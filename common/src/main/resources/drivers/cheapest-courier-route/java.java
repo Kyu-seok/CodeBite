@@ -8,10 +8,10 @@ public class Main {
         int n = Integer.parseInt(sc.nextLine().trim());
         String line = sc.nextLine().trim();
         // Parse 2D int array [[0,1,100],[1,2,100]]
-        int[][] flights;
+        int[][] links;
         String inner = line.substring(1, line.length() - 1);
         if (inner.isEmpty() || !inner.contains("[")) {
-            flights = new int[0][];
+            links = new int[0][];
         } else {
             List<int[]> list = new ArrayList<>();
             int i = 0;
@@ -28,12 +28,12 @@ public class Main {
                     i++;
                 }
             }
-            flights = list.toArray(new int[0][]);
+            links = list.toArray(new int[0][]);
         }
         int src = Integer.parseInt(sc.nextLine().trim());
         int dst = Integer.parseInt(sc.nextLine().trim());
-        int k = Integer.parseInt(sc.nextLine().trim());
-        int result = new Solution().relayDispatchCost(n, flights, src, dst, k);
+        int maxStops = Integer.parseInt(sc.nextLine().trim());
+        int result = new Solution().cheapestRoute(n, links, src, dst, maxStops);
         System.out.println(result);
     }
 }

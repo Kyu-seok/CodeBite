@@ -20,11 +20,27 @@
    "title": "t"
   },
   {
-   "id": "counts",
-   "type": "table",
+   "id": "count_s",
+   "type": "map",
    "title": {
-    "en": "letter counts",
-    "ko": "글자별 개수"
+    "en": "letters in s",
+    "ko": "s의 글자별 개수"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  },
+  {
+   "id": "count_t",
+   "type": "map",
+   "title": {
+    "en": "letters in t",
+    "ko": "t의 글자별 개수"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
    }
   }
  ],
@@ -39,8 +55,8 @@
    "frames": [
     {
      "caption": {
-      "en": "Count how many times each letter appears in s, then in t. Every count starts at 0.",
-      "ko": "s에서 각 글자가 몇 번 나오는지 세고, 이어서 t에서도 셉니다. 모든 개수는 0에서 시작합니다."
+      "en": "Count how many times each letter appears in s, then in t, each in its own map. Both maps start empty.",
+      "ko": "s에서 각 글자가 몇 번 나오는지 세고, 이어서 t에서도 셉니다. 두 맵 모두 비어 있는 채로 시작합니다."
      },
      "views": {
       "s": {
@@ -55,16 +71,19 @@
        "pointers": {
         "i": null
        },
-       "marks": {
-        "dim": [
-         0,
-         1,
-         2,
-         3,
-         4,
-         5
-        ]
-       }
+       "marks": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+       ]
+      },
+      "count_s": {
+       "entries": [],
+       "marks": {}
       },
       "t": {
        "values": [
@@ -78,61 +97,26 @@
        "pointers": {
         "j": null
        },
-       "marks": {
-        "dim": [
-         0,
-         1,
-         2,
-         3,
-         4,
-         5
-        ]
-       }
+       "marks": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+       ]
       },
-      "counts": {
-       "columns": [
-        "b",
-        "e",
-        "r",
-        "t",
-        "u"
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "in s",
-          "ko": "s 안"
-         },
-         "cells": [
-          0,
-          0,
-          0,
-          0,
-          0
-         ]
-        },
-        {
-         "label": {
-          "en": "in t",
-          "ko": "t 안"
-         },
-         "cells": [
-          0,
-          0,
-          0,
-          0,
-          0
-         ]
-        }
-       ],
+      "count_t": {
+       "entries": [],
        "marks": {}
       }
      }
     },
     {
      "caption": {
-      "en": "s[0] is 'b': s now has 1 × 'b'.",
-      "ko": "s[0] = 'b': s의 'b' 개수는 이제 1개입니다."
+      "en": "s[0] is 'b': it goes into the s map, which now has 1 × 'b'.",
+      "ko": "s[0] = 'b': s의 맵에 넣으면 'b' 개수는 이제 1개입니다."
      },
      "views": {
       "s": {
@@ -150,13 +134,26 @@
        "marks": {
         "lit": [
          0
-        ],
-        "dim": [
-         1,
-         2,
-         3,
-         4,
-         5
+        ]
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4,
+        5
+       ]
+      },
+      "count_s": {
+       "entries": [
+        {
+         "key": "b",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "good": [
+         "b"
         ]
        }
       },
@@ -172,68 +169,38 @@
        "pointers": {
         "j": null
        },
-       "marks": {
-        "dim": [
-         0,
-         1,
-         2,
-         3,
-         4,
-         5
-        ]
-       }
+       "marks": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+       ]
       },
-      "counts": {
-       "columns": [
-        "b",
-        "e",
-        "r",
-        "t",
-        "u"
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "in s",
-          "ko": "s 안"
-         },
-         "cells": [
-          1,
-          0,
-          0,
-          0,
-          0
-         ]
-        },
-        {
-         "label": {
-          "en": "in t",
-          "ko": "t 안"
-         },
-         "cells": [
-          0,
-          0,
-          0,
-          0,
-          0
-         ]
-        }
-       ],
-       "marks": {
-        "good": [
-         [
-          0,
-          0
-         ]
-        ]
+      "count_t": {
+       "entries": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "s",
+        "at": 0
+       },
+       "to": {
+        "view": "count_s",
+        "at": "b"
        }
       }
-     }
+     ]
     },
     {
      "caption": {
-      "en": "s[1] is 'u': s now has 1 × 'u'.",
-      "ko": "s[1] = 'u': s의 'u' 개수는 이제 1개입니다."
+      "en": "s[1] is 'u': it goes into the s map, which now has 1 × 'u'.",
+      "ko": "s[1] = 'u': s의 맵에 넣으면 'u' 개수는 이제 1개입니다."
      },
      "views": {
       "s": {
@@ -251,12 +218,29 @@
        "marks": {
         "lit": [
          1
-        ],
-        "dim": [
-         2,
-         3,
-         4,
-         5
+        ]
+       },
+       "unread": [
+        2,
+        3,
+        4,
+        5
+       ]
+      },
+      "count_s": {
+       "entries": [
+        {
+         "key": "b",
+         "value": 1
+        },
+        {
+         "key": "u",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "good": [
+         "u"
         ]
        }
       },
@@ -272,68 +256,38 @@
        "pointers": {
         "j": null
        },
-       "marks": {
-        "dim": [
-         0,
-         1,
-         2,
-         3,
-         4,
-         5
-        ]
-       }
+       "marks": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+       ]
       },
-      "counts": {
-       "columns": [
-        "b",
-        "e",
-        "r",
-        "t",
-        "u"
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "in s",
-          "ko": "s 안"
-         },
-         "cells": [
-          1,
-          0,
-          0,
-          0,
-          1
-         ]
-        },
-        {
-         "label": {
-          "en": "in t",
-          "ko": "t 안"
-         },
-         "cells": [
-          0,
-          0,
-          0,
-          0,
-          0
-         ]
-        }
-       ],
-       "marks": {
-        "good": [
-         [
-          0,
-          4
-         ]
-        ]
+      "count_t": {
+       "entries": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "s",
+        "at": 1
+       },
+       "to": {
+        "view": "count_s",
+        "at": "u"
        }
       }
-     }
+     ]
     },
     {
      "caption": {
-      "en": "s[2] is 't': s now has 1 × 't'.",
-      "ko": "s[2] = 't': s의 't' 개수는 이제 1개입니다."
+      "en": "s[2] is 't': it goes into the s map, which now has 1 × 't'.",
+      "ko": "s[2] = 't': s의 맵에 넣으면 't' 개수는 이제 1개입니다."
      },
      "views": {
       "s": {
@@ -351,11 +305,32 @@
        "marks": {
         "lit": [
          2
-        ],
-        "dim": [
-         3,
-         4,
-         5
+        ]
+       },
+       "unread": [
+        3,
+        4,
+        5
+       ]
+      },
+      "count_s": {
+       "entries": [
+        {
+         "key": "b",
+         "value": 1
+        },
+        {
+         "key": "u",
+         "value": 1
+        },
+        {
+         "key": "t",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "good": [
+         "t"
         ]
        }
       },
@@ -371,68 +346,38 @@
        "pointers": {
         "j": null
        },
-       "marks": {
-        "dim": [
-         0,
-         1,
-         2,
-         3,
-         4,
-         5
-        ]
-       }
+       "marks": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+       ]
       },
-      "counts": {
-       "columns": [
-        "b",
-        "e",
-        "r",
-        "t",
-        "u"
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "in s",
-          "ko": "s 안"
-         },
-         "cells": [
-          1,
-          0,
-          0,
-          1,
-          1
-         ]
-        },
-        {
-         "label": {
-          "en": "in t",
-          "ko": "t 안"
-         },
-         "cells": [
-          0,
-          0,
-          0,
-          0,
-          0
-         ]
-        }
-       ],
-       "marks": {
-        "good": [
-         [
-          0,
-          3
-         ]
-        ]
+      "count_t": {
+       "entries": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "s",
+        "at": 2
+       },
+       "to": {
+        "view": "count_s",
+        "at": "t"
        }
       }
-     }
+     ]
     },
     {
      "caption": {
-      "en": "s[3] is 't': s now has 2 × 't'.",
-      "ko": "s[3] = 't': s의 't' 개수는 이제 2개입니다."
+      "en": "s[3] is 't': it goes into the s map, which now has 2 × 't'.",
+      "ko": "s[3] = 't': s의 맵에 넣으면 't' 개수는 이제 2개입니다."
      },
      "views": {
       "s": {
@@ -450,10 +395,31 @@
        "marks": {
         "lit": [
          3
-        ],
-        "dim": [
-         4,
-         5
+        ]
+       },
+       "unread": [
+        4,
+        5
+       ]
+      },
+      "count_s": {
+       "entries": [
+        {
+         "key": "b",
+         "value": 1
+        },
+        {
+         "key": "u",
+         "value": 1
+        },
+        {
+         "key": "t",
+         "value": 2
+        }
+       ],
+       "marks": {
+        "good": [
+         "t"
         ]
        }
       },
@@ -469,68 +435,38 @@
        "pointers": {
         "j": null
        },
-       "marks": {
-        "dim": [
-         0,
-         1,
-         2,
-         3,
-         4,
-         5
-        ]
-       }
+       "marks": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+       ]
       },
-      "counts": {
-       "columns": [
-        "b",
-        "e",
-        "r",
-        "t",
-        "u"
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "in s",
-          "ko": "s 안"
-         },
-         "cells": [
-          1,
-          0,
-          0,
-          2,
-          1
-         ]
-        },
-        {
-         "label": {
-          "en": "in t",
-          "ko": "t 안"
-         },
-         "cells": [
-          0,
-          0,
-          0,
-          0,
-          0
-         ]
-        }
-       ],
-       "marks": {
-        "good": [
-         [
-          0,
-          3
-         ]
-        ]
+      "count_t": {
+       "entries": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "s",
+        "at": 3
+       },
+       "to": {
+        "view": "count_s",
+        "at": "t"
        }
       }
-     }
+     ]
     },
     {
      "caption": {
-      "en": "s[4] is 'e': s now has 1 × 'e'.",
-      "ko": "s[4] = 'e': s의 'e' 개수는 이제 1개입니다."
+      "en": "s[4] is 'e': it goes into the s map, which now has 1 × 'e'.",
+      "ko": "s[4] = 'e': s의 맵에 넣으면 'e' 개수는 이제 1개입니다."
      },
      "views": {
       "s": {
@@ -548,9 +484,34 @@
        "marks": {
         "lit": [
          4
-        ],
-        "dim": [
-         5
+        ]
+       },
+       "unread": [
+        5
+       ]
+      },
+      "count_s": {
+       "entries": [
+        {
+         "key": "b",
+         "value": 1
+        },
+        {
+         "key": "u",
+         "value": 1
+        },
+        {
+         "key": "t",
+         "value": 2
+        },
+        {
+         "key": "e",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "good": [
+         "e"
         ]
        }
       },
@@ -566,68 +527,38 @@
        "pointers": {
         "j": null
        },
-       "marks": {
-        "dim": [
-         0,
-         1,
-         2,
-         3,
-         4,
-         5
-        ]
-       }
+       "marks": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+       ]
       },
-      "counts": {
-       "columns": [
-        "b",
-        "e",
-        "r",
-        "t",
-        "u"
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "in s",
-          "ko": "s 안"
-         },
-         "cells": [
-          1,
-          1,
-          0,
-          2,
-          1
-         ]
-        },
-        {
-         "label": {
-          "en": "in t",
-          "ko": "t 안"
-         },
-         "cells": [
-          0,
-          0,
-          0,
-          0,
-          0
-         ]
-        }
-       ],
-       "marks": {
-        "good": [
-         [
-          0,
-          1
-         ]
-        ]
+      "count_t": {
+       "entries": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "s",
+        "at": 4
+       },
+       "to": {
+        "view": "count_s",
+        "at": "e"
        }
       }
-     }
+     ]
     },
     {
      "caption": {
-      "en": "s[5] is 'r': s now has 1 × 'r'.",
-      "ko": "s[5] = 'r': s의 'r' 개수는 이제 1개입니다."
+      "en": "s[5] is 'r': it goes into the s map, which now has 1 × 'r'.",
+      "ko": "s[5] = 'r': s의 맵에 넣으면 'r' 개수는 이제 1개입니다."
      },
      "views": {
       "s": {
@@ -645,8 +576,37 @@
        "marks": {
         "lit": [
          5
-        ],
-        "dim": []
+        ]
+       },
+       "unread": []
+      },
+      "count_s": {
+       "entries": [
+        {
+         "key": "b",
+         "value": 1
+        },
+        {
+         "key": "u",
+         "value": 1
+        },
+        {
+         "key": "t",
+         "value": 2
+        },
+        {
+         "key": "e",
+         "value": 1
+        },
+        {
+         "key": "r",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "good": [
+         "r"
+        ]
        }
       },
       "t": {
@@ -661,68 +621,38 @@
        "pointers": {
         "j": null
        },
-       "marks": {
-        "dim": [
-         0,
-         1,
-         2,
-         3,
-         4,
-         5
-        ]
-       }
+       "marks": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+       ]
       },
-      "counts": {
-       "columns": [
-        "b",
-        "e",
-        "r",
-        "t",
-        "u"
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "in s",
-          "ko": "s 안"
-         },
-         "cells": [
-          1,
-          1,
-          1,
-          2,
-          1
-         ]
-        },
-        {
-         "label": {
-          "en": "in t",
-          "ko": "t 안"
-         },
-         "cells": [
-          0,
-          0,
-          0,
-          0,
-          0
-         ]
-        }
-       ],
-       "marks": {
-        "good": [
-         [
-          0,
-          2
-         ]
-        ]
+      "count_t": {
+       "entries": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "s",
+        "at": 5
+       },
+       "to": {
+        "view": "count_s",
+        "at": "r"
        }
       }
-     }
+     ]
     },
     {
      "caption": {
-      "en": "t[0] is 'b': t now has 1 × 'b'.",
-      "ko": "t[0] = 'b': t의 'b' 개수는 이제 1개입니다."
+      "en": "t[0] is 'b': it goes into the t map, which now has 1 × 'b'.",
+      "ko": "t[0] = 'b': t의 맵에 넣으면 'b' 개수는 이제 1개입니다."
      },
      "views": {
       "s": {
@@ -737,6 +667,32 @@
        "pointers": {
         "i": null
        },
+       "marks": {},
+       "unread": []
+      },
+      "count_s": {
+       "entries": [
+        {
+         "key": "b",
+         "value": 1
+        },
+        {
+         "key": "u",
+         "value": 1
+        },
+        {
+         "key": "t",
+         "value": 2
+        },
+        {
+         "key": "e",
+         "value": 1
+        },
+        {
+         "key": "r",
+         "value": 1
+        }
+       ],
        "marks": {}
       },
       "t": {
@@ -754,67 +710,47 @@
        "marks": {
         "lit": [
          0
-        ],
-        "dim": [
-         1,
-         2,
-         3,
-         4,
-         5
         ]
-       }
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4,
+        5
+       ]
       },
-      "counts": {
-       "columns": [
-        "b",
-        "e",
-        "r",
-        "t",
-        "u"
-       ],
-       "rows": [
+      "count_t": {
+       "entries": [
         {
-         "label": {
-          "en": "in s",
-          "ko": "s 안"
-         },
-         "cells": [
-          1,
-          1,
-          1,
-          2,
-          1
-         ]
-        },
-        {
-         "label": {
-          "en": "in t",
-          "ko": "t 안"
-         },
-         "cells": [
-          1,
-          0,
-          0,
-          0,
-          0
-         ]
+         "key": "b",
+         "value": 1
         }
        ],
        "marks": {
         "good": [
-         [
-          1,
-          0
-         ]
+         "b"
         ]
        }
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "t",
+        "at": 0
+       },
+       "to": {
+        "view": "count_t",
+        "at": "b"
+       }
+      }
+     ]
     },
     {
      "caption": {
-      "en": "t[1] is 'r': t now has 1 × 'r'.",
-      "ko": "t[1] = 'r': t의 'r' 개수는 이제 1개입니다."
+      "en": "t[1] is 'r': it goes into the t map, which now has 1 × 'r'.",
+      "ko": "t[1] = 'r': t의 맵에 넣으면 'r' 개수는 이제 1개입니다."
      },
      "views": {
       "s": {
@@ -829,6 +765,32 @@
        "pointers": {
         "i": null
        },
+       "marks": {},
+       "unread": []
+      },
+      "count_s": {
+       "entries": [
+        {
+         "key": "b",
+         "value": 1
+        },
+        {
+         "key": "u",
+         "value": 1
+        },
+        {
+         "key": "t",
+         "value": 2
+        },
+        {
+         "key": "e",
+         "value": 1
+        },
+        {
+         "key": "r",
+         "value": 1
+        }
+       ],
        "marks": {}
       },
       "t": {
@@ -846,66 +808,50 @@
        "marks": {
         "lit": [
          1
-        ],
-        "dim": [
-         2,
-         3,
-         4,
-         5
         ]
-       }
+       },
+       "unread": [
+        2,
+        3,
+        4,
+        5
+       ]
       },
-      "counts": {
-       "columns": [
-        "b",
-        "e",
-        "r",
-        "t",
-        "u"
-       ],
-       "rows": [
+      "count_t": {
+       "entries": [
         {
-         "label": {
-          "en": "in s",
-          "ko": "s 안"
-         },
-         "cells": [
-          1,
-          1,
-          1,
-          2,
-          1
-         ]
+         "key": "b",
+         "value": 1
         },
         {
-         "label": {
-          "en": "in t",
-          "ko": "t 안"
-         },
-         "cells": [
-          1,
-          0,
-          1,
-          0,
-          0
-         ]
+         "key": "r",
+         "value": 1
         }
        ],
        "marks": {
         "good": [
-         [
-          1,
-          2
-         ]
+         "r"
         ]
        }
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "t",
+        "at": 1
+       },
+       "to": {
+        "view": "count_t",
+        "at": "r"
+       }
+      }
+     ]
     },
     {
      "caption": {
-      "en": "t[2] is 'u': t now has 1 × 'u'.",
-      "ko": "t[2] = 'u': t의 'u' 개수는 이제 1개입니다."
+      "en": "t[2] is 'u': it goes into the t map, which now has 1 × 'u'.",
+      "ko": "t[2] = 'u': t의 맵에 넣으면 'u' 개수는 이제 1개입니다."
      },
      "views": {
       "s": {
@@ -920,6 +866,32 @@
        "pointers": {
         "i": null
        },
+       "marks": {},
+       "unread": []
+      },
+      "count_s": {
+       "entries": [
+        {
+         "key": "b",
+         "value": 1
+        },
+        {
+         "key": "u",
+         "value": 1
+        },
+        {
+         "key": "t",
+         "value": 2
+        },
+        {
+         "key": "e",
+         "value": 1
+        },
+        {
+         "key": "r",
+         "value": 1
+        }
+       ],
        "marks": {}
       },
       "t": {
@@ -937,65 +909,53 @@
        "marks": {
         "lit": [
          2
-        ],
-        "dim": [
-         3,
-         4,
-         5
         ]
-       }
+       },
+       "unread": [
+        3,
+        4,
+        5
+       ]
       },
-      "counts": {
-       "columns": [
-        "b",
-        "e",
-        "r",
-        "t",
-        "u"
-       ],
-       "rows": [
+      "count_t": {
+       "entries": [
         {
-         "label": {
-          "en": "in s",
-          "ko": "s 안"
-         },
-         "cells": [
-          1,
-          1,
-          1,
-          2,
-          1
-         ]
+         "key": "b",
+         "value": 1
         },
         {
-         "label": {
-          "en": "in t",
-          "ko": "t 안"
-         },
-         "cells": [
-          1,
-          0,
-          1,
-          0,
-          1
-         ]
+         "key": "r",
+         "value": 1
+        },
+        {
+         "key": "u",
+         "value": 1
         }
        ],
        "marks": {
         "good": [
-         [
-          1,
-          4
-         ]
+         "u"
         ]
        }
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "t",
+        "at": 2
+       },
+       "to": {
+        "view": "count_t",
+        "at": "u"
+       }
+      }
+     ]
     },
     {
      "caption": {
-      "en": "t[3] is 'e': t now has 1 × 'e'.",
-      "ko": "t[3] = 'e': t의 'e' 개수는 이제 1개입니다."
+      "en": "t[3] is 'e': it goes into the t map, which now has 1 × 'e'.",
+      "ko": "t[3] = 'e': t의 맵에 넣으면 'e' 개수는 이제 1개입니다."
      },
      "views": {
       "s": {
@@ -1010,6 +970,32 @@
        "pointers": {
         "i": null
        },
+       "marks": {},
+       "unread": []
+      },
+      "count_s": {
+       "entries": [
+        {
+         "key": "b",
+         "value": 1
+        },
+        {
+         "key": "u",
+         "value": 1
+        },
+        {
+         "key": "t",
+         "value": 2
+        },
+        {
+         "key": "e",
+         "value": 1
+        },
+        {
+         "key": "r",
+         "value": 1
+        }
+       ],
        "marks": {}
       },
       "t": {
@@ -1027,64 +1013,56 @@
        "marks": {
         "lit": [
          3
-        ],
-        "dim": [
-         4,
-         5
         ]
-       }
+       },
+       "unread": [
+        4,
+        5
+       ]
       },
-      "counts": {
-       "columns": [
-        "b",
-        "e",
-        "r",
-        "t",
-        "u"
-       ],
-       "rows": [
+      "count_t": {
+       "entries": [
         {
-         "label": {
-          "en": "in s",
-          "ko": "s 안"
-         },
-         "cells": [
-          1,
-          1,
-          1,
-          2,
-          1
-         ]
+         "key": "b",
+         "value": 1
         },
         {
-         "label": {
-          "en": "in t",
-          "ko": "t 안"
-         },
-         "cells": [
-          1,
-          1,
-          1,
-          0,
-          1
-         ]
+         "key": "r",
+         "value": 1
+        },
+        {
+         "key": "u",
+         "value": 1
+        },
+        {
+         "key": "e",
+         "value": 1
         }
        ],
        "marks": {
         "good": [
-         [
-          1,
-          1
-         ]
+         "e"
         ]
        }
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "t",
+        "at": 3
+       },
+       "to": {
+        "view": "count_t",
+        "at": "e"
+       }
+      }
+     ]
     },
     {
      "caption": {
-      "en": "t[4] is 't': t now has 1 × 't'.",
-      "ko": "t[4] = 't': t의 't' 개수는 이제 1개입니다."
+      "en": "t[4] is 't': it goes into the t map, which now has 1 × 't'.",
+      "ko": "t[4] = 't': t의 맵에 넣으면 't' 개수는 이제 1개입니다."
      },
      "views": {
       "s": {
@@ -1099,6 +1077,32 @@
        "pointers": {
         "i": null
        },
+       "marks": {},
+       "unread": []
+      },
+      "count_s": {
+       "entries": [
+        {
+         "key": "b",
+         "value": 1
+        },
+        {
+         "key": "u",
+         "value": 1
+        },
+        {
+         "key": "t",
+         "value": 2
+        },
+        {
+         "key": "e",
+         "value": 1
+        },
+        {
+         "key": "r",
+         "value": 1
+        }
+       ],
        "marks": {}
       },
       "t": {
@@ -1116,63 +1120,59 @@
        "marks": {
         "lit": [
          4
-        ],
-        "dim": [
-         5
         ]
-       }
+       },
+       "unread": [
+        5
+       ]
       },
-      "counts": {
-       "columns": [
-        "b",
-        "e",
-        "r",
-        "t",
-        "u"
-       ],
-       "rows": [
+      "count_t": {
+       "entries": [
         {
-         "label": {
-          "en": "in s",
-          "ko": "s 안"
-         },
-         "cells": [
-          1,
-          1,
-          1,
-          2,
-          1
-         ]
+         "key": "b",
+         "value": 1
         },
         {
-         "label": {
-          "en": "in t",
-          "ko": "t 안"
-         },
-         "cells": [
-          1,
-          1,
-          1,
-          1,
-          1
-         ]
+         "key": "r",
+         "value": 1
+        },
+        {
+         "key": "u",
+         "value": 1
+        },
+        {
+         "key": "e",
+         "value": 1
+        },
+        {
+         "key": "t",
+         "value": 1
         }
        ],
        "marks": {
         "good": [
-         [
-          1,
-          3
-         ]
+         "t"
         ]
        }
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "t",
+        "at": 4
+       },
+       "to": {
+        "view": "count_t",
+        "at": "t"
+       }
+      }
+     ]
     },
     {
      "caption": {
-      "en": "t[5] is 't': t now has 2 × 't'.",
-      "ko": "t[5] = 't': t의 't' 개수는 이제 2개입니다."
+      "en": "t[5] is 't': it goes into the t map, which now has 2 × 't'.",
+      "ko": "t[5] = 't': t의 맵에 넣으면 't' 개수는 이제 2개입니다."
      },
      "views": {
       "s": {
@@ -1187,6 +1187,32 @@
        "pointers": {
         "i": null
        },
+       "marks": {},
+       "unread": []
+      },
+      "count_s": {
+       "entries": [
+        {
+         "key": "b",
+         "value": 1
+        },
+        {
+         "key": "u",
+         "value": 1
+        },
+        {
+         "key": "t",
+         "value": 2
+        },
+        {
+         "key": "e",
+         "value": 1
+        },
+        {
+         "key": "r",
+         "value": 1
+        }
+       ],
        "marks": {}
       },
       "t": {
@@ -1204,61 +1230,57 @@
        "marks": {
         "lit": [
          5
-        ],
-        "dim": []
-       }
+        ]
+       },
+       "unread": []
       },
-      "counts": {
-       "columns": [
-        "b",
-        "e",
-        "r",
-        "t",
-        "u"
-       ],
-       "rows": [
+      "count_t": {
+       "entries": [
         {
-         "label": {
-          "en": "in s",
-          "ko": "s 안"
-         },
-         "cells": [
-          1,
-          1,
-          1,
-          2,
-          1
-         ]
+         "key": "b",
+         "value": 1
         },
         {
-         "label": {
-          "en": "in t",
-          "ko": "t 안"
-         },
-         "cells": [
-          1,
-          1,
-          1,
-          2,
-          1
-         ]
+         "key": "r",
+         "value": 1
+        },
+        {
+         "key": "u",
+         "value": 1
+        },
+        {
+         "key": "e",
+         "value": 1
+        },
+        {
+         "key": "t",
+         "value": 2
         }
        ],
        "marks": {
         "good": [
-         [
-          1,
-          3
-         ]
+         "t"
         ]
        }
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "t",
+        "at": 5
+       },
+       "to": {
+        "view": "count_t",
+        "at": "t"
+       }
+      }
+     ]
     },
     {
      "caption": {
-      "en": "Every letter's count is the same in s and t (5 letters checked), so t is an anagram of s. Answer true.",
-      "ko": "모든 글자(5종류)의 개수가 s와 t에서 같으므로 t는 s의 애너그램입니다. 답은 true입니다."
+      "en": "Both maps hold the same 5 letters with the same counts, so t is an anagram of s. Answer true.",
+      "ko": "두 맵에 같은 글자 5종류가 같은 개수로 들어 있으므로 t는 s의 애너그램입니다. 답은 true입니다."
      },
      "views": {
       "s": {
@@ -1273,7 +1295,41 @@
        "pointers": {
         "i": null
        },
-       "marks": {}
+       "marks": {},
+       "unread": []
+      },
+      "count_s": {
+       "entries": [
+        {
+         "key": "b",
+         "value": 1
+        },
+        {
+         "key": "u",
+         "value": 1
+        },
+        {
+         "key": "t",
+         "value": 2
+        },
+        {
+         "key": "e",
+         "value": 1
+        },
+        {
+         "key": "r",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "path": [
+         "b",
+         "u",
+         "t",
+         "e",
+         "r"
+        ]
+       }
       },
       "t": {
        "values": [
@@ -1287,86 +1343,39 @@
        "pointers": {
         "j": null
        },
-       "marks": {}
+       "marks": {},
+       "unread": []
       },
-      "counts": {
-       "columns": [
-        "b",
-        "e",
-        "r",
-        "t",
-        "u"
-       ],
-       "rows": [
+      "count_t": {
+       "entries": [
         {
-         "label": {
-          "en": "in s",
-          "ko": "s 안"
-         },
-         "cells": [
-          1,
-          1,
-          1,
-          2,
-          1
-         ]
+         "key": "b",
+         "value": 1
         },
         {
-         "label": {
-          "en": "in t",
-          "ko": "t 안"
-         },
-         "cells": [
-          1,
-          1,
-          1,
-          2,
-          1
-         ]
+         "key": "r",
+         "value": 1
+        },
+        {
+         "key": "u",
+         "value": 1
+        },
+        {
+         "key": "e",
+         "value": 1
+        },
+        {
+         "key": "t",
+         "value": 2
         }
        ],
        "marks": {
         "path": [
-         [
-          0,
-          0
-         ],
-         [
-          0,
-          1
-         ],
-         [
-          0,
-          2
-         ],
-         [
-          0,
-          3
-         ],
-         [
-          0,
-          4
-         ],
-         [
-          1,
-          0
-         ],
-         [
-          1,
-          1
-         ],
-         [
-          1,
-          2
-         ],
-         [
-          1,
-          3
-         ],
-         [
-          1,
-          4
-         ]
+         "b",
+         "r",
+         "u",
+         "e",
+         "t"
         ]
        }
       }
@@ -1386,8 +1395,8 @@
    "frames": [
     {
      "caption": {
-      "en": "Count how many times each letter appears in s, then in t. Every count starts at 0.",
-      "ko": "s에서 각 글자가 몇 번 나오는지 세고, 이어서 t에서도 셉니다. 모든 개수는 0에서 시작합니다."
+      "en": "Count how many times each letter appears in s, then in t, each in its own map. Both maps start empty.",
+      "ko": "s에서 각 글자가 몇 번 나오는지 세고, 이어서 t에서도 셉니다. 두 맵 모두 비어 있는 채로 시작합니다."
      },
      "views": {
       "s": {
@@ -1401,15 +1410,18 @@
        "pointers": {
         "i": null
        },
-       "marks": {
-        "dim": [
-         0,
-         1,
-         2,
-         3,
-         4
-        ]
-       }
+       "marks": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ]
+      },
+      "count_s": {
+       "entries": [],
+       "marks": {}
       },
       "t": {
        "values": [
@@ -1422,63 +1434,25 @@
        "pointers": {
         "j": null
        },
-       "marks": {
-        "dim": [
-         0,
-         1,
-         2,
-         3,
-         4
-        ]
-       }
+       "marks": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ]
       },
-      "counts": {
-       "columns": [
-        "a",
-        "e",
-        "o",
-        "s",
-        "t",
-        "y"
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "in s",
-          "ko": "s 안"
-         },
-         "cells": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-         ]
-        },
-        {
-         "label": {
-          "en": "in t",
-          "ko": "t 안"
-         },
-         "cells": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-         ]
-        }
-       ],
+      "count_t": {
+       "entries": [],
        "marks": {}
       }
      }
     },
     {
      "caption": {
-      "en": "s[0] is 'y': s now has 1 × 'y'.",
-      "ko": "s[0] = 'y': s의 'y' 개수는 이제 1개입니다."
+      "en": "s[0] is 'y': it goes into the s map, which now has 1 × 'y'.",
+      "ko": "s[0] = 'y': s의 맵에 넣으면 'y' 개수는 이제 1개입니다."
      },
      "views": {
       "s": {
@@ -1495,12 +1469,25 @@
        "marks": {
         "lit": [
          0
-        ],
-        "dim": [
-         1,
-         2,
-         3,
-         4
+        ]
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4
+       ]
+      },
+      "count_s": {
+       "entries": [
+        {
+         "key": "y",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "good": [
+         "y"
         ]
        }
       },
@@ -1515,70 +1502,37 @@
        "pointers": {
         "j": null
        },
-       "marks": {
-        "dim": [
-         0,
-         1,
-         2,
-         3,
-         4
-        ]
-       }
+       "marks": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ]
       },
-      "counts": {
-       "columns": [
-        "a",
-        "e",
-        "o",
-        "s",
-        "t",
-        "y"
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "in s",
-          "ko": "s 안"
-         },
-         "cells": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          1
-         ]
-        },
-        {
-         "label": {
-          "en": "in t",
-          "ko": "t 안"
-         },
-         "cells": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-         ]
-        }
-       ],
-       "marks": {
-        "good": [
-         [
-          0,
-          5
-         ]
-        ]
+      "count_t": {
+       "entries": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "s",
+        "at": 0
+       },
+       "to": {
+        "view": "count_s",
+        "at": "y"
        }
       }
-     }
+     ]
     },
     {
      "caption": {
-      "en": "s[1] is 'e': s now has 1 × 'e'.",
-      "ko": "s[1] = 'e': s의 'e' 개수는 이제 1개입니다."
+      "en": "s[1] is 'e': it goes into the s map, which now has 1 × 'e'.",
+      "ko": "s[1] = 'e': s의 맵에 넣으면 'e' 개수는 이제 1개입니다."
      },
      "views": {
       "s": {
@@ -1595,11 +1549,28 @@
        "marks": {
         "lit": [
          1
-        ],
-        "dim": [
-         2,
-         3,
-         4
+        ]
+       },
+       "unread": [
+        2,
+        3,
+        4
+       ]
+      },
+      "count_s": {
+       "entries": [
+        {
+         "key": "y",
+         "value": 1
+        },
+        {
+         "key": "e",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "good": [
+         "e"
         ]
        }
       },
@@ -1614,70 +1585,37 @@
        "pointers": {
         "j": null
        },
-       "marks": {
-        "dim": [
-         0,
-         1,
-         2,
-         3,
-         4
-        ]
-       }
+       "marks": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ]
       },
-      "counts": {
-       "columns": [
-        "a",
-        "e",
-        "o",
-        "s",
-        "t",
-        "y"
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "in s",
-          "ko": "s 안"
-         },
-         "cells": [
-          0,
-          1,
-          0,
-          0,
-          0,
-          1
-         ]
-        },
-        {
-         "label": {
-          "en": "in t",
-          "ko": "t 안"
-         },
-         "cells": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-         ]
-        }
-       ],
-       "marks": {
-        "good": [
-         [
-          0,
-          1
-         ]
-        ]
+      "count_t": {
+       "entries": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "s",
+        "at": 1
+       },
+       "to": {
+        "view": "count_s",
+        "at": "e"
        }
       }
-     }
+     ]
     },
     {
      "caption": {
-      "en": "s[2] is 'a': s now has 1 × 'a'.",
-      "ko": "s[2] = 'a': s의 'a' 개수는 이제 1개입니다."
+      "en": "s[2] is 'a': it goes into the s map, which now has 1 × 'a'.",
+      "ko": "s[2] = 'a': s의 맵에 넣으면 'a' 개수는 이제 1개입니다."
      },
      "views": {
       "s": {
@@ -1694,10 +1632,31 @@
        "marks": {
         "lit": [
          2
-        ],
-        "dim": [
-         3,
-         4
+        ]
+       },
+       "unread": [
+        3,
+        4
+       ]
+      },
+      "count_s": {
+       "entries": [
+        {
+         "key": "y",
+         "value": 1
+        },
+        {
+         "key": "e",
+         "value": 1
+        },
+        {
+         "key": "a",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "good": [
+         "a"
         ]
        }
       },
@@ -1712,70 +1671,37 @@
        "pointers": {
         "j": null
        },
-       "marks": {
-        "dim": [
-         0,
-         1,
-         2,
-         3,
-         4
-        ]
-       }
+       "marks": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ]
       },
-      "counts": {
-       "columns": [
-        "a",
-        "e",
-        "o",
-        "s",
-        "t",
-        "y"
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "in s",
-          "ko": "s 안"
-         },
-         "cells": [
-          1,
-          1,
-          0,
-          0,
-          0,
-          1
-         ]
-        },
-        {
-         "label": {
-          "en": "in t",
-          "ko": "t 안"
-         },
-         "cells": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-         ]
-        }
-       ],
-       "marks": {
-        "good": [
-         [
-          0,
-          0
-         ]
-        ]
+      "count_t": {
+       "entries": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "s",
+        "at": 2
+       },
+       "to": {
+        "view": "count_s",
+        "at": "a"
        }
       }
-     }
+     ]
     },
     {
      "caption": {
-      "en": "s[3] is 's': s now has 1 × 's'.",
-      "ko": "s[3] = 's': s의 's' 개수는 이제 1개입니다."
+      "en": "s[3] is 's': it goes into the s map, which now has 1 × 's'.",
+      "ko": "s[3] = 's': s의 맵에 넣으면 's' 개수는 이제 1개입니다."
      },
      "views": {
       "s": {
@@ -1792,9 +1718,34 @@
        "marks": {
         "lit": [
          3
-        ],
-        "dim": [
-         4
+        ]
+       },
+       "unread": [
+        4
+       ]
+      },
+      "count_s": {
+       "entries": [
+        {
+         "key": "y",
+         "value": 1
+        },
+        {
+         "key": "e",
+         "value": 1
+        },
+        {
+         "key": "a",
+         "value": 1
+        },
+        {
+         "key": "s",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "good": [
+         "s"
         ]
        }
       },
@@ -1809,70 +1760,37 @@
        "pointers": {
         "j": null
        },
-       "marks": {
-        "dim": [
-         0,
-         1,
-         2,
-         3,
-         4
-        ]
-       }
+       "marks": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ]
       },
-      "counts": {
-       "columns": [
-        "a",
-        "e",
-        "o",
-        "s",
-        "t",
-        "y"
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "in s",
-          "ko": "s 안"
-         },
-         "cells": [
-          1,
-          1,
-          0,
-          1,
-          0,
-          1
-         ]
-        },
-        {
-         "label": {
-          "en": "in t",
-          "ko": "t 안"
-         },
-         "cells": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-         ]
-        }
-       ],
-       "marks": {
-        "good": [
-         [
-          0,
-          3
-         ]
-        ]
+      "count_t": {
+       "entries": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "s",
+        "at": 3
+       },
+       "to": {
+        "view": "count_s",
+        "at": "s"
        }
       }
-     }
+     ]
     },
     {
      "caption": {
-      "en": "s[4] is 't': s now has 1 × 't'.",
-      "ko": "s[4] = 't': s의 't' 개수는 이제 1개입니다."
+      "en": "s[4] is 't': it goes into the s map, which now has 1 × 't'.",
+      "ko": "s[4] = 't': s의 맵에 넣으면 't' 개수는 이제 1개입니다."
      },
      "views": {
       "s": {
@@ -1889,8 +1807,37 @@
        "marks": {
         "lit": [
          4
-        ],
-        "dim": []
+        ]
+       },
+       "unread": []
+      },
+      "count_s": {
+       "entries": [
+        {
+         "key": "y",
+         "value": 1
+        },
+        {
+         "key": "e",
+         "value": 1
+        },
+        {
+         "key": "a",
+         "value": 1
+        },
+        {
+         "key": "s",
+         "value": 1
+        },
+        {
+         "key": "t",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "good": [
+         "t"
+        ]
        }
       },
       "t": {
@@ -1904,70 +1851,37 @@
        "pointers": {
         "j": null
        },
-       "marks": {
-        "dim": [
-         0,
-         1,
-         2,
-         3,
-         4
-        ]
-       }
+       "marks": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ]
       },
-      "counts": {
-       "columns": [
-        "a",
-        "e",
-        "o",
-        "s",
-        "t",
-        "y"
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "in s",
-          "ko": "s 안"
-         },
-         "cells": [
-          1,
-          1,
-          0,
-          1,
-          1,
-          1
-         ]
-        },
-        {
-         "label": {
-          "en": "in t",
-          "ko": "t 안"
-         },
-         "cells": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-         ]
-        }
-       ],
-       "marks": {
-        "good": [
-         [
-          0,
-          4
-         ]
-        ]
+      "count_t": {
+       "entries": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "s",
+        "at": 4
+       },
+       "to": {
+        "view": "count_s",
+        "at": "t"
        }
       }
-     }
+     ]
     },
     {
      "caption": {
-      "en": "t[0] is 't': t now has 1 × 't'.",
-      "ko": "t[0] = 't': t의 't' 개수는 이제 1개입니다."
+      "en": "t[0] is 't': it goes into the t map, which now has 1 × 't'.",
+      "ko": "t[0] = 't': t의 맵에 넣으면 't' 개수는 이제 1개입니다."
      },
      "views": {
       "s": {
@@ -1981,6 +1895,32 @@
        "pointers": {
         "i": null
        },
+       "marks": {},
+       "unread": []
+      },
+      "count_s": {
+       "entries": [
+        {
+         "key": "y",
+         "value": 1
+        },
+        {
+         "key": "e",
+         "value": 1
+        },
+        {
+         "key": "a",
+         "value": 1
+        },
+        {
+         "key": "s",
+         "value": 1
+        },
+        {
+         "key": "t",
+         "value": 1
+        }
+       ],
        "marks": {}
       },
       "t": {
@@ -1997,69 +1937,46 @@
        "marks": {
         "lit": [
          0
-        ],
-        "dim": [
-         1,
-         2,
-         3,
-         4
         ]
-       }
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4
+       ]
       },
-      "counts": {
-       "columns": [
-        "a",
-        "e",
-        "o",
-        "s",
-        "t",
-        "y"
-       ],
-       "rows": [
+      "count_t": {
+       "entries": [
         {
-         "label": {
-          "en": "in s",
-          "ko": "s 안"
-         },
-         "cells": [
-          1,
-          1,
-          0,
-          1,
-          1,
-          1
-         ]
-        },
-        {
-         "label": {
-          "en": "in t",
-          "ko": "t 안"
-         },
-         "cells": [
-          0,
-          0,
-          0,
-          0,
-          1,
-          0
-         ]
+         "key": "t",
+         "value": 1
         }
        ],
        "marks": {
         "good": [
-         [
-          1,
-          4
-         ]
+         "t"
         ]
        }
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "t",
+        "at": 0
+       },
+       "to": {
+        "view": "count_t",
+        "at": "t"
+       }
+      }
+     ]
     },
     {
      "caption": {
-      "en": "t[1] is 'o': t now has 1 × 'o'.",
-      "ko": "t[1] = 'o': t의 'o' 개수는 이제 1개입니다."
+      "en": "t[1] is 'o': it goes into the t map, which now has 1 × 'o'.",
+      "ko": "t[1] = 'o': t의 맵에 넣으면 'o' 개수는 이제 1개입니다."
      },
      "views": {
       "s": {
@@ -2073,6 +1990,32 @@
        "pointers": {
         "i": null
        },
+       "marks": {},
+       "unread": []
+      },
+      "count_s": {
+       "entries": [
+        {
+         "key": "y",
+         "value": 1
+        },
+        {
+         "key": "e",
+         "value": 1
+        },
+        {
+         "key": "a",
+         "value": 1
+        },
+        {
+         "key": "s",
+         "value": 1
+        },
+        {
+         "key": "t",
+         "value": 1
+        }
+       ],
        "marks": {}
       },
       "t": {
@@ -2089,68 +2032,49 @@
        "marks": {
         "lit": [
          1
-        ],
-        "dim": [
-         2,
-         3,
-         4
         ]
-       }
+       },
+       "unread": [
+        2,
+        3,
+        4
+       ]
       },
-      "counts": {
-       "columns": [
-        "a",
-        "e",
-        "o",
-        "s",
-        "t",
-        "y"
-       ],
-       "rows": [
+      "count_t": {
+       "entries": [
         {
-         "label": {
-          "en": "in s",
-          "ko": "s 안"
-         },
-         "cells": [
-          1,
-          1,
-          0,
-          1,
-          1,
-          1
-         ]
+         "key": "t",
+         "value": 1
         },
         {
-         "label": {
-          "en": "in t",
-          "ko": "t 안"
-         },
-         "cells": [
-          0,
-          0,
-          1,
-          0,
-          1,
-          0
-         ]
+         "key": "o",
+         "value": 1
         }
        ],
        "marks": {
         "good": [
-         [
-          1,
-          2
-         ]
+         "o"
         ]
        }
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "t",
+        "at": 1
+       },
+       "to": {
+        "view": "count_t",
+        "at": "o"
+       }
+      }
+     ]
     },
     {
      "caption": {
-      "en": "t[2] is 'a': t now has 1 × 'a'.",
-      "ko": "t[2] = 'a': t의 'a' 개수는 이제 1개입니다."
+      "en": "t[2] is 'a': it goes into the t map, which now has 1 × 'a'.",
+      "ko": "t[2] = 'a': t의 맵에 넣으면 'a' 개수는 이제 1개입니다."
      },
      "views": {
       "s": {
@@ -2164,6 +2088,32 @@
        "pointers": {
         "i": null
        },
+       "marks": {},
+       "unread": []
+      },
+      "count_s": {
+       "entries": [
+        {
+         "key": "y",
+         "value": 1
+        },
+        {
+         "key": "e",
+         "value": 1
+        },
+        {
+         "key": "a",
+         "value": 1
+        },
+        {
+         "key": "s",
+         "value": 1
+        },
+        {
+         "key": "t",
+         "value": 1
+        }
+       ],
        "marks": {}
       },
       "t": {
@@ -2180,67 +2130,52 @@
        "marks": {
         "lit": [
          2
-        ],
-        "dim": [
-         3,
-         4
         ]
-       }
+       },
+       "unread": [
+        3,
+        4
+       ]
       },
-      "counts": {
-       "columns": [
-        "a",
-        "e",
-        "o",
-        "s",
-        "t",
-        "y"
-       ],
-       "rows": [
+      "count_t": {
+       "entries": [
         {
-         "label": {
-          "en": "in s",
-          "ko": "s 안"
-         },
-         "cells": [
-          1,
-          1,
-          0,
-          1,
-          1,
-          1
-         ]
+         "key": "t",
+         "value": 1
         },
         {
-         "label": {
-          "en": "in t",
-          "ko": "t 안"
-         },
-         "cells": [
-          1,
-          0,
-          1,
-          0,
-          1,
-          0
-         ]
+         "key": "o",
+         "value": 1
+        },
+        {
+         "key": "a",
+         "value": 1
         }
        ],
        "marks": {
         "good": [
-         [
-          1,
-          0
-         ]
+         "a"
         ]
        }
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "t",
+        "at": 2
+       },
+       "to": {
+        "view": "count_t",
+        "at": "a"
+       }
+      }
+     ]
     },
     {
      "caption": {
-      "en": "t[3] is 's': t now has 1 × 's'.",
-      "ko": "t[3] = 's': t의 's' 개수는 이제 1개입니다."
+      "en": "t[3] is 's': it goes into the t map, which now has 1 × 's'.",
+      "ko": "t[3] = 's': t의 맵에 넣으면 's' 개수는 이제 1개입니다."
      },
      "views": {
       "s": {
@@ -2254,6 +2189,32 @@
        "pointers": {
         "i": null
        },
+       "marks": {},
+       "unread": []
+      },
+      "count_s": {
+       "entries": [
+        {
+         "key": "y",
+         "value": 1
+        },
+        {
+         "key": "e",
+         "value": 1
+        },
+        {
+         "key": "a",
+         "value": 1
+        },
+        {
+         "key": "s",
+         "value": 1
+        },
+        {
+         "key": "t",
+         "value": 1
+        }
+       ],
        "marks": {}
       },
       "t": {
@@ -2270,66 +2231,55 @@
        "marks": {
         "lit": [
          3
-        ],
-        "dim": [
-         4
         ]
-       }
+       },
+       "unread": [
+        4
+       ]
       },
-      "counts": {
-       "columns": [
-        "a",
-        "e",
-        "o",
-        "s",
-        "t",
-        "y"
-       ],
-       "rows": [
+      "count_t": {
+       "entries": [
         {
-         "label": {
-          "en": "in s",
-          "ko": "s 안"
-         },
-         "cells": [
-          1,
-          1,
-          0,
-          1,
-          1,
-          1
-         ]
+         "key": "t",
+         "value": 1
         },
         {
-         "label": {
-          "en": "in t",
-          "ko": "t 안"
-         },
-         "cells": [
-          1,
-          0,
-          1,
-          1,
-          1,
-          0
-         ]
+         "key": "o",
+         "value": 1
+        },
+        {
+         "key": "a",
+         "value": 1
+        },
+        {
+         "key": "s",
+         "value": 1
         }
        ],
        "marks": {
         "good": [
-         [
-          1,
-          3
-         ]
+         "s"
         ]
        }
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "t",
+        "at": 3
+       },
+       "to": {
+        "view": "count_t",
+        "at": "s"
+       }
+      }
+     ]
     },
     {
      "caption": {
-      "en": "t[4] is 't': t now has 2 × 't'.",
-      "ko": "t[4] = 't': t의 't' 개수는 이제 2개입니다."
+      "en": "t[4] is 't': it goes into the t map, which now has 2 × 't'.",
+      "ko": "t[4] = 't': t의 맵에 넣으면 't' 개수는 이제 2개입니다."
      },
      "views": {
       "s": {
@@ -2343,6 +2293,32 @@
        "pointers": {
         "i": null
        },
+       "marks": {},
+       "unread": []
+      },
+      "count_s": {
+       "entries": [
+        {
+         "key": "y",
+         "value": 1
+        },
+        {
+         "key": "e",
+         "value": 1
+        },
+        {
+         "key": "a",
+         "value": 1
+        },
+        {
+         "key": "s",
+         "value": 1
+        },
+        {
+         "key": "t",
+         "value": 1
+        }
+       ],
        "marks": {}
       },
       "t": {
@@ -2359,64 +2335,53 @@
        "marks": {
         "lit": [
          4
-        ],
-        "dim": []
-       }
+        ]
+       },
+       "unread": []
       },
-      "counts": {
-       "columns": [
-        "a",
-        "e",
-        "o",
-        "s",
-        "t",
-        "y"
-       ],
-       "rows": [
+      "count_t": {
+       "entries": [
         {
-         "label": {
-          "en": "in s",
-          "ko": "s 안"
-         },
-         "cells": [
-          1,
-          1,
-          0,
-          1,
-          1,
-          1
-         ]
+         "key": "t",
+         "value": 2
         },
         {
-         "label": {
-          "en": "in t",
-          "ko": "t 안"
-         },
-         "cells": [
-          1,
-          0,
-          1,
-          1,
-          2,
-          0
-         ]
+         "key": "o",
+         "value": 1
+        },
+        {
+         "key": "a",
+         "value": 1
+        },
+        {
+         "key": "s",
+         "value": 1
         }
        ],
        "marks": {
         "good": [
-         [
-          1,
-          4
-         ]
+         "t"
         ]
        }
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "t",
+        "at": 4
+       },
+       "to": {
+        "view": "count_t",
+        "at": "t"
+       }
+      }
+     ]
     },
     {
      "caption": {
-      "en": "The counts differ ('e' 1 vs 0, 'o' 0 vs 1, 't' 1 vs 2, 'y' 1 vs 0), so t is not an anagram of s. A false answer is made of no letters, so nothing is marked as its path, only the counts that rule t out: answer false.",
-      "ko": "개수가 다른 글자가 있으므로('e' 1개 대 0개, 'o' 0개 대 1개, 't' 1개 대 2개, 'y' 1개 대 0개) t는 s의 애너그램이 아닙니다. false라는 답은 어떤 글자로 이루어진 것이 아니라서 답의 경로는 표시하지 않고, 애너그램이 아닌 이유인 개수만 표시합니다(답은 false)."
+      "en": "The maps differ ('e' 1 vs 0, 'o' 0 vs 1, 't' 1 vs 2, 'y' 1 vs 0), so t is not an anagram of s: answer false. The letters whose counts differ are marked red.",
+      "ko": "두 맵이 다릅니다('e' 1개 대 0개, 'o' 0개 대 1개, 't' 1개 대 2개, 'y' 1개 대 0개). 그래서 t는 s의 애너그램이 아니고 답은 false이며, 개수가 다른 글자를 빨간색으로 표시했습니다."
      },
      "views": {
       "s": {
@@ -2435,6 +2400,42 @@
          0,
          1,
          4
+        ]
+       },
+       "unread": []
+      },
+      "count_s": {
+       "entries": [
+        {
+         "key": "y",
+         "value": 1
+        },
+        {
+         "key": "e",
+         "value": 1
+        },
+        {
+         "key": "a",
+         "value": 1
+        },
+        {
+         "key": "s",
+         "value": 1
+        },
+        {
+         "key": "t",
+         "value": 1
+        }
+       ],
+       "marks": {
+        "bad": [
+         "e",
+         "t",
+         "y"
+        ],
+        "dim": [
+         "a",
+         "s"
         ]
        }
       },
@@ -2455,81 +2456,36 @@
          1,
          4
         ]
-       }
+       },
+       "unread": []
       },
-      "counts": {
-       "columns": [
-        "a",
-        "e",
-        "o",
-        "s",
-        "t",
-        "y"
-       ],
-       "rows": [
+      "count_t": {
+       "entries": [
         {
-         "label": {
-          "en": "in s",
-          "ko": "s 안"
-         },
-         "cells": [
-          1,
-          1,
-          0,
-          1,
-          1,
-          1
-         ]
+         "key": "t",
+         "value": 2
         },
         {
-         "label": {
-          "en": "in t",
-          "ko": "t 안"
-         },
-         "cells": [
-          1,
-          0,
-          1,
-          1,
-          2,
-          0
-         ]
+         "key": "o",
+         "value": 1
+        },
+        {
+         "key": "a",
+         "value": 1
+        },
+        {
+         "key": "s",
+         "value": 1
         }
        ],
        "marks": {
         "bad": [
-         [
-          0,
-          1
-         ],
-         [
-          0,
-          2
-         ],
-         [
-          0,
-          4
-         ],
-         [
-          0,
-          5
-         ],
-         [
-          1,
-          1
-         ],
-         [
-          1,
-          2
-         ],
-         [
-          1,
-          4
-         ],
-         [
-          1,
-          5
-         ]
+         "o",
+         "t"
+        ],
+        "dim": [
+         "a",
+         "s"
         ]
        }
       }

@@ -8,18 +8,18 @@ using namespace std;
 {USER_CODE}
 
 int main() {
-    string numsLine;
-    getline(cin, numsLine);
-    string inner = numsLine.substr(1, numsLine.size() - 2);
-    vector<int> nums;
+    string codesLine;
+    getline(cin, codesLine);
+    string inner = codesLine.substr(1, codesLine.size() - 2);
+    vector<int> codes;
     if (!inner.empty()) {
         stringstream ss(inner);
         string token;
         while (getline(ss, token, ',')) {
-            nums.push_back(stoi(token));
+            codes.push_back(stoi(token));
         }
     }
-    vector<int> result = Solution().listRepeatedCodes(nums);
+    vector<int> result = Solution().listRepeatedCodes(codes);
     sort(result.begin(), result.end());
     cout << "[";
     for (int i = 0; i < (int)result.size(); i++) {

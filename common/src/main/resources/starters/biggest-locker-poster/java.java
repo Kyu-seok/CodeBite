@@ -1,5 +1,5 @@
 class Solution {
-    public int frameLargestBale(int[] lockers) {
+    public int largestPosterArea(int[] lockers) {
         // Write your solution here
     }
 }

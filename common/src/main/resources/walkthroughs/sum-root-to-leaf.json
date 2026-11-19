@@ -1,0 +1,856 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Sum Root to Leaf Numbers",
+  "ko": "루트에서 리프까지의 수 더하기"
+ },
+ "approach": {
+  "en": "Going down one level appends a digit, which is the number so far × 10 + the digit: carry that number into each call, and every leaf adds the number its path spells to the total.",
+  "ko": "한 층 내려가면 숫자 하나가 뒤에 붙는데, 이는 지금까지의 수 × 10 + 그 숫자입니다. 그 수를 각 호출에 넘기고, 리프마다 경로가 만든 수를 합계에 더합니다."
+ },
+ "views": [
+  {
+   "id": "tree",
+   "type": "tree",
+   "arity": 2,
+   "title": {
+    "en": "root (under each node: the number spelled down to it)",
+    "ko": "root (노드 아래: 내려오며 만든 수)"
+   }
+  },
+  {
+   "id": "result",
+   "type": "output",
+   "title": {
+    "en": "total",
+    "ko": "total (합계)"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "root = [2,5,8]",
+   "expected": "53",
+   "frames": [
+    {
+     "caption": {
+      "en": "A tree of 3 digits. Walk down from the root 2, left before right, carrying the number spelled so far; the total starts at 0.",
+      "ko": "숫자 3개짜리 트리입니다. root 2부터 왼쪽 먼저 내려가며 지금까지 만든 수를 넘기고, 합계는 0에서 시작합니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": []
+       },
+       "shade": [],
+       "tags": []
+      },
+      "result": {
+       "values": [
+        "0"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Down to 2: the number so far is 2. It has children, so go on to 5.",
+      "ko": "2 노드까지 내려와 지금까지의 수는 2입니다. 자식이 있으므로 5 노드로 내려갑니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ],
+       "tags": [
+        [
+         0,
+         "2"
+        ]
+       ]
+      },
+      "result": {
+       "values": [
+        "0"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "5 is a leaf: its path spells 2 × 10 + 5 = 25, so the total becomes 0 + 25 = 25.",
+      "ko": "5 노드는 리프이고 경로가 만든 수는 2 × 10 + 5 = 25입니다. 합계는 0 + 25 = 25가 됩니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "good": [
+         1
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         "2"
+        ],
+        [
+         1,
+         "25"
+        ]
+       ]
+      },
+      "result": {
+       "values": [
+        "25"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 0
+       },
+       "to": {
+        "view": "tree",
+        "at": 1
+       },
+       "value": "2×10+5"
+      },
+      {
+       "from": {
+        "view": "tree",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "+25"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "8 is a leaf: its path spells 2 × 10 + 8 = 28, so the total becomes 25 + 28 = 53.",
+      "ko": "8 노드는 리프이고 경로가 만든 수는 2 × 10 + 8 = 28입니다. 합계는 25 + 28 = 53이 됩니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         1
+        ],
+        "good": [
+         2
+        ]
+       },
+       "shade": [
+        0,
+        2
+       ],
+       "tags": [
+        [
+         0,
+         "2"
+        ],
+        [
+         1,
+         "25"
+        ],
+        [
+         2,
+         "28"
+        ]
+       ]
+      },
+      "result": {
+       "values": [
+        "53"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 0
+       },
+       "to": {
+        "view": "tree",
+        "at": 2
+       },
+       "value": "2×10+8"
+      },
+      {
+       "from": {
+        "view": "tree",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "+28"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every leaf is added: 25 + 28 = 53.",
+      "ko": "모든 리프를 더했습니다. 25 + 28 = 53입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "path": [
+         1,
+         2
+        ],
+        "dim": [
+         0
+        ]
+       },
+       "shade": [],
+       "tags": [
+        [
+         0,
+         "2"
+        ],
+        [
+         1,
+         "25"
+        ],
+        [
+         2,
+         "28"
+        ]
+       ]
+      },
+      "result": {
+       "values": [
+        "53"
+       ],
+       "marks": {}
+      }
+     },
+     "answer": "53"
+    }
+   ],
+   "setup": {
+    "tree": {
+     "nodes": [
+      {
+       "id": 0,
+       "value": 2
+      },
+      {
+       "id": 1,
+       "value": 5
+      },
+      {
+       "id": 2,
+       "value": 8
+      }
+     ],
+     "edges": [
+      {
+       "from": 0,
+       "to": 1,
+       "slot": 0
+      },
+      {
+       "from": 0,
+       "to": 2,
+       "slot": 1
+      }
+     ]
+    }
+   },
+   "sampleInput": "[2,5,8]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "root = [3,6,1,4,0]",
+   "expected": "755",
+   "frames": [
+    {
+     "caption": {
+      "en": "A tree of 5 digits. Walk down from the root 3, left before right, carrying the number spelled so far; the total starts at 0.",
+      "ko": "숫자 5개짜리 트리입니다. root 3부터 왼쪽 먼저 내려가며 지금까지 만든 수를 넘기고, 합계는 0에서 시작합니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": []
+       },
+       "shade": [],
+       "tags": []
+      },
+      "result": {
+       "values": [
+        "0"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Down to 3: the number so far is 3. It has children, so go on to 6.",
+      "ko": "3 노드까지 내려와 지금까지의 수는 3입니다. 자식이 있으므로 6 노드로 내려갑니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ],
+       "tags": [
+        [
+         0,
+         "3"
+        ]
+       ]
+      },
+      "result": {
+       "values": [
+        "0"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Down to 6: the number so far is 3 × 10 + 6 = 36. It has children, so go on to 4.",
+      "ko": "6 노드까지 내려와 지금까지의 수는 3 × 10 + 6 = 36입니다. 자식이 있으므로 4 노드로 내려갑니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         1
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         "3"
+        ],
+        [
+         1,
+         "36"
+        ]
+       ]
+      },
+      "result": {
+       "values": [
+        "0"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 0
+       },
+       "to": {
+        "view": "tree",
+        "at": 1
+       },
+       "value": "3×10+6"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "4 is a leaf: its path spells 36 × 10 + 4 = 364, so the total becomes 0 + 364 = 364.",
+      "ko": "4 노드는 리프이고 경로가 만든 수는 36 × 10 + 4 = 364입니다. 합계는 0 + 364 = 364가 됩니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "good": [
+         3
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        3
+       ],
+       "tags": [
+        [
+         0,
+         "3"
+        ],
+        [
+         1,
+         "36"
+        ],
+        [
+         3,
+         "364"
+        ]
+       ]
+      },
+      "result": {
+       "values": [
+        "364"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 1
+       },
+       "to": {
+        "view": "tree",
+        "at": 3
+       },
+       "value": "36×10+4"
+      },
+      {
+       "from": {
+        "view": "tree",
+        "at": 3
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "+364"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "0 is a leaf: its path spells 36 × 10 + 0 = 360, so the total becomes 364 + 360 = 724.",
+      "ko": "0 노드는 리프이고 경로가 만든 수는 36 × 10 + 0 = 360입니다. 합계는 364 + 360 = 724가 됩니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         3
+        ],
+        "good": [
+         4
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        4
+       ],
+       "tags": [
+        [
+         0,
+         "3"
+        ],
+        [
+         1,
+         "36"
+        ],
+        [
+         3,
+         "364"
+        ],
+        [
+         4,
+         "360"
+        ]
+       ]
+      },
+      "result": {
+       "values": [
+        "724"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 1
+       },
+       "to": {
+        "view": "tree",
+        "at": 4
+       },
+       "value": "36×10+0"
+      },
+      {
+       "from": {
+        "view": "tree",
+        "at": 4
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "+360"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "1 is a leaf: its path spells 3 × 10 + 1 = 31, so the total becomes 724 + 31 = 755.",
+      "ko": "1 노드는 리프이고 경로가 만든 수는 3 × 10 + 1 = 31입니다. 합계는 724 + 31 = 755가 됩니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         3,
+         4,
+         1
+        ],
+        "good": [
+         2
+        ]
+       },
+       "shade": [
+        0,
+        2
+       ],
+       "tags": [
+        [
+         0,
+         "3"
+        ],
+        [
+         1,
+         "36"
+        ],
+        [
+         3,
+         "364"
+        ],
+        [
+         4,
+         "360"
+        ],
+        [
+         2,
+         "31"
+        ]
+       ]
+      },
+      "result": {
+       "values": [
+        "755"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 0
+       },
+       "to": {
+        "view": "tree",
+        "at": 2
+       },
+       "value": "3×10+1"
+      },
+      {
+       "from": {
+        "view": "tree",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "+31"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every leaf is added: 364 + 360 + 31 = 755.",
+      "ko": "모든 리프를 더했습니다. 364 + 360 + 31 = 755입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "path": [
+         3,
+         4,
+         2
+        ],
+        "dim": [
+         0,
+         1
+        ]
+       },
+       "shade": [],
+       "tags": [
+        [
+         0,
+         "3"
+        ],
+        [
+         1,
+         "36"
+        ],
+        [
+         3,
+         "364"
+        ],
+        [
+         4,
+         "360"
+        ],
+        [
+         2,
+         "31"
+        ]
+       ]
+      },
+      "result": {
+       "values": [
+        "755"
+       ],
+       "marks": {}
+      }
+     },
+     "answer": "755"
+    }
+   ],
+   "setup": {
+    "tree": {
+     "nodes": [
+      {
+       "id": 0,
+       "value": 3
+      },
+      {
+       "id": 1,
+       "value": 6
+      },
+      {
+       "id": 2,
+       "value": 1
+      },
+      {
+       "id": 3,
+       "value": 4
+      },
+      {
+       "id": 4,
+       "value": 0
+      }
+     ],
+     "edges": [
+      {
+       "from": 0,
+       "to": 1,
+       "slot": 0
+      },
+      {
+       "from": 0,
+       "to": 2,
+       "slot": 1
+      },
+      {
+       "from": 1,
+       "to": 3,
+       "slot": 0
+      },
+      {
+       "from": 1,
+       "to": 4,
+       "slot": 1
+      }
+     ]
+    }
+   },
+   "sampleInput": "[3,6,1,4,0]"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "root = [9]",
+   "expected": "9",
+   "frames": [
+    {
+     "caption": {
+      "en": "A tree of 1 digit. Walk down from the root 9, left before right, carrying the number spelled so far; the total starts at 0.",
+      "ko": "숫자 1개짜리 트리입니다. root 9부터 왼쪽 먼저 내려가며 지금까지 만든 수를 넘기고, 합계는 0에서 시작합니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": []
+       },
+       "shade": [],
+       "tags": []
+      },
+      "result": {
+       "values": [
+        "0"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "9 is a leaf: its path spells 9, so the total becomes 0 + 9 = 9.",
+      "ko": "9 노드는 리프이고 경로가 만든 수는 9입니다. 합계는 0 + 9 = 9가 됩니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "good": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ],
+       "tags": [
+        [
+         0,
+         "9"
+        ]
+       ]
+      },
+      "result": {
+       "values": [
+        "9"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "+9"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The only leaf spells 9, so the total is 9.",
+      "ko": "리프가 하나뿐이고 9를 만들므로 합계는 9입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "path": [
+         0
+        ],
+        "dim": []
+       },
+       "shade": [],
+       "tags": [
+        [
+         0,
+         "9"
+        ]
+       ]
+      },
+      "result": {
+       "values": [
+        "9"
+       ],
+       "marks": {}
+      }
+     },
+     "answer": "9"
+    }
+   ],
+   "setup": {
+    "tree": {
+     "nodes": [
+      {
+       "id": 0,
+       "value": 9
+      }
+     ],
+     "edges": []
+    }
+   },
+   "sampleInput": "[9]"
+  }
+ ]
+}

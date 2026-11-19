@@ -7,6 +7,6 @@ class TreeNode:
         self.right = right
 
 class Solution:
-    def deepestZoneChain(self, root: Optional[TreeNode]) -> int:
+    def maxSkillDepth(self, root: Optional[TreeNode]) -> int:
         # Write your solution here
         pass

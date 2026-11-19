@@ -13,7 +13,7 @@ class Solution {
      * @param {ListNode} head
      * @return {void}
      */
-    interleaveTrailerCuts(head) {
+    interleaveClips(head) {
         // Write your solution here
     }
 }

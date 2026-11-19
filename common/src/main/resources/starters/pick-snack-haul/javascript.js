@@ -3,7 +3,7 @@ class Solution {
      * @param {number[]} snacks
      * @return {number}
      */
-    pickPlotHaul(snacks) {
+    maxSnackHaul(snacks) {
         // Write your solution here
     }
 }

@@ -10,9 +10,9 @@ public class Main {
         String line = sc.nextLine().trim();
         String inner = line.substring(1, line.length() - 1);
         String[] parts = inner.isEmpty() ? new String[0] : inner.split(",");
-        int[] nums = new int[parts.length];
-        for (int i = 0; i < parts.length; i++) nums[i] = Integer.parseInt(parts[i].trim());
-        List<List<Integer>> result = new Solution().listStationOrders(nums);
+        int[] stops = new int[parts.length];
+        for (int i = 0; i < parts.length; i++) stops[i] = Integer.parseInt(parts[i].trim());
+        List<List<Integer>> result = new Solution().listVisitOrders(stops);
         result.sort((a, b) -> {
             for (int i = 0; i < Math.min(a.size(), b.size()); i++) {
                 int cmp = Integer.compare(a.get(i), b.get(i));

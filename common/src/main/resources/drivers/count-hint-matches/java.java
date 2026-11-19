@@ -5,9 +5,9 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        String s = sc.nextLine().trim();
-        String t = sc.nextLine().trim();
-        long result = new Solution().countFilterMatches(s, t);
+        String notes = sc.nextLine().trim();
+        String target = sc.nextLine().trim();
+        long result = new Solution().countHintMatches(notes, target);
         System.out.println(result);
     }
 }

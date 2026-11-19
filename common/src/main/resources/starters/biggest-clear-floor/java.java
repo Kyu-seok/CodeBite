@@ -1,5 +1,5 @@
 class Solution {
-    public int biggestClearBay(char[][] floor) {
+    public int biggestClearFloor(char[][] floor) {
         // Write your solution here
     }
 }

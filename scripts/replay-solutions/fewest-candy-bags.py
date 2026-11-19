@@ -1,5 +1,5 @@
 class Solution:
-    def fewestBagSizes(self, bagSizes: list[int], quota: int) -> int:
+    def fewestBags(self, bagSizes: list[int], quota: int) -> int:
         unreachable = quota + 1
         fewest = [0] + [unreachable] * quota
         for total in range(1, quota + 1):

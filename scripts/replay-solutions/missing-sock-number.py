@@ -1,5 +1,5 @@
 class Solution:
-    def lowestMissingTarget(self, socks: list[int]) -> int:
+    def smallestMissingNumber(self, socks: list[int]) -> int:
         # Put each number k in 1..n at index k - 1; the first index holding the wrong number is the answer.
         n = len(socks)
         for i in range(n):

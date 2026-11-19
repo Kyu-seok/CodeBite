@@ -10,7 +10,7 @@
  */
 class Solution {
 public:
-    void interleaveTrailerCuts(ListNode* head) {
+    void interleaveClips(ListNode* head) {
         // Write your solution here
     }
 };

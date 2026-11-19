@@ -10,24 +10,12 @@
  },
  "views": [
   {
-   "id": "sorted",
-   "type": "table",
-   "title": {
-    "en": "seatings, sorted by start",
-    "ko": "시작 순으로 정렬한 예약"
+   "id": "line",
+   "type": "intervals",
+   "empty": {
+    "en": "none yet",
+    "ko": "아직 없음"
    }
-  },
-  {
-   "id": "merged",
-   "type": "table",
-   "title": {
-    "en": "merged windows",
-    "ko": "합친 구간"
-   }
-  },
-  {
-   "id": "state",
-   "type": "vars"
   }
  ],
  "runs": [
@@ -45,97 +33,47 @@
       "ko": "예약 4개를 시작 시각으로 정렬합니다: [2,5], [4,7], [9,11], [14,16]. 이제 각 예약은 바로 앞 구간하고만 겹칠 수 있습니다."
      },
      "views": {
-      "sorted": {
-       "columns": [
-        {
-         "en": "start",
-         "ko": "시작"
-        },
-        {
-         "en": "end",
-         "ko": "끝"
-        }
-       ],
-       "rows": [
-        {
-         "label": "0",
-         "cells": [
-          2,
-          5
-         ]
-        },
-        {
-         "label": "1",
-         "cells": [
-          4,
-          7
-         ]
-        },
-        {
-         "label": "2",
-         "cells": [
-          9,
-          11
-         ]
-        },
-        {
-         "label": "3",
-         "cells": [
-          14,
-          16
-         ]
-        }
-       ],
-       "marks": {
-        "lit": [
-         [
-          0,
-          0
-         ],
-         [
-          1,
-          0
-         ],
-         [
-          2,
-          0
-         ],
-         [
-          3,
-          0
-         ]
-        ]
-       }
-      },
-      "merged": {
-       "columns": [
-        {
-         "en": "start",
-         "ko": "시작"
-        },
-        {
-         "en": "end",
-         "ko": "끝"
-        }
-       ],
-       "rows": [],
-       "marks": {}
-      },
-      "state": {
-       "items": [
+      "line": {
+       "groups": [
         {
          "label": {
-          "en": "seating",
-          "ko": "예약"
+          "en": "seatings, sorted by start",
+          "ko": "시작 순으로 정렬한 예약"
          },
-         "value": "–"
+         "intervals": [
+          [
+           2,
+           5
+          ],
+          [
+           4,
+           7
+          ],
+          [
+           9,
+           11
+          ],
+          [
+           14,
+           16
+          ]
+         ],
+         "marks": {
+          "lit": [
+           0,
+           1,
+           2,
+           3
+          ]
+         }
         },
         {
          "label": {
-          "en": "last merged end",
-          "ko": "마지막 구간의 끝"
+          "en": "merged windows",
+          "ko": "합친 구간"
          },
-         "value": "–"
+         "intervals": [],
+         "marks": {}
         }
        ]
       }
@@ -147,113 +85,76 @@
       "ko": "[2,5]: 아직 합친 구간이 없어 새 구간을 엽니다."
      },
      "views": {
-      "sorted": {
-       "columns": [
-        {
-         "en": "start",
-         "ko": "시작"
-        },
-        {
-         "en": "end",
-         "ko": "끝"
-        }
-       ],
-       "rows": [
-        {
-         "label": "0",
-         "cells": [
-          2,
-          5
-         ]
-        },
-        {
-         "label": "1",
-         "cells": [
-          4,
-          7
-         ]
-        },
-        {
-         "label": "2",
-         "cells": [
-          9,
-          11
-         ]
-        },
-        {
-         "label": "3",
-         "cells": [
-          14,
-          16
-         ]
-        }
-       ],
-       "marks": {
-        "lit": [
-         [
-          0,
-          0
-         ],
-         [
-          0,
-          1
-         ]
-        ],
-        "dim": []
-       }
-      },
-      "merged": {
-       "columns": [
-        {
-         "en": "start",
-         "ko": "시작"
-        },
-        {
-         "en": "end",
-         "ko": "끝"
-        }
-       ],
-       "rows": [
-        {
-         "label": "0",
-         "cells": [
-          2,
-          5
-         ]
-        }
-       ],
-       "marks": {
-        "good": [
-         [
-          0,
-          0
-         ],
-         [
-          0,
-          1
-         ]
-        ]
-       }
-      },
-      "state": {
-       "items": [
+      "line": {
+       "groups": [
         {
          "label": {
-          "en": "seating",
-          "ko": "예약"
+          "en": "seatings, sorted by start",
+          "ko": "시작 순으로 정렬한 예약"
          },
-         "value": "[2,5]"
+         "intervals": [
+          [
+           2,
+           5
+          ],
+          [
+           4,
+           7
+          ],
+          [
+           9,
+           11
+          ],
+          [
+           14,
+           16
+          ]
+         ],
+         "marks": {
+          "lit": [
+           0
+          ],
+          "dim": []
+         }
         },
         {
          "label": {
-          "en": "last merged end",
-          "ko": "마지막 구간의 끝"
+          "en": "merged windows",
+          "ko": "합친 구간"
          },
-         "value": 5
+         "intervals": [
+          [
+           2,
+           5
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "line",
+        "at": [
+         1,
+         0
+        ]
+       }
+      }
+     ]
     },
     {
      "caption": {
@@ -261,118 +162,88 @@
       "ko": "[4,7]: 시작 4 ≤ 마지막 끝 5이므로 [2,5] 구간과 겹치고, [2,7] 구간으로 늘어납니다."
      },
      "views": {
-      "sorted": {
-       "columns": [
-        {
-         "en": "start",
-         "ko": "시작"
-        },
-        {
-         "en": "end",
-         "ko": "끝"
-        }
-       ],
-       "rows": [
-        {
-         "label": "0",
-         "cells": [
-          2,
-          5
-         ]
-        },
-        {
-         "label": "1",
-         "cells": [
-          4,
-          7
-         ]
-        },
-        {
-         "label": "2",
-         "cells": [
-          9,
-          11
-         ]
-        },
-        {
-         "label": "3",
-         "cells": [
-          14,
-          16
-         ]
-        }
-       ],
-       "marks": {
-        "lit": [
-         [
-          1,
-          0
-         ],
-         [
-          1,
-          1
-         ]
-        ],
-        "dim": [
-         [
-          0,
-          0
-         ],
-         [
-          0,
-          1
-         ]
-        ]
-       }
-      },
-      "merged": {
-       "columns": [
-        {
-         "en": "start",
-         "ko": "시작"
-        },
-        {
-         "en": "end",
-         "ko": "끝"
-        }
-       ],
-       "rows": [
-        {
-         "label": "0",
-         "cells": [
-          2,
-          7
-         ]
-        }
-       ],
-       "marks": {
-        "good": [
-         [
-          0,
-          1
-         ]
-        ]
-       }
-      },
-      "state": {
-       "items": [
+      "line": {
+       "groups": [
         {
          "label": {
-          "en": "seating",
-          "ko": "예약"
+          "en": "seatings, sorted by start",
+          "ko": "시작 순으로 정렬한 예약"
          },
-         "value": "[4,7]"
+         "intervals": [
+          [
+           2,
+           5
+          ],
+          [
+           4,
+           7
+          ],
+          [
+           9,
+           11
+          ],
+          [
+           14,
+           16
+          ]
+         ],
+         "marks": {
+          "lit": [
+           1
+          ],
+          "dim": [
+           0
+          ]
+         }
         },
         {
          "label": {
-          "en": "last merged end",
-          "ko": "마지막 구간의 끝"
+          "en": "merged windows",
+          "ko": "합친 구간"
          },
-         "value": 7
+         "intervals": [
+          [
+           2,
+           7
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 5,
+         "label": {
+          "en": "last end",
+          "ko": "마지막 끝"
+         },
+         "mark": "lit"
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         0,
+         1
+        ]
+       },
+       "to": {
+        "view": "line",
+        "at": [
+         1,
+         0
+        ]
+       }
+      }
+     ]
     },
     {
      "caption": {
@@ -380,137 +251,93 @@
       "ko": "[9,11]: 시작 9 > 마지막 끝 7이므로 [2,7] 구간과 닿지 않아 새 구간을 엽니다."
      },
      "views": {
-      "sorted": {
-       "columns": [
-        {
-         "en": "start",
-         "ko": "시작"
-        },
-        {
-         "en": "end",
-         "ko": "끝"
-        }
-       ],
-       "rows": [
-        {
-         "label": "0",
-         "cells": [
-          2,
-          5
-         ]
-        },
-        {
-         "label": "1",
-         "cells": [
-          4,
-          7
-         ]
-        },
-        {
-         "label": "2",
-         "cells": [
-          9,
-          11
-         ]
-        },
-        {
-         "label": "3",
-         "cells": [
-          14,
-          16
-         ]
-        }
-       ],
-       "marks": {
-        "lit": [
-         [
-          2,
-          0
-         ],
-         [
-          2,
-          1
-         ]
-        ],
-        "dim": [
-         [
-          0,
-          0
-         ],
-         [
-          0,
-          1
-         ],
-         [
-          1,
-          0
-         ],
-         [
-          1,
-          1
-         ]
-        ]
-       }
-      },
-      "merged": {
-       "columns": [
-        {
-         "en": "start",
-         "ko": "시작"
-        },
-        {
-         "en": "end",
-         "ko": "끝"
-        }
-       ],
-       "rows": [
-        {
-         "label": "0",
-         "cells": [
-          2,
-          7
-         ]
-        },
-        {
-         "label": "1",
-         "cells": [
-          9,
-          11
-         ]
-        }
-       ],
-       "marks": {
-        "good": [
-         [
-          1,
-          0
-         ],
-         [
-          1,
-          1
-         ]
-        ]
-       }
-      },
-      "state": {
-       "items": [
+      "line": {
+       "groups": [
         {
          "label": {
-          "en": "seating",
-          "ko": "예약"
+          "en": "seatings, sorted by start",
+          "ko": "시작 순으로 정렬한 예약"
          },
-         "value": "[9,11]"
+         "intervals": [
+          [
+           2,
+           5
+          ],
+          [
+           4,
+           7
+          ],
+          [
+           9,
+           11
+          ],
+          [
+           14,
+           16
+          ]
+         ],
+         "marks": {
+          "lit": [
+           2
+          ],
+          "dim": [
+           0,
+           1
+          ]
+         }
         },
         {
          "label": {
-          "en": "last merged end",
-          "ko": "마지막 구간의 끝"
+          "en": "merged windows",
+          "ko": "합친 구간"
          },
-         "value": 11
+         "intervals": [
+          [
+           2,
+           7
+          ],
+          [
+           9,
+           11
+          ]
+         ],
+         "marks": {
+          "good": [
+           1
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 7,
+         "label": {
+          "en": "last end",
+          "ko": "마지막 끝"
+         },
+         "mark": "lit"
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         0,
+         2
+        ]
+       },
+       "to": {
+        "view": "line",
+        "at": [
+         1,
+         1
+        ]
+       }
+      }
+     ]
     },
     {
      "caption": {
@@ -518,152 +345,98 @@
       "ko": "[14,16]: 시작 14 > 마지막 끝 11이므로 [9,11] 구간과 닿지 않아 새 구간을 엽니다."
      },
      "views": {
-      "sorted": {
-       "columns": [
-        {
-         "en": "start",
-         "ko": "시작"
-        },
-        {
-         "en": "end",
-         "ko": "끝"
-        }
-       ],
-       "rows": [
-        {
-         "label": "0",
-         "cells": [
-          2,
-          5
-         ]
-        },
-        {
-         "label": "1",
-         "cells": [
-          4,
-          7
-         ]
-        },
-        {
-         "label": "2",
-         "cells": [
-          9,
-          11
-         ]
-        },
-        {
-         "label": "3",
-         "cells": [
-          14,
-          16
-         ]
-        }
-       ],
-       "marks": {
-        "lit": [
-         [
-          3,
-          0
-         ],
-         [
-          3,
-          1
-         ]
-        ],
-        "dim": [
-         [
-          0,
-          0
-         ],
-         [
-          0,
-          1
-         ],
-         [
-          1,
-          0
-         ],
-         [
-          1,
-          1
-         ],
-         [
-          2,
-          0
-         ],
-         [
-          2,
-          1
-         ]
-        ]
-       }
-      },
-      "merged": {
-       "columns": [
-        {
-         "en": "start",
-         "ko": "시작"
-        },
-        {
-         "en": "end",
-         "ko": "끝"
-        }
-       ],
-       "rows": [
-        {
-         "label": "0",
-         "cells": [
-          2,
-          7
-         ]
-        },
-        {
-         "label": "1",
-         "cells": [
-          9,
-          11
-         ]
-        },
-        {
-         "label": "2",
-         "cells": [
-          14,
-          16
-         ]
-        }
-       ],
-       "marks": {
-        "good": [
-         [
-          2,
-          0
-         ],
-         [
-          2,
-          1
-         ]
-        ]
-       }
-      },
-      "state": {
-       "items": [
+      "line": {
+       "groups": [
         {
          "label": {
-          "en": "seating",
-          "ko": "예약"
+          "en": "seatings, sorted by start",
+          "ko": "시작 순으로 정렬한 예약"
          },
-         "value": "[14,16]"
+         "intervals": [
+          [
+           2,
+           5
+          ],
+          [
+           4,
+           7
+          ],
+          [
+           9,
+           11
+          ],
+          [
+           14,
+           16
+          ]
+         ],
+         "marks": {
+          "lit": [
+           3
+          ],
+          "dim": [
+           0,
+           1,
+           2
+          ]
+         }
         },
         {
          "label": {
-          "en": "last merged end",
-          "ko": "마지막 구간의 끝"
+          "en": "merged windows",
+          "ko": "합친 구간"
          },
-         "value": 16
+         "intervals": [
+          [
+           2,
+           7
+          ],
+          [
+           9,
+           11
+          ],
+          [
+           14,
+           16
+          ]
+         ],
+         "marks": {
+          "good": [
+           2
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 11,
+         "label": {
+          "en": "last end",
+          "ko": "마지막 끝"
+         },
+         "mark": "lit"
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         0,
+         3
+        ]
+       },
+       "to": {
+        "view": "line",
+        "at": [
+         1,
+         2
+        ]
+       }
+      }
+     ]
     },
     {
      "caption": {
@@ -671,162 +444,66 @@
       "ko": "모든 예약이 구간에 들어갔습니다. 예약 4개가 겹치지 않는 구간 3개가 되었습니다: [[2,7],[9,11],[14,16]]."
      },
      "views": {
-      "sorted": {
-       "columns": [
-        {
-         "en": "start",
-         "ko": "시작"
-        },
-        {
-         "en": "end",
-         "ko": "끝"
-        }
-       ],
-       "rows": [
-        {
-         "label": "0",
-         "cells": [
-          2,
-          5
-         ]
-        },
-        {
-         "label": "1",
-         "cells": [
-          4,
-          7
-         ]
-        },
-        {
-         "label": "2",
-         "cells": [
-          9,
-          11
-         ]
-        },
-        {
-         "label": "3",
-         "cells": [
-          14,
-          16
-         ]
-        }
-       ],
-       "marks": {
-        "dim": [
-         [
-          0,
-          0
-         ],
-         [
-          0,
-          1
-         ],
-         [
-          1,
-          0
-         ],
-         [
-          1,
-          1
-         ],
-         [
-          2,
-          0
-         ],
-         [
-          2,
-          1
-         ],
-         [
-          3,
-          0
-         ],
-         [
-          3,
-          1
-         ]
-        ]
-       }
-      },
-      "merged": {
-       "columns": [
-        {
-         "en": "start",
-         "ko": "시작"
-        },
-        {
-         "en": "end",
-         "ko": "끝"
-        }
-       ],
-       "rows": [
-        {
-         "label": "0",
-         "cells": [
-          2,
-          7
-         ]
-        },
-        {
-         "label": "1",
-         "cells": [
-          9,
-          11
-         ]
-        },
-        {
-         "label": "2",
-         "cells": [
-          14,
-          16
-         ]
-        }
-       ],
-       "marks": {
-        "path": [
-         [
-          0,
-          0
-         ],
-         [
-          0,
-          1
-         ],
-         [
-          1,
-          0
-         ],
-         [
-          1,
-          1
-         ],
-         [
-          2,
-          0
-         ],
-         [
-          2,
-          1
-         ]
-        ]
-       }
-      },
-      "state": {
-       "items": [
+      "line": {
+       "groups": [
         {
          "label": {
-          "en": "seating",
-          "ko": "예약"
+          "en": "seatings, sorted by start",
+          "ko": "시작 순으로 정렬한 예약"
          },
-         "value": "–"
+         "intervals": [
+          [
+           2,
+           5
+          ],
+          [
+           4,
+           7
+          ],
+          [
+           9,
+           11
+          ],
+          [
+           14,
+           16
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1,
+           2,
+           3
+          ]
+         }
         },
         {
          "label": {
-          "en": "last merged end",
-          "ko": "마지막 구간의 끝"
+          "en": "merged windows",
+          "ko": "합친 구간"
          },
-         "value": 16
+         "intervals": [
+          [
+           2,
+           7
+          ],
+          [
+           9,
+           11
+          ],
+          [
+           14,
+           16
+          ]
+         ],
+         "marks": {
+          "path": [
+           0,
+           1,
+           2
+          ]
+         }
         }
        ]
       }
@@ -834,6 +511,14 @@
      "answer": "[[2,7],[9,11],[14,16]]"
     }
    ],
+   "setup": {
+    "line": {
+     "domain": [
+      2,
+      16
+     ]
+    }
+   },
    "sampleInput": "[[2,5],[4,7],[9,11],[14,16]]"
   },
   {
@@ -850,86 +535,42 @@
       "ko": "예약 3개를 시작 시각으로 정렬합니다: [1,3], [3,8], [10,12]. 이제 각 예약은 바로 앞 구간하고만 겹칠 수 있습니다."
      },
      "views": {
-      "sorted": {
-       "columns": [
-        {
-         "en": "start",
-         "ko": "시작"
-        },
-        {
-         "en": "end",
-         "ko": "끝"
-        }
-       ],
-       "rows": [
-        {
-         "label": "0",
-         "cells": [
-          1,
-          3
-         ]
-        },
-        {
-         "label": "1",
-         "cells": [
-          3,
-          8
-         ]
-        },
-        {
-         "label": "2",
-         "cells": [
-          10,
-          12
-         ]
-        }
-       ],
-       "marks": {
-        "lit": [
-         [
-          0,
-          0
-         ],
-         [
-          1,
-          0
-         ],
-         [
-          2,
-          0
-         ]
-        ]
-       }
-      },
-      "merged": {
-       "columns": [
-        {
-         "en": "start",
-         "ko": "시작"
-        },
-        {
-         "en": "end",
-         "ko": "끝"
-        }
-       ],
-       "rows": [],
-       "marks": {}
-      },
-      "state": {
-       "items": [
+      "line": {
+       "groups": [
         {
          "label": {
-          "en": "seating",
-          "ko": "예약"
+          "en": "seatings, sorted by start",
+          "ko": "시작 순으로 정렬한 예약"
          },
-         "value": "–"
+         "intervals": [
+          [
+           1,
+           3
+          ],
+          [
+           3,
+           8
+          ],
+          [
+           10,
+           12
+          ]
+         ],
+         "marks": {
+          "lit": [
+           0,
+           1,
+           2
+          ]
+         }
         },
         {
          "label": {
-          "en": "last merged end",
-          "ko": "마지막 구간의 끝"
+          "en": "merged windows",
+          "ko": "합친 구간"
          },
-         "value": "–"
+         "intervals": [],
+         "marks": {}
         }
        ]
       }
@@ -941,106 +582,72 @@
       "ko": "[1,3]: 아직 합친 구간이 없어 새 구간을 엽니다."
      },
      "views": {
-      "sorted": {
-       "columns": [
-        {
-         "en": "start",
-         "ko": "시작"
-        },
-        {
-         "en": "end",
-         "ko": "끝"
-        }
-       ],
-       "rows": [
-        {
-         "label": "0",
-         "cells": [
-          1,
-          3
-         ]
-        },
-        {
-         "label": "1",
-         "cells": [
-          3,
-          8
-         ]
-        },
-        {
-         "label": "2",
-         "cells": [
-          10,
-          12
-         ]
-        }
-       ],
-       "marks": {
-        "lit": [
-         [
-          0,
-          0
-         ],
-         [
-          0,
-          1
-         ]
-        ],
-        "dim": []
-       }
-      },
-      "merged": {
-       "columns": [
-        {
-         "en": "start",
-         "ko": "시작"
-        },
-        {
-         "en": "end",
-         "ko": "끝"
-        }
-       ],
-       "rows": [
-        {
-         "label": "0",
-         "cells": [
-          1,
-          3
-         ]
-        }
-       ],
-       "marks": {
-        "good": [
-         [
-          0,
-          0
-         ],
-         [
-          0,
-          1
-         ]
-        ]
-       }
-      },
-      "state": {
-       "items": [
+      "line": {
+       "groups": [
         {
          "label": {
-          "en": "seating",
-          "ko": "예약"
+          "en": "seatings, sorted by start",
+          "ko": "시작 순으로 정렬한 예약"
          },
-         "value": "[1,3]"
+         "intervals": [
+          [
+           1,
+           3
+          ],
+          [
+           3,
+           8
+          ],
+          [
+           10,
+           12
+          ]
+         ],
+         "marks": {
+          "lit": [
+           0
+          ],
+          "dim": []
+         }
         },
         {
          "label": {
-          "en": "last merged end",
-          "ko": "마지막 구간의 끝"
+          "en": "merged windows",
+          "ko": "합친 구간"
          },
-         "value": 3
+         "intervals": [
+          [
+           1,
+           3
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "line",
+        "at": [
+         1,
+         0
+        ]
+       }
+      }
+     ]
     },
     {
      "caption": {
@@ -1048,111 +655,84 @@
       "ko": "[3,8]: 시작 3 ≤ 마지막 끝 3이므로 [1,3] 구간과 겹치고, [1,8] 구간으로 늘어납니다."
      },
      "views": {
-      "sorted": {
-       "columns": [
-        {
-         "en": "start",
-         "ko": "시작"
-        },
-        {
-         "en": "end",
-         "ko": "끝"
-        }
-       ],
-       "rows": [
-        {
-         "label": "0",
-         "cells": [
-          1,
-          3
-         ]
-        },
-        {
-         "label": "1",
-         "cells": [
-          3,
-          8
-         ]
-        },
-        {
-         "label": "2",
-         "cells": [
-          10,
-          12
-         ]
-        }
-       ],
-       "marks": {
-        "lit": [
-         [
-          1,
-          0
-         ],
-         [
-          1,
-          1
-         ]
-        ],
-        "dim": [
-         [
-          0,
-          0
-         ],
-         [
-          0,
-          1
-         ]
-        ]
-       }
-      },
-      "merged": {
-       "columns": [
-        {
-         "en": "start",
-         "ko": "시작"
-        },
-        {
-         "en": "end",
-         "ko": "끝"
-        }
-       ],
-       "rows": [
-        {
-         "label": "0",
-         "cells": [
-          1,
-          8
-         ]
-        }
-       ],
-       "marks": {
-        "good": [
-         [
-          0,
-          1
-         ]
-        ]
-       }
-      },
-      "state": {
-       "items": [
+      "line": {
+       "groups": [
         {
          "label": {
-          "en": "seating",
-          "ko": "예약"
+          "en": "seatings, sorted by start",
+          "ko": "시작 순으로 정렬한 예약"
          },
-         "value": "[3,8]"
+         "intervals": [
+          [
+           1,
+           3
+          ],
+          [
+           3,
+           8
+          ],
+          [
+           10,
+           12
+          ]
+         ],
+         "marks": {
+          "lit": [
+           1
+          ],
+          "dim": [
+           0
+          ]
+         }
         },
         {
          "label": {
-          "en": "last merged end",
-          "ko": "마지막 구간의 끝"
+          "en": "merged windows",
+          "ko": "합친 구간"
          },
-         "value": 8
+         "intervals": [
+          [
+           1,
+           8
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 3,
+         "label": {
+          "en": "last end",
+          "ko": "마지막 끝"
+         },
+         "mark": "lit"
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         0,
+         1
+        ]
+       },
+       "to": {
+        "view": "line",
+        "at": [
+         1,
+         0
+        ]
+       }
+      }
+     ]
     },
     {
      "caption": {
@@ -1160,130 +740,89 @@
       "ko": "[10,12]: 시작 10 > 마지막 끝 8이므로 [1,8] 구간과 닿지 않아 새 구간을 엽니다."
      },
      "views": {
-      "sorted": {
-       "columns": [
-        {
-         "en": "start",
-         "ko": "시작"
-        },
-        {
-         "en": "end",
-         "ko": "끝"
-        }
-       ],
-       "rows": [
-        {
-         "label": "0",
-         "cells": [
-          1,
-          3
-         ]
-        },
-        {
-         "label": "1",
-         "cells": [
-          3,
-          8
-         ]
-        },
-        {
-         "label": "2",
-         "cells": [
-          10,
-          12
-         ]
-        }
-       ],
-       "marks": {
-        "lit": [
-         [
-          2,
-          0
-         ],
-         [
-          2,
-          1
-         ]
-        ],
-        "dim": [
-         [
-          0,
-          0
-         ],
-         [
-          0,
-          1
-         ],
-         [
-          1,
-          0
-         ],
-         [
-          1,
-          1
-         ]
-        ]
-       }
-      },
-      "merged": {
-       "columns": [
-        {
-         "en": "start",
-         "ko": "시작"
-        },
-        {
-         "en": "end",
-         "ko": "끝"
-        }
-       ],
-       "rows": [
-        {
-         "label": "0",
-         "cells": [
-          1,
-          8
-         ]
-        },
-        {
-         "label": "1",
-         "cells": [
-          10,
-          12
-         ]
-        }
-       ],
-       "marks": {
-        "good": [
-         [
-          1,
-          0
-         ],
-         [
-          1,
-          1
-         ]
-        ]
-       }
-      },
-      "state": {
-       "items": [
+      "line": {
+       "groups": [
         {
          "label": {
-          "en": "seating",
-          "ko": "예약"
+          "en": "seatings, sorted by start",
+          "ko": "시작 순으로 정렬한 예약"
          },
-         "value": "[10,12]"
+         "intervals": [
+          [
+           1,
+           3
+          ],
+          [
+           3,
+           8
+          ],
+          [
+           10,
+           12
+          ]
+         ],
+         "marks": {
+          "lit": [
+           2
+          ],
+          "dim": [
+           0,
+           1
+          ]
+         }
         },
         {
          "label": {
-          "en": "last merged end",
-          "ko": "마지막 구간의 끝"
+          "en": "merged windows",
+          "ko": "합친 구간"
          },
-         "value": 12
+         "intervals": [
+          [
+           1,
+           8
+          ],
+          [
+           10,
+           12
+          ]
+         ],
+         "marks": {
+          "good": [
+           1
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 8,
+         "label": {
+          "en": "last end",
+          "ko": "마지막 끝"
+         },
+         "mark": "lit"
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "line",
+        "at": [
+         0,
+         2
+        ]
+       },
+       "to": {
+        "view": "line",
+        "at": [
+         1,
+         1
+        ]
+       }
+      }
+     ]
     },
     {
      "caption": {
@@ -1291,132 +830,56 @@
       "ko": "모든 예약이 구간에 들어갔습니다. 예약 3개가 겹치지 않는 구간 2개가 되었습니다: [[1,8],[10,12]]."
      },
      "views": {
-      "sorted": {
-       "columns": [
-        {
-         "en": "start",
-         "ko": "시작"
-        },
-        {
-         "en": "end",
-         "ko": "끝"
-        }
-       ],
-       "rows": [
-        {
-         "label": "0",
-         "cells": [
-          1,
-          3
-         ]
-        },
-        {
-         "label": "1",
-         "cells": [
-          3,
-          8
-         ]
-        },
-        {
-         "label": "2",
-         "cells": [
-          10,
-          12
-         ]
-        }
-       ],
-       "marks": {
-        "dim": [
-         [
-          0,
-          0
-         ],
-         [
-          0,
-          1
-         ],
-         [
-          1,
-          0
-         ],
-         [
-          1,
-          1
-         ],
-         [
-          2,
-          0
-         ],
-         [
-          2,
-          1
-         ]
-        ]
-       }
-      },
-      "merged": {
-       "columns": [
-        {
-         "en": "start",
-         "ko": "시작"
-        },
-        {
-         "en": "end",
-         "ko": "끝"
-        }
-       ],
-       "rows": [
-        {
-         "label": "0",
-         "cells": [
-          1,
-          8
-         ]
-        },
-        {
-         "label": "1",
-         "cells": [
-          10,
-          12
-         ]
-        }
-       ],
-       "marks": {
-        "path": [
-         [
-          0,
-          0
-         ],
-         [
-          0,
-          1
-         ],
-         [
-          1,
-          0
-         ],
-         [
-          1,
-          1
-         ]
-        ]
-       }
-      },
-      "state": {
-       "items": [
+      "line": {
+       "groups": [
         {
          "label": {
-          "en": "seating",
-          "ko": "예약"
+          "en": "seatings, sorted by start",
+          "ko": "시작 순으로 정렬한 예약"
          },
-         "value": "–"
+         "intervals": [
+          [
+           1,
+           3
+          ],
+          [
+           3,
+           8
+          ],
+          [
+           10,
+           12
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0,
+           1,
+           2
+          ]
+         }
         },
         {
          "label": {
-          "en": "last merged end",
-          "ko": "마지막 구간의 끝"
+          "en": "merged windows",
+          "ko": "합친 구간"
          },
-         "value": 12
+         "intervals": [
+          [
+           1,
+           8
+          ],
+          [
+           10,
+           12
+          ]
+         ],
+         "marks": {
+          "path": [
+           0,
+           1
+          ]
+         }
         }
        ]
       }
@@ -1424,6 +887,14 @@
      "answer": "[[1,8],[10,12]]"
     }
    ],
+   "setup": {
+    "line": {
+     "domain": [
+      1,
+      12
+     ]
+    }
+   },
    "sampleInput": "[[1,3],[3,8],[10,12]]"
   }
  ]

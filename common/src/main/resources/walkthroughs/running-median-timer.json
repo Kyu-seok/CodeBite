@@ -1,0 +1,9989 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Running Median Timer",
+  "ko": "실시간 중앙값 추적"
+ },
+ "approach": {
+  "en": "Split the numbers into two halves: low, a max-heap of the lower half, and high, a min-heap of the upper half, with low holding the extra one when the count is odd. The median is then low's top, or the average of the two tops.",
+  "ko": "수를 두 절반으로 나눕니다. low는 아래쪽 절반의 최대 힙, high는 위쪽 절반의 최소 힙이고, 개수가 홀수면 low가 하나 더 가집니다. 그러면 중앙값은 low의 맨 위 값이거나 두 맨 위 값의 평균입니다."
+ },
+ "views": [
+  {
+   "id": "calls",
+   "type": "table",
+   "title": {
+    "en": "calls",
+    "ko": "호출"
+   }
+  },
+  {
+   "id": "low",
+   "type": "tree",
+   "arity": 2,
+   "title": {
+    "en": "low: lower half, max on top",
+    "ko": "low: 아래쪽 절반 (맨 위가 최대)"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  },
+  {
+   "id": "high",
+   "type": "tree",
+   "arity": 2,
+   "title": {
+    "en": "high: upper half, min on top",
+    "ko": "high: 위쪽 절반 (맨 위가 최소)"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  },
+  {
+   "id": "result",
+   "type": "output",
+   "title": {
+    "en": "answer, one value per call",
+    "ko": "답 (호출마다 하나)"
+   },
+   "empty": {
+    "en": "none yet",
+    "ko": "아직 없음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "[\"StreamMedian\",\"record\",\"median\",\"record\",\"median\",\"record\",\"median\"]\n[[],[1],[],[2],[],[3],[]]",
+   "expected": "[null,null,1.0,null,1.5,null,2.0]",
+   "frames": [
+    {
+     "caption": {
+      "en": "StreamMedian() starts with both halves empty and returns null.",
+      "ko": "생성자 StreamMedian() 호출은 두 절반이 모두 빈 채로 시작하고 null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "low": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "high": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "record(1): every number goes into low first. 1 goes in at the end of low, [0]; it is the top.",
+      "ko": "record(1): 모든 수는 먼저 low에 들어갑니다. 1은 low의 맨 끝 [0]에 들어가고, 맨 위가 됩니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null"
+       ],
+       "marks": {}
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "high": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "low",
+        "at": 0
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "low's largest belongs in the upper half if anything does: low's top 1 leaves it for the end of high, [0].",
+      "ko": "low의 가장 큰 값이 위쪽 절반에 들어갈 후보이므로, low의 맨 위 1이 빠져 high의 맨 끝 [0] 자리로 갑니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null"
+       ],
+       "marks": {}
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "high": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "low",
+        "at": 0
+       },
+       "to": {
+        "view": "high",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "high has 1 and low 0, but low must hold at least as many: high's top 1 leaves it for the end of low, [0].",
+      "ko": "high는 1개, low는 0개인데 low가 적어도 같은 수를 가져야 하므로, high의 맨 위 1이 빠져 low의 맨 끝 [0] 자리로 갑니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null"
+       ],
+       "marks": {}
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "high": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "high",
+        "at": 0
+       },
+       "to": {
+        "view": "low",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "record(1) returns null. low holds 1 and high 0, and every number in low is at most every number in high.",
+      "ko": "record(1) 호출은 null을 반환합니다. low에 1개, high에 0개가 있고, low의 모든 수는 high의 어떤 수보다 크지 않습니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {}
+      },
+      "high": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "median(): low holds one more than high, so the middle number is low's top: 1.0.",
+      "ko": "median(): low가 high보다 하나 더 많으므로 가운데 수는 low의 맨 위 값 1.0입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "1.0"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "high": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "low",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "record(2): every number goes into low first. 2 goes in at the end of low, [1]; it sifts up past its parent.",
+      "ko": "record(2): 모든 수는 먼저 low에 들어갑니다. 2는 low의 맨 끝 [1]에 들어가고, 부모보다 위로 올라가야 합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "1.0"
+       ],
+       "marks": {}
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        },
+        {
+         "id": 1,
+         "value": 2
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "high": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         3,
+         1
+        ]
+       },
+       "to": {
+        "view": "low",
+        "at": 1
+       },
+       "value": "2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Sift up in low: 2 at [1] is higher than its parent 1 at [0], so they swap.",
+      "ko": "low에서 위로 올리기: [1]의 2는 부모 [0]의 1보다 높으므로 자리를 바꿉니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "1.0"
+       ],
+       "marks": {}
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 2
+        },
+        {
+         "id": 1,
+         "value": 1
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "high": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "low",
+        "at": 1
+       },
+       "to": {
+        "view": "low",
+        "at": 0
+       },
+       "value": 2
+      },
+      {
+       "from": {
+        "view": "low",
+        "at": 0
+       },
+       "to": {
+        "view": "low",
+        "at": 1
+       },
+       "value": 1
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "low's largest belongs in the upper half if anything does: low's top 2 leaves it for the end of high, [0].",
+      "ko": "low의 가장 큰 값이 위쪽 절반에 들어갈 후보이므로, low의 맨 위 2가 빠져 high의 맨 끝 [0] 자리로 갑니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "1.0"
+       ],
+       "marks": {}
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 2
+        },
+        {
+         "id": 1,
+         "value": 1
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "high": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 2
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "low",
+        "at": 0
+       },
+       "to": {
+        "view": "high",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "low's last node 1 at [1] fills its empty top.",
+      "ko": "low의 마지막 노드 [1]의 1이 빈 맨 위를 채웁니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "1.0"
+       ],
+       "marks": {}
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        },
+        {
+         "id": 1,
+         "value": 1
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "high": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 2
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "low",
+        "at": 1
+       },
+       "to": {
+        "view": "low",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "record(2) returns null. low holds 1 and high 1, and every number in low is at most every number in high.",
+      "ko": "record(2) 호출은 null을 반환합니다. low에 1개, high에 1개가 있고, low의 모든 수는 high의 어떤 수보다 크지 않습니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "1.0",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {}
+      },
+      "high": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 2
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         3,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "median(): both halves hold 1, so the median is the average of the two tops: (1 + 2) / 2 = 1.5.",
+      "ko": "median(): 두 절반이 1개씩이므로 중앙값은 두 맨 위 값의 평균 (1 + 2) / 2 = 1.5입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "1.0",
+        "null",
+        "1.5"
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "high": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 2
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "low",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       }
+      },
+      {
+       "from": {
+        "view": "high",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "record(3): every number goes into low first. 3 goes in at the end of low, [1]; it sifts up past its parent.",
+      "ko": "record(3): 모든 수는 먼저 low에 들어갑니다. 3은 low의 맨 끝 [1]에 들어가고, 부모보다 위로 올라가야 합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "1.0",
+        "null",
+        "1.5"
+       ],
+       "marks": {}
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        },
+        {
+         "id": 1,
+         "value": 3
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "high": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 2
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         5,
+         1
+        ]
+       },
+       "to": {
+        "view": "low",
+        "at": 1
+       },
+       "value": "3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Sift up in low: 3 at [1] is higher than its parent 1 at [0], so they swap.",
+      "ko": "low에서 위로 올리기: [1]의 3은 부모 [0]의 1보다 높으므로 자리를 바꿉니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "1.0",
+        "null",
+        "1.5"
+       ],
+       "marks": {}
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        },
+        {
+         "id": 1,
+         "value": 1
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "high": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 2
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "low",
+        "at": 1
+       },
+       "to": {
+        "view": "low",
+        "at": 0
+       },
+       "value": 3
+      },
+      {
+       "from": {
+        "view": "low",
+        "at": 0
+       },
+       "to": {
+        "view": "low",
+        "at": 1
+       },
+       "value": 1
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "low's largest belongs in the upper half if anything does: low's top 3 leaves it for the end of high, [1].",
+      "ko": "low의 가장 큰 값이 위쪽 절반에 들어갈 후보이므로, low의 맨 위 3이 빠져 high의 맨 끝 [1] 자리로 갑니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "1.0",
+        "null",
+        "1.5"
+       ],
+       "marks": {}
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        },
+        {
+         "id": 1,
+         "value": 1
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "high": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 2
+        },
+        {
+         "id": 1,
+         "value": 3
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "low",
+        "at": 0
+       },
+       "to": {
+        "view": "high",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "low's last node 1 at [1] fills its empty top.",
+      "ko": "low의 마지막 노드 [1]의 1이 빈 맨 위를 채웁니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "1.0",
+        "null",
+        "1.5"
+       ],
+       "marks": {}
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        },
+        {
+         "id": 1,
+         "value": 1
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "high": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 2
+        },
+        {
+         "id": 1,
+         "value": 3
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "low",
+        "at": 1
+       },
+       "to": {
+        "view": "low",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "high has 2 and low 1, but low must hold at least as many: high's top 2 leaves it for the end of low, [1], where it will sift up.",
+      "ko": "high는 2개, low는 1개인데 low가 적어도 같은 수를 가져야 하므로, high의 맨 위 2가 빠져 low의 맨 끝 [1] 자리로 갑니다. 거기서 위로 올릴 차례입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "1.0",
+        "null",
+        "1.5"
+       ],
+       "marks": {}
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        },
+        {
+         "id": 1,
+         "value": 2
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "high": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 2
+        },
+        {
+         "id": 1,
+         "value": 3
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "high",
+        "at": 0
+       },
+       "to": {
+        "view": "low",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "high's last node 3 at [1] fills its empty top.",
+      "ko": "high의 마지막 노드 [1]의 3이 빈 맨 위를 채웁니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "1.0",
+        "null",
+        "1.5"
+       ],
+       "marks": {}
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        },
+        {
+         "id": 1,
+         "value": 2
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {}
+      },
+      "high": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        },
+        {
+         "id": 1,
+         "value": 3
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "high",
+        "at": 1
+       },
+       "to": {
+        "view": "high",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Sift up in low: 2 at [1] is higher than its parent 1 at [0], so they swap.",
+      "ko": "low에서 위로 올리기: [1]의 2는 부모 [0]의 1보다 높으므로 자리를 바꿉니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "1.0",
+        "null",
+        "1.5"
+       ],
+       "marks": {}
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 2
+        },
+        {
+         "id": 1,
+         "value": 1
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "high": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "low",
+        "at": 1
+       },
+       "to": {
+        "view": "low",
+        "at": 0
+       },
+       "value": 2
+      },
+      {
+       "from": {
+        "view": "low",
+        "at": 0
+       },
+       "to": {
+        "view": "low",
+        "at": 1
+       },
+       "value": 1
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "record(3) returns null. low holds 2 and high 1, and every number in low is at most every number in high.",
+      "ko": "record(3) 호출은 null을 반환합니다. low에 2개, high에 1개가 있고, low의 모든 수는 high의 어떤 수보다 크지 않습니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "1.0",
+        "null",
+        "1.5",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         5
+        ]
+       }
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 2
+        },
+        {
+         "id": 1,
+         "value": 1
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {}
+      },
+      "high": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         5,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 5
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "median(): low holds one more than high, so the middle number is low's top: 2.0.",
+      "ko": "median(): low가 high보다 하나 더 많으므로 가운데 수는 low의 맨 위 값 2.0입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ],
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          6,
+          0
+         ],
+         [
+          6,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "1.0",
+        "null",
+        "1.5",
+        "null",
+        "2.0"
+       ],
+       "marks": {
+        "good": [
+         6
+        ]
+       }
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 2
+        },
+        {
+         "id": 1,
+         "value": 1
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "high": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "low",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 6
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every call has run; the answer lists one value per call: [null,null,1.0,null,1.5,null,2.0].",
+      "ko": "모든 호출이 끝났습니다. 답은 호출마다 값 하나씩입니다: [null,null,1.0,null,1.5,null,2.0]."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "1.0",
+        "null",
+        "1.5",
+        "null",
+        "2.0"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6
+        ]
+       }
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 2
+        },
+        {
+         "id": 1,
+         "value": 1
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "path": [
+         0
+        ]
+       }
+      },
+      "high": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {
+        "path": [
+         0
+        ]
+       }
+      }
+     },
+     "answer": "[null,null,1.0,null,1.5,null,2.0]"
+    }
+   ],
+   "sampleInput": "[\"StreamMedian\",\"record\",\"median\",\"record\",\"median\",\"record\",\"median\"]\n[[],[1],[],[2],[],[3],[]]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "[\"StreamMedian\",\"record\",\"record\",\"record\",\"record\",\"median\"]\n[[],[4],[2],[5],[3],[]]",
+   "expected": "[null,null,null,null,null,3.5]",
+   "frames": [
+    {
+     "caption": {
+      "en": "StreamMedian() starts with both halves empty and returns null.",
+      "ko": "생성자 StreamMedian() 호출은 두 절반이 모두 빈 채로 시작하고 null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "4"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "5"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "low": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "high": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "record(4): every number goes into low first. 4 goes in at the end of low, [0]; it is the top.",
+      "ko": "record(4): 모든 수는 먼저 low에 들어갑니다. 4는 low의 맨 끝 [0]에 들어가고, 맨 위가 됩니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "4"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "5"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null"
+       ],
+       "marks": {}
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "high": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "low",
+        "at": 0
+       },
+       "value": "4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "low's largest belongs in the upper half if anything does: low's top 4 leaves it for the end of high, [0].",
+      "ko": "low의 가장 큰 값이 위쪽 절반에 들어갈 후보이므로, low의 맨 위 4가 빠져 high의 맨 끝 [0] 자리로 갑니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "4"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "5"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null"
+       ],
+       "marks": {}
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "high": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "low",
+        "at": 0
+       },
+       "to": {
+        "view": "high",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "high has 1 and low 0, but low must hold at least as many: high's top 4 leaves it for the end of low, [0].",
+      "ko": "high는 1개, low는 0개인데 low가 적어도 같은 수를 가져야 하므로, high의 맨 위 4가 빠져 low의 맨 끝 [0] 자리로 갑니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "4"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "5"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null"
+       ],
+       "marks": {}
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "high": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "high",
+        "at": 0
+       },
+       "to": {
+        "view": "low",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "record(4) returns null. low holds 1 and high 0, and every number in low is at most every number in high.",
+      "ko": "record(4) 호출은 null을 반환합니다. low에 1개, high에 0개가 있고, low의 모든 수는 high의 어떤 수보다 크지 않습니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "4"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "5"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {}
+      },
+      "high": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "record(2): every number goes into low first. 2 goes in at the end of low, [1]; its parent 4 stays above it.",
+      "ko": "record(2): 모든 수는 먼저 low에 들어갑니다. 2는 low의 맨 끝 [1]에 들어가고, 부모 4는 그대로 위에 둡니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "4"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "5"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null"
+       ],
+       "marks": {}
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 2
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "high": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         2,
+         1
+        ]
+       },
+       "to": {
+        "view": "low",
+        "at": 1
+       },
+       "value": "2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "low's largest belongs in the upper half if anything does: low's top 4 leaves it for the end of high, [0].",
+      "ko": "low의 가장 큰 값이 위쪽 절반에 들어갈 후보이므로, low의 맨 위 4가 빠져 high의 맨 끝 [0] 자리로 갑니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "4"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "5"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null"
+       ],
+       "marks": {}
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 2
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "high": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "low",
+        "at": 0
+       },
+       "to": {
+        "view": "high",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "low's last node 2 at [1] fills its empty top.",
+      "ko": "low의 마지막 노드 [1]의 2가 빈 맨 위를 채웁니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "4"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "5"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null"
+       ],
+       "marks": {}
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 2
+        },
+        {
+         "id": 1,
+         "value": 2
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "high": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "low",
+        "at": 1
+       },
+       "to": {
+        "view": "low",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "record(2) returns null. low holds 1 and high 1, and every number in low is at most every number in high.",
+      "ko": "record(2) 호출은 null을 반환합니다. low에 1개, high에 1개가 있고, low의 모든 수는 high의 어떤 수보다 크지 않습니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "4"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "5"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 2
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {}
+      },
+      "high": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         2,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "record(5): every number goes into low first. 5 goes in at the end of low, [1]; it sifts up past its parent.",
+      "ko": "record(5): 모든 수는 먼저 low에 들어갑니다. 5는 low의 맨 끝 [1]에 들어가고, 부모보다 위로 올라가야 합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "4"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "5"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {}
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 2
+        },
+        {
+         "id": 1,
+         "value": 5
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "high": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         3,
+         1
+        ]
+       },
+       "to": {
+        "view": "low",
+        "at": 1
+       },
+       "value": "5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Sift up in low: 5 at [1] is higher than its parent 2 at [0], so they swap.",
+      "ko": "low에서 위로 올리기: [1]의 5는 부모 [0]의 2보다 높으므로 자리를 바꿉니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "4"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "5"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {}
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 5
+        },
+        {
+         "id": 1,
+         "value": 2
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "high": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "low",
+        "at": 1
+       },
+       "to": {
+        "view": "low",
+        "at": 0
+       },
+       "value": 5
+      },
+      {
+       "from": {
+        "view": "low",
+        "at": 0
+       },
+       "to": {
+        "view": "low",
+        "at": 1
+       },
+       "value": 2
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "low's largest belongs in the upper half if anything does: low's top 5 leaves it for the end of high, [1].",
+      "ko": "low의 가장 큰 값이 위쪽 절반에 들어갈 후보이므로, low의 맨 위 5가 빠져 high의 맨 끝 [1] 자리로 갑니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "4"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "5"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {}
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 5
+        },
+        {
+         "id": 1,
+         "value": 2
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "high": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 5
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "low",
+        "at": 0
+       },
+       "to": {
+        "view": "high",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "low's last node 2 at [1] fills its empty top.",
+      "ko": "low의 마지막 노드 [1]의 2가 빈 맨 위를 채웁니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "4"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "5"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {}
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 2
+        },
+        {
+         "id": 1,
+         "value": 2
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "high": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 5
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "low",
+        "at": 1
+       },
+       "to": {
+        "view": "low",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "high has 2 and low 1, but low must hold at least as many: high's top 4 leaves it for the end of low, [1], where it will sift up.",
+      "ko": "high는 2개, low는 1개인데 low가 적어도 같은 수를 가져야 하므로, high의 맨 위 4가 빠져 low의 맨 끝 [1] 자리로 갑니다. 거기서 위로 올릴 차례입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "4"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "5"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {}
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 2
+        },
+        {
+         "id": 1,
+         "value": 4
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "high": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 5
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "high",
+        "at": 0
+       },
+       "to": {
+        "view": "low",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "high's last node 5 at [1] fills its empty top.",
+      "ko": "high의 마지막 노드 [1]의 5가 빈 맨 위를 채웁니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "4"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "5"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {}
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 2
+        },
+        {
+         "id": 1,
+         "value": 4
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {}
+      },
+      "high": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 5
+        },
+        {
+         "id": 1,
+         "value": 5
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "high",
+        "at": 1
+       },
+       "to": {
+        "view": "high",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Sift up in low: 4 at [1] is higher than its parent 2 at [0], so they swap.",
+      "ko": "low에서 위로 올리기: [1]의 4는 부모 [0]의 2보다 높으므로 자리를 바꿉니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "4"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "5"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {}
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 2
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "high": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 5
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "low",
+        "at": 1
+       },
+       "to": {
+        "view": "low",
+        "at": 0
+       },
+       "value": 4
+      },
+      {
+       "from": {
+        "view": "low",
+        "at": 0
+       },
+       "to": {
+        "view": "low",
+        "at": 1
+       },
+       "value": 2
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "record(5) returns null. low holds 2 and high 1, and every number in low is at most every number in high.",
+      "ko": "record(5) 호출은 null을 반환합니다. low에 2개, high에 1개가 있고, low의 모든 수는 high의 어떤 수보다 크지 않습니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "4"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "5"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 2
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {}
+      },
+      "high": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 5
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         3,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "record(3): every number goes into low first. 3 goes in at the end of low, [2]; its parent 4 stays above it.",
+      "ko": "record(3): 모든 수는 먼저 low에 들어갑니다. 3은 low의 맨 끝 [2]에 들어가고, 부모 4는 그대로 위에 둡니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "4"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "5"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {}
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 3
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "high": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 5
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         4,
+         1
+        ]
+       },
+       "to": {
+        "view": "low",
+        "at": 2
+       },
+       "value": "3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "low's largest belongs in the upper half if anything does: low's top 4 leaves it for the end of high, [1], where it will sift up.",
+      "ko": "low의 가장 큰 값이 위쪽 절반에 들어갈 후보이므로, low의 맨 위 4가 빠져 high의 맨 끝 [1] 자리로 갑니다. 거기서 위로 올릴 차례입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "4"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "5"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {}
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 3
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "high": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 5
+        },
+        {
+         "id": 1,
+         "value": 4
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "low",
+        "at": 0
+       },
+       "to": {
+        "view": "high",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "low's last node 3 at [2] fills its empty top.",
+      "ko": "low의 마지막 노드 [2]의 3이 빈 맨 위를 채웁니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "4"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "5"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {}
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 3
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "high": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 5
+        },
+        {
+         "id": 1,
+         "value": 4
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "low",
+        "at": 2
+       },
+       "to": {
+        "view": "low",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Sift up in high: 4 at [1] is lower than its parent 5 at [0], so they swap.",
+      "ko": "high에서 위로 올리기: [1]의 4는 부모 [0]의 5보다 낮으므로 자리를 바꿉니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "4"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "5"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {}
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        },
+        {
+         "id": 1,
+         "value": 2
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {}
+      },
+      "high": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 5
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "high",
+        "at": 1
+       },
+       "to": {
+        "view": "high",
+        "at": 0
+       },
+       "value": 4
+      },
+      {
+       "from": {
+        "view": "high",
+        "at": 0
+       },
+       "to": {
+        "view": "high",
+        "at": 1
+       },
+       "value": 5
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "record(3) returns null. low holds 2 and high 2, and every number in low is at most every number in high.",
+      "ko": "record(3) 호출은 null을 반환합니다. low에 2개, high에 2개가 있고, low의 모든 수는 high의 어떤 수보다 크지 않습니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "4"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "5"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        },
+        {
+         "id": 1,
+         "value": 2
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {}
+      },
+      "high": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 5
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         4,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "median(): both halves hold 2, so the median is the average of the two tops: (3 + 4) / 2 = 3.5.",
+      "ko": "median(): 두 절반이 2개씩이므로 중앙값은 두 맨 위 값의 평균 (3 + 4) / 2 = 3.5입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "4"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "5"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null",
+        "null",
+        "3.5"
+       ],
+       "marks": {
+        "good": [
+         5
+        ]
+       }
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        },
+        {
+         "id": 1,
+         "value": 2
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "high": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 5
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "low",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 5
+       }
+      },
+      {
+       "from": {
+        "view": "high",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 5
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every call has run; the answer lists one value per call: [null,null,null,null,null,3.5].",
+      "ko": "모든 호출이 끝났습니다. 답은 호출마다 값 하나씩입니다: [null,null,null,null,null,3.5]."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "4"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "record",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "5"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null",
+        "null",
+        "3.5"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        },
+        {
+         "id": 1,
+         "value": 2
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "path": [
+         0
+        ]
+       }
+      },
+      "high": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 5
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "path": [
+         0
+        ]
+       }
+      }
+     },
+     "answer": "[null,null,null,null,null,3.5]"
+    }
+   ],
+   "sampleInput": "[\"StreamMedian\",\"record\",\"record\",\"record\",\"record\",\"median\"]\n[[],[4],[2],[5],[3],[]]"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "[\"StreamMedian\",\"record\",\"median\",\"record\",\"median\"]\n[[],[7],[],[3],[]]",
+   "expected": "[null,null,7.0,null,5.0]",
+   "frames": [
+    {
+     "caption": {
+      "en": "StreamMedian() starts with both halves empty and returns null.",
+      "ko": "생성자 StreamMedian() 호출은 두 절반이 모두 빈 채로 시작하고 null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "7"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "low": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "high": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "record(7): every number goes into low first. 7 goes in at the end of low, [0]; it is the top.",
+      "ko": "record(7): 모든 수는 먼저 low에 들어갑니다. 7은 low의 맨 끝 [0]에 들어가고, 맨 위가 됩니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "7"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null"
+       ],
+       "marks": {}
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 7
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "high": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "low",
+        "at": 0
+       },
+       "value": "7"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "low's largest belongs in the upper half if anything does: low's top 7 leaves it for the end of high, [0].",
+      "ko": "low의 가장 큰 값이 위쪽 절반에 들어갈 후보이므로, low의 맨 위 7이 빠져 high의 맨 끝 [0] 자리로 갑니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "7"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null"
+       ],
+       "marks": {}
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 7
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "high": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 7
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "low",
+        "at": 0
+       },
+       "to": {
+        "view": "high",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "high has 1 and low 0, but low must hold at least as many: high's top 7 leaves it for the end of low, [0].",
+      "ko": "high는 1개, low는 0개인데 low가 적어도 같은 수를 가져야 하므로, high의 맨 위 7이 빠져 low의 맨 끝 [0] 자리로 갑니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "7"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null"
+       ],
+       "marks": {}
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 7
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "high": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 7
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "high",
+        "at": 0
+       },
+       "to": {
+        "view": "low",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "record(7) returns null. low holds 1 and high 0, and every number in low is at most every number in high.",
+      "ko": "record(7) 호출은 null을 반환합니다. low에 1개, high에 0개가 있고, low의 모든 수는 high의 어떤 수보다 크지 않습니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "7"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 7
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {}
+      },
+      "high": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "median(): low holds one more than high, so the middle number is low's top: 7.0.",
+      "ko": "median(): low가 high보다 하나 더 많으므로 가운데 수는 low의 맨 위 값 7.0입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "7"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "7.0"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 7
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "high": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "low",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "record(3): every number goes into low first. 3 goes in at the end of low, [1]; its parent 7 stays above it.",
+      "ko": "record(3): 모든 수는 먼저 low에 들어갑니다. 3은 low의 맨 끝 [1]에 들어가고, 부모 7은 그대로 위에 둡니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "7"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "7.0"
+       ],
+       "marks": {}
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 7
+        },
+        {
+         "id": 1,
+         "value": 3
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "high": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         3,
+         1
+        ]
+       },
+       "to": {
+        "view": "low",
+        "at": 1
+       },
+       "value": "3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "low's largest belongs in the upper half if anything does: low's top 7 leaves it for the end of high, [0].",
+      "ko": "low의 가장 큰 값이 위쪽 절반에 들어갈 후보이므로, low의 맨 위 7이 빠져 high의 맨 끝 [0] 자리로 갑니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "7"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "7.0"
+       ],
+       "marks": {}
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 7
+        },
+        {
+         "id": 1,
+         "value": 3
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "high": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 7
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "low",
+        "at": 0
+       },
+       "to": {
+        "view": "high",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "low's last node 3 at [1] fills its empty top.",
+      "ko": "low의 마지막 노드 [1]의 3이 빈 맨 위를 채웁니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "7"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "7.0"
+       ],
+       "marks": {}
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        },
+        {
+         "id": 1,
+         "value": 3
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "high": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 7
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "low",
+        "at": 1
+       },
+       "to": {
+        "view": "low",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "record(3) returns null. low holds 1 and high 1, and every number in low is at most every number in high.",
+      "ko": "record(3) 호출은 null을 반환합니다. low에 1개, high에 1개가 있고, low의 모든 수는 high의 어떤 수보다 크지 않습니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "7"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "7.0",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {}
+      },
+      "high": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 7
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         3,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "median(): both halves hold 1, so the median is the average of the two tops: (3 + 7) / 2 = 5.0.",
+      "ko": "median(): 두 절반이 1개씩이므로 중앙값은 두 맨 위 값의 평균 (3 + 7) / 2 = 5.0입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "7"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "7.0",
+        "null",
+        "5.0"
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "high": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 7
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "low",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       }
+      },
+      {
+       "from": {
+        "view": "high",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every call has run; the answer lists one value per call: [null,null,7.0,null,5.0].",
+      "ko": "모든 호출이 끝났습니다. 답은 호출마다 값 하나씩입니다: [null,null,7.0,null,5.0]."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "num",
+         "ko": "num (수)"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "StreamMedian",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "record",
+          "7"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "median",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "record",
+          "3"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "median",
+          ""
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "7.0",
+        "null",
+        "5.0"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "low": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {
+        "path": [
+         0
+        ]
+       }
+      },
+      "high": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 7
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {
+        "path": [
+         0
+        ]
+       }
+      }
+     },
+     "answer": "[null,null,7.0,null,5.0]"
+    }
+   ],
+   "sampleInput": "[\"StreamMedian\",\"record\",\"median\",\"record\",\"median\"]\n[[],[7],[],[3],[]]"
+  }
+ ]
+}

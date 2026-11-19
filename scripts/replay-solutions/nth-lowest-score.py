@@ -6,7 +6,7 @@ class TreeNode:
 
 
 class Solution:
-    def pickNthTarget(self, root: TreeNode | None, k: int) -> int:
+    def nthLowestScore(self, root: TreeNode | None, k: int) -> int:
         stack: list[TreeNode] = []
         node = root
         while stack or node:

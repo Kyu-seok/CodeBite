@@ -2,7 +2,8 @@
 """product-of-all-other-elements' Walkthrough: the reference solution
 (scripts/replay-solutions/product-of-all-other-elements.py), a left-to-right pass writing each position's
 prefix product and a right-to-left pass multiplying in its suffix product, one frame per position per pass
-on each sample Test Case.
+on each sample Test Case. The running product is a span over the nums it multiplies, labelled with its value, and
+moves from the span's nearest cell into answer[i].
 
     CODEBITE_DB=<database> scripts/walkthroughs/product-of-all-other-elements.py
 
@@ -15,7 +16,7 @@ import sys
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
 from codebite import driver_list, sample_cases, sample_run, walkthrough_path  # noqa: E402
-from walkthrough_trace import Walkthrough  # noqa: E402
+from walkthrough_trace import Walkthrough, at, move, span  # noqa: E402
 
 SLUG = "product-of-all-other-elements"
 
@@ -23,12 +24,11 @@ wt = Walkthrough(
     {"en": "Product of All Other Elements", "ko": "자기 자신을 제외한 모든 원소의 곱"},
     {"en": "answer[i] is the product of everything left of i times the product of everything right of i: "
            "one pass left to right writes the left products, one pass right to left multiplies in the right ones.",
-     "ko": "answer[i]는 i 왼쪽 원소들의 곱 × i 오른쪽 원소들의 곱입니다. 왼쪽에서 오른쪽으로 한 번 훑으며 "
+     "ko": "answer[i] 값은 i 왼쪽 원소들의 곱 × i 오른쪽 원소들의 곱입니다. 왼쪽에서 오른쪽으로 한 번 훑으며 "
            "왼쪽 곱을 적고, 오른쪽에서 왼쪽으로 한 번 더 훑으며 오른쪽 곱을 곱해 넣습니다."},
     views=[
         {"id": "nums", "type": "array", "title": {"en": "nums", "ko": "nums"}},
         {"id": "result", "type": "array", "title": {"en": "answer", "ko": "answer"}},
-        {"id": "state", "type": "vars"},
     ],
 )
 
@@ -46,20 +46,23 @@ def solve(nums, run):
     written = [False] * n  # positions the first pass has reached, so unwritten ones show blank
     prefix = suffix = 1
 
-    def frame(caption, at=None, covers=(), good=(), path=(), **answer):
+    def frame(caption, at_i=None, prefix=None, suffix=None, good=(), path=(), moves=None, **answer):
+        """prefix or suffix: the running product this step uses, over nums[0..i-1] or nums[i+1..n-1]; it is a span
+        only when it covers a cell."""
+        spans = {}
+        if prefix is not None and at_i > 0:
+            spans["prefix"] = span(0, at_i - 1, {"en": f"prefix = {prefix}", "ko": f"prefix (왼쪽 곱) = {prefix}"})
+        if suffix is not None and at_i < n - 1:
+            spans["suffix"] = span(at_i + 1, n - 1, {"en": f"suffix = {suffix}", "ko": f"suffix (오른쪽 곱) = {suffix}"})
         run.frame(caption,
-                  nums={"values": nums, "pointers": {"i": at},
-                        "marks": {"lit": list(covers)}},
-                  result={"values": [v if w else "" for v, w in zip(result, written)], "pointers": {"i": at},
+                  nums={"values": nums, "pointers": {"i": at_i}, "spans": spans},
+                  result={"values": [v if w else "" for v, w in zip(result, written)], "pointers": {"i": at_i},
                           "marks": {"good": list(good), "path": list(path)}},
-                  state={"items": [
-                      {"label": {"en": "prefix", "ko": "prefix (왼쪽 곱)"}, "value": prefix},
-                      {"label": {"en": "suffix", "ko": "suffix (오른쪽 곱)"}, "value": suffix}]},
-                  **answer)
+                  moves=moves, **answer)
 
     frame({"en": "Without division, answer[i] is (product of everything left of i) × (product of everything "
                  "right of i). First pass: walk left to right, carrying the left product in prefix, which starts at 1.",
-           "ko": "나눗셈 없이, answer[i]는 (i 왼쪽 원소들의 곱) × (i 오른쪽 원소들의 곱)입니다. 첫 번째 단계는 "
+           "ko": "나눗셈 없이, answer[i] 값은 (i 왼쪽 원소들의 곱) × (i 오른쪽 원소들의 곱)입니다. 첫 번째 단계는 "
                  "왼쪽에서 오른쪽으로 훑으며 왼쪽 곱을 prefix에 들고 가는데, prefix는 1에서 시작합니다."})
     for i in range(n):
         result[i] = prefix
@@ -75,7 +78,8 @@ def solve(nums, run):
             ko = f"answer[{i}] = prefix = {left} = {old}, 인덱스 {i} 왼쪽 원소들의 곱입니다."
         en += f" Then prefix takes in nums[{i}]: {old} × {product_text([nums[i]])} = {prefix}."
         ko += f" 그다음 prefix에 nums[{i}]의 값을 곱합니다: {old} × {product_text([nums[i]])} = {prefix}."
-        frame({"en": en, "ko": ko}, at=i, covers=range(i), good=[i])
+        flow = move(at("nums", i - 1) if i > 0 else None, at("result", i), value=old)
+        frame({"en": en, "ko": ko}, at_i=i, prefix=old, good=[i], moves=[flow])
     frame({"en": "Every answer[i] now holds its left product. Second pass: walk right to left, carrying the "
                  "right product in suffix, which starts at 1, and multiply it in.",
            "ko": "이제 모든 answer[i]에 왼쪽 곱이 들어 있습니다. 두 번째 단계는 오른쪽에서 왼쪽으로 훑으며 "
@@ -98,11 +102,12 @@ def solve(nums, run):
                   f"answer[{i}] = {old_answer} × {product_text([old])} = {result[i]}.")
         en += f" Then suffix takes in nums[{i}]: {old} × {product_text([nums[i]])} = {suffix}."
         ko += f" 그다음 suffix에 nums[{i}]의 값을 곱합니다: {old} × {product_text([nums[i]])} = {suffix}."
-        frame({"en": en, "ko": ko}, at=i, covers=range(i + 1, n), good=[i])
+        flow = move(at("nums", i + 1) if i < n - 1 else None, at("result", i), value=f"×{product_text([old])}")
+        frame({"en": en, "ko": ko}, at_i=i, suffix=old, good=[i], moves=[flow])
     answer = driver_list(result)
     frame({"en": f"Both passes are done: each answer[i] is its left product times its right product, "
                  f"with nums[i] itself never multiplied in. Answer {answer}.",
-           "ko": f"두 단계가 끝나 각 answer[i]는 왼쪽 곱 × 오른쪽 곱이고, nums[i] 자신은 한 번도 곱해지지 "
+           "ko": f"두 단계가 끝나 각 answer[i] 값은 왼쪽 곱 × 오른쪽 곱이고, nums[i] 자신은 한 번도 곱해지지 "
                  f"않았습니다. 답은 {answer}입니다."},
           path=range(n), answer=answer)
     return answer

@@ -5,9 +5,9 @@ using namespace std;
 {USER_CODE}
 
 int main() {
-    string s;
-    getline(cin, s);
-    int result = Solution().countMirrorSpans(s);
+    string doodle;
+    getline(cin, doodle);
+    int result = Solution().countPalindromicSubstrings(doodle);
     cout << result << endl;
     return 0;
 }

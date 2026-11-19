@@ -44,5 +44,5 @@ function _treeToArray(root) {
 const input = require('fs').readFileSync('/dev/stdin', 'utf8').trim();
 const arr = JSON.parse(input);
 const root = _buildTree(arr);
-const result = new Solution().reflectBlend(root);
+const result = new Solution().mirrorTree(root);
 console.log(JSON.stringify(_treeToArray(result)));

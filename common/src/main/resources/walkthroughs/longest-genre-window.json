@@ -1,0 +1,2224 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Longest Genre Window",
+  "ko": "가장 긴 장르 몰아보기"
+ },
+ "approach": {
+  "en": "Remember where each tag was last seen: when the tag read was last seen inside the window, the window's start jumps just past that copy, and every window in between is a candidate.",
+  "ko": "태그마다 마지막으로 본 위치를 기억합니다. 지금 읽은 태그를 구간 안에서 본 적이 있으면 구간의 start를 그 태그 바로 다음으로 옮기고, 그사이 지나는 구간이 모두 후보입니다."
+ },
+ "views": [
+  {
+   "id": "feed",
+   "type": "array",
+   "title": {
+    "en": "feed",
+    "ko": "feed (시청 대기열)"
+   }
+  },
+  {
+   "id": "last_seen",
+   "type": "map",
+   "title": {
+    "en": "last_seen (tag → last index)",
+    "ko": "last_seen (태그 → 마지막 위치)"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "feed = \"tmmzuxt\"",
+   "expected": "5",
+   "frames": [
+    {
+     "caption": {
+      "en": "7 tags in feed. Read them left to right; last_seen remembers the index where each tag was last seen, and the window runs from start to the tag read.",
+      "ko": "feed에 태그가 7개 있습니다. 왼쪽부터 읽으며 last_seen에 태그마다 마지막으로 본 위치를 기억하고, 구간은 start부터 지금 읽는 태그까지입니다."
+     },
+     "views": {
+      "feed": {
+       "values": [
+        "t",
+        "m",
+        "m",
+        "z",
+        "u",
+        "x",
+        "t"
+       ],
+       "spans": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "pointers": {},
+       "marks": {}
+      },
+      "last_seen": {
+       "entries": [],
+       "marks": {
+        "dim": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "feed[0] = 't' is new; last_seen['t'] = 0. Window length 1, a new best.",
+      "ko": "feed[0] = 't' 태그는 처음 나왔습니다. last_seen['t'] = 0, 구간 길이 1, best = 1로 갱신."
+     },
+     "views": {
+      "feed": {
+       "values": [
+        "t",
+        "m",
+        "m",
+        "z",
+        "u",
+        "x",
+        "t"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "window 1",
+          "ko": "구간 1"
+         },
+         "mark": "good",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "best = 1",
+          "ko": "best (최장 길이) = 1"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "pointers": {
+        "start": 0,
+        "i": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "last_seen": {
+       "entries": [
+        {
+         "key": "t",
+         "value": "i=0"
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "good": [
+         "t"
+        ]
+       },
+       "probe": {
+        "key": "t",
+        "hit": false,
+        "label": {
+         "en": "'t' in window?",
+         "ko": "'t' 구간 안에?"
+        }
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "feed",
+        "at": 0
+       },
+       "to": {
+        "view": "last_seen",
+        "at": "t"
+       },
+       "value": "i=0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "feed[1] = 'm' is new; last_seen['m'] = 1. Window length 2, a new best.",
+      "ko": "feed[1] = 'm' 태그는 처음 나왔습니다. last_seen['m'] = 1, 구간 길이 2, best = 2로 갱신."
+     },
+     "views": {
+      "feed": {
+       "values": [
+        "t",
+        "m",
+        "m",
+        "z",
+        "u",
+        "x",
+        "t"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "window 2",
+          "ko": "구간 2"
+         },
+         "mark": "good",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "best = 2",
+          "ko": "best (최장 길이) = 2"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "unread": [
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "pointers": {
+        "start": 0,
+        "i": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "last_seen": {
+       "entries": [
+        {
+         "key": "t",
+         "value": "i=0"
+        },
+        {
+         "key": "m",
+         "value": "i=1"
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "good": [
+         "m"
+        ]
+       },
+       "probe": {
+        "key": "m",
+        "hit": false,
+        "label": {
+         "en": "'m' in window?",
+         "ko": "'m' 구간 안에?"
+        }
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "feed",
+        "at": 1
+       },
+       "to": {
+        "view": "last_seen",
+        "at": "m"
+       },
+       "value": "i=1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "feed[2] = 'm' was last seen at i=1, inside the window from start = 0: the window would hold two 'm's.",
+      "ko": "feed[2] = 'm' 태그는 i=1에서 마지막으로 봤고, start = 0부터인 구간 안입니다. 구간에 'm' 태그가 두 번 들어갑니다."
+     },
+     "views": {
+      "feed": {
+       "values": [
+        "t",
+        "m",
+        "m",
+        "z",
+        "u",
+        "x",
+        "t"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "window 3",
+          "ko": "구간 3"
+         },
+         "mark": "bad",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "best = 2",
+          "ko": "best (최장 길이) = 2"
+         },
+         "below": true
+        }
+       },
+       "unread": [
+        3,
+        4,
+        5,
+        6
+       ],
+       "pointers": {
+        "start": 0,
+        "i": 2
+       },
+       "marks": {
+        "bad": [
+         1,
+         2
+        ]
+       }
+      },
+      "last_seen": {
+       "entries": [
+        {
+         "key": "t",
+         "value": "i=0"
+        },
+        {
+         "key": "m",
+         "value": "i=1"
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         "m"
+        ]
+       },
+       "probe": {
+        "key": "m",
+        "hit": true,
+        "label": {
+         "en": "'m' in window?",
+         "ko": "'m' 구간 안에?"
+        }
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "start jumps from 0 to 1 + 1 = 2, just past the earlier 'm', and last_seen['m'] becomes 2: window length 1, best stays 2.",
+      "ko": "start가 0에서 앞의 'm' 태그 바로 다음인 1 + 1 = 2로 옮겨 가고, last_seen['m'] 값은 2가 됩니다. 구간 길이 1, best = 2 그대로."
+     },
+     "views": {
+      "feed": {
+       "values": [
+        "t",
+        "m",
+        "m",
+        "z",
+        "u",
+        "x",
+        "t"
+       ],
+       "spans": {
+        "window": {
+         "from": 2,
+         "to": 2,
+         "label": {
+          "en": "window 1",
+          "ko": "구간 1"
+         },
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "best = 2",
+          "ko": "best (최장 길이) = 2"
+         },
+         "below": true
+        }
+       },
+       "unread": [
+        3,
+        4,
+        5,
+        6
+       ],
+       "pointers": {
+        "start": 2,
+        "i": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "last_seen": {
+       "entries": [
+        {
+         "key": "t",
+         "value": "i=0"
+        },
+        {
+         "key": "m",
+         "value": "i=2"
+        }
+       ],
+       "marks": {
+        "dim": [
+         "t"
+        ],
+        "good": [
+         "m"
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "feed",
+        "at": 2
+       },
+       "to": {
+        "view": "last_seen",
+        "at": "m"
+       },
+       "value": "i=2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "feed[3] = 'z' is new; last_seen['z'] = 3. Window length 2, best stays 2.",
+      "ko": "feed[3] = 'z' 태그는 처음 나왔습니다. last_seen['z'] = 3, 구간 길이 2, best = 2 그대로."
+     },
+     "views": {
+      "feed": {
+       "values": [
+        "t",
+        "m",
+        "m",
+        "z",
+        "u",
+        "x",
+        "t"
+       ],
+       "spans": {
+        "window": {
+         "from": 2,
+         "to": 3,
+         "label": {
+          "en": "window 2",
+          "ko": "구간 2"
+         },
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "best = 2",
+          "ko": "best (최장 길이) = 2"
+         },
+         "below": true
+        }
+       },
+       "unread": [
+        4,
+        5,
+        6
+       ],
+       "pointers": {
+        "start": 2,
+        "i": 3
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "last_seen": {
+       "entries": [
+        {
+         "key": "t",
+         "value": "i=0"
+        },
+        {
+         "key": "m",
+         "value": "i=2"
+        },
+        {
+         "key": "z",
+         "value": "i=3"
+        }
+       ],
+       "marks": {
+        "dim": [
+         "t"
+        ],
+        "good": [
+         "z"
+        ]
+       },
+       "probe": {
+        "key": "z",
+        "hit": false,
+        "label": {
+         "en": "'z' in window?",
+         "ko": "'z' 구간 안에?"
+        }
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "feed",
+        "at": 3
+       },
+       "to": {
+        "view": "last_seen",
+        "at": "z"
+       },
+       "value": "i=3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "feed[4] = 'u' is new; last_seen['u'] = 4. Window length 3, a new best.",
+      "ko": "feed[4] = 'u' 태그는 처음 나왔습니다. last_seen['u'] = 4, 구간 길이 3, best = 3으로 갱신."
+     },
+     "views": {
+      "feed": {
+       "values": [
+        "t",
+        "m",
+        "m",
+        "z",
+        "u",
+        "x",
+        "t"
+       ],
+       "spans": {
+        "window": {
+         "from": 2,
+         "to": 4,
+         "label": {
+          "en": "window 3",
+          "ko": "구간 3"
+         },
+         "mark": "good",
+         "fade": true
+        },
+        "best": {
+         "from": 2,
+         "to": 4,
+         "label": {
+          "en": "best = 3",
+          "ko": "best (최장 길이) = 3"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "unread": [
+        5,
+        6
+       ],
+       "pointers": {
+        "start": 2,
+        "i": 4
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       }
+      },
+      "last_seen": {
+       "entries": [
+        {
+         "key": "t",
+         "value": "i=0"
+        },
+        {
+         "key": "m",
+         "value": "i=2"
+        },
+        {
+         "key": "z",
+         "value": "i=3"
+        },
+        {
+         "key": "u",
+         "value": "i=4"
+        }
+       ],
+       "marks": {
+        "dim": [
+         "t"
+        ],
+        "good": [
+         "u"
+        ]
+       },
+       "probe": {
+        "key": "u",
+        "hit": false,
+        "label": {
+         "en": "'u' in window?",
+         "ko": "'u' 구간 안에?"
+        }
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "feed",
+        "at": 4
+       },
+       "to": {
+        "view": "last_seen",
+        "at": "u"
+       },
+       "value": "i=4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "feed[5] = 'x' is new; last_seen['x'] = 5. Window length 4, a new best.",
+      "ko": "feed[5] = 'x' 태그는 처음 나왔습니다. last_seen['x'] = 5, 구간 길이 4, best = 4로 갱신."
+     },
+     "views": {
+      "feed": {
+       "values": [
+        "t",
+        "m",
+        "m",
+        "z",
+        "u",
+        "x",
+        "t"
+       ],
+       "spans": {
+        "window": {
+         "from": 2,
+         "to": 5,
+         "label": {
+          "en": "window 4",
+          "ko": "구간 4"
+         },
+         "mark": "good",
+         "fade": true
+        },
+        "best": {
+         "from": 2,
+         "to": 5,
+         "label": {
+          "en": "best = 4",
+          "ko": "best (최장 길이) = 4"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "unread": [
+        6
+       ],
+       "pointers": {
+        "start": 2,
+        "i": 5
+       },
+       "marks": {
+        "lit": [
+         5
+        ]
+       }
+      },
+      "last_seen": {
+       "entries": [
+        {
+         "key": "t",
+         "value": "i=0"
+        },
+        {
+         "key": "m",
+         "value": "i=2"
+        },
+        {
+         "key": "z",
+         "value": "i=3"
+        },
+        {
+         "key": "u",
+         "value": "i=4"
+        },
+        {
+         "key": "x",
+         "value": "i=5"
+        }
+       ],
+       "marks": {
+        "dim": [
+         "t"
+        ],
+        "good": [
+         "x"
+        ]
+       },
+       "probe": {
+        "key": "x",
+        "hit": false,
+        "label": {
+         "en": "'x' in window?",
+         "ko": "'x' 구간 안에?"
+        }
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "feed",
+        "at": 5
+       },
+       "to": {
+        "view": "last_seen",
+        "at": "x"
+       },
+       "value": "i=5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "feed[6] = 't' was last seen at i=0, before start = 2, so it is not in the window; last_seen['t'] = 6. Window length 5, a new best.",
+      "ko": "feed[6] = 't' 태그는 i=0에서 봤지만 start = 2보다 앞이라 구간 밖입니다. last_seen['t'] = 6, 구간 길이 5, best = 5로 갱신."
+     },
+     "views": {
+      "feed": {
+       "values": [
+        "t",
+        "m",
+        "m",
+        "z",
+        "u",
+        "x",
+        "t"
+       ],
+       "spans": {
+        "window": {
+         "from": 2,
+         "to": 6,
+         "label": {
+          "en": "window 5",
+          "ko": "구간 5"
+         },
+         "mark": "good",
+         "fade": true
+        },
+        "best": {
+         "from": 2,
+         "to": 6,
+         "label": {
+          "en": "best = 5",
+          "ko": "best (최장 길이) = 5"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "unread": [],
+       "pointers": {
+        "start": 2,
+        "i": 6
+       },
+       "marks": {
+        "lit": [
+         6
+        ]
+       }
+      },
+      "last_seen": {
+       "entries": [
+        {
+         "key": "t",
+         "value": "i=6"
+        },
+        {
+         "key": "m",
+         "value": "i=2"
+        },
+        {
+         "key": "z",
+         "value": "i=3"
+        },
+        {
+         "key": "u",
+         "value": "i=4"
+        },
+        {
+         "key": "x",
+         "value": "i=5"
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "good": [
+         "t"
+        ]
+       },
+       "probe": {
+        "key": "t",
+        "hit": false,
+        "label": {
+         "en": "'t' in window?",
+         "ko": "'t' 구간 안에?"
+        }
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "feed",
+        "at": 6
+       },
+       "to": {
+        "view": "last_seen",
+        "at": "t"
+       },
+       "value": "i=6"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every tag is read, and the longest window was the last one, \"mzuxt\" (feed[2..6]), length 5. Answer 5.",
+      "ko": "모든 태그를 읽었고, 가장 긴 구간은 마지막 구간 \"mzuxt\"(feed[2..6]), 길이 5입니다. 답은 5입니다."
+     },
+     "views": {
+      "feed": {
+       "values": [
+        "t",
+        "m",
+        "m",
+        "z",
+        "u",
+        "x",
+        "t"
+       ],
+       "spans": {
+        "best": {
+         "from": 2,
+         "to": 6,
+         "label": {
+          "en": "best = 5",
+          "ko": "best (최장 길이) = 5"
+         },
+         "mark": "path",
+         "below": true
+        }
+       },
+       "unread": [],
+       "pointers": {},
+       "marks": {
+        "path": [
+         2,
+         3,
+         4,
+         5,
+         6
+        ]
+       }
+      },
+      "last_seen": {
+       "entries": [
+        {
+         "key": "t",
+         "value": "i=6"
+        },
+        {
+         "key": "m",
+         "value": "i=2"
+        },
+        {
+         "key": "z",
+         "value": "i=3"
+        },
+        {
+         "key": "u",
+         "value": "i=4"
+        },
+        {
+         "key": "x",
+         "value": "i=5"
+        }
+       ],
+       "marks": {
+        "dim": [
+         "t",
+         "m",
+         "z",
+         "u",
+         "x"
+        ]
+       }
+      }
+     },
+     "answer": "5"
+    }
+   ],
+   "sampleInput": "tmmzuxt"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "feed = \"zzzz\"",
+   "expected": "1",
+   "frames": [
+    {
+     "caption": {
+      "en": "4 tags in feed. Read them left to right; last_seen remembers the index where each tag was last seen, and the window runs from start to the tag read.",
+      "ko": "feed에 태그가 4개 있습니다. 왼쪽부터 읽으며 last_seen에 태그마다 마지막으로 본 위치를 기억하고, 구간은 start부터 지금 읽는 태그까지입니다."
+     },
+     "views": {
+      "feed": {
+       "values": [
+        "z",
+        "z",
+        "z",
+        "z"
+       ],
+       "spans": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3
+       ],
+       "pointers": {},
+       "marks": {}
+      },
+      "last_seen": {
+       "entries": [],
+       "marks": {
+        "dim": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "feed[0] = 'z' is new; last_seen['z'] = 0. Window length 1, a new best.",
+      "ko": "feed[0] = 'z' 태그는 처음 나왔습니다. last_seen['z'] = 0, 구간 길이 1, best = 1로 갱신."
+     },
+     "views": {
+      "feed": {
+       "values": [
+        "z",
+        "z",
+        "z",
+        "z"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "window 1",
+          "ko": "구간 1"
+         },
+         "mark": "good",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "best = 1",
+          "ko": "best (최장 길이) = 1"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "unread": [
+        1,
+        2,
+        3
+       ],
+       "pointers": {
+        "start": 0,
+        "i": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "last_seen": {
+       "entries": [
+        {
+         "key": "z",
+         "value": "i=0"
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "good": [
+         "z"
+        ]
+       },
+       "probe": {
+        "key": "z",
+        "hit": false,
+        "label": {
+         "en": "'z' in window?",
+         "ko": "'z' 구간 안에?"
+        }
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "feed",
+        "at": 0
+       },
+       "to": {
+        "view": "last_seen",
+        "at": "z"
+       },
+       "value": "i=0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "feed[1] = 'z' was last seen at i=0, inside the window from start = 0: the window would hold two 'z's.",
+      "ko": "feed[1] = 'z' 태그는 i=0에서 마지막으로 봤고, start = 0부터인 구간 안입니다. 구간에 'z' 태그가 두 번 들어갑니다."
+     },
+     "views": {
+      "feed": {
+       "values": [
+        "z",
+        "z",
+        "z",
+        "z"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "window 2",
+          "ko": "구간 2"
+         },
+         "mark": "bad",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "best = 1",
+          "ko": "best (최장 길이) = 1"
+         },
+         "below": true
+        }
+       },
+       "unread": [
+        2,
+        3
+       ],
+       "pointers": {
+        "start": 0,
+        "i": 1
+       },
+       "marks": {
+        "bad": [
+         0,
+         1
+        ]
+       }
+      },
+      "last_seen": {
+       "entries": [
+        {
+         "key": "z",
+         "value": "i=0"
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         "z"
+        ]
+       },
+       "probe": {
+        "key": "z",
+        "hit": true,
+        "label": {
+         "en": "'z' in window?",
+         "ko": "'z' 구간 안에?"
+        }
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "start jumps from 0 to 0 + 1 = 1, just past the earlier 'z', and last_seen['z'] becomes 1: window length 1, best stays 1.",
+      "ko": "start가 0에서 앞의 'z' 태그 바로 다음인 0 + 1 = 1로 옮겨 가고, last_seen['z'] 값은 1이 됩니다. 구간 길이 1, best = 1 그대로."
+     },
+     "views": {
+      "feed": {
+       "values": [
+        "z",
+        "z",
+        "z",
+        "z"
+       ],
+       "spans": {
+        "window": {
+         "from": 1,
+         "to": 1,
+         "label": {
+          "en": "window 1",
+          "ko": "구간 1"
+         },
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "best = 1",
+          "ko": "best (최장 길이) = 1"
+         },
+         "below": true
+        }
+       },
+       "unread": [
+        2,
+        3
+       ],
+       "pointers": {
+        "start": 1,
+        "i": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "last_seen": {
+       "entries": [
+        {
+         "key": "z",
+         "value": "i=1"
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "good": [
+         "z"
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "feed",
+        "at": 1
+       },
+       "to": {
+        "view": "last_seen",
+        "at": "z"
+       },
+       "value": "i=1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "feed[2] = 'z' was last seen at i=1, inside the window from start = 1: the window would hold two 'z's.",
+      "ko": "feed[2] = 'z' 태그는 i=1에서 마지막으로 봤고, start = 1부터인 구간 안입니다. 구간에 'z' 태그가 두 번 들어갑니다."
+     },
+     "views": {
+      "feed": {
+       "values": [
+        "z",
+        "z",
+        "z",
+        "z"
+       ],
+       "spans": {
+        "window": {
+         "from": 1,
+         "to": 2,
+         "label": {
+          "en": "window 2",
+          "ko": "구간 2"
+         },
+         "mark": "bad",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "best = 1",
+          "ko": "best (최장 길이) = 1"
+         },
+         "below": true
+        }
+       },
+       "unread": [
+        3
+       ],
+       "pointers": {
+        "start": 1,
+        "i": 2
+       },
+       "marks": {
+        "bad": [
+         1,
+         2
+        ]
+       }
+      },
+      "last_seen": {
+       "entries": [
+        {
+         "key": "z",
+         "value": "i=1"
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         "z"
+        ]
+       },
+       "probe": {
+        "key": "z",
+        "hit": true,
+        "label": {
+         "en": "'z' in window?",
+         "ko": "'z' 구간 안에?"
+        }
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "start jumps from 1 to 1 + 1 = 2, just past the earlier 'z', and last_seen['z'] becomes 2: window length 1, best stays 1.",
+      "ko": "start가 1에서 앞의 'z' 태그 바로 다음인 1 + 1 = 2로 옮겨 가고, last_seen['z'] 값은 2가 됩니다. 구간 길이 1, best = 1 그대로."
+     },
+     "views": {
+      "feed": {
+       "values": [
+        "z",
+        "z",
+        "z",
+        "z"
+       ],
+       "spans": {
+        "window": {
+         "from": 2,
+         "to": 2,
+         "label": {
+          "en": "window 1",
+          "ko": "구간 1"
+         },
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "best = 1",
+          "ko": "best (최장 길이) = 1"
+         },
+         "below": true
+        }
+       },
+       "unread": [
+        3
+       ],
+       "pointers": {
+        "start": 2,
+        "i": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "last_seen": {
+       "entries": [
+        {
+         "key": "z",
+         "value": "i=2"
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "good": [
+         "z"
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "feed",
+        "at": 2
+       },
+       "to": {
+        "view": "last_seen",
+        "at": "z"
+       },
+       "value": "i=2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "feed[3] = 'z' was last seen at i=2, inside the window from start = 2: the window would hold two 'z's.",
+      "ko": "feed[3] = 'z' 태그는 i=2에서 마지막으로 봤고, start = 2부터인 구간 안입니다. 구간에 'z' 태그가 두 번 들어갑니다."
+     },
+     "views": {
+      "feed": {
+       "values": [
+        "z",
+        "z",
+        "z",
+        "z"
+       ],
+       "spans": {
+        "window": {
+         "from": 2,
+         "to": 3,
+         "label": {
+          "en": "window 2",
+          "ko": "구간 2"
+         },
+         "mark": "bad",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "best = 1",
+          "ko": "best (최장 길이) = 1"
+         },
+         "below": true
+        }
+       },
+       "unread": [],
+       "pointers": {
+        "start": 2,
+        "i": 3
+       },
+       "marks": {
+        "bad": [
+         2,
+         3
+        ]
+       }
+      },
+      "last_seen": {
+       "entries": [
+        {
+         "key": "z",
+         "value": "i=2"
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         "z"
+        ]
+       },
+       "probe": {
+        "key": "z",
+        "hit": true,
+        "label": {
+         "en": "'z' in window?",
+         "ko": "'z' 구간 안에?"
+        }
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "start jumps from 2 to 2 + 1 = 3, just past the earlier 'z', and last_seen['z'] becomes 3: window length 1, best stays 1.",
+      "ko": "start가 2에서 앞의 'z' 태그 바로 다음인 2 + 1 = 3으로 옮겨 가고, last_seen['z'] 값은 3이 됩니다. 구간 길이 1, best = 1 그대로."
+     },
+     "views": {
+      "feed": {
+       "values": [
+        "z",
+        "z",
+        "z",
+        "z"
+       ],
+       "spans": {
+        "window": {
+         "from": 3,
+         "to": 3,
+         "label": {
+          "en": "window 1",
+          "ko": "구간 1"
+         },
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "best = 1",
+          "ko": "best (최장 길이) = 1"
+         },
+         "below": true
+        }
+       },
+       "unread": [],
+       "pointers": {
+        "start": 3,
+        "i": 3
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "last_seen": {
+       "entries": [
+        {
+         "key": "z",
+         "value": "i=3"
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "good": [
+         "z"
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "feed",
+        "at": 3
+       },
+       "to": {
+        "view": "last_seen",
+        "at": "z"
+       },
+       "value": "i=3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every tag is read: the run ended on feed[3..3], but the first longest window was \"z\" (feed[0..0]), length 1. Answer 1.",
+      "ko": "모든 태그를 읽었습니다. 실행은 feed[3..3]에서 끝났지만 처음 찾은 가장 긴 구간은 \"z\"(feed[0..0]), 길이 1이고, 답은 1입니다."
+     },
+     "views": {
+      "feed": {
+       "values": [
+        "z",
+        "z",
+        "z",
+        "z"
+       ],
+       "spans": {
+        "best": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "best = 1",
+          "ko": "best (최장 길이) = 1"
+         },
+         "mark": "path",
+         "below": true
+        }
+       },
+       "unread": [],
+       "pointers": {},
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      },
+      "last_seen": {
+       "entries": [
+        {
+         "key": "z",
+         "value": "i=3"
+        }
+       ],
+       "marks": {
+        "dim": [
+         "z"
+        ]
+       }
+      }
+     },
+     "answer": "1"
+    }
+   ],
+   "sampleInput": "zzzz"
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "feed = \"xxxyz\"",
+   "expected": "3",
+   "frames": [
+    {
+     "caption": {
+      "en": "5 tags in feed. Read them left to right; last_seen remembers the index where each tag was last seen, and the window runs from start to the tag read.",
+      "ko": "feed에 태그가 5개 있습니다. 왼쪽부터 읽으며 last_seen에 태그마다 마지막으로 본 위치를 기억하고, 구간은 start부터 지금 읽는 태그까지입니다."
+     },
+     "views": {
+      "feed": {
+       "values": [
+        "x",
+        "x",
+        "x",
+        "y",
+        "z"
+       ],
+       "spans": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "pointers": {},
+       "marks": {}
+      },
+      "last_seen": {
+       "entries": [],
+       "marks": {
+        "dim": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "feed[0] = 'x' is new; last_seen['x'] = 0. Window length 1, a new best.",
+      "ko": "feed[0] = 'x' 태그는 처음 나왔습니다. last_seen['x'] = 0, 구간 길이 1, best = 1로 갱신."
+     },
+     "views": {
+      "feed": {
+       "values": [
+        "x",
+        "x",
+        "x",
+        "y",
+        "z"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "window 1",
+          "ko": "구간 1"
+         },
+         "mark": "good",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "best = 1",
+          "ko": "best (최장 길이) = 1"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4
+       ],
+       "pointers": {
+        "start": 0,
+        "i": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "last_seen": {
+       "entries": [
+        {
+         "key": "x",
+         "value": "i=0"
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "good": [
+         "x"
+        ]
+       },
+       "probe": {
+        "key": "x",
+        "hit": false,
+        "label": {
+         "en": "'x' in window?",
+         "ko": "'x' 구간 안에?"
+        }
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "feed",
+        "at": 0
+       },
+       "to": {
+        "view": "last_seen",
+        "at": "x"
+       },
+       "value": "i=0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "feed[1] = 'x' was last seen at i=0, inside the window from start = 0: the window would hold two 'x's.",
+      "ko": "feed[1] = 'x' 태그는 i=0에서 마지막으로 봤고, start = 0부터인 구간 안입니다. 구간에 'x' 태그가 두 번 들어갑니다."
+     },
+     "views": {
+      "feed": {
+       "values": [
+        "x",
+        "x",
+        "x",
+        "y",
+        "z"
+       ],
+       "spans": {
+        "window": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "window 2",
+          "ko": "구간 2"
+         },
+         "mark": "bad",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "best = 1",
+          "ko": "best (최장 길이) = 1"
+         },
+         "below": true
+        }
+       },
+       "unread": [
+        2,
+        3,
+        4
+       ],
+       "pointers": {
+        "start": 0,
+        "i": 1
+       },
+       "marks": {
+        "bad": [
+         0,
+         1
+        ]
+       }
+      },
+      "last_seen": {
+       "entries": [
+        {
+         "key": "x",
+         "value": "i=0"
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         "x"
+        ]
+       },
+       "probe": {
+        "key": "x",
+        "hit": true,
+        "label": {
+         "en": "'x' in window?",
+         "ko": "'x' 구간 안에?"
+        }
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "start jumps from 0 to 0 + 1 = 1, just past the earlier 'x', and last_seen['x'] becomes 1: window length 1, best stays 1.",
+      "ko": "start가 0에서 앞의 'x' 태그 바로 다음인 0 + 1 = 1로 옮겨 가고, last_seen['x'] 값은 1이 됩니다. 구간 길이 1, best = 1 그대로."
+     },
+     "views": {
+      "feed": {
+       "values": [
+        "x",
+        "x",
+        "x",
+        "y",
+        "z"
+       ],
+       "spans": {
+        "window": {
+         "from": 1,
+         "to": 1,
+         "label": {
+          "en": "window 1",
+          "ko": "구간 1"
+         },
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "best = 1",
+          "ko": "best (최장 길이) = 1"
+         },
+         "below": true
+        }
+       },
+       "unread": [
+        2,
+        3,
+        4
+       ],
+       "pointers": {
+        "start": 1,
+        "i": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "last_seen": {
+       "entries": [
+        {
+         "key": "x",
+         "value": "i=1"
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "good": [
+         "x"
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "feed",
+        "at": 1
+       },
+       "to": {
+        "view": "last_seen",
+        "at": "x"
+       },
+       "value": "i=1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "feed[2] = 'x' was last seen at i=1, inside the window from start = 1: the window would hold two 'x's.",
+      "ko": "feed[2] = 'x' 태그는 i=1에서 마지막으로 봤고, start = 1부터인 구간 안입니다. 구간에 'x' 태그가 두 번 들어갑니다."
+     },
+     "views": {
+      "feed": {
+       "values": [
+        "x",
+        "x",
+        "x",
+        "y",
+        "z"
+       ],
+       "spans": {
+        "window": {
+         "from": 1,
+         "to": 2,
+         "label": {
+          "en": "window 2",
+          "ko": "구간 2"
+         },
+         "mark": "bad",
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "best = 1",
+          "ko": "best (최장 길이) = 1"
+         },
+         "below": true
+        }
+       },
+       "unread": [
+        3,
+        4
+       ],
+       "pointers": {
+        "start": 1,
+        "i": 2
+       },
+       "marks": {
+        "bad": [
+         1,
+         2
+        ]
+       }
+      },
+      "last_seen": {
+       "entries": [
+        {
+         "key": "x",
+         "value": "i=1"
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         "x"
+        ]
+       },
+       "probe": {
+        "key": "x",
+        "hit": true,
+        "label": {
+         "en": "'x' in window?",
+         "ko": "'x' 구간 안에?"
+        }
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "start jumps from 1 to 1 + 1 = 2, just past the earlier 'x', and last_seen['x'] becomes 2: window length 1, best stays 1.",
+      "ko": "start가 1에서 앞의 'x' 태그 바로 다음인 1 + 1 = 2로 옮겨 가고, last_seen['x'] 값은 2가 됩니다. 구간 길이 1, best = 1 그대로."
+     },
+     "views": {
+      "feed": {
+       "values": [
+        "x",
+        "x",
+        "x",
+        "y",
+        "z"
+       ],
+       "spans": {
+        "window": {
+         "from": 2,
+         "to": 2,
+         "label": {
+          "en": "window 1",
+          "ko": "구간 1"
+         },
+         "fade": true
+        },
+        "best": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "best = 1",
+          "ko": "best (최장 길이) = 1"
+         },
+         "below": true
+        }
+       },
+       "unread": [
+        3,
+        4
+       ],
+       "pointers": {
+        "start": 2,
+        "i": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "last_seen": {
+       "entries": [
+        {
+         "key": "x",
+         "value": "i=2"
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "good": [
+         "x"
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "feed",
+        "at": 2
+       },
+       "to": {
+        "view": "last_seen",
+        "at": "x"
+       },
+       "value": "i=2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "feed[3] = 'y' is new; last_seen['y'] = 3. Window length 2, a new best.",
+      "ko": "feed[3] = 'y' 태그는 처음 나왔습니다. last_seen['y'] = 3, 구간 길이 2, best = 2로 갱신."
+     },
+     "views": {
+      "feed": {
+       "values": [
+        "x",
+        "x",
+        "x",
+        "y",
+        "z"
+       ],
+       "spans": {
+        "window": {
+         "from": 2,
+         "to": 3,
+         "label": {
+          "en": "window 2",
+          "ko": "구간 2"
+         },
+         "mark": "good",
+         "fade": true
+        },
+        "best": {
+         "from": 2,
+         "to": 3,
+         "label": {
+          "en": "best = 2",
+          "ko": "best (최장 길이) = 2"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "unread": [
+        4
+       ],
+       "pointers": {
+        "start": 2,
+        "i": 3
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "last_seen": {
+       "entries": [
+        {
+         "key": "x",
+         "value": "i=2"
+        },
+        {
+         "key": "y",
+         "value": "i=3"
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "good": [
+         "y"
+        ]
+       },
+       "probe": {
+        "key": "y",
+        "hit": false,
+        "label": {
+         "en": "'y' in window?",
+         "ko": "'y' 구간 안에?"
+        }
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "feed",
+        "at": 3
+       },
+       "to": {
+        "view": "last_seen",
+        "at": "y"
+       },
+       "value": "i=3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "feed[4] = 'z' is new; last_seen['z'] = 4. Window length 3, a new best.",
+      "ko": "feed[4] = 'z' 태그는 처음 나왔습니다. last_seen['z'] = 4, 구간 길이 3, best = 3으로 갱신."
+     },
+     "views": {
+      "feed": {
+       "values": [
+        "x",
+        "x",
+        "x",
+        "y",
+        "z"
+       ],
+       "spans": {
+        "window": {
+         "from": 2,
+         "to": 4,
+         "label": {
+          "en": "window 3",
+          "ko": "구간 3"
+         },
+         "mark": "good",
+         "fade": true
+        },
+        "best": {
+         "from": 2,
+         "to": 4,
+         "label": {
+          "en": "best = 3",
+          "ko": "best (최장 길이) = 3"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "unread": [],
+       "pointers": {
+        "start": 2,
+        "i": 4
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       }
+      },
+      "last_seen": {
+       "entries": [
+        {
+         "key": "x",
+         "value": "i=2"
+        },
+        {
+         "key": "y",
+         "value": "i=3"
+        },
+        {
+         "key": "z",
+         "value": "i=4"
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "good": [
+         "z"
+        ]
+       },
+       "probe": {
+        "key": "z",
+        "hit": false,
+        "label": {
+         "en": "'z' in window?",
+         "ko": "'z' 구간 안에?"
+        }
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "feed",
+        "at": 4
+       },
+       "to": {
+        "view": "last_seen",
+        "at": "z"
+       },
+       "value": "i=4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every tag is read, and the longest window was the last one, \"xyz\" (feed[2..4]), length 3. Answer 3.",
+      "ko": "모든 태그를 읽었고, 가장 긴 구간은 마지막 구간 \"xyz\"(feed[2..4]), 길이 3입니다. 답은 3입니다."
+     },
+     "views": {
+      "feed": {
+       "values": [
+        "x",
+        "x",
+        "x",
+        "y",
+        "z"
+       ],
+       "spans": {
+        "best": {
+         "from": 2,
+         "to": 4,
+         "label": {
+          "en": "best = 3",
+          "ko": "best (최장 길이) = 3"
+         },
+         "mark": "path",
+         "below": true
+        }
+       },
+       "unread": [],
+       "pointers": {},
+       "marks": {
+        "path": [
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "last_seen": {
+       "entries": [
+        {
+         "key": "x",
+         "value": "i=2"
+        },
+        {
+         "key": "y",
+         "value": "i=3"
+        },
+        {
+         "key": "z",
+         "value": "i=4"
+        }
+       ],
+       "marks": {
+        "dim": [
+         "x",
+         "y",
+         "z"
+        ]
+       }
+      }
+     },
+     "answer": "3"
+    }
+   ],
+   "sampleInput": "xxxyz"
+  }
+ ]
+}

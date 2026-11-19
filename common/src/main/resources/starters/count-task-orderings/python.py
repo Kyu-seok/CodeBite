@@ -1,6 +1,6 @@
 from typing import List
 
 class Solution:
-    def countAssemblyOrders(self, parent: List[int]) -> int:
+    def countTaskOrders(self, parent: List[int]) -> int:
         # Write your solution here
         pass

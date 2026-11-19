@@ -1,5 +1,5 @@
 class Solution:
-    def erase_overlap_intervals(self, classes: list[list[int]]) -> int:
+    def dropClassConflicts(self, classes: list[list[int]]) -> int:
         dropped = 0
         last_end = float("-inf")
         for start, end in sorted(classes, key=lambda c: c[1]):

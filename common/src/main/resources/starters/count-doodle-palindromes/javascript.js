@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {string} code
+     * @param {string} doodle
      * @return {number}
      */
-    countMirrorSpans(code) {
+    countPalindromicSubstrings(doodle) {
         // Write your solution here
     }
 }

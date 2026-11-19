@@ -1,6 +1,6 @@
 {USER_CODE}
 
 import json
-grid = json.loads(input())
-result = Solution().tallyPlantedRegions(grid)
+board = json.loads(input())
+result = Solution().countClusters(board)
 print(result)

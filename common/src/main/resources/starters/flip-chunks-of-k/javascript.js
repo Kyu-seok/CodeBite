@@ -14,7 +14,7 @@ class Solution {
      * @param {number} k
      * @return {ListNode}
      */
-    flipSorterSegments(head, k) {
+    flipChunks(head, k) {
         // Write your solution here
     }
 }

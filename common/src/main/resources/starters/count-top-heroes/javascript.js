@@ -14,7 +14,7 @@ class Solution {
      * @param {TreeNode} root
      * @return {number}
      */
-    tallyDominantBlocks(root) {
+    countDominantHeroes(root) {
         // Write your solution here
     }
 }

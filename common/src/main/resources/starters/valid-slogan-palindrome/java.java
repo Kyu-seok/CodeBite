@@ -1,5 +1,5 @@
 class Solution {
-    public boolean verifyMirrorCode(String phrase) {
+    public boolean isPalindrome(String phrase) {
         // Write your solution here
     }
 }

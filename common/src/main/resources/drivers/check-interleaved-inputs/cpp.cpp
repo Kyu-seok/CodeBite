@@ -5,11 +5,11 @@ using namespace std;
 {USER_CODE}
 
 int main() {
-    string s1, s2, s3;
-    getline(cin, s1);
-    getline(cin, s2);
-    getline(cin, s3);
-    bool result = Solution().checkMergedQueue(s1, s2, s3);
+    string controllerA, controllerB, merged;
+    getline(cin, controllerA);
+    getline(cin, controllerB);
+    getline(cin, merged);
+    bool result = Solution().isInterleaving(controllerA, controllerB, merged);
     cout << (result ? "true" : "false") << endl;
     return 0;
 }

@@ -24,5 +24,5 @@ const arr1 = JSON.parse(lines[0]);
 const arr2 = JSON.parse(lines[1]);
 const l1 = _buildList(arr1);
 const l2 = _buildList(arr2);
-const result = new Solution().tallyPickRoutes(l1, l2);
+const result = new Solution().addScoreLists(l1, l2);
 console.log(JSON.stringify(_listToArray(result)));

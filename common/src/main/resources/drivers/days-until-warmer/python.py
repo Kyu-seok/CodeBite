@@ -1,6 +1,6 @@
 {USER_CODE}
 
 import json
-temperatures = eval(input())
-result = Solution().daysToUpgrade(temperatures)
+readings = eval(input())
+result = Solution().daysUntilWarmer(readings)
 print(json.dumps(result, separators=(',', ':')))

@@ -1,6 +1,6 @@
 {USER_CODE}
 
-gas = eval(input())
-cost = eval(input())
-result = Solution().can_complete_circuit(gas, cost)
+energy = eval(input())
+drain = eval(input())
+result = Solution().pickStartStop(energy, drain)
 print(result)

@@ -9,9 +9,9 @@ using namespace std;
 {USER_CODE}
 
 int main() {
-    int n;
-    cin >> n;
-    vector<string> result = Solution().listSlateSequences(n);
+    int pairCount;
+    cin >> pairCount;
+    vector<string> result = Solution().listBracketPairings(pairCount);
     sort(result.begin(), result.end());
     cout << JsonOutput::stringVector(result) << endl;
     return 0;

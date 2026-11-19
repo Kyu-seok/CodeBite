@@ -14,7 +14,7 @@ class Solution {
      * @param {TreeNode} root
      * @return {TreeNode}
      */
-    reflectBlend(root) {
+    mirrorTree(root) {
         // Write your solution here
     }
 }

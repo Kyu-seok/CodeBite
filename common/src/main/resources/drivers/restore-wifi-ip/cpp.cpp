@@ -9,9 +9,9 @@ using namespace std;
 {USER_CODE}
 
 int main() {
-    string s;
-    getline(cin, s);
-    vector<string> result = Solution().splitZoneCodes(s);
+    string digits;
+    getline(cin, digits);
+    vector<string> result = Solution().restoreIpAddresses(digits);
     sort(result.begin(), result.end());
     cout << JsonOutput::stringVector(result) << endl;
     return 0;

@@ -1,0 +1,3103 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Find the Sub-map",
+  "ko": "서브맵 찾기"
+ },
+ "approach": {
+  "en": "A preorder walk that writes # for every missing child describes a subtree's shape and values exactly, and a subtree's walk is one unbroken stretch of the whole tree's walk: so subRoot is in root exactly when its walk appears inside root's.",
+  "ko": "없는 자식마다 # 표시를 적는 전위 순회는 서브트리의 모양과 값을 정확히 나타내고, 서브트리의 순회는 전체 트리 순회 안에 끊기지 않고 이어진 한 구간입니다. 그래서 subRoot의 순회가 root의 순회 안에 그대로 있을 때만 서브트리입니다."
+ },
+ "views": [
+  {
+   "id": "root",
+   "type": "tree",
+   "arity": 2,
+   "title": {
+    "en": "root",
+    "ko": "root (큰 트리)"
+   }
+  },
+  {
+   "id": "sub",
+   "type": "tree",
+   "arity": 2,
+   "title": {
+    "en": "subRoot",
+    "ko": "subRoot (찾는 트리)"
+   }
+  },
+  {
+   "id": "subwalk",
+   "type": "array",
+   "title": {
+    "en": "walk of subRoot",
+    "ko": "subRoot의 순회"
+   }
+  },
+  {
+   "id": "rootwalk",
+   "type": "array",
+   "title": {
+    "en": "walk of root",
+    "ko": "root의 순회"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "root = [9,6,7,2,4], subRoot = [6,2,4]",
+   "expected": "true",
+   "frames": [
+    {
+     "caption": {
+      "en": "root has 5 nodes, subRoot 3. Write each as its preorder walk (node, left side, right side) with # for a missing child, subRoot first.",
+      "ko": "root는 노드 5개, subRoot는 3개이며, 각각을 전위 순회(노드, 왼쪽, 오른쪽)로 적되 없는 자식은 # 표시로 적습니다. subRoot부터 적습니다."
+     },
+     "views": {
+      "root": {
+       "nodeMarks": {
+        "dim": []
+       }
+      },
+      "rootwalk": {
+       "values": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "marks": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+       ],
+       "spans": {}
+      },
+      "sub": {
+       "nodeMarks": {
+        "dim": []
+       }
+      },
+      "subwalk": {
+       "values": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "marks": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "spans": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Start subRoot's walk at its root: write 6.",
+      "ko": "subRoot의 순회를 root부터 시작해 6을 적습니다."
+     },
+     "views": {
+      "root": {
+       "nodeMarks": {
+        "dim": []
+       }
+      },
+      "rootwalk": {
+       "values": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "marks": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+       ],
+       "spans": {}
+      },
+      "sub": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "subwalk": {
+       "values": [
+        "6",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "spans": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "sub",
+        "at": 0
+       },
+       "to": {
+        "view": "subwalk",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Next, 6's left child: write 2.",
+      "ko": "다음은 6의 왼쪽 자식이므로 2를 적습니다."
+     },
+     "views": {
+      "root": {
+       "nodeMarks": {
+        "dim": []
+       }
+      },
+      "rootwalk": {
+       "values": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "marks": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+       ],
+       "spans": {}
+      },
+      "sub": {
+       "nodeMarks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "subwalk": {
+       "values": [
+        "6",
+        "2",
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       },
+       "unread": [
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "spans": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "sub",
+        "at": 1
+       },
+       "to": {
+        "view": "subwalk",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "2 has no left child: write #.",
+      "ko": "2에는 왼쪽 자식이 없으므로 # 표시를 적습니다."
+     },
+     "views": {
+      "root": {
+       "nodeMarks": {
+        "dim": []
+       }
+      },
+      "rootwalk": {
+       "values": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "marks": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+       ],
+       "spans": {}
+      },
+      "sub": {
+       "nodeMarks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "subwalk": {
+       "values": [
+        "6",
+        "2",
+        "#",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       },
+       "unread": [
+        3,
+        4,
+        5,
+        6
+       ],
+       "spans": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "sub",
+        "at": 1
+       },
+       "to": {
+        "view": "subwalk",
+        "at": 2
+       },
+       "value": "#"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "2 has no right child: write #.",
+      "ko": "2에는 오른쪽 자식이 없으므로 # 표시를 적습니다."
+     },
+     "views": {
+      "root": {
+       "nodeMarks": {
+        "dim": []
+       }
+      },
+      "rootwalk": {
+       "values": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "marks": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+       ],
+       "spans": {}
+      },
+      "sub": {
+       "nodeMarks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "subwalk": {
+       "values": [
+        "6",
+        "2",
+        "#",
+        "#",
+        "",
+        "",
+        ""
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       },
+       "unread": [
+        4,
+        5,
+        6
+       ],
+       "spans": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "sub",
+        "at": 1
+       },
+       "to": {
+        "view": "subwalk",
+        "at": 3
+       },
+       "value": "#"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Next, 6's right child: write 4.",
+      "ko": "다음은 6의 오른쪽 자식이므로 4를 적습니다."
+     },
+     "views": {
+      "root": {
+       "nodeMarks": {
+        "dim": []
+       }
+      },
+      "rootwalk": {
+       "values": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "marks": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+       ],
+       "spans": {}
+      },
+      "sub": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         1
+        ],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "subwalk": {
+       "values": [
+        "6",
+        "2",
+        "#",
+        "#",
+        "4",
+        "",
+        ""
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       },
+       "unread": [
+        5,
+        6
+       ],
+       "spans": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "sub",
+        "at": 2
+       },
+       "to": {
+        "view": "subwalk",
+        "at": 4
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "4 has no left child: write #.",
+      "ko": "4에는 왼쪽 자식이 없으므로 # 표시를 적습니다."
+     },
+     "views": {
+      "root": {
+       "nodeMarks": {
+        "dim": []
+       }
+      },
+      "rootwalk": {
+       "values": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "marks": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+       ],
+       "spans": {}
+      },
+      "sub": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         1
+        ],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "subwalk": {
+       "values": [
+        "6",
+        "2",
+        "#",
+        "#",
+        "4",
+        "#",
+        ""
+       ],
+       "marks": {
+        "good": [
+         5
+        ]
+       },
+       "unread": [
+        6
+       ],
+       "spans": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "sub",
+        "at": 2
+       },
+       "to": {
+        "view": "subwalk",
+        "at": 5
+       },
+       "value": "#"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "4 has no right child: write #.",
+      "ko": "4에는 오른쪽 자식이 없으므로 # 표시를 적습니다."
+     },
+     "views": {
+      "root": {
+       "nodeMarks": {
+        "dim": []
+       }
+      },
+      "rootwalk": {
+       "values": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "marks": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+       ],
+       "spans": {}
+      },
+      "sub": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         1
+        ],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "subwalk": {
+       "values": [
+        "6",
+        "2",
+        "#",
+        "#",
+        "4",
+        "#",
+        "#"
+       ],
+       "marks": {
+        "good": [
+         6
+        ]
+       },
+       "unread": [],
+       "spans": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "sub",
+        "at": 2
+       },
+       "to": {
+        "view": "subwalk",
+        "at": 6
+       },
+       "value": "#"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Start root's walk at its root: write 9.",
+      "ko": "root의 순회를 root부터 시작해 9를 적습니다."
+     },
+     "views": {
+      "root": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "rootwalk": {
+       "values": [
+        "9",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+       ],
+       "spans": {}
+      },
+      "sub": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "subwalk": {
+       "values": [
+        "6",
+        "2",
+        "#",
+        "#",
+        "4",
+        "#",
+        "#"
+       ],
+       "marks": {},
+       "unread": [],
+       "spans": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "root",
+        "at": 0
+       },
+       "to": {
+        "view": "rootwalk",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Next, 9's left child: write 6.",
+      "ko": "다음은 9의 왼쪽 자식이므로 6을 적습니다."
+     },
+     "views": {
+      "root": {
+       "nodeMarks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "rootwalk": {
+       "values": [
+        "9",
+        "6",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       },
+       "unread": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+       ],
+       "spans": {}
+      },
+      "sub": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "subwalk": {
+       "values": [
+        "6",
+        "2",
+        "#",
+        "#",
+        "4",
+        "#",
+        "#"
+       ],
+       "marks": {},
+       "unread": [],
+       "spans": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "root",
+        "at": 1
+       },
+       "to": {
+        "view": "rootwalk",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Next, 6's left child: write 2.",
+      "ko": "다음은 6의 왼쪽 자식이므로 2를 적습니다."
+     },
+     "views": {
+      "root": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         1
+        ],
+        "lit": [
+         3
+        ]
+       }
+      },
+      "rootwalk": {
+       "values": [
+        "9",
+        "6",
+        "2",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       },
+       "unread": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+       ],
+       "spans": {}
+      },
+      "sub": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "subwalk": {
+       "values": [
+        "6",
+        "2",
+        "#",
+        "#",
+        "4",
+        "#",
+        "#"
+       ],
+       "marks": {},
+       "unread": [],
+       "spans": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "root",
+        "at": 3
+       },
+       "to": {
+        "view": "rootwalk",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "2 has no left child: write #.",
+      "ko": "2에는 왼쪽 자식이 없으므로 # 표시를 적습니다."
+     },
+     "views": {
+      "root": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         1
+        ],
+        "lit": [
+         3
+        ]
+       }
+      },
+      "rootwalk": {
+       "values": [
+        "9",
+        "6",
+        "2",
+        "#",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       },
+       "unread": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+       ],
+       "spans": {}
+      },
+      "sub": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "subwalk": {
+       "values": [
+        "6",
+        "2",
+        "#",
+        "#",
+        "4",
+        "#",
+        "#"
+       ],
+       "marks": {},
+       "unread": [],
+       "spans": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "root",
+        "at": 3
+       },
+       "to": {
+        "view": "rootwalk",
+        "at": 3
+       },
+       "value": "#"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "2 has no right child: write #.",
+      "ko": "2에는 오른쪽 자식이 없으므로 # 표시를 적습니다."
+     },
+     "views": {
+      "root": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         1
+        ],
+        "lit": [
+         3
+        ]
+       }
+      },
+      "rootwalk": {
+       "values": [
+        "9",
+        "6",
+        "2",
+        "#",
+        "#",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       },
+       "unread": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+       ],
+       "spans": {}
+      },
+      "sub": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "subwalk": {
+       "values": [
+        "6",
+        "2",
+        "#",
+        "#",
+        "4",
+        "#",
+        "#"
+       ],
+       "marks": {},
+       "unread": [],
+       "spans": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "root",
+        "at": 3
+       },
+       "to": {
+        "view": "rootwalk",
+        "at": 4
+       },
+       "value": "#"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Next, 6's right child: write 4.",
+      "ko": "다음은 6의 오른쪽 자식이므로 4를 적습니다."
+     },
+     "views": {
+      "root": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         1,
+         3
+        ],
+        "lit": [
+         4
+        ]
+       }
+      },
+      "rootwalk": {
+       "values": [
+        "9",
+        "6",
+        "2",
+        "#",
+        "#",
+        "4",
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "marks": {
+        "good": [
+         5
+        ]
+       },
+       "unread": [
+        6,
+        7,
+        8,
+        9,
+        10
+       ],
+       "spans": {}
+      },
+      "sub": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "subwalk": {
+       "values": [
+        "6",
+        "2",
+        "#",
+        "#",
+        "4",
+        "#",
+        "#"
+       ],
+       "marks": {},
+       "unread": [],
+       "spans": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "root",
+        "at": 4
+       },
+       "to": {
+        "view": "rootwalk",
+        "at": 5
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "4 has no left child: write #.",
+      "ko": "4에는 왼쪽 자식이 없으므로 # 표시를 적습니다."
+     },
+     "views": {
+      "root": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         1,
+         3
+        ],
+        "lit": [
+         4
+        ]
+       }
+      },
+      "rootwalk": {
+       "values": [
+        "9",
+        "6",
+        "2",
+        "#",
+        "#",
+        "4",
+        "#",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "marks": {
+        "good": [
+         6
+        ]
+       },
+       "unread": [
+        7,
+        8,
+        9,
+        10
+       ],
+       "spans": {}
+      },
+      "sub": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "subwalk": {
+       "values": [
+        "6",
+        "2",
+        "#",
+        "#",
+        "4",
+        "#",
+        "#"
+       ],
+       "marks": {},
+       "unread": [],
+       "spans": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "root",
+        "at": 4
+       },
+       "to": {
+        "view": "rootwalk",
+        "at": 6
+       },
+       "value": "#"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "4 has no right child: write #.",
+      "ko": "4에는 오른쪽 자식이 없으므로 # 표시를 적습니다."
+     },
+     "views": {
+      "root": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         1,
+         3
+        ],
+        "lit": [
+         4
+        ]
+       }
+      },
+      "rootwalk": {
+       "values": [
+        "9",
+        "6",
+        "2",
+        "#",
+        "#",
+        "4",
+        "#",
+        "#",
+        "",
+        "",
+        ""
+       ],
+       "marks": {
+        "good": [
+         7
+        ]
+       },
+       "unread": [
+        8,
+        9,
+        10
+       ],
+       "spans": {}
+      },
+      "sub": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "subwalk": {
+       "values": [
+        "6",
+        "2",
+        "#",
+        "#",
+        "4",
+        "#",
+        "#"
+       ],
+       "marks": {},
+       "unread": [],
+       "spans": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "root",
+        "at": 4
+       },
+       "to": {
+        "view": "rootwalk",
+        "at": 7
+       },
+       "value": "#"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Next, 9's right child: write 7.",
+      "ko": "다음은 9의 오른쪽 자식이므로 7을 적습니다."
+     },
+     "views": {
+      "root": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         1,
+         3,
+         4
+        ],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "rootwalk": {
+       "values": [
+        "9",
+        "6",
+        "2",
+        "#",
+        "#",
+        "4",
+        "#",
+        "#",
+        "7",
+        "",
+        ""
+       ],
+       "marks": {
+        "good": [
+         8
+        ]
+       },
+       "unread": [
+        9,
+        10
+       ],
+       "spans": {}
+      },
+      "sub": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "subwalk": {
+       "values": [
+        "6",
+        "2",
+        "#",
+        "#",
+        "4",
+        "#",
+        "#"
+       ],
+       "marks": {},
+       "unread": [],
+       "spans": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "root",
+        "at": 2
+       },
+       "to": {
+        "view": "rootwalk",
+        "at": 8
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "7 has no left child: write #.",
+      "ko": "7에는 왼쪽 자식이 없으므로 # 표시를 적습니다."
+     },
+     "views": {
+      "root": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         1,
+         3,
+         4
+        ],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "rootwalk": {
+       "values": [
+        "9",
+        "6",
+        "2",
+        "#",
+        "#",
+        "4",
+        "#",
+        "#",
+        "7",
+        "#",
+        ""
+       ],
+       "marks": {
+        "good": [
+         9
+        ]
+       },
+       "unread": [
+        10
+       ],
+       "spans": {}
+      },
+      "sub": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "subwalk": {
+       "values": [
+        "6",
+        "2",
+        "#",
+        "#",
+        "4",
+        "#",
+        "#"
+       ],
+       "marks": {},
+       "unread": [],
+       "spans": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "root",
+        "at": 2
+       },
+       "to": {
+        "view": "rootwalk",
+        "at": 9
+       },
+       "value": "#"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "7 has no right child: write #.",
+      "ko": "7에는 오른쪽 자식이 없으므로 # 표시를 적습니다."
+     },
+     "views": {
+      "root": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         1,
+         3,
+         4
+        ],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "rootwalk": {
+       "values": [
+        "9",
+        "6",
+        "2",
+        "#",
+        "#",
+        "4",
+        "#",
+        "#",
+        "7",
+        "#",
+        "#"
+       ],
+       "marks": {
+        "good": [
+         10
+        ]
+       },
+       "unread": [],
+       "spans": {}
+      },
+      "sub": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "subwalk": {
+       "values": [
+        "6",
+        "2",
+        "#",
+        "#",
+        "4",
+        "#",
+        "#"
+       ],
+       "marks": {},
+       "unread": [],
+       "spans": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "root",
+        "at": 2
+       },
+       "to": {
+        "view": "rootwalk",
+        "at": 10
+       },
+       "value": "#"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "subRoot's walk, 6,2,#,#,4,#,#, appears whole in root's walk, starting at index 1: the subtree under 6 matches, so the answer is true.",
+      "ko": "subRoot의 순회 6,2,#,#,4,#,# 전체가 root의 순회 안 1번 칸부터 그대로 나타납니다. 6 아래 서브트리가 일치하므로 답은 true입니다."
+     },
+     "views": {
+      "root": {
+       "nodeMarks": {
+        "path": [
+         1,
+         3,
+         4
+        ]
+       }
+      },
+      "rootwalk": {
+       "values": [
+        "9",
+        "6",
+        "2",
+        "#",
+        "#",
+        "4",
+        "#",
+        "#",
+        "7",
+        "#",
+        "#"
+       ],
+       "marks": {
+        "path": [
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7
+        ]
+       },
+       "unread": [],
+       "spans": {
+        "match": {
+         "from": 1,
+         "to": 7,
+         "label": {
+          "en": "subRoot's walk",
+          "ko": "subRoot의 순회"
+         }
+        }
+       }
+      },
+      "sub": {
+       "nodeMarks": {
+        "path": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "subwalk": {
+       "values": [
+        "6",
+        "2",
+        "#",
+        "#",
+        "4",
+        "#",
+        "#"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6
+        ]
+       },
+       "unread": [],
+       "spans": {}
+      }
+     },
+     "answer": "true"
+    }
+   ],
+   "setup": {
+    "root": {
+     "nodes": [
+      {
+       "id": 0,
+       "value": 9
+      },
+      {
+       "id": 1,
+       "value": 6
+      },
+      {
+       "id": 2,
+       "value": 7
+      },
+      {
+       "id": 3,
+       "value": 2
+      },
+      {
+       "id": 4,
+       "value": 4
+      }
+     ],
+     "edges": [
+      {
+       "from": 0,
+       "to": 1,
+       "slot": 0
+      },
+      {
+       "from": 0,
+       "to": 2,
+       "slot": 1
+      },
+      {
+       "from": 1,
+       "to": 3,
+       "slot": 0
+      },
+      {
+       "from": 1,
+       "to": 4,
+       "slot": 1
+      }
+     ]
+    },
+    "sub": {
+     "nodes": [
+      {
+       "id": 0,
+       "value": 6
+      },
+      {
+       "id": 1,
+       "value": 2
+      },
+      {
+       "id": 2,
+       "value": 4
+      }
+     ],
+     "edges": [
+      {
+       "from": 0,
+       "to": 1,
+       "slot": 0
+      },
+      {
+       "from": 0,
+       "to": 2,
+       "slot": 1
+      }
+     ]
+    }
+   },
+   "sampleInput": "[9,6,7,2,4]\n[6,2,4]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "root = [1,8,3,null,5], subRoot = [8,5]",
+   "expected": "false",
+   "frames": [
+    {
+     "caption": {
+      "en": "root has 4 nodes, subRoot 2. Write each as its preorder walk (node, left side, right side) with # for a missing child, subRoot first.",
+      "ko": "root는 노드 4개, subRoot는 2개이며, 각각을 전위 순회(노드, 왼쪽, 오른쪽)로 적되 없는 자식은 # 표시로 적습니다. subRoot부터 적습니다."
+     },
+     "views": {
+      "root": {
+       "nodeMarks": {
+        "dim": []
+       }
+      },
+      "rootwalk": {
+       "values": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "marks": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+       ],
+       "spans": {}
+      },
+      "sub": {
+       "nodeMarks": {
+        "dim": []
+       }
+      },
+      "subwalk": {
+       "values": [
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "marks": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "spans": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Start subRoot's walk at its root: write 8.",
+      "ko": "subRoot의 순회를 root부터 시작해 8을 적습니다."
+     },
+     "views": {
+      "root": {
+       "nodeMarks": {
+        "dim": []
+       }
+      },
+      "rootwalk": {
+       "values": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "marks": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+       ],
+       "spans": {}
+      },
+      "sub": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "subwalk": {
+       "values": [
+        "8",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4
+       ],
+       "spans": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "sub",
+        "at": 0
+       },
+       "to": {
+        "view": "subwalk",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Next, 8's left child: write 5.",
+      "ko": "다음은 8의 왼쪽 자식이므로 5를 적습니다."
+     },
+     "views": {
+      "root": {
+       "nodeMarks": {
+        "dim": []
+       }
+      },
+      "rootwalk": {
+       "values": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "marks": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+       ],
+       "spans": {}
+      },
+      "sub": {
+       "nodeMarks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "subwalk": {
+       "values": [
+        "8",
+        "5",
+        "",
+        "",
+        ""
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       },
+       "unread": [
+        2,
+        3,
+        4
+       ],
+       "spans": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "sub",
+        "at": 1
+       },
+       "to": {
+        "view": "subwalk",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "5 has no left child: write #.",
+      "ko": "5에는 왼쪽 자식이 없으므로 # 표시를 적습니다."
+     },
+     "views": {
+      "root": {
+       "nodeMarks": {
+        "dim": []
+       }
+      },
+      "rootwalk": {
+       "values": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "marks": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+       ],
+       "spans": {}
+      },
+      "sub": {
+       "nodeMarks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "subwalk": {
+       "values": [
+        "8",
+        "5",
+        "#",
+        "",
+        ""
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       },
+       "unread": [
+        3,
+        4
+       ],
+       "spans": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "sub",
+        "at": 1
+       },
+       "to": {
+        "view": "subwalk",
+        "at": 2
+       },
+       "value": "#"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "5 has no right child: write #.",
+      "ko": "5에는 오른쪽 자식이 없으므로 # 표시를 적습니다."
+     },
+     "views": {
+      "root": {
+       "nodeMarks": {
+        "dim": []
+       }
+      },
+      "rootwalk": {
+       "values": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "marks": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+       ],
+       "spans": {}
+      },
+      "sub": {
+       "nodeMarks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "subwalk": {
+       "values": [
+        "8",
+        "5",
+        "#",
+        "#",
+        ""
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       },
+       "unread": [
+        4
+       ],
+       "spans": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "sub",
+        "at": 1
+       },
+       "to": {
+        "view": "subwalk",
+        "at": 3
+       },
+       "value": "#"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "8 has no right child: write #.",
+      "ko": "8에는 오른쪽 자식이 없으므로 # 표시를 적습니다."
+     },
+     "views": {
+      "root": {
+       "nodeMarks": {
+        "dim": []
+       }
+      },
+      "rootwalk": {
+       "values": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "marks": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+       ],
+       "spans": {}
+      },
+      "sub": {
+       "nodeMarks": {
+        "dim": [
+         1
+        ],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "subwalk": {
+       "values": [
+        "8",
+        "5",
+        "#",
+        "#",
+        "#"
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       },
+       "unread": [],
+       "spans": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "sub",
+        "at": 0
+       },
+       "to": {
+        "view": "subwalk",
+        "at": 4
+       },
+       "value": "#"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Start root's walk at its root: write 1.",
+      "ko": "root의 순회를 root부터 시작해 1을 적습니다."
+     },
+     "views": {
+      "root": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "rootwalk": {
+       "values": [
+        "1",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+       ],
+       "spans": {}
+      },
+      "sub": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         1
+        ]
+       }
+      },
+      "subwalk": {
+       "values": [
+        "8",
+        "5",
+        "#",
+        "#",
+        "#"
+       ],
+       "marks": {},
+       "unread": [],
+       "spans": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "root",
+        "at": 0
+       },
+       "to": {
+        "view": "rootwalk",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Next, 1's left child: write 8.",
+      "ko": "다음은 1의 왼쪽 자식이므로 8을 적습니다."
+     },
+     "views": {
+      "root": {
+       "nodeMarks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "rootwalk": {
+       "values": [
+        "1",
+        "8",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       },
+       "unread": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+       ],
+       "spans": {}
+      },
+      "sub": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         1
+        ]
+       }
+      },
+      "subwalk": {
+       "values": [
+        "8",
+        "5",
+        "#",
+        "#",
+        "#"
+       ],
+       "marks": {},
+       "unread": [],
+       "spans": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "root",
+        "at": 1
+       },
+       "to": {
+        "view": "rootwalk",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "8 has no left child: write #.",
+      "ko": "8에는 왼쪽 자식이 없으므로 # 표시를 적습니다."
+     },
+     "views": {
+      "root": {
+       "nodeMarks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "rootwalk": {
+       "values": [
+        "1",
+        "8",
+        "#",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       },
+       "unread": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+       ],
+       "spans": {}
+      },
+      "sub": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         1
+        ]
+       }
+      },
+      "subwalk": {
+       "values": [
+        "8",
+        "5",
+        "#",
+        "#",
+        "#"
+       ],
+       "marks": {},
+       "unread": [],
+       "spans": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "root",
+        "at": 1
+       },
+       "to": {
+        "view": "rootwalk",
+        "at": 2
+       },
+       "value": "#"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Next, 8's right child: write 5.",
+      "ko": "다음은 8의 오른쪽 자식이므로 5를 적습니다."
+     },
+     "views": {
+      "root": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         1
+        ],
+        "lit": [
+         4
+        ]
+       }
+      },
+      "rootwalk": {
+       "values": [
+        "1",
+        "8",
+        "#",
+        "5",
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       },
+       "unread": [
+        4,
+        5,
+        6,
+        7,
+        8
+       ],
+       "spans": {}
+      },
+      "sub": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         1
+        ]
+       }
+      },
+      "subwalk": {
+       "values": [
+        "8",
+        "5",
+        "#",
+        "#",
+        "#"
+       ],
+       "marks": {},
+       "unread": [],
+       "spans": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "root",
+        "at": 4
+       },
+       "to": {
+        "view": "rootwalk",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "5 has no left child: write #.",
+      "ko": "5에는 왼쪽 자식이 없으므로 # 표시를 적습니다."
+     },
+     "views": {
+      "root": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         1
+        ],
+        "lit": [
+         4
+        ]
+       }
+      },
+      "rootwalk": {
+       "values": [
+        "1",
+        "8",
+        "#",
+        "5",
+        "#",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       },
+       "unread": [
+        5,
+        6,
+        7,
+        8
+       ],
+       "spans": {}
+      },
+      "sub": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         1
+        ]
+       }
+      },
+      "subwalk": {
+       "values": [
+        "8",
+        "5",
+        "#",
+        "#",
+        "#"
+       ],
+       "marks": {},
+       "unread": [],
+       "spans": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "root",
+        "at": 4
+       },
+       "to": {
+        "view": "rootwalk",
+        "at": 4
+       },
+       "value": "#"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "5 has no right child: write #.",
+      "ko": "5에는 오른쪽 자식이 없으므로 # 표시를 적습니다."
+     },
+     "views": {
+      "root": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         1
+        ],
+        "lit": [
+         4
+        ]
+       }
+      },
+      "rootwalk": {
+       "values": [
+        "1",
+        "8",
+        "#",
+        "5",
+        "#",
+        "#",
+        "",
+        "",
+        ""
+       ],
+       "marks": {
+        "good": [
+         5
+        ]
+       },
+       "unread": [
+        6,
+        7,
+        8
+       ],
+       "spans": {}
+      },
+      "sub": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         1
+        ]
+       }
+      },
+      "subwalk": {
+       "values": [
+        "8",
+        "5",
+        "#",
+        "#",
+        "#"
+       ],
+       "marks": {},
+       "unread": [],
+       "spans": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "root",
+        "at": 4
+       },
+       "to": {
+        "view": "rootwalk",
+        "at": 5
+       },
+       "value": "#"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Next, 1's right child: write 3.",
+      "ko": "다음은 1의 오른쪽 자식이므로 3을 적습니다."
+     },
+     "views": {
+      "root": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         1,
+         4
+        ],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "rootwalk": {
+       "values": [
+        "1",
+        "8",
+        "#",
+        "5",
+        "#",
+        "#",
+        "3",
+        "",
+        ""
+       ],
+       "marks": {
+        "good": [
+         6
+        ]
+       },
+       "unread": [
+        7,
+        8
+       ],
+       "spans": {}
+      },
+      "sub": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         1
+        ]
+       }
+      },
+      "subwalk": {
+       "values": [
+        "8",
+        "5",
+        "#",
+        "#",
+        "#"
+       ],
+       "marks": {},
+       "unread": [],
+       "spans": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "root",
+        "at": 2
+       },
+       "to": {
+        "view": "rootwalk",
+        "at": 6
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "3 has no left child: write #.",
+      "ko": "3에는 왼쪽 자식이 없으므로 # 표시를 적습니다."
+     },
+     "views": {
+      "root": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         1,
+         4
+        ],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "rootwalk": {
+       "values": [
+        "1",
+        "8",
+        "#",
+        "5",
+        "#",
+        "#",
+        "3",
+        "#",
+        ""
+       ],
+       "marks": {
+        "good": [
+         7
+        ]
+       },
+       "unread": [
+        8
+       ],
+       "spans": {}
+      },
+      "sub": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         1
+        ]
+       }
+      },
+      "subwalk": {
+       "values": [
+        "8",
+        "5",
+        "#",
+        "#",
+        "#"
+       ],
+       "marks": {},
+       "unread": [],
+       "spans": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "root",
+        "at": 2
+       },
+       "to": {
+        "view": "rootwalk",
+        "at": 7
+       },
+       "value": "#"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "3 has no right child: write #.",
+      "ko": "3에는 오른쪽 자식이 없으므로 # 표시를 적습니다."
+     },
+     "views": {
+      "root": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         1,
+         4
+        ],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "rootwalk": {
+       "values": [
+        "1",
+        "8",
+        "#",
+        "5",
+        "#",
+        "#",
+        "3",
+        "#",
+        "#"
+       ],
+       "marks": {
+        "good": [
+         8
+        ]
+       },
+       "unread": [],
+       "spans": {}
+      },
+      "sub": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         1
+        ]
+       }
+      },
+      "subwalk": {
+       "values": [
+        "8",
+        "5",
+        "#",
+        "#",
+        "#"
+       ],
+       "marks": {},
+       "unread": [],
+       "spans": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "root",
+        "at": 2
+       },
+       "to": {
+        "view": "rootwalk",
+        "at": 8
+       },
+       "value": "#"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "subRoot's walk, 8,5,#,#,#, appears nowhere in root's walk: the closest, from index 1, has # where subRoot has 5. So the answer is false.",
+      "ko": "subRoot의 순회 8,5,#,#,# 전체는 root의 순회 어디에도 없습니다. 가장 가까운 1번 칸부터의 구간에는 subRoot의 '5' 자리에 '#' 토큰이 있으므로 답은 false입니다."
+     },
+     "views": {
+      "root": {
+       "nodeMarks": {}
+      },
+      "rootwalk": {
+       "values": [
+        "1",
+        "8",
+        "#",
+        "5",
+        "#",
+        "#",
+        "3",
+        "#",
+        "#"
+       ],
+       "marks": {
+        "lit": [
+         1
+        ],
+        "bad": [
+         2
+        ]
+       },
+       "unread": [],
+       "spans": {
+        "closest": {
+         "from": 1,
+         "to": 5,
+         "label": {
+          "en": "closest",
+          "ko": "가장 가까운 구간"
+         },
+         "mark": "bad"
+        }
+       }
+      },
+      "sub": {
+       "nodeMarks": {}
+      },
+      "subwalk": {
+       "values": [
+        "8",
+        "5",
+        "#",
+        "#",
+        "#"
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "bad": [
+         1
+        ]
+       },
+       "unread": [],
+       "spans": {}
+      }
+     },
+     "answer": "false"
+    }
+   ],
+   "setup": {
+    "root": {
+     "nodes": [
+      {
+       "id": 0,
+       "value": 1
+      },
+      {
+       "id": 1,
+       "value": 8
+      },
+      {
+       "id": 2,
+       "value": 3
+      },
+      {
+       "id": 4,
+       "value": 5
+      }
+     ],
+     "edges": [
+      {
+       "from": 0,
+       "to": 1,
+       "slot": 0
+      },
+      {
+       "from": 0,
+       "to": 2,
+       "slot": 1
+      },
+      {
+       "from": 1,
+       "to": 4,
+       "slot": 1
+      }
+     ]
+    },
+    "sub": {
+     "nodes": [
+      {
+       "id": 0,
+       "value": 8
+      },
+      {
+       "id": 1,
+       "value": 5
+      }
+     ],
+     "edges": [
+      {
+       "from": 0,
+       "to": 1,
+       "slot": 0
+      }
+     ]
+    }
+   },
+   "sampleInput": "[1,8,3,null,5]\n[8,5]"
+  }
+ ]
+}

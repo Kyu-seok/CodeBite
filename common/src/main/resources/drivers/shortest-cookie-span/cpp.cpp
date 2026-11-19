@@ -8,18 +8,18 @@ using namespace std;
 {USER_CODE}
 
 int main() {
-    string numsLine;
-    getline(cin, numsLine);
-    string inner = numsLine.substr(1, numsLine.size() - 2);
-    vector<int> nums;
+    string traysLine;
+    getline(cin, traysLine);
+    string inner = traysLine.substr(1, traysLine.size() - 2);
+    vector<int> trays;
     stringstream ss(inner);
     string token;
     while (getline(ss, token, ',')) {
-        nums.push_back(stoi(token));
+        trays.push_back(stoi(token));
     }
     int target;
     cin >> target;
-    int result = Solution().shortestBakeSpan(nums, target);
+    int result = Solution().shortestCookieSpan(trays, target);
     cout << result << endl;
     return 0;
 }

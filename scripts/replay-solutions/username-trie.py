@@ -20,5 +20,5 @@ class PrefixIndex:
         node = self._walk(word)
         return node is not None and "$" in node
 
-    def starts_with(self, prefix: str) -> bool:
+    def startsWith(self, prefix: str) -> bool:
         return self._walk(prefix) is not None

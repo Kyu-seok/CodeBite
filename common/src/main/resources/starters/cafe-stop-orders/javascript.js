@@ -3,7 +3,7 @@ class Solution {
      * @param {number[]} stops
      * @return {number[][]}
      */
-    listStationOrders(stops) {
+    listVisitOrders(stops) {
         // Write your solution here
     }
 }

@@ -4,7 +4,7 @@ class Solution {
      * @param {number[][]} relays
      * @return {number}
      */
-    tallyDeviceMeshes(n, relays) {
+    countParties(n, relays) {
         // Write your solution here
     }
 }

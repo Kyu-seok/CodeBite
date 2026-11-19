@@ -30,7 +30,7 @@ int main() {
         lists.push_back(listFromArray(inner.substr(start)));
     }
 
-    ListNode* result = Solution().mergeFlightRosters(lists);
+    ListNode* result = Solution().mergeCafeQueues(lists);
     cout << listToJsonArray(result) << endl;
     return 0;
 }

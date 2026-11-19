@@ -11,7 +11,7 @@
  */
 class Solution {
 public:
-    bool checkHubEvenness(TreeNode* root) {
+    bool isBalanced(TreeNode* root) {
         // Write your solution here
     }
 };

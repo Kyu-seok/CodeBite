@@ -1,5 +1,5 @@
 class Solution:
-    def longest_common_subsequence(self, left: str, right: str) -> int:
+    def longestCommonSubsequence(self, left: str, right: str) -> int:
         previous = [0] * (len(right) + 1)
         for a in left:
             current = [0]

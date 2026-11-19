@@ -3,7 +3,7 @@ class Solution {
      * @param {number[]} blocks
      * @return {number}
      */
-    crushHeaviestBales(blocks) {
+    crushHeaviestBlocks(blocks) {
         // Write your solution here
     }
 }

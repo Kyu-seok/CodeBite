@@ -3,7 +3,7 @@ using namespace std;
 
 class Solution {
 public:
-    int spreadContaminationWave(vector<vector<int>>& ward) {
+    int minutesUntilStale(vector<vector<int>>& tray) {
         // Write your solution here
     }
 };

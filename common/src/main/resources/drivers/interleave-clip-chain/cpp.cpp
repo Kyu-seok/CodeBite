@@ -11,7 +11,7 @@ int main() {
     string line;
     getline(cin, line);
     ListNode* head = listFromArray(line);
-    Solution().interleaveTrailerCuts(head);
+    Solution().interleaveClips(head);
     cout << listToJsonArray(head) << endl;
     return 0;
 }

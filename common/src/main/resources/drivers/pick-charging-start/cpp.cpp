@@ -16,12 +16,12 @@ vector<int> parseArr(const string& line) {
 }
 
 int main() {
-    string gasLine, costLine;
-    getline(cin, gasLine);
-    getline(cin, costLine);
-    vector<int> gas = parseArr(gasLine);
-    vector<int> cost = parseArr(costLine);
-    int result = Solution().pickStartStation(gas, cost);
+    string energyLine, drainLine;
+    getline(cin, energyLine);
+    getline(cin, drainLine);
+    vector<int> energy = parseArr(energyLine);
+    vector<int> drain = parseArr(drainLine);
+    int result = Solution().pickStartStop(energy, drain);
     cout << result << endl;
     return 0;
 }

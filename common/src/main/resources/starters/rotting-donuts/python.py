@@ -1,4 +1,4 @@
 class Solution:
-    def oranges_rotting(self, ward: list[list[int]]) -> int:
+    def minutesUntilStale(self, tray: list[list[int]]) -> int:
         # Write your solution here
         pass

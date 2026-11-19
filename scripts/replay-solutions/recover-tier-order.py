@@ -2,13 +2,16 @@ import heapq
 
 
 class Solution:
-    def orderSceneShoot(self, words: list[str]) -> str:
-        letters = {letter for word in words for letter in word}
-        after: dict[str, set[str]] = {letter: set() for letter in letters}
-        for first, second in zip(words, words[1:]):
+    def recoverTierOrder(self, tags: list[str]) -> str:
+        # Letters in the order they first appear, and each letter's followers in the order the tags reveal them,
+        # so every run goes the same way (a set's order would change from run to run; the answer would not).
+        letters = list(dict.fromkeys(letter for tag in tags for letter in tag))
+        after: dict[str, list[str]] = {letter: [] for letter in letters}
+        for first, second in zip(tags, tags[1:]):
             for a, b in zip(first, second):
                 if a != b:
-                    after[a].add(b)
+                    if b not in after[a]:
+                        after[a].append(b)
                     break
             else:
                 if len(first) > len(second):

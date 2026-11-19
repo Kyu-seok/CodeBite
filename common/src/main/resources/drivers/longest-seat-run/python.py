@@ -1,5 +1,5 @@
 {USER_CODE}
 
-nums = eval(input())
-result = Solution().longestSeatBlock(nums)
+seatIds = eval(input())
+result = Solution().longestSeatRun(seatIds)
 print(result)

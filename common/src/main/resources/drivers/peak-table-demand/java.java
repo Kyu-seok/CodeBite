@@ -21,8 +21,8 @@ public class Main {
                 }
             }
         }
-        int[][] intervals = list.toArray(new int[0][]);
-        int result = new Solution().findPeakGates(intervals);
+        int[][] visits = list.toArray(new int[0][]);
+        int result = new Solution().minTables(visits);
         System.out.println(result);
     }
 }

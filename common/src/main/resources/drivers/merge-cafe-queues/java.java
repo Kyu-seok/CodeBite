@@ -28,7 +28,7 @@ public class Main {
         }
 
         ListNode[] arr = lists.toArray(new ListNode[0]);
-        ListNode result = new Solution().mergeFlightRosters(arr);
+        ListNode result = new Solution().mergeCafeQueues(arr);
         System.out.println(ListNode.toJsonArray(result));
     }
 }

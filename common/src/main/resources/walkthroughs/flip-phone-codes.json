@@ -1,0 +1,3410 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Flip Phone Codes",
+  "ko": "플립폰 키패드 코드"
+ },
+ "approach": {
+  "en": "One call per digit: it adds each letter of that digit's key in turn and calls itself for the next digit, taking the letter back off afterwards. A call past the last digit holds one full combination.",
+  "ko": "숫자 하나에 호출 하나입니다. 그 숫자 키의 글자를 차례로 붙이고 다음 숫자를 위해 자신을 호출한 뒤 글자를 다시 뺍니다. 마지막 숫자를 지난 호출이 완성된 조합 하나를 가집니다."
+ },
+ "views": [
+  {
+   "id": "digits",
+   "type": "array",
+   "title": {
+    "en": "digits",
+    "ko": "digits (누른 키)"
+   }
+  },
+  {
+   "id": "keys",
+   "type": "map",
+   "title": {
+    "en": "keys pressed",
+    "ko": "누른 키의 글자"
+   }
+  },
+  {
+   "id": "calls",
+   "type": "tree",
+   "title": {
+    "en": "calls (letters so far)",
+    "ko": "호출 (지금까지의 글자)"
+   }
+  },
+  {
+   "id": "result",
+   "type": "output",
+   "title": {
+    "en": "combinations",
+    "ko": "조합"
+   },
+   "empty": {
+    "en": "none yet",
+    "ko": "아직 없음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "digits = \"45\"",
+   "expected": "[\"gj\",\"gk\",\"gl\",\"hj\",\"hk\",\"hl\",\"ij\",\"ik\",\"il\"]",
+   "frames": [
+    {
+     "caption": {
+      "en": "build(i=0) starts with no letters; digit 4 stands for 'g', 'h', 'i', so it will add each in turn.",
+      "ko": "build(i=0) 호출은 글자 없이 시작합니다. 숫자 4는 'g', 'h', 'i' 글자를 나타내므로 하나씩 붙여 봅니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "4",
+        "5"
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "keys": {
+       "entries": [
+        {
+         "key": "4",
+         "value": [
+          "g",
+          "h",
+          "i"
+         ]
+        },
+        {
+         "key": "5",
+         "value": [
+          "j",
+          "k",
+          "l"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         "4"
+        ]
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        }
+       ],
+       "edges": [],
+       "nodeMarks": {
+        "good": [],
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "calls",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add 'g': build(i=1) holds \"g\" and will add each of 'j', 'k', 'l' for digit 5.",
+      "ko": "'g' 글자를 붙입니다. build(i=1) 호출은 \"g\" 글자를 가지고, 숫자 5 키의 'j', 'k', 'l' 글자를 하나씩 붙여 봅니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "4",
+        "5"
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "keys": {
+       "entries": [
+        {
+         "key": "4",
+         "value": [
+          "g",
+          "h",
+          "i"
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        },
+        {
+         "key": "5",
+         "value": [
+          "j",
+          "k",
+          "l"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         "5"
+        ]
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        },
+        {
+         "id": 1,
+         "value": "g"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "g"
+        }
+       ],
+       "nodeMarks": {
+        "good": [],
+        "lit": [
+         1
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "keys",
+        "at": "4"
+       },
+       "to": {
+        "view": "calls",
+        "at": 1
+       },
+       "value": "g"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add 'j': build(i=2) is past the last digit, so \"gj\" is a full combination and goes into the answer.",
+      "ko": "'j' 글자를 붙입니다. build(i=2) 호출은 마지막 숫자를 지났으므로 \"gj\" 조합을 답에 넣습니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "4",
+        "5"
+       ],
+       "pointers": {},
+       "marks": {}
+      },
+      "keys": {
+       "entries": [
+        {
+         "key": "4",
+         "value": [
+          "g",
+          "h",
+          "i"
+         ]
+        },
+        {
+         "key": "5",
+         "value": [
+          "j",
+          "k",
+          "l"
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "marks": {}
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        },
+        {
+         "id": 1,
+         "value": "g"
+        },
+        {
+         "id": 2,
+         "value": "gj"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "g"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "j"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         2
+        ],
+        "lit": [
+         2
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        2
+       ]
+      },
+      "result": {
+       "values": [
+        "gj"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "keys",
+        "at": "5"
+       },
+       "to": {
+        "view": "calls",
+        "at": 2
+       },
+       "value": "j"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add 'k': build(i=2) is past the last digit, so \"gk\" is a full combination and goes into the answer.",
+      "ko": "'k' 글자를 붙입니다. build(i=2) 호출은 마지막 숫자를 지났으므로 \"gk\" 조합을 답에 넣습니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "4",
+        "5"
+       ],
+       "pointers": {},
+       "marks": {}
+      },
+      "keys": {
+       "entries": [
+        {
+         "key": "4",
+         "value": [
+          "g",
+          "h",
+          "i"
+         ]
+        },
+        {
+         "key": "5",
+         "value": [
+          "j",
+          "k",
+          "l"
+         ],
+         "marks": {
+          "good": [
+           1
+          ]
+         }
+        }
+       ],
+       "marks": {}
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        },
+        {
+         "id": 1,
+         "value": "g"
+        },
+        {
+         "id": 2,
+         "value": "gj"
+        },
+        {
+         "id": 3,
+         "value": "gk"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "g"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "j"
+        },
+        {
+         "from": 1,
+         "to": 3,
+         "label": "k"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         2,
+         3
+        ],
+        "lit": [
+         3
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        3
+       ]
+      },
+      "result": {
+       "values": [
+        "gj",
+        "gk"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "keys",
+        "at": "5"
+       },
+       "to": {
+        "view": "calls",
+        "at": 3
+       },
+       "value": "k"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 3
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add 'l': build(i=2) is past the last digit, so \"gl\" is a full combination and goes into the answer.",
+      "ko": "'l' 글자를 붙입니다. build(i=2) 호출은 마지막 숫자를 지났으므로 \"gl\" 조합을 답에 넣습니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "4",
+        "5"
+       ],
+       "pointers": {},
+       "marks": {}
+      },
+      "keys": {
+       "entries": [
+        {
+         "key": "4",
+         "value": [
+          "g",
+          "h",
+          "i"
+         ]
+        },
+        {
+         "key": "5",
+         "value": [
+          "j",
+          "k",
+          "l"
+         ],
+         "marks": {
+          "good": [
+           2
+          ]
+         }
+        }
+       ],
+       "marks": {}
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        },
+        {
+         "id": 1,
+         "value": "g"
+        },
+        {
+         "id": 2,
+         "value": "gj"
+        },
+        {
+         "id": 3,
+         "value": "gk"
+        },
+        {
+         "id": 4,
+         "value": "gl"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "g"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "j"
+        },
+        {
+         "from": 1,
+         "to": 3,
+         "label": "k"
+        },
+        {
+         "from": 1,
+         "to": 4,
+         "label": "l"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         2,
+         3,
+         4
+        ],
+        "lit": [
+         4
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        4
+       ]
+      },
+      "result": {
+       "values": [
+        "gj",
+        "gk",
+        "gl"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "keys",
+        "at": "5"
+       },
+       "to": {
+        "view": "calls",
+        "at": 4
+       },
+       "value": "l"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add 'h': build(i=1) holds \"h\" and will add each of 'j', 'k', 'l' for digit 5.",
+      "ko": "'h' 글자를 붙입니다. build(i=1) 호출은 \"h\" 글자를 가지고, 숫자 5 키의 'j', 'k', 'l' 글자를 하나씩 붙여 봅니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "4",
+        "5"
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "keys": {
+       "entries": [
+        {
+         "key": "4",
+         "value": [
+          "g",
+          "h",
+          "i"
+         ],
+         "marks": {
+          "good": [
+           1
+          ]
+         }
+        },
+        {
+         "key": "5",
+         "value": [
+          "j",
+          "k",
+          "l"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         "5"
+        ]
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        },
+        {
+         "id": 1,
+         "value": "g"
+        },
+        {
+         "id": 2,
+         "value": "gj"
+        },
+        {
+         "id": 3,
+         "value": "gk"
+        },
+        {
+         "id": 4,
+         "value": "gl"
+        },
+        {
+         "id": 5,
+         "value": "h"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "g"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "j"
+        },
+        {
+         "from": 1,
+         "to": 3,
+         "label": "k"
+        },
+        {
+         "from": 1,
+         "to": 4,
+         "label": "l"
+        },
+        {
+         "from": 0,
+         "to": 5,
+         "label": "h"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         2,
+         3,
+         4
+        ],
+        "lit": [
+         5
+        ]
+       },
+       "shade": [
+        0,
+        5
+       ]
+      },
+      "result": {
+       "values": [
+        "gj",
+        "gk",
+        "gl"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "keys",
+        "at": "4"
+       },
+       "to": {
+        "view": "calls",
+        "at": 5
+       },
+       "value": "h"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add 'j': build(i=2) is past the last digit, so \"hj\" is a full combination and goes into the answer.",
+      "ko": "'j' 글자를 붙입니다. build(i=2) 호출은 마지막 숫자를 지났으므로 \"hj\" 조합을 답에 넣습니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "4",
+        "5"
+       ],
+       "pointers": {},
+       "marks": {}
+      },
+      "keys": {
+       "entries": [
+        {
+         "key": "4",
+         "value": [
+          "g",
+          "h",
+          "i"
+         ]
+        },
+        {
+         "key": "5",
+         "value": [
+          "j",
+          "k",
+          "l"
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "marks": {}
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        },
+        {
+         "id": 1,
+         "value": "g"
+        },
+        {
+         "id": 2,
+         "value": "gj"
+        },
+        {
+         "id": 3,
+         "value": "gk"
+        },
+        {
+         "id": 4,
+         "value": "gl"
+        },
+        {
+         "id": 5,
+         "value": "h"
+        },
+        {
+         "id": 6,
+         "value": "hj"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "g"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "j"
+        },
+        {
+         "from": 1,
+         "to": 3,
+         "label": "k"
+        },
+        {
+         "from": 1,
+         "to": 4,
+         "label": "l"
+        },
+        {
+         "from": 0,
+         "to": 5,
+         "label": "h"
+        },
+        {
+         "from": 5,
+         "to": 6,
+         "label": "j"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         2,
+         3,
+         4,
+         6
+        ],
+        "lit": [
+         6
+        ]
+       },
+       "shade": [
+        0,
+        5,
+        6
+       ]
+      },
+      "result": {
+       "values": [
+        "gj",
+        "gk",
+        "gl",
+        "hj"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "keys",
+        "at": "5"
+       },
+       "to": {
+        "view": "calls",
+        "at": 6
+       },
+       "value": "j"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 6
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add 'k': build(i=2) is past the last digit, so \"hk\" is a full combination and goes into the answer.",
+      "ko": "'k' 글자를 붙입니다. build(i=2) 호출은 마지막 숫자를 지났으므로 \"hk\" 조합을 답에 넣습니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "4",
+        "5"
+       ],
+       "pointers": {},
+       "marks": {}
+      },
+      "keys": {
+       "entries": [
+        {
+         "key": "4",
+         "value": [
+          "g",
+          "h",
+          "i"
+         ]
+        },
+        {
+         "key": "5",
+         "value": [
+          "j",
+          "k",
+          "l"
+         ],
+         "marks": {
+          "good": [
+           1
+          ]
+         }
+        }
+       ],
+       "marks": {}
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        },
+        {
+         "id": 1,
+         "value": "g"
+        },
+        {
+         "id": 2,
+         "value": "gj"
+        },
+        {
+         "id": 3,
+         "value": "gk"
+        },
+        {
+         "id": 4,
+         "value": "gl"
+        },
+        {
+         "id": 5,
+         "value": "h"
+        },
+        {
+         "id": 6,
+         "value": "hj"
+        },
+        {
+         "id": 7,
+         "value": "hk"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "g"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "j"
+        },
+        {
+         "from": 1,
+         "to": 3,
+         "label": "k"
+        },
+        {
+         "from": 1,
+         "to": 4,
+         "label": "l"
+        },
+        {
+         "from": 0,
+         "to": 5,
+         "label": "h"
+        },
+        {
+         "from": 5,
+         "to": 6,
+         "label": "j"
+        },
+        {
+         "from": 5,
+         "to": 7,
+         "label": "k"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         2,
+         3,
+         4,
+         6,
+         7
+        ],
+        "lit": [
+         7
+        ]
+       },
+       "shade": [
+        0,
+        5,
+        7
+       ]
+      },
+      "result": {
+       "values": [
+        "gj",
+        "gk",
+        "gl",
+        "hj",
+        "hk"
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "keys",
+        "at": "5"
+       },
+       "to": {
+        "view": "calls",
+        "at": 7
+       },
+       "value": "k"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 7
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add 'l': build(i=2) is past the last digit, so \"hl\" is a full combination and goes into the answer.",
+      "ko": "'l' 글자를 붙입니다. build(i=2) 호출은 마지막 숫자를 지났으므로 \"hl\" 조합을 답에 넣습니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "4",
+        "5"
+       ],
+       "pointers": {},
+       "marks": {}
+      },
+      "keys": {
+       "entries": [
+        {
+         "key": "4",
+         "value": [
+          "g",
+          "h",
+          "i"
+         ]
+        },
+        {
+         "key": "5",
+         "value": [
+          "j",
+          "k",
+          "l"
+         ],
+         "marks": {
+          "good": [
+           2
+          ]
+         }
+        }
+       ],
+       "marks": {}
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        },
+        {
+         "id": 1,
+         "value": "g"
+        },
+        {
+         "id": 2,
+         "value": "gj"
+        },
+        {
+         "id": 3,
+         "value": "gk"
+        },
+        {
+         "id": 4,
+         "value": "gl"
+        },
+        {
+         "id": 5,
+         "value": "h"
+        },
+        {
+         "id": 6,
+         "value": "hj"
+        },
+        {
+         "id": 7,
+         "value": "hk"
+        },
+        {
+         "id": 8,
+         "value": "hl"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "g"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "j"
+        },
+        {
+         "from": 1,
+         "to": 3,
+         "label": "k"
+        },
+        {
+         "from": 1,
+         "to": 4,
+         "label": "l"
+        },
+        {
+         "from": 0,
+         "to": 5,
+         "label": "h"
+        },
+        {
+         "from": 5,
+         "to": 6,
+         "label": "j"
+        },
+        {
+         "from": 5,
+         "to": 7,
+         "label": "k"
+        },
+        {
+         "from": 5,
+         "to": 8,
+         "label": "l"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         2,
+         3,
+         4,
+         6,
+         7,
+         8
+        ],
+        "lit": [
+         8
+        ]
+       },
+       "shade": [
+        0,
+        5,
+        8
+       ]
+      },
+      "result": {
+       "values": [
+        "gj",
+        "gk",
+        "gl",
+        "hj",
+        "hk",
+        "hl"
+       ],
+       "marks": {
+        "good": [
+         5
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "keys",
+        "at": "5"
+       },
+       "to": {
+        "view": "calls",
+        "at": 8
+       },
+       "value": "l"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 8
+       },
+       "to": {
+        "view": "result",
+        "at": 5
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add 'i': build(i=1) holds \"i\" and will add each of 'j', 'k', 'l' for digit 5.",
+      "ko": "'i' 글자를 붙입니다. build(i=1) 호출은 \"i\" 글자를 가지고, 숫자 5 키의 'j', 'k', 'l' 글자를 하나씩 붙여 봅니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "4",
+        "5"
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "keys": {
+       "entries": [
+        {
+         "key": "4",
+         "value": [
+          "g",
+          "h",
+          "i"
+         ],
+         "marks": {
+          "good": [
+           2
+          ]
+         }
+        },
+        {
+         "key": "5",
+         "value": [
+          "j",
+          "k",
+          "l"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         "5"
+        ]
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        },
+        {
+         "id": 1,
+         "value": "g"
+        },
+        {
+         "id": 2,
+         "value": "gj"
+        },
+        {
+         "id": 3,
+         "value": "gk"
+        },
+        {
+         "id": 4,
+         "value": "gl"
+        },
+        {
+         "id": 5,
+         "value": "h"
+        },
+        {
+         "id": 6,
+         "value": "hj"
+        },
+        {
+         "id": 7,
+         "value": "hk"
+        },
+        {
+         "id": 8,
+         "value": "hl"
+        },
+        {
+         "id": 9,
+         "value": "i"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "g"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "j"
+        },
+        {
+         "from": 1,
+         "to": 3,
+         "label": "k"
+        },
+        {
+         "from": 1,
+         "to": 4,
+         "label": "l"
+        },
+        {
+         "from": 0,
+         "to": 5,
+         "label": "h"
+        },
+        {
+         "from": 5,
+         "to": 6,
+         "label": "j"
+        },
+        {
+         "from": 5,
+         "to": 7,
+         "label": "k"
+        },
+        {
+         "from": 5,
+         "to": 8,
+         "label": "l"
+        },
+        {
+         "from": 0,
+         "to": 9,
+         "label": "i"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         2,
+         3,
+         4,
+         6,
+         7,
+         8
+        ],
+        "lit": [
+         9
+        ]
+       },
+       "shade": [
+        0,
+        9
+       ]
+      },
+      "result": {
+       "values": [
+        "gj",
+        "gk",
+        "gl",
+        "hj",
+        "hk",
+        "hl"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "keys",
+        "at": "4"
+       },
+       "to": {
+        "view": "calls",
+        "at": 9
+       },
+       "value": "i"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add 'j': build(i=2) is past the last digit, so \"ij\" is a full combination and goes into the answer.",
+      "ko": "'j' 글자를 붙입니다. build(i=2) 호출은 마지막 숫자를 지났으므로 \"ij\" 조합을 답에 넣습니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "4",
+        "5"
+       ],
+       "pointers": {},
+       "marks": {}
+      },
+      "keys": {
+       "entries": [
+        {
+         "key": "4",
+         "value": [
+          "g",
+          "h",
+          "i"
+         ]
+        },
+        {
+         "key": "5",
+         "value": [
+          "j",
+          "k",
+          "l"
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "marks": {}
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        },
+        {
+         "id": 1,
+         "value": "g"
+        },
+        {
+         "id": 2,
+         "value": "gj"
+        },
+        {
+         "id": 3,
+         "value": "gk"
+        },
+        {
+         "id": 4,
+         "value": "gl"
+        },
+        {
+         "id": 5,
+         "value": "h"
+        },
+        {
+         "id": 6,
+         "value": "hj"
+        },
+        {
+         "id": 7,
+         "value": "hk"
+        },
+        {
+         "id": 8,
+         "value": "hl"
+        },
+        {
+         "id": 9,
+         "value": "i"
+        },
+        {
+         "id": 10,
+         "value": "ij"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "g"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "j"
+        },
+        {
+         "from": 1,
+         "to": 3,
+         "label": "k"
+        },
+        {
+         "from": 1,
+         "to": 4,
+         "label": "l"
+        },
+        {
+         "from": 0,
+         "to": 5,
+         "label": "h"
+        },
+        {
+         "from": 5,
+         "to": 6,
+         "label": "j"
+        },
+        {
+         "from": 5,
+         "to": 7,
+         "label": "k"
+        },
+        {
+         "from": 5,
+         "to": 8,
+         "label": "l"
+        },
+        {
+         "from": 0,
+         "to": 9,
+         "label": "i"
+        },
+        {
+         "from": 9,
+         "to": 10,
+         "label": "j"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         2,
+         3,
+         4,
+         6,
+         7,
+         8,
+         10
+        ],
+        "lit": [
+         10
+        ]
+       },
+       "shade": [
+        0,
+        9,
+        10
+       ]
+      },
+      "result": {
+       "values": [
+        "gj",
+        "gk",
+        "gl",
+        "hj",
+        "hk",
+        "hl",
+        "ij"
+       ],
+       "marks": {
+        "good": [
+         6
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "keys",
+        "at": "5"
+       },
+       "to": {
+        "view": "calls",
+        "at": 10
+       },
+       "value": "j"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 10
+       },
+       "to": {
+        "view": "result",
+        "at": 6
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add 'k': build(i=2) is past the last digit, so \"ik\" is a full combination and goes into the answer.",
+      "ko": "'k' 글자를 붙입니다. build(i=2) 호출은 마지막 숫자를 지났으므로 \"ik\" 조합을 답에 넣습니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "4",
+        "5"
+       ],
+       "pointers": {},
+       "marks": {}
+      },
+      "keys": {
+       "entries": [
+        {
+         "key": "4",
+         "value": [
+          "g",
+          "h",
+          "i"
+         ]
+        },
+        {
+         "key": "5",
+         "value": [
+          "j",
+          "k",
+          "l"
+         ],
+         "marks": {
+          "good": [
+           1
+          ]
+         }
+        }
+       ],
+       "marks": {}
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        },
+        {
+         "id": 1,
+         "value": "g"
+        },
+        {
+         "id": 2,
+         "value": "gj"
+        },
+        {
+         "id": 3,
+         "value": "gk"
+        },
+        {
+         "id": 4,
+         "value": "gl"
+        },
+        {
+         "id": 5,
+         "value": "h"
+        },
+        {
+         "id": 6,
+         "value": "hj"
+        },
+        {
+         "id": 7,
+         "value": "hk"
+        },
+        {
+         "id": 8,
+         "value": "hl"
+        },
+        {
+         "id": 9,
+         "value": "i"
+        },
+        {
+         "id": 10,
+         "value": "ij"
+        },
+        {
+         "id": 11,
+         "value": "ik"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "g"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "j"
+        },
+        {
+         "from": 1,
+         "to": 3,
+         "label": "k"
+        },
+        {
+         "from": 1,
+         "to": 4,
+         "label": "l"
+        },
+        {
+         "from": 0,
+         "to": 5,
+         "label": "h"
+        },
+        {
+         "from": 5,
+         "to": 6,
+         "label": "j"
+        },
+        {
+         "from": 5,
+         "to": 7,
+         "label": "k"
+        },
+        {
+         "from": 5,
+         "to": 8,
+         "label": "l"
+        },
+        {
+         "from": 0,
+         "to": 9,
+         "label": "i"
+        },
+        {
+         "from": 9,
+         "to": 10,
+         "label": "j"
+        },
+        {
+         "from": 9,
+         "to": 11,
+         "label": "k"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         2,
+         3,
+         4,
+         6,
+         7,
+         8,
+         10,
+         11
+        ],
+        "lit": [
+         11
+        ]
+       },
+       "shade": [
+        0,
+        9,
+        11
+       ]
+      },
+      "result": {
+       "values": [
+        "gj",
+        "gk",
+        "gl",
+        "hj",
+        "hk",
+        "hl",
+        "ij",
+        "ik"
+       ],
+       "marks": {
+        "good": [
+         7
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "keys",
+        "at": "5"
+       },
+       "to": {
+        "view": "calls",
+        "at": 11
+       },
+       "value": "k"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 11
+       },
+       "to": {
+        "view": "result",
+        "at": 7
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add 'l': build(i=2) is past the last digit, so \"il\" is a full combination and goes into the answer.",
+      "ko": "'l' 글자를 붙입니다. build(i=2) 호출은 마지막 숫자를 지났으므로 \"il\" 조합을 답에 넣습니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "4",
+        "5"
+       ],
+       "pointers": {},
+       "marks": {}
+      },
+      "keys": {
+       "entries": [
+        {
+         "key": "4",
+         "value": [
+          "g",
+          "h",
+          "i"
+         ]
+        },
+        {
+         "key": "5",
+         "value": [
+          "j",
+          "k",
+          "l"
+         ],
+         "marks": {
+          "good": [
+           2
+          ]
+         }
+        }
+       ],
+       "marks": {}
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        },
+        {
+         "id": 1,
+         "value": "g"
+        },
+        {
+         "id": 2,
+         "value": "gj"
+        },
+        {
+         "id": 3,
+         "value": "gk"
+        },
+        {
+         "id": 4,
+         "value": "gl"
+        },
+        {
+         "id": 5,
+         "value": "h"
+        },
+        {
+         "id": 6,
+         "value": "hj"
+        },
+        {
+         "id": 7,
+         "value": "hk"
+        },
+        {
+         "id": 8,
+         "value": "hl"
+        },
+        {
+         "id": 9,
+         "value": "i"
+        },
+        {
+         "id": 10,
+         "value": "ij"
+        },
+        {
+         "id": 11,
+         "value": "ik"
+        },
+        {
+         "id": 12,
+         "value": "il"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "g"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "j"
+        },
+        {
+         "from": 1,
+         "to": 3,
+         "label": "k"
+        },
+        {
+         "from": 1,
+         "to": 4,
+         "label": "l"
+        },
+        {
+         "from": 0,
+         "to": 5,
+         "label": "h"
+        },
+        {
+         "from": 5,
+         "to": 6,
+         "label": "j"
+        },
+        {
+         "from": 5,
+         "to": 7,
+         "label": "k"
+        },
+        {
+         "from": 5,
+         "to": 8,
+         "label": "l"
+        },
+        {
+         "from": 0,
+         "to": 9,
+         "label": "i"
+        },
+        {
+         "from": 9,
+         "to": 10,
+         "label": "j"
+        },
+        {
+         "from": 9,
+         "to": 11,
+         "label": "k"
+        },
+        {
+         "from": 9,
+         "to": 12,
+         "label": "l"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         2,
+         3,
+         4,
+         6,
+         7,
+         8,
+         10,
+         11,
+         12
+        ],
+        "lit": [
+         12
+        ]
+       },
+       "shade": [
+        0,
+        9,
+        12
+       ]
+      },
+      "result": {
+       "values": [
+        "gj",
+        "gk",
+        "gl",
+        "hj",
+        "hk",
+        "hl",
+        "ij",
+        "ik",
+        "il"
+       ],
+       "marks": {
+        "good": [
+         8
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "keys",
+        "at": "5"
+       },
+       "to": {
+        "view": "calls",
+        "at": 12
+       },
+       "value": "l"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 12
+       },
+       "to": {
+        "view": "result",
+        "at": 8
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every call has returned: 9 combinations, 3 × 3 = 9, one per leaf of the tree.",
+      "ko": "모든 호출이 끝났습니다. 조합은 9개(3 × 3 = 9)이고, 트리의 잎 하나가 조합 하나입니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "4",
+        "5"
+       ],
+       "pointers": {},
+       "marks": {}
+      },
+      "keys": {
+       "entries": [
+        {
+         "key": "4",
+         "value": [
+          "g",
+          "h",
+          "i"
+         ]
+        },
+        {
+         "key": "5",
+         "value": [
+          "j",
+          "k",
+          "l"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        },
+        {
+         "id": 1,
+         "value": "g"
+        },
+        {
+         "id": 2,
+         "value": "gj"
+        },
+        {
+         "id": 3,
+         "value": "gk"
+        },
+        {
+         "id": 4,
+         "value": "gl"
+        },
+        {
+         "id": 5,
+         "value": "h"
+        },
+        {
+         "id": 6,
+         "value": "hj"
+        },
+        {
+         "id": 7,
+         "value": "hk"
+        },
+        {
+         "id": 8,
+         "value": "hl"
+        },
+        {
+         "id": 9,
+         "value": "i"
+        },
+        {
+         "id": 10,
+         "value": "ij"
+        },
+        {
+         "id": 11,
+         "value": "ik"
+        },
+        {
+         "id": 12,
+         "value": "il"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "g"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "j"
+        },
+        {
+         "from": 1,
+         "to": 3,
+         "label": "k"
+        },
+        {
+         "from": 1,
+         "to": 4,
+         "label": "l"
+        },
+        {
+         "from": 0,
+         "to": 5,
+         "label": "h"
+        },
+        {
+         "from": 5,
+         "to": 6,
+         "label": "j"
+        },
+        {
+         "from": 5,
+         "to": 7,
+         "label": "k"
+        },
+        {
+         "from": 5,
+         "to": 8,
+         "label": "l"
+        },
+        {
+         "from": 0,
+         "to": 9,
+         "label": "i"
+        },
+        {
+         "from": 9,
+         "to": 10,
+         "label": "j"
+        },
+        {
+         "from": 9,
+         "to": 11,
+         "label": "k"
+        },
+        {
+         "from": 9,
+         "to": 12,
+         "label": "l"
+        }
+       ],
+       "nodeMarks": {
+        "path": [
+         2,
+         3,
+         4,
+         6,
+         7,
+         8,
+         10,
+         11,
+         12
+        ]
+       },
+       "shade": []
+      },
+      "result": {
+       "values": [
+        "gj",
+        "gk",
+        "gl",
+        "hj",
+        "hk",
+        "hl",
+        "ij",
+        "ik",
+        "il"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7,
+         8
+        ]
+       }
+      }
+     },
+     "answer": "[\"gj\",\"gk\",\"gl\",\"hj\",\"hk\",\"hl\",\"ij\",\"ik\",\"il\"]"
+    }
+   ],
+   "sampleInput": "45"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "digits = \"2\"",
+   "expected": "[\"a\",\"b\",\"c\"]",
+   "frames": [
+    {
+     "caption": {
+      "en": "build(i=0) starts with no letters; digit 2 stands for 'a', 'b', 'c', so it will add each in turn.",
+      "ko": "build(i=0) 호출은 글자 없이 시작합니다. 숫자 2는 'a', 'b', 'c' 글자를 나타내므로 하나씩 붙여 봅니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "2"
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "keys": {
+       "entries": [
+        {
+         "key": "2",
+         "value": [
+          "a",
+          "b",
+          "c"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         "2"
+        ]
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        }
+       ],
+       "edges": [],
+       "nodeMarks": {
+        "good": [],
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "calls",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add 'a': build(i=1) is past the last digit, so \"a\" is a full combination and goes into the answer.",
+      "ko": "'a' 글자를 붙입니다. build(i=1) 호출은 마지막 숫자를 지났으므로 \"a\" 조합을 답에 넣습니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "2"
+       ],
+       "pointers": {},
+       "marks": {}
+      },
+      "keys": {
+       "entries": [
+        {
+         "key": "2",
+         "value": [
+          "a",
+          "b",
+          "c"
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "marks": {}
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        },
+        {
+         "id": 1,
+         "value": "a"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "a"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         1
+        ],
+        "lit": [
+         1
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ]
+      },
+      "result": {
+       "values": [
+        "a"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "keys",
+        "at": "2"
+       },
+       "to": {
+        "view": "calls",
+        "at": 1
+       },
+       "value": "a"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add 'b': build(i=1) is past the last digit, so \"b\" is a full combination and goes into the answer.",
+      "ko": "'b' 글자를 붙입니다. build(i=1) 호출은 마지막 숫자를 지났으므로 \"b\" 조합을 답에 넣습니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "2"
+       ],
+       "pointers": {},
+       "marks": {}
+      },
+      "keys": {
+       "entries": [
+        {
+         "key": "2",
+         "value": [
+          "a",
+          "b",
+          "c"
+         ],
+         "marks": {
+          "good": [
+           1
+          ]
+         }
+        }
+       ],
+       "marks": {}
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        },
+        {
+         "id": 1,
+         "value": "a"
+        },
+        {
+         "id": 2,
+         "value": "b"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "a"
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "label": "b"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         1,
+         2
+        ],
+        "lit": [
+         2
+        ]
+       },
+       "shade": [
+        0,
+        2
+       ]
+      },
+      "result": {
+       "values": [
+        "a",
+        "b"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "keys",
+        "at": "2"
+       },
+       "to": {
+        "view": "calls",
+        "at": 2
+       },
+       "value": "b"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add 'c': build(i=1) is past the last digit, so \"c\" is a full combination and goes into the answer.",
+      "ko": "'c' 글자를 붙입니다. build(i=1) 호출은 마지막 숫자를 지났으므로 \"c\" 조합을 답에 넣습니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "2"
+       ],
+       "pointers": {},
+       "marks": {}
+      },
+      "keys": {
+       "entries": [
+        {
+         "key": "2",
+         "value": [
+          "a",
+          "b",
+          "c"
+         ],
+         "marks": {
+          "good": [
+           2
+          ]
+         }
+        }
+       ],
+       "marks": {}
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        },
+        {
+         "id": 1,
+         "value": "a"
+        },
+        {
+         "id": 2,
+         "value": "b"
+        },
+        {
+         "id": 3,
+         "value": "c"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "a"
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "label": "b"
+        },
+        {
+         "from": 0,
+         "to": 3,
+         "label": "c"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         1,
+         2,
+         3
+        ],
+        "lit": [
+         3
+        ]
+       },
+       "shade": [
+        0,
+        3
+       ]
+      },
+      "result": {
+       "values": [
+        "a",
+        "b",
+        "c"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "keys",
+        "at": "2"
+       },
+       "to": {
+        "view": "calls",
+        "at": 3
+       },
+       "value": "c"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 3
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every call has returned: 3 combinations, one per letter of the key.",
+      "ko": "모든 호출이 끝났습니다. 조합은 3개로, 키의 글자마다 하나입니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "2"
+       ],
+       "pointers": {},
+       "marks": {}
+      },
+      "keys": {
+       "entries": [
+        {
+         "key": "2",
+         "value": [
+          "a",
+          "b",
+          "c"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        },
+        {
+         "id": 1,
+         "value": "a"
+        },
+        {
+         "id": 2,
+         "value": "b"
+        },
+        {
+         "id": 3,
+         "value": "c"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "a"
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "label": "b"
+        },
+        {
+         "from": 0,
+         "to": 3,
+         "label": "c"
+        }
+       ],
+       "nodeMarks": {
+        "path": [
+         1,
+         2,
+         3
+        ]
+       },
+       "shade": []
+      },
+      "result": {
+       "values": [
+        "a",
+        "b",
+        "c"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2
+        ]
+       }
+      }
+     },
+     "answer": "[\"a\",\"b\",\"c\"]"
+    }
+   ],
+   "sampleInput": "2"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "digits = \"7\"",
+   "expected": "[\"p\",\"q\",\"r\",\"s\"]",
+   "frames": [
+    {
+     "caption": {
+      "en": "build(i=0) starts with no letters; digit 7 stands for 'p', 'q', 'r', 's', so it will add each in turn.",
+      "ko": "build(i=0) 호출은 글자 없이 시작합니다. 숫자 7은 'p', 'q', 'r', 's' 글자를 나타내므로 하나씩 붙여 봅니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "7"
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "keys": {
+       "entries": [
+        {
+         "key": "7",
+         "value": [
+          "p",
+          "q",
+          "r",
+          "s"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         "7"
+        ]
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        }
+       ],
+       "edges": [],
+       "nodeMarks": {
+        "good": [],
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "calls",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add 'p': build(i=1) is past the last digit, so \"p\" is a full combination and goes into the answer.",
+      "ko": "'p' 글자를 붙입니다. build(i=1) 호출은 마지막 숫자를 지났으므로 \"p\" 조합을 답에 넣습니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "7"
+       ],
+       "pointers": {},
+       "marks": {}
+      },
+      "keys": {
+       "entries": [
+        {
+         "key": "7",
+         "value": [
+          "p",
+          "q",
+          "r",
+          "s"
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "marks": {}
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        },
+        {
+         "id": 1,
+         "value": "p"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "p"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         1
+        ],
+        "lit": [
+         1
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ]
+      },
+      "result": {
+       "values": [
+        "p"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "keys",
+        "at": "7"
+       },
+       "to": {
+        "view": "calls",
+        "at": 1
+       },
+       "value": "p"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add 'q': build(i=1) is past the last digit, so \"q\" is a full combination and goes into the answer.",
+      "ko": "'q' 글자를 붙입니다. build(i=1) 호출은 마지막 숫자를 지났으므로 \"q\" 조합을 답에 넣습니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "7"
+       ],
+       "pointers": {},
+       "marks": {}
+      },
+      "keys": {
+       "entries": [
+        {
+         "key": "7",
+         "value": [
+          "p",
+          "q",
+          "r",
+          "s"
+         ],
+         "marks": {
+          "good": [
+           1
+          ]
+         }
+        }
+       ],
+       "marks": {}
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        },
+        {
+         "id": 1,
+         "value": "p"
+        },
+        {
+         "id": 2,
+         "value": "q"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "p"
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "label": "q"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         1,
+         2
+        ],
+        "lit": [
+         2
+        ]
+       },
+       "shade": [
+        0,
+        2
+       ]
+      },
+      "result": {
+       "values": [
+        "p",
+        "q"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "keys",
+        "at": "7"
+       },
+       "to": {
+        "view": "calls",
+        "at": 2
+       },
+       "value": "q"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add 'r': build(i=1) is past the last digit, so \"r\" is a full combination and goes into the answer.",
+      "ko": "'r' 글자를 붙입니다. build(i=1) 호출은 마지막 숫자를 지났으므로 \"r\" 조합을 답에 넣습니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "7"
+       ],
+       "pointers": {},
+       "marks": {}
+      },
+      "keys": {
+       "entries": [
+        {
+         "key": "7",
+         "value": [
+          "p",
+          "q",
+          "r",
+          "s"
+         ],
+         "marks": {
+          "good": [
+           2
+          ]
+         }
+        }
+       ],
+       "marks": {}
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        },
+        {
+         "id": 1,
+         "value": "p"
+        },
+        {
+         "id": 2,
+         "value": "q"
+        },
+        {
+         "id": 3,
+         "value": "r"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "p"
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "label": "q"
+        },
+        {
+         "from": 0,
+         "to": 3,
+         "label": "r"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         1,
+         2,
+         3
+        ],
+        "lit": [
+         3
+        ]
+       },
+       "shade": [
+        0,
+        3
+       ]
+      },
+      "result": {
+       "values": [
+        "p",
+        "q",
+        "r"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "keys",
+        "at": "7"
+       },
+       "to": {
+        "view": "calls",
+        "at": 3
+       },
+       "value": "r"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 3
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Add 's': build(i=1) is past the last digit, so \"s\" is a full combination and goes into the answer.",
+      "ko": "'s' 글자를 붙입니다. build(i=1) 호출은 마지막 숫자를 지났으므로 \"s\" 조합을 답에 넣습니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "7"
+       ],
+       "pointers": {},
+       "marks": {}
+      },
+      "keys": {
+       "entries": [
+        {
+         "key": "7",
+         "value": [
+          "p",
+          "q",
+          "r",
+          "s"
+         ],
+         "marks": {
+          "good": [
+           3
+          ]
+         }
+        }
+       ],
+       "marks": {}
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        },
+        {
+         "id": 1,
+         "value": "p"
+        },
+        {
+         "id": 2,
+         "value": "q"
+        },
+        {
+         "id": 3,
+         "value": "r"
+        },
+        {
+         "id": 4,
+         "value": "s"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "p"
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "label": "q"
+        },
+        {
+         "from": 0,
+         "to": 3,
+         "label": "r"
+        },
+        {
+         "from": 0,
+         "to": 4,
+         "label": "s"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         1,
+         2,
+         3,
+         4
+        ],
+        "lit": [
+         4
+        ]
+       },
+       "shade": [
+        0,
+        4
+       ]
+      },
+      "result": {
+       "values": [
+        "p",
+        "q",
+        "r",
+        "s"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "keys",
+        "at": "7"
+       },
+       "to": {
+        "view": "calls",
+        "at": 4
+       },
+       "value": "s"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every call has returned: 4 combinations, one per letter of the key.",
+      "ko": "모든 호출이 끝났습니다. 조합은 4개로, 키의 글자마다 하나입니다."
+     },
+     "views": {
+      "digits": {
+       "values": [
+        "7"
+       ],
+       "pointers": {},
+       "marks": {}
+      },
+      "keys": {
+       "entries": [
+        {
+         "key": "7",
+         "value": [
+          "p",
+          "q",
+          "r",
+          "s"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": null
+        },
+        {
+         "id": 1,
+         "value": "p"
+        },
+        {
+         "id": 2,
+         "value": "q"
+        },
+        {
+         "id": 3,
+         "value": "r"
+        },
+        {
+         "id": 4,
+         "value": "s"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "p"
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "label": "q"
+        },
+        {
+         "from": 0,
+         "to": 3,
+         "label": "r"
+        },
+        {
+         "from": 0,
+         "to": 4,
+         "label": "s"
+        }
+       ],
+       "nodeMarks": {
+        "path": [
+         1,
+         2,
+         3,
+         4
+        ]
+       },
+       "shade": []
+      },
+      "result": {
+       "values": [
+        "p",
+        "q",
+        "r",
+        "s"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      }
+     },
+     "answer": "[\"p\",\"q\",\"r\",\"s\"]"
+    }
+   ],
+   "sampleInput": "7"
+  }
+ ]
+}

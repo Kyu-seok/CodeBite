@@ -1,6 +1,6 @@
 {USER_CODE}
 
 import json
-prev_room = json.loads(input())
-result = Solution().countAssemblyOrders(prev_room)
+parent = json.loads(input())
+result = Solution().countTaskOrders(parent)
 print(result)

@@ -1,5 +1,5 @@
 class Solution {
-    public int longestVineAscent(int[][] scores) {
+    public int longestIncreasingPath(int[][] scores) {
         // Write your solution here
     }
 }

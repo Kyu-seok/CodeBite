@@ -14,7 +14,7 @@ class Solution {
      * @param {TreeNode} root
      * @return {boolean}
      */
-    verifyWardOrder(root) {
+    isValidBST(root) {
         // Write your solution here
     }
 }

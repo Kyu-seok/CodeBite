@@ -1,5 +1,5 @@
 class Solution:
-    def daysToUpgrade(self, readings: list[int]) -> list[int]:
+    def daysUntilWarmer(self, readings: list[int]) -> list[int]:
         waits = [0] * len(readings)
         pending: list[int] = []  # days still waiting for a higher reading
         for day, reading in enumerate(readings):

@@ -9,15 +9,13 @@ class TreeNode:
 
 
 class Solution:
-    def tallyDominantBlocks(self, root: Optional[TreeNode]) -> int:
-        count = 0
-        stack = [(root, float("-inf"))] if root else []
-        while stack:
-            node, best = stack.pop()
-            if node.val >= best:
-                count += 1
-                best = node.val
-            for child in (node.left, node.right):
-                if child:
-                    stack.append((child, best))
-        return count
+    def countDominantHeroes(self, root: Optional[TreeNode]) -> int:
+        # Each call carries the highest number above its node; the node is dominant when it reaches that number.
+        def count(node: Optional[TreeNode], best: float) -> int:
+            if node is None:
+                return 0
+            dominant = node.val >= best
+            best = max(best, node.val)
+            return int(dominant) + count(node.left, best) + count(node.right, best)
+
+        return count(root, float("-inf"))

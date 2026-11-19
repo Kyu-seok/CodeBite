@@ -14,7 +14,7 @@ using namespace std;
  */
 class Solution {
 public:
-    vector<int> captureDockSilhouette(TreeNode* root) {
+    vector<int> rightSideView(TreeNode* root) {
         // Write your solution here
     }
 };

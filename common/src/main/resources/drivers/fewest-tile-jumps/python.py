@@ -1,5 +1,5 @@
 {USER_CODE}
 
-nums = eval(input())
-result = Solution().minVanHops(nums)
+maxJump = eval(input())
+result = Solution().minJumps(maxJump)
 print(result)

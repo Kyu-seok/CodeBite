@@ -1,6 +1,6 @@
 class Solution {
 public:
-    bool isReversibleCode(int code) {
+    bool isPalindrome(int episode) {
         // Write your solution here
     }
 };

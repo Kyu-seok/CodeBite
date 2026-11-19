@@ -1,6 +1,6 @@
 class Solution {
 public:
-    vector<int> splitZoneRuns(string stickers) {
+    vector<int> splitStickerRuns(string stickers) {
         // Write your solution here
     }
 };

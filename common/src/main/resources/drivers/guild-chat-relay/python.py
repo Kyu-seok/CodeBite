@@ -1,8 +1,8 @@
 {USER_CODE}
 
 import json
-edges = json.loads(input())
+links = json.loads(input())
 n = int(input())
 src = int(input())
-result = Solution().propagateAlertWave(edges, n, src)
+result = Solution().minutesToReachAll(links, n, src)
 print(result)

@@ -4,7 +4,7 @@ class Solution {
      * @param {number} hours
      * @return {number}
      */
-    slowestConveyorSpeed(piles, hours) {
+    minEatingRate(piles, hours) {
         // Write your solution here
     }
 }

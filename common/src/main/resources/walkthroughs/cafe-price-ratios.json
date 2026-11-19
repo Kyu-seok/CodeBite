@@ -1,0 +1,6039 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Cafe Price Ratios",
+  "ko": "가격 비율 계산하기"
+ },
+ "approach": {
+  "en": "Each ratio A / B = k is an edge both ways: × k from A to B, × 1/k back. For each query, search from its first item with a stack, carrying the product of the ratios along the way; reaching the second item, the product is the answer.",
+  "ko": "비율 A / B = k마다 양방향 간선을 둡니다: A에서 B로는 × k, 거꾸로는 × 1/k입니다. 질의마다 첫 품목에서 스택으로 찾으며 지나온 비율의 곱을 들고 가고, 두 번째 품목에 닿으면 그 곱이 답입니다."
+ },
+ "views": [
+  {
+   "id": "prices",
+   "type": "graph",
+   "directed": true,
+   "title": {
+    "en": "ratios (arrow A → B: A / B; under: start / item)",
+    "ko": "비율 (화살표 A → B: A / B, 아래: 시작 / 품목)"
+   }
+  },
+  {
+   "id": "queries",
+   "type": "table",
+   "title": {
+    "en": "queries",
+    "ko": "queries (질의)"
+   },
+   "columns": [
+    {
+     "en": "query",
+     "ko": "질의"
+    }
+   ]
+  },
+  {
+   "id": "stack",
+   "type": "stack",
+   "title": {
+    "en": "stack (tag: start / item)",
+    "ko": "스택 (태그: 시작 / 품목)"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  },
+  {
+   "id": "result",
+   "type": "output",
+   "title": {
+    "en": "answers",
+    "ko": "답"
+   },
+   "empty": {
+    "en": "none yet",
+    "ko": "아직 없음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "ratios = [[\"milk\",\"bread\"],[\"bread\",\"eggs\"]], values = [4.0,2.0], queries = [[\"milk\",\"eggs\"],[\"eggs\",\"bread\"],[\"bread\",\"milk\"],[\"milk\",\"milk\"],[\"soap\",\"milk\"]]",
+   "expected": "[8.00000,0.50000,0.25000,1.00000,-1.00000]",
+   "frames": [
+    {
+     "caption": {
+      "en": "2 known ratios and 5 queries. Each ratio can be walked both ways: along its arrow × the ratio, against it ÷ the ratio.",
+      "ko": "알려진 비율 2개와 질의 5개가 있습니다. 비율은 양방향으로 쓸 수 있어서, 화살표 방향으로는 비율을 곱하고 반대 방향으로는 비율로 나눕니다."
+     },
+     "views": {
+      "prices": {
+       "values": {},
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": []
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "milk / eggs"
+         ]
+        },
+        {
+         "cells": [
+          "eggs / bread"
+         ]
+        },
+        {
+         "cells": [
+          "bread / milk"
+         ]
+        },
+        {
+         "cells": [
+          "milk / milk"
+         ]
+        },
+        {
+         "cells": [
+          "soap / milk"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": []
+       }
+      },
+      "stack": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Query 1, milk / eggs: start at milk, whose ratio to itself is 1, and push it.",
+      "ko": "질의 1, milk / eggs: milk 품목에서 시작합니다. 자기 자신과의 비율은 1이고, 스택에 넣습니다."
+     },
+     "views": {
+      "prices": {
+       "values": {
+        "milk": "1"
+       },
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         "milk"
+        ],
+        "lit": [
+         "milk"
+        ]
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "milk / eggs"
+         ]
+        },
+        {
+         "cells": [
+          "eggs / bread"
+         ]
+        },
+        {
+         "cells": [
+          "bread / milk"
+         ]
+        },
+        {
+         "cells": [
+          "milk / milk"
+         ]
+        },
+        {
+         "cells": [
+          "soap / milk"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "milk"
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "queries",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "prices",
+        "at": "milk"
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "prices",
+        "at": "milk"
+       },
+       "to": {
+        "view": "stack",
+        "at": 0
+       },
+       "value": "milk"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop milk, at 1: bread = 1 × 4 = 4.",
+      "ko": "1인 milk 품목을 꺼냅니다: bread = 1 × 4 = 4."
+     },
+     "views": {
+      "prices": {
+       "values": {
+        "milk": "1",
+        "bread": "4"
+       },
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         "bread"
+        ],
+        "lit": [
+         "milk"
+        ]
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "milk / eggs"
+         ]
+        },
+        {
+         "cells": [
+          "eggs / bread"
+         ]
+        },
+        {
+         "cells": [
+          "bread / milk"
+         ]
+        },
+        {
+         "cells": [
+          "milk / milk"
+         ]
+        },
+        {
+         "cells": [
+          "soap / milk"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "milk"
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": [
+         "milk",
+         "bread"
+        ]
+       },
+       "to": {
+        "view": "prices",
+        "at": "bread"
+       },
+       "value": "4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Push bread, to search on from it.",
+      "ko": "bread 품목을 스택에 넣어, 거기서 계속 찾습니다."
+     },
+     "views": {
+      "prices": {
+       "values": {
+        "milk": "1",
+        "bread": "4"
+       },
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         "bread"
+        ],
+        "lit": []
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "milk / eggs"
+         ]
+        },
+        {
+         "cells": [
+          "eggs / bread"
+         ]
+        },
+        {
+         "cells": [
+          "bread / milk"
+         ]
+        },
+        {
+         "cells": [
+          "milk / milk"
+         ]
+        },
+        {
+         "cells": [
+          "soap / milk"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "bread"
+       ],
+       "tags": [
+        [
+         0,
+         "4"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": "bread"
+       },
+       "to": {
+        "view": "stack",
+        "at": 0
+       },
+       "value": "bread"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop bread, at 4: eggs = 4 × 2 = 8.",
+      "ko": "4인 bread 품목을 꺼냅니다: eggs = 4 × 2 = 8."
+     },
+     "views": {
+      "prices": {
+       "values": {
+        "milk": "1",
+        "bread": "4",
+        "eggs": "8"
+       },
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         "eggs"
+        ],
+        "lit": [
+         "bread"
+        ]
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "milk / eggs"
+         ]
+        },
+        {
+         "cells": [
+          "eggs / bread"
+         ]
+        },
+        {
+         "cells": [
+          "bread / milk"
+         ]
+        },
+        {
+         "cells": [
+          "milk / milk"
+         ]
+        },
+        {
+         "cells": [
+          "soap / milk"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "bread"
+       ],
+       "tags": [
+        [
+         0,
+         "4"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": [
+         "bread",
+         "eggs"
+        ]
+       },
+       "to": {
+        "view": "prices",
+        "at": "eggs"
+       },
+       "value": "8"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Push eggs, to search on from it.",
+      "ko": "eggs 품목을 스택에 넣어, 거기서 계속 찾습니다."
+     },
+     "views": {
+      "prices": {
+       "values": {
+        "milk": "1",
+        "bread": "4",
+        "eggs": "8"
+       },
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         "eggs"
+        ],
+        "lit": []
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "milk / eggs"
+         ]
+        },
+        {
+         "cells": [
+          "eggs / bread"
+         ]
+        },
+        {
+         "cells": [
+          "bread / milk"
+         ]
+        },
+        {
+         "cells": [
+          "milk / milk"
+         ]
+        },
+        {
+         "cells": [
+          "soap / milk"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "eggs"
+       ],
+       "tags": [
+        [
+         0,
+         "8"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": "eggs"
+       },
+       "to": {
+        "view": "stack",
+        "at": 0
+       },
+       "value": "eggs"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop eggs: it is the item the query asks for, so milk / eggs = 8.",
+      "ko": "eggs 품목을 꺼냅니다. 질의가 찾는 품목이므로 milk / eggs = 8입니다."
+     },
+     "views": {
+      "prices": {
+       "values": {
+        "milk": "1",
+        "bread": "4",
+        "eggs": "8"
+       },
+       "nodeMarks": {
+        "path": [
+         "eggs"
+        ],
+        "bad": [],
+        "good": [],
+        "lit": [
+         "eggs"
+        ]
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "milk / eggs"
+         ]
+        },
+        {
+         "cells": [
+          "eggs / bread"
+         ]
+        },
+        {
+         "cells": [
+          "bread / milk"
+         ]
+        },
+        {
+         "cells": [
+          "milk / milk"
+         ]
+        },
+        {
+         "cells": [
+          "soap / milk"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "eggs"
+       ],
+       "tags": [
+        [
+         0,
+         "8"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "8.00000"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": "eggs"
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "8.00000"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Query 2, eggs / bread: start at eggs, whose ratio to itself is 1, and push it.",
+      "ko": "질의 2, eggs / bread: eggs 품목에서 시작합니다. 자기 자신과의 비율은 1이고, 스택에 넣습니다."
+     },
+     "views": {
+      "prices": {
+       "values": {
+        "eggs": "1"
+       },
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         "eggs"
+        ],
+        "lit": [
+         "eggs"
+        ]
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "milk / eggs"
+         ]
+        },
+        {
+         "cells": [
+          "eggs / bread"
+         ]
+        },
+        {
+         "cells": [
+          "bread / milk"
+         ]
+        },
+        {
+         "cells": [
+          "milk / milk"
+         ]
+        },
+        {
+         "cells": [
+          "soap / milk"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "eggs"
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "8.00000"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": "milk"
+       },
+       "mark": "bad"
+      },
+      {
+       "from": {
+        "view": "prices",
+        "at": "bread"
+       },
+       "mark": "bad"
+      },
+      {
+       "from": {
+        "view": "queries",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "prices",
+        "at": "eggs"
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "prices",
+        "at": "eggs"
+       },
+       "to": {
+        "view": "stack",
+        "at": 0
+       },
+       "value": "eggs"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop eggs, at 1: bread = 1 ÷ 2 = 0.5.",
+      "ko": "1인 eggs 품목을 꺼냅니다: bread = 1 ÷ 2 = 0.5."
+     },
+     "views": {
+      "prices": {
+       "values": {
+        "eggs": "1",
+        "bread": "0.5"
+       },
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         "bread"
+        ],
+        "lit": [
+         "eggs"
+        ]
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "milk / eggs"
+         ]
+        },
+        {
+         "cells": [
+          "eggs / bread"
+         ]
+        },
+        {
+         "cells": [
+          "bread / milk"
+         ]
+        },
+        {
+         "cells": [
+          "milk / milk"
+         ]
+        },
+        {
+         "cells": [
+          "soap / milk"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "eggs"
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "8.00000"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": [
+         "bread",
+         "eggs"
+        ]
+       },
+       "to": {
+        "view": "prices",
+        "at": "bread"
+       },
+       "value": "0.5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Push bread, to search on from it.",
+      "ko": "bread 품목을 스택에 넣어, 거기서 계속 찾습니다."
+     },
+     "views": {
+      "prices": {
+       "values": {
+        "eggs": "1",
+        "bread": "0.5"
+       },
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         "bread"
+        ],
+        "lit": []
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "milk / eggs"
+         ]
+        },
+        {
+         "cells": [
+          "eggs / bread"
+         ]
+        },
+        {
+         "cells": [
+          "bread / milk"
+         ]
+        },
+        {
+         "cells": [
+          "milk / milk"
+         ]
+        },
+        {
+         "cells": [
+          "soap / milk"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "bread"
+       ],
+       "tags": [
+        [
+         0,
+         "0.5"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "8.00000"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": "bread"
+       },
+       "to": {
+        "view": "stack",
+        "at": 0
+       },
+       "value": "bread"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop bread: it is the item the query asks for, so eggs / bread = 0.5.",
+      "ko": "bread 품목을 꺼냅니다. 질의가 찾는 품목이므로 eggs / bread = 0.5입니다."
+     },
+     "views": {
+      "prices": {
+       "values": {
+        "eggs": "1",
+        "bread": "0.5"
+       },
+       "nodeMarks": {
+        "path": [
+         "bread"
+        ],
+        "bad": [],
+        "good": [],
+        "lit": [
+         "bread"
+        ]
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "milk / eggs"
+         ]
+        },
+        {
+         "cells": [
+          "eggs / bread"
+         ]
+        },
+        {
+         "cells": [
+          "bread / milk"
+         ]
+        },
+        {
+         "cells": [
+          "milk / milk"
+         ]
+        },
+        {
+         "cells": [
+          "soap / milk"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "bread"
+       ],
+       "tags": [
+        [
+         0,
+         "0.5"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "8.00000",
+        "0.50000"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": "bread"
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": "0.50000"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Query 3, bread / milk: start at bread, whose ratio to itself is 1, and push it.",
+      "ko": "질의 3, bread / milk: bread 품목에서 시작합니다. 자기 자신과의 비율은 1이고, 스택에 넣습니다."
+     },
+     "views": {
+      "prices": {
+       "values": {
+        "bread": "1"
+       },
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         "bread"
+        ],
+        "lit": [
+         "bread"
+        ]
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "milk / eggs"
+         ]
+        },
+        {
+         "cells": [
+          "eggs / bread"
+         ]
+        },
+        {
+         "cells": [
+          "bread / milk"
+         ]
+        },
+        {
+         "cells": [
+          "milk / milk"
+         ]
+        },
+        {
+         "cells": [
+          "soap / milk"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "bread"
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "8.00000",
+        "0.50000"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": "eggs"
+       },
+       "mark": "bad"
+      },
+      {
+       "from": {
+        "view": "queries",
+        "at": [
+         2,
+         0
+        ]
+       },
+       "to": {
+        "view": "prices",
+        "at": "bread"
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "prices",
+        "at": "bread"
+       },
+       "to": {
+        "view": "stack",
+        "at": 0
+       },
+       "value": "bread"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop bread, at 1: milk = 1 ÷ 4 = 0.25; eggs = 1 × 2 = 2.",
+      "ko": "1인 bread 품목을 꺼냅니다: milk = 1 ÷ 4 = 0.25; eggs = 1 × 2 = 2."
+     },
+     "views": {
+      "prices": {
+       "values": {
+        "bread": "1",
+        "milk": "0.25",
+        "eggs": "2"
+       },
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         "milk",
+         "eggs"
+        ],
+        "lit": [
+         "bread"
+        ]
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": [
+         0,
+         1
+        ]
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "milk / eggs"
+         ]
+        },
+        {
+         "cells": [
+          "eggs / bread"
+         ]
+        },
+        {
+         "cells": [
+          "bread / milk"
+         ]
+        },
+        {
+         "cells": [
+          "milk / milk"
+         ]
+        },
+        {
+         "cells": [
+          "soap / milk"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "bread"
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "8.00000",
+        "0.50000"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": [
+         "milk",
+         "bread"
+        ]
+       },
+       "to": {
+        "view": "prices",
+        "at": "milk"
+       },
+       "value": "0.25"
+      },
+      {
+       "from": {
+        "view": "prices",
+        "at": [
+         "bread",
+         "eggs"
+        ]
+       },
+       "to": {
+        "view": "prices",
+        "at": "eggs"
+       },
+       "value": "2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Push milk, eggs, to search on from them.",
+      "ko": "milk, eggs 품목을 스택에 넣어, 거기서 계속 찾습니다."
+     },
+     "views": {
+      "prices": {
+       "values": {
+        "bread": "1",
+        "milk": "0.25",
+        "eggs": "2"
+       },
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         "milk",
+         "eggs"
+        ],
+        "lit": []
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "milk / eggs"
+         ]
+        },
+        {
+         "cells": [
+          "eggs / bread"
+         ]
+        },
+        {
+         "cells": [
+          "bread / milk"
+         ]
+        },
+        {
+         "cells": [
+          "milk / milk"
+         ]
+        },
+        {
+         "cells": [
+          "soap / milk"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "milk",
+        "eggs"
+       ],
+       "tags": [
+        [
+         0,
+         "0.25"
+        ],
+        [
+         1,
+         "2"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0,
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "8.00000",
+        "0.50000"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": "milk"
+       },
+       "to": {
+        "view": "stack",
+        "at": 0
+       },
+       "value": "milk"
+      },
+      {
+       "from": {
+        "view": "prices",
+        "at": "eggs"
+       },
+       "to": {
+        "view": "stack",
+        "at": 1
+       },
+       "value": "eggs"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop eggs: every item next to it was already reached in this search.",
+      "ko": "eggs 품목을 꺼냅니다. 이웃한 품목은 모두 이번 탐색에서 이미 닿았습니다."
+     },
+     "views": {
+      "prices": {
+       "values": {
+        "bread": "1",
+        "milk": "0.25",
+        "eggs": "2"
+       },
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": [
+         "eggs"
+        ]
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "milk / eggs"
+         ]
+        },
+        {
+         "cells": [
+          "eggs / bread"
+         ]
+        },
+        {
+         "cells": [
+          "bread / milk"
+         ]
+        },
+        {
+         "cells": [
+          "milk / milk"
+         ]
+        },
+        {
+         "cells": [
+          "soap / milk"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "milk",
+        "eggs"
+       ],
+       "tags": [
+        [
+         0,
+         "0.25"
+        ],
+        [
+         1,
+         "2"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "8.00000",
+        "0.50000"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stack",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop milk: it is the item the query asks for, so bread / milk = 0.25.",
+      "ko": "milk 품목을 꺼냅니다. 질의가 찾는 품목이므로 bread / milk = 0.25입니다."
+     },
+     "views": {
+      "prices": {
+       "values": {
+        "bread": "1",
+        "milk": "0.25",
+        "eggs": "2"
+       },
+       "nodeMarks": {
+        "path": [
+         "milk"
+        ],
+        "bad": [],
+        "good": [],
+        "lit": [
+         "milk"
+        ]
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "milk / eggs"
+         ]
+        },
+        {
+         "cells": [
+          "eggs / bread"
+         ]
+        },
+        {
+         "cells": [
+          "bread / milk"
+         ]
+        },
+        {
+         "cells": [
+          "milk / milk"
+         ]
+        },
+        {
+         "cells": [
+          "soap / milk"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "milk"
+       ],
+       "tags": [
+        [
+         0,
+         "0.25"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "8.00000",
+        "0.50000",
+        "0.25000"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": "milk"
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       },
+       "value": "0.25000"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Query 4, milk / milk: start at milk, whose ratio to itself is 1, and push it.",
+      "ko": "질의 4, milk / milk: milk 품목에서 시작합니다. 자기 자신과의 비율은 1이고, 스택에 넣습니다."
+     },
+     "views": {
+      "prices": {
+       "values": {
+        "milk": "1"
+       },
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         "milk"
+        ],
+        "lit": [
+         "milk"
+        ]
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "milk / eggs"
+         ]
+        },
+        {
+         "cells": [
+          "eggs / bread"
+         ]
+        },
+        {
+         "cells": [
+          "bread / milk"
+         ]
+        },
+        {
+         "cells": [
+          "milk / milk"
+         ]
+        },
+        {
+         "cells": [
+          "soap / milk"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          2,
+          0
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "milk"
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "8.00000",
+        "0.50000",
+        "0.25000"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": "bread"
+       },
+       "mark": "bad"
+      },
+      {
+       "from": {
+        "view": "prices",
+        "at": "eggs"
+       },
+       "mark": "bad"
+      },
+      {
+       "from": {
+        "view": "queries",
+        "at": [
+         3,
+         0
+        ]
+       },
+       "to": {
+        "view": "prices",
+        "at": "milk"
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "prices",
+        "at": "milk"
+       },
+       "to": {
+        "view": "stack",
+        "at": 0
+       },
+       "value": "milk"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop milk: it is the item the query asks for, so milk / milk = 1.",
+      "ko": "milk 품목을 꺼냅니다. 질의가 찾는 품목이므로 milk / milk = 1입니다."
+     },
+     "views": {
+      "prices": {
+       "values": {
+        "milk": "1"
+       },
+       "nodeMarks": {
+        "path": [
+         "milk"
+        ],
+        "bad": [],
+        "good": [],
+        "lit": [
+         "milk"
+        ]
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "milk / eggs"
+         ]
+        },
+        {
+         "cells": [
+          "eggs / bread"
+         ]
+        },
+        {
+         "cells": [
+          "bread / milk"
+         ]
+        },
+        {
+         "cells": [
+          "milk / milk"
+         ]
+        },
+        {
+         "cells": [
+          "soap / milk"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          2,
+          0
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "milk"
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "8.00000",
+        "0.50000",
+        "0.25000",
+        "1.00000"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": "milk"
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       },
+       "value": "1.00000"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Query 5, soap / milk: soap never appears in the ratios, so the answer is -1.",
+      "ko": "질의 5, soap / milk: soap 품목은 비율에 한 번도 나오지 않으므로 답은 -1입니다."
+     },
+     "views": {
+      "prices": {
+       "values": {},
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": []
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "milk / eggs"
+         ]
+        },
+        {
+         "cells": [
+          "eggs / bread"
+         ]
+        },
+        {
+         "cells": [
+          "bread / milk"
+         ]
+        },
+        {
+         "cells": [
+          "milk / milk"
+         ]
+        },
+        {
+         "cells": [
+          "soap / milk"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          3,
+          0
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "8.00000",
+        "0.50000",
+        "0.25000",
+        "1.00000",
+        "-1.00000"
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": "milk"
+       },
+       "mark": "bad"
+      },
+      {
+       "from": {
+        "view": "queries",
+        "at": [
+         4,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       },
+       "value": "-1.00000"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every query is answered, rounded to 5 decimals: [8.00000,0.50000,0.25000,1.00000,-1.00000].",
+      "ko": "모든 질의에 소수점 아래 5자리로 답했습니다: [8.00000,0.50000,0.25000,1.00000,-1.00000]."
+     },
+     "views": {
+      "prices": {
+       "values": {},
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": []
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "milk / eggs"
+         ]
+        },
+        {
+         "cells": [
+          "eggs / bread"
+         ]
+        },
+        {
+         "cells": [
+          "bread / milk"
+         ]
+        },
+        {
+         "cells": [
+          "milk / milk"
+         ]
+        },
+        {
+         "cells": [
+          "soap / milk"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "stack": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "8.00000",
+        "0.50000",
+        "0.25000",
+        "1.00000",
+        "-1.00000"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      }
+     },
+     "answer": "[8.00000,0.50000,0.25000,1.00000,-1.00000]"
+    }
+   ],
+   "setup": {
+    "prices": {
+     "nodes": [
+      {
+       "id": "milk"
+      },
+      {
+       "id": "bread"
+      },
+      {
+       "id": "eggs"
+      }
+     ],
+     "edges": [
+      {
+       "from": "milk",
+       "to": "bread",
+       "label": "4.0"
+      },
+      {
+       "from": "bread",
+       "to": "eggs",
+       "label": "2.0"
+      }
+     ]
+    }
+   },
+   "sampleInput": "[[\"milk\",\"bread\"],[\"bread\",\"eggs\"]]\n[4.0,2.0]\n[[\"milk\",\"eggs\"],[\"eggs\",\"bread\"],[\"bread\",\"milk\"],[\"milk\",\"milk\"],[\"soap\",\"milk\"]]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "ratios = [[\"apple\",\"pear\"],[\"pear\",\"plum\"],[\"kiwi\",\"lime\"]], values = [3.0,4.0,2.0], queries = [[\"apple\",\"plum\"],[\"plum\",\"apple\"],[\"kiwi\",\"lime\"],[\"apple\",\"kiwi\"]]",
+   "expected": "[12.00000,0.08333,2.00000,-1.00000]",
+   "frames": [
+    {
+     "caption": {
+      "en": "3 known ratios and 4 queries. Each ratio can be walked both ways: along its arrow × the ratio, against it ÷ the ratio.",
+      "ko": "알려진 비율 3개와 질의 4개가 있습니다. 비율은 양방향으로 쓸 수 있어서, 화살표 방향으로는 비율을 곱하고 반대 방향으로는 비율로 나눕니다."
+     },
+     "views": {
+      "prices": {
+       "values": {},
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": []
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "apple / plum"
+         ]
+        },
+        {
+         "cells": [
+          "plum / apple"
+         ]
+        },
+        {
+         "cells": [
+          "kiwi / lime"
+         ]
+        },
+        {
+         "cells": [
+          "apple / kiwi"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": []
+       }
+      },
+      "stack": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Query 1, apple / plum: start at apple, whose ratio to itself is 1, and push it.",
+      "ko": "질의 1, apple / plum: apple 품목에서 시작합니다. 자기 자신과의 비율은 1이고, 스택에 넣습니다."
+     },
+     "views": {
+      "prices": {
+       "values": {
+        "apple": "1"
+       },
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         "apple"
+        ],
+        "lit": [
+         "apple"
+        ]
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "apple / plum"
+         ]
+        },
+        {
+         "cells": [
+          "plum / apple"
+         ]
+        },
+        {
+         "cells": [
+          "kiwi / lime"
+         ]
+        },
+        {
+         "cells": [
+          "apple / kiwi"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "apple"
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "queries",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "prices",
+        "at": "apple"
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "prices",
+        "at": "apple"
+       },
+       "to": {
+        "view": "stack",
+        "at": 0
+       },
+       "value": "apple"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop apple, at 1: pear = 1 × 3 = 3.",
+      "ko": "1인 apple 품목을 꺼냅니다: pear = 1 × 3 = 3."
+     },
+     "views": {
+      "prices": {
+       "values": {
+        "apple": "1",
+        "pear": "3"
+       },
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         "pear"
+        ],
+        "lit": [
+         "apple"
+        ]
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "apple / plum"
+         ]
+        },
+        {
+         "cells": [
+          "plum / apple"
+         ]
+        },
+        {
+         "cells": [
+          "kiwi / lime"
+         ]
+        },
+        {
+         "cells": [
+          "apple / kiwi"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "apple"
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": [
+         "apple",
+         "pear"
+        ]
+       },
+       "to": {
+        "view": "prices",
+        "at": "pear"
+       },
+       "value": "3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Push pear, to search on from it.",
+      "ko": "pear 품목을 스택에 넣어, 거기서 계속 찾습니다."
+     },
+     "views": {
+      "prices": {
+       "values": {
+        "apple": "1",
+        "pear": "3"
+       },
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         "pear"
+        ],
+        "lit": []
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "apple / plum"
+         ]
+        },
+        {
+         "cells": [
+          "plum / apple"
+         ]
+        },
+        {
+         "cells": [
+          "kiwi / lime"
+         ]
+        },
+        {
+         "cells": [
+          "apple / kiwi"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "pear"
+       ],
+       "tags": [
+        [
+         0,
+         "3"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": "pear"
+       },
+       "to": {
+        "view": "stack",
+        "at": 0
+       },
+       "value": "pear"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop pear, at 3: plum = 3 × 4 = 12.",
+      "ko": "3인 pear 품목을 꺼냅니다: plum = 3 × 4 = 12."
+     },
+     "views": {
+      "prices": {
+       "values": {
+        "apple": "1",
+        "pear": "3",
+        "plum": "12"
+       },
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         "plum"
+        ],
+        "lit": [
+         "pear"
+        ]
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "apple / plum"
+         ]
+        },
+        {
+         "cells": [
+          "plum / apple"
+         ]
+        },
+        {
+         "cells": [
+          "kiwi / lime"
+         ]
+        },
+        {
+         "cells": [
+          "apple / kiwi"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "pear"
+       ],
+       "tags": [
+        [
+         0,
+         "3"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": [
+         "pear",
+         "plum"
+        ]
+       },
+       "to": {
+        "view": "prices",
+        "at": "plum"
+       },
+       "value": "12"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Push plum, to search on from it.",
+      "ko": "plum 품목을 스택에 넣어, 거기서 계속 찾습니다."
+     },
+     "views": {
+      "prices": {
+       "values": {
+        "apple": "1",
+        "pear": "3",
+        "plum": "12"
+       },
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         "plum"
+        ],
+        "lit": []
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "apple / plum"
+         ]
+        },
+        {
+         "cells": [
+          "plum / apple"
+         ]
+        },
+        {
+         "cells": [
+          "kiwi / lime"
+         ]
+        },
+        {
+         "cells": [
+          "apple / kiwi"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "plum"
+       ],
+       "tags": [
+        [
+         0,
+         "12"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": "plum"
+       },
+       "to": {
+        "view": "stack",
+        "at": 0
+       },
+       "value": "plum"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop plum: it is the item the query asks for, so apple / plum = 12.",
+      "ko": "plum 품목을 꺼냅니다. 질의가 찾는 품목이므로 apple / plum = 12입니다."
+     },
+     "views": {
+      "prices": {
+       "values": {
+        "apple": "1",
+        "pear": "3",
+        "plum": "12"
+       },
+       "nodeMarks": {
+        "path": [
+         "plum"
+        ],
+        "bad": [],
+        "good": [],
+        "lit": [
+         "plum"
+        ]
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "apple / plum"
+         ]
+        },
+        {
+         "cells": [
+          "plum / apple"
+         ]
+        },
+        {
+         "cells": [
+          "kiwi / lime"
+         ]
+        },
+        {
+         "cells": [
+          "apple / kiwi"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "plum"
+       ],
+       "tags": [
+        [
+         0,
+         "12"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "12.00000"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": "plum"
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "12.00000"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Query 2, plum / apple: start at plum, whose ratio to itself is 1, and push it.",
+      "ko": "질의 2, plum / apple: plum 품목에서 시작합니다. 자기 자신과의 비율은 1이고, 스택에 넣습니다."
+     },
+     "views": {
+      "prices": {
+       "values": {
+        "plum": "1"
+       },
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         "plum"
+        ],
+        "lit": [
+         "plum"
+        ]
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "apple / plum"
+         ]
+        },
+        {
+         "cells": [
+          "plum / apple"
+         ]
+        },
+        {
+         "cells": [
+          "kiwi / lime"
+         ]
+        },
+        {
+         "cells": [
+          "apple / kiwi"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "plum"
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "12.00000"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": "apple"
+       },
+       "mark": "bad"
+      },
+      {
+       "from": {
+        "view": "prices",
+        "at": "pear"
+       },
+       "mark": "bad"
+      },
+      {
+       "from": {
+        "view": "queries",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "prices",
+        "at": "plum"
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "prices",
+        "at": "plum"
+       },
+       "to": {
+        "view": "stack",
+        "at": 0
+       },
+       "value": "plum"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop plum, at 1: pear = 1 ÷ 4 = 0.25.",
+      "ko": "1인 plum 품목을 꺼냅니다: pear = 1 ÷ 4 = 0.25."
+     },
+     "views": {
+      "prices": {
+       "values": {
+        "plum": "1",
+        "pear": "0.25"
+       },
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         "pear"
+        ],
+        "lit": [
+         "plum"
+        ]
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "apple / plum"
+         ]
+        },
+        {
+         "cells": [
+          "plum / apple"
+         ]
+        },
+        {
+         "cells": [
+          "kiwi / lime"
+         ]
+        },
+        {
+         "cells": [
+          "apple / kiwi"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "plum"
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "12.00000"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": [
+         "pear",
+         "plum"
+        ]
+       },
+       "to": {
+        "view": "prices",
+        "at": "pear"
+       },
+       "value": "0.25"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Push pear, to search on from it.",
+      "ko": "pear 품목을 스택에 넣어, 거기서 계속 찾습니다."
+     },
+     "views": {
+      "prices": {
+       "values": {
+        "plum": "1",
+        "pear": "0.25"
+       },
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         "pear"
+        ],
+        "lit": []
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "apple / plum"
+         ]
+        },
+        {
+         "cells": [
+          "plum / apple"
+         ]
+        },
+        {
+         "cells": [
+          "kiwi / lime"
+         ]
+        },
+        {
+         "cells": [
+          "apple / kiwi"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "pear"
+       ],
+       "tags": [
+        [
+         0,
+         "0.25"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "12.00000"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": "pear"
+       },
+       "to": {
+        "view": "stack",
+        "at": 0
+       },
+       "value": "pear"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop pear, at 0.25: apple = 0.25 ÷ 3 = 0.08333.",
+      "ko": "0.25인 pear 품목을 꺼냅니다: apple = 0.25 ÷ 3 = 0.08333."
+     },
+     "views": {
+      "prices": {
+       "values": {
+        "plum": "1",
+        "pear": "0.25",
+        "apple": "0.08333"
+       },
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         "apple"
+        ],
+        "lit": [
+         "pear"
+        ]
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "apple / plum"
+         ]
+        },
+        {
+         "cells": [
+          "plum / apple"
+         ]
+        },
+        {
+         "cells": [
+          "kiwi / lime"
+         ]
+        },
+        {
+         "cells": [
+          "apple / kiwi"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "pear"
+       ],
+       "tags": [
+        [
+         0,
+         "0.25"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "12.00000"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": [
+         "apple",
+         "pear"
+        ]
+       },
+       "to": {
+        "view": "prices",
+        "at": "apple"
+       },
+       "value": "0.08333"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Push apple, to search on from it.",
+      "ko": "apple 품목을 스택에 넣어, 거기서 계속 찾습니다."
+     },
+     "views": {
+      "prices": {
+       "values": {
+        "plum": "1",
+        "pear": "0.25",
+        "apple": "0.08333"
+       },
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         "apple"
+        ],
+        "lit": []
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "apple / plum"
+         ]
+        },
+        {
+         "cells": [
+          "plum / apple"
+         ]
+        },
+        {
+         "cells": [
+          "kiwi / lime"
+         ]
+        },
+        {
+         "cells": [
+          "apple / kiwi"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "apple"
+       ],
+       "tags": [
+        [
+         0,
+         "0.08333"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "12.00000"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": "apple"
+       },
+       "to": {
+        "view": "stack",
+        "at": 0
+       },
+       "value": "apple"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop apple: it is the item the query asks for, so plum / apple = 0.08333.",
+      "ko": "apple 품목을 꺼냅니다. 질의가 찾는 품목이므로 plum / apple = 0.08333입니다."
+     },
+     "views": {
+      "prices": {
+       "values": {
+        "plum": "1",
+        "pear": "0.25",
+        "apple": "0.08333"
+       },
+       "nodeMarks": {
+        "path": [
+         "apple"
+        ],
+        "bad": [],
+        "good": [],
+        "lit": [
+         "apple"
+        ]
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "apple / plum"
+         ]
+        },
+        {
+         "cells": [
+          "plum / apple"
+         ]
+        },
+        {
+         "cells": [
+          "kiwi / lime"
+         ]
+        },
+        {
+         "cells": [
+          "apple / kiwi"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "apple"
+       ],
+       "tags": [
+        [
+         0,
+         "0.08333"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "12.00000",
+        "0.08333"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": "apple"
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": "0.08333"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Query 3, kiwi / lime: start at kiwi, whose ratio to itself is 1, and push it.",
+      "ko": "질의 3, kiwi / lime: kiwi 품목에서 시작합니다. 자기 자신과의 비율은 1이고, 스택에 넣습니다."
+     },
+     "views": {
+      "prices": {
+       "values": {
+        "kiwi": "1"
+       },
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         "kiwi"
+        ],
+        "lit": [
+         "kiwi"
+        ]
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "apple / plum"
+         ]
+        },
+        {
+         "cells": [
+          "plum / apple"
+         ]
+        },
+        {
+         "cells": [
+          "kiwi / lime"
+         ]
+        },
+        {
+         "cells": [
+          "apple / kiwi"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "kiwi"
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "12.00000",
+        "0.08333"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": "plum"
+       },
+       "mark": "bad"
+      },
+      {
+       "from": {
+        "view": "prices",
+        "at": "pear"
+       },
+       "mark": "bad"
+      },
+      {
+       "from": {
+        "view": "prices",
+        "at": "apple"
+       },
+       "mark": "bad"
+      },
+      {
+       "from": {
+        "view": "queries",
+        "at": [
+         2,
+         0
+        ]
+       },
+       "to": {
+        "view": "prices",
+        "at": "kiwi"
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "prices",
+        "at": "kiwi"
+       },
+       "to": {
+        "view": "stack",
+        "at": 0
+       },
+       "value": "kiwi"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop kiwi, at 1: lime = 1 × 2 = 2.",
+      "ko": "1인 kiwi 품목을 꺼냅니다: lime = 1 × 2 = 2."
+     },
+     "views": {
+      "prices": {
+       "values": {
+        "kiwi": "1",
+        "lime": "2"
+       },
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         "lime"
+        ],
+        "lit": [
+         "kiwi"
+        ]
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "apple / plum"
+         ]
+        },
+        {
+         "cells": [
+          "plum / apple"
+         ]
+        },
+        {
+         "cells": [
+          "kiwi / lime"
+         ]
+        },
+        {
+         "cells": [
+          "apple / kiwi"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "kiwi"
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "12.00000",
+        "0.08333"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": [
+         "kiwi",
+         "lime"
+        ]
+       },
+       "to": {
+        "view": "prices",
+        "at": "lime"
+       },
+       "value": "2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Push lime, to search on from it.",
+      "ko": "lime 품목을 스택에 넣어, 거기서 계속 찾습니다."
+     },
+     "views": {
+      "prices": {
+       "values": {
+        "kiwi": "1",
+        "lime": "2"
+       },
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         "lime"
+        ],
+        "lit": []
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "apple / plum"
+         ]
+        },
+        {
+         "cells": [
+          "plum / apple"
+         ]
+        },
+        {
+         "cells": [
+          "kiwi / lime"
+         ]
+        },
+        {
+         "cells": [
+          "apple / kiwi"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "lime"
+       ],
+       "tags": [
+        [
+         0,
+         "2"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "12.00000",
+        "0.08333"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": "lime"
+       },
+       "to": {
+        "view": "stack",
+        "at": 0
+       },
+       "value": "lime"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop lime: it is the item the query asks for, so kiwi / lime = 2.",
+      "ko": "lime 품목을 꺼냅니다. 질의가 찾는 품목이므로 kiwi / lime = 2입니다."
+     },
+     "views": {
+      "prices": {
+       "values": {
+        "kiwi": "1",
+        "lime": "2"
+       },
+       "nodeMarks": {
+        "path": [
+         "lime"
+        ],
+        "bad": [],
+        "good": [],
+        "lit": [
+         "lime"
+        ]
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "apple / plum"
+         ]
+        },
+        {
+         "cells": [
+          "plum / apple"
+         ]
+        },
+        {
+         "cells": [
+          "kiwi / lime"
+         ]
+        },
+        {
+         "cells": [
+          "apple / kiwi"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "lime"
+       ],
+       "tags": [
+        [
+         0,
+         "2"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "12.00000",
+        "0.08333",
+        "2.00000"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": "lime"
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       },
+       "value": "2.00000"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Query 4, apple / kiwi: start at apple, whose ratio to itself is 1, and push it.",
+      "ko": "질의 4, apple / kiwi: apple 품목에서 시작합니다. 자기 자신과의 비율은 1이고, 스택에 넣습니다."
+     },
+     "views": {
+      "prices": {
+       "values": {
+        "apple": "1"
+       },
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         "apple"
+        ],
+        "lit": [
+         "apple"
+        ]
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "apple / plum"
+         ]
+        },
+        {
+         "cells": [
+          "plum / apple"
+         ]
+        },
+        {
+         "cells": [
+          "kiwi / lime"
+         ]
+        },
+        {
+         "cells": [
+          "apple / kiwi"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          2,
+          0
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "apple"
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "12.00000",
+        "0.08333",
+        "2.00000"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": "kiwi"
+       },
+       "mark": "bad"
+      },
+      {
+       "from": {
+        "view": "prices",
+        "at": "lime"
+       },
+       "mark": "bad"
+      },
+      {
+       "from": {
+        "view": "queries",
+        "at": [
+         3,
+         0
+        ]
+       },
+       "to": {
+        "view": "prices",
+        "at": "apple"
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "prices",
+        "at": "apple"
+       },
+       "to": {
+        "view": "stack",
+        "at": 0
+       },
+       "value": "apple"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop apple, at 1: pear = 1 × 3 = 3.",
+      "ko": "1인 apple 품목을 꺼냅니다: pear = 1 × 3 = 3."
+     },
+     "views": {
+      "prices": {
+       "values": {
+        "apple": "1",
+        "pear": "3"
+       },
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         "pear"
+        ],
+        "lit": [
+         "apple"
+        ]
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "apple / plum"
+         ]
+        },
+        {
+         "cells": [
+          "plum / apple"
+         ]
+        },
+        {
+         "cells": [
+          "kiwi / lime"
+         ]
+        },
+        {
+         "cells": [
+          "apple / kiwi"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          2,
+          0
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "apple"
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "12.00000",
+        "0.08333",
+        "2.00000"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": [
+         "apple",
+         "pear"
+        ]
+       },
+       "to": {
+        "view": "prices",
+        "at": "pear"
+       },
+       "value": "3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Push pear, to search on from it.",
+      "ko": "pear 품목을 스택에 넣어, 거기서 계속 찾습니다."
+     },
+     "views": {
+      "prices": {
+       "values": {
+        "apple": "1",
+        "pear": "3"
+       },
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         "pear"
+        ],
+        "lit": []
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "apple / plum"
+         ]
+        },
+        {
+         "cells": [
+          "plum / apple"
+         ]
+        },
+        {
+         "cells": [
+          "kiwi / lime"
+         ]
+        },
+        {
+         "cells": [
+          "apple / kiwi"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          2,
+          0
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "pear"
+       ],
+       "tags": [
+        [
+         0,
+         "3"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "12.00000",
+        "0.08333",
+        "2.00000"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": "pear"
+       },
+       "to": {
+        "view": "stack",
+        "at": 0
+       },
+       "value": "pear"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop pear, at 3: plum = 3 × 4 = 12.",
+      "ko": "3인 pear 품목을 꺼냅니다: plum = 3 × 4 = 12."
+     },
+     "views": {
+      "prices": {
+       "values": {
+        "apple": "1",
+        "pear": "3",
+        "plum": "12"
+       },
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         "plum"
+        ],
+        "lit": [
+         "pear"
+        ]
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "apple / plum"
+         ]
+        },
+        {
+         "cells": [
+          "plum / apple"
+         ]
+        },
+        {
+         "cells": [
+          "kiwi / lime"
+         ]
+        },
+        {
+         "cells": [
+          "apple / kiwi"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          2,
+          0
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "pear"
+       ],
+       "tags": [
+        [
+         0,
+         "3"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "12.00000",
+        "0.08333",
+        "2.00000"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": [
+         "pear",
+         "plum"
+        ]
+       },
+       "to": {
+        "view": "prices",
+        "at": "plum"
+       },
+       "value": "12"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Push plum, to search on from it.",
+      "ko": "plum 품목을 스택에 넣어, 거기서 계속 찾습니다."
+     },
+     "views": {
+      "prices": {
+       "values": {
+        "apple": "1",
+        "pear": "3",
+        "plum": "12"
+       },
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         "plum"
+        ],
+        "lit": []
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "apple / plum"
+         ]
+        },
+        {
+         "cells": [
+          "plum / apple"
+         ]
+        },
+        {
+         "cells": [
+          "kiwi / lime"
+         ]
+        },
+        {
+         "cells": [
+          "apple / kiwi"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          2,
+          0
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "plum"
+       ],
+       "tags": [
+        [
+         0,
+         "12"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "12.00000",
+        "0.08333",
+        "2.00000"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": "plum"
+       },
+       "to": {
+        "view": "stack",
+        "at": 0
+       },
+       "value": "plum"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop plum: every item next to it was already reached in this search.",
+      "ko": "plum 품목을 꺼냅니다. 이웃한 품목은 모두 이번 탐색에서 이미 닿았습니다."
+     },
+     "views": {
+      "prices": {
+       "values": {
+        "apple": "1",
+        "pear": "3",
+        "plum": "12"
+       },
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": [
+         "plum"
+        ]
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "apple / plum"
+         ]
+        },
+        {
+         "cells": [
+          "plum / apple"
+         ]
+        },
+        {
+         "cells": [
+          "kiwi / lime"
+         ]
+        },
+        {
+         "cells": [
+          "apple / kiwi"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          2,
+          0
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "plum"
+       ],
+       "tags": [
+        [
+         0,
+         "12"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "12.00000",
+        "0.08333",
+        "2.00000"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stack",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The stack is empty and kiwi was never reached: apple and kiwi are not linked, so the answer is -1.",
+      "ko": "스택이 비었는데 kiwi 품목에 닿지 못했습니다. apple 품목과 이어져 있지 않으므로 답은 -1입니다."
+     },
+     "views": {
+      "prices": {
+       "values": {
+        "apple": "1",
+        "pear": "3",
+        "plum": "12"
+       },
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": []
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "apple / plum"
+         ]
+        },
+        {
+         "cells": [
+          "plum / apple"
+         ]
+        },
+        {
+         "cells": [
+          "kiwi / lime"
+         ]
+        },
+        {
+         "cells": [
+          "apple / kiwi"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          2,
+          0
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "12.00000",
+        "0.08333",
+        "2.00000",
+        "-1.00000"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "queries",
+        "at": [
+         3,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       },
+       "value": "-1.00000"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every query is answered, rounded to 5 decimals: [12.00000,0.08333,2.00000,-1.00000].",
+      "ko": "모든 질의에 소수점 아래 5자리로 답했습니다: [12.00000,0.08333,2.00000,-1.00000]."
+     },
+     "views": {
+      "prices": {
+       "values": {
+        "apple": "1",
+        "pear": "3",
+        "plum": "12"
+       },
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": []
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "apple / plum"
+         ]
+        },
+        {
+         "cells": [
+          "plum / apple"
+         ]
+        },
+        {
+         "cells": [
+          "kiwi / lime"
+         ]
+        },
+        {
+         "cells": [
+          "apple / kiwi"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "stack": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "12.00000",
+        "0.08333",
+        "2.00000",
+        "-1.00000"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      }
+     },
+     "answer": "[12.00000,0.08333,2.00000,-1.00000]"
+    }
+   ],
+   "setup": {
+    "prices": {
+     "nodes": [
+      {
+       "id": "apple"
+      },
+      {
+       "id": "pear"
+      },
+      {
+       "id": "plum"
+      },
+      {
+       "id": "kiwi"
+      },
+      {
+       "id": "lime"
+      }
+     ],
+     "edges": [
+      {
+       "from": "apple",
+       "to": "pear",
+       "label": "3.0"
+      },
+      {
+       "from": "pear",
+       "to": "plum",
+       "label": "4.0"
+      },
+      {
+       "from": "kiwi",
+       "to": "lime",
+       "label": "2.0"
+      }
+     ]
+    }
+   },
+   "sampleInput": "[[\"apple\",\"pear\"],[\"pear\",\"plum\"],[\"kiwi\",\"lime\"]]\n[3.0,4.0,2.0]\n[[\"apple\",\"plum\"],[\"plum\",\"apple\"],[\"kiwi\",\"lime\"],[\"apple\",\"kiwi\"]]"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "ratios = [[\"x\",\"y\"]], values = [4.0], queries = [[\"x\",\"y\"],[\"y\",\"x\"],[\"x\",\"z\"]]",
+   "expected": "[4.00000,0.25000,-1.00000]",
+   "frames": [
+    {
+     "caption": {
+      "en": "1 known ratio and 3 queries. Each ratio can be walked both ways: along its arrow × the ratio, against it ÷ the ratio.",
+      "ko": "알려진 비율 1개와 질의 3개가 있습니다. 비율은 양방향으로 쓸 수 있어서, 화살표 방향으로는 비율을 곱하고 반대 방향으로는 비율로 나눕니다."
+     },
+     "views": {
+      "prices": {
+       "values": {},
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": []
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "x / y"
+         ]
+        },
+        {
+         "cells": [
+          "y / x"
+         ]
+        },
+        {
+         "cells": [
+          "x / z"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": []
+       }
+      },
+      "stack": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Query 1, x / y: start at x, whose ratio to itself is 1, and push it.",
+      "ko": "질의 1, x / y: x 품목에서 시작합니다. 자기 자신과의 비율은 1이고, 스택에 넣습니다."
+     },
+     "views": {
+      "prices": {
+       "values": {
+        "x": "1"
+       },
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         "x"
+        ],
+        "lit": [
+         "x"
+        ]
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "x / y"
+         ]
+        },
+        {
+         "cells": [
+          "y / x"
+         ]
+        },
+        {
+         "cells": [
+          "x / z"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "x"
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "queries",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "prices",
+        "at": "x"
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "prices",
+        "at": "x"
+       },
+       "to": {
+        "view": "stack",
+        "at": 0
+       },
+       "value": "x"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop x, at 1: y = 1 × 4 = 4.",
+      "ko": "1인 x 품목을 꺼냅니다: y = 1 × 4 = 4."
+     },
+     "views": {
+      "prices": {
+       "values": {
+        "x": "1",
+        "y": "4"
+       },
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         "y"
+        ],
+        "lit": [
+         "x"
+        ]
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "x / y"
+         ]
+        },
+        {
+         "cells": [
+          "y / x"
+         ]
+        },
+        {
+         "cells": [
+          "x / z"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "x"
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": [
+         "x",
+         "y"
+        ]
+       },
+       "to": {
+        "view": "prices",
+        "at": "y"
+       },
+       "value": "4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Push y, to search on from it.",
+      "ko": "y 품목을 스택에 넣어, 거기서 계속 찾습니다."
+     },
+     "views": {
+      "prices": {
+       "values": {
+        "x": "1",
+        "y": "4"
+       },
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         "y"
+        ],
+        "lit": []
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "x / y"
+         ]
+        },
+        {
+         "cells": [
+          "y / x"
+         ]
+        },
+        {
+         "cells": [
+          "x / z"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "y"
+       ],
+       "tags": [
+        [
+         0,
+         "4"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": "y"
+       },
+       "to": {
+        "view": "stack",
+        "at": 0
+       },
+       "value": "y"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop y: it is the item the query asks for, so x / y = 4.",
+      "ko": "y 품목을 꺼냅니다. 질의가 찾는 품목이므로 x / y = 4입니다."
+     },
+     "views": {
+      "prices": {
+       "values": {
+        "x": "1",
+        "y": "4"
+       },
+       "nodeMarks": {
+        "path": [
+         "y"
+        ],
+        "bad": [],
+        "good": [],
+        "lit": [
+         "y"
+        ]
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "x / y"
+         ]
+        },
+        {
+         "cells": [
+          "y / x"
+         ]
+        },
+        {
+         "cells": [
+          "x / z"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "y"
+       ],
+       "tags": [
+        [
+         0,
+         "4"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "4.00000"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": "y"
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "4.00000"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Query 2, y / x: start at y, whose ratio to itself is 1, and push it.",
+      "ko": "질의 2, y / x: y 품목에서 시작합니다. 자기 자신과의 비율은 1이고, 스택에 넣습니다."
+     },
+     "views": {
+      "prices": {
+       "values": {
+        "y": "1"
+       },
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         "y"
+        ],
+        "lit": [
+         "y"
+        ]
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "x / y"
+         ]
+        },
+        {
+         "cells": [
+          "y / x"
+         ]
+        },
+        {
+         "cells": [
+          "x / z"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "y"
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "4.00000"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": "x"
+       },
+       "mark": "bad"
+      },
+      {
+       "from": {
+        "view": "queries",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "prices",
+        "at": "y"
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "prices",
+        "at": "y"
+       },
+       "to": {
+        "view": "stack",
+        "at": 0
+       },
+       "value": "y"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop y, at 1: x = 1 ÷ 4 = 0.25.",
+      "ko": "1인 y 품목을 꺼냅니다: x = 1 ÷ 4 = 0.25."
+     },
+     "views": {
+      "prices": {
+       "values": {
+        "y": "1",
+        "x": "0.25"
+       },
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         "x"
+        ],
+        "lit": [
+         "y"
+        ]
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "x / y"
+         ]
+        },
+        {
+         "cells": [
+          "y / x"
+         ]
+        },
+        {
+         "cells": [
+          "x / z"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "y"
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "4.00000"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": [
+         "x",
+         "y"
+        ]
+       },
+       "to": {
+        "view": "prices",
+        "at": "x"
+       },
+       "value": "0.25"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Push x, to search on from it.",
+      "ko": "x 품목을 스택에 넣어, 거기서 계속 찾습니다."
+     },
+     "views": {
+      "prices": {
+       "values": {
+        "y": "1",
+        "x": "0.25"
+       },
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         "x"
+        ],
+        "lit": []
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "x / y"
+         ]
+        },
+        {
+         "cells": [
+          "y / x"
+         ]
+        },
+        {
+         "cells": [
+          "x / z"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "x"
+       ],
+       "tags": [
+        [
+         0,
+         "0.25"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "4.00000"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": "x"
+       },
+       "to": {
+        "view": "stack",
+        "at": 0
+       },
+       "value": "x"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop x: it is the item the query asks for, so y / x = 0.25.",
+      "ko": "x 품목을 꺼냅니다. 질의가 찾는 품목이므로 y / x = 0.25입니다."
+     },
+     "views": {
+      "prices": {
+       "values": {
+        "y": "1",
+        "x": "0.25"
+       },
+       "nodeMarks": {
+        "path": [
+         "x"
+        ],
+        "bad": [],
+        "good": [],
+        "lit": [
+         "x"
+        ]
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "x / y"
+         ]
+        },
+        {
+         "cells": [
+          "y / x"
+         ]
+        },
+        {
+         "cells": [
+          "x / z"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        "x"
+       ],
+       "tags": [
+        [
+         0,
+         "0.25"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "4.00000",
+        "0.25000"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": "x"
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": "0.25000"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Query 3, x / z: z never appears in the ratios, so the answer is -1.",
+      "ko": "질의 3, x / z: z 품목은 비율에 한 번도 나오지 않으므로 답은 -1입니다."
+     },
+     "views": {
+      "prices": {
+       "values": {},
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": []
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "x / y"
+         ]
+        },
+        {
+         "cells": [
+          "y / x"
+         ]
+        },
+        {
+         "cells": [
+          "x / z"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          0
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ]
+        ]
+       }
+      },
+      "stack": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "4.00000",
+        "0.25000",
+        "-1.00000"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "prices",
+        "at": "y"
+       },
+       "mark": "bad"
+      },
+      {
+       "from": {
+        "view": "prices",
+        "at": "x"
+       },
+       "mark": "bad"
+      },
+      {
+       "from": {
+        "view": "queries",
+        "at": [
+         2,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       },
+       "value": "-1.00000"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every query is answered, rounded to 5 decimals: [4.00000,0.25000,-1.00000].",
+      "ko": "모든 질의에 소수점 아래 5자리로 답했습니다: [4.00000,0.25000,-1.00000]."
+     },
+     "views": {
+      "prices": {
+       "values": {},
+       "nodeMarks": {
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": []
+       },
+       "edgeMarks": {
+        "path": [],
+        "lit": []
+       }
+      },
+      "queries": {
+       "rows": [
+        {
+         "cells": [
+          "x / y"
+         ]
+        },
+        {
+         "cells": [
+          "y / x"
+         ]
+        },
+        {
+         "cells": [
+          "x / z"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "stack": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "4.00000",
+        "0.25000",
+        "-1.00000"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2
+        ]
+       }
+      }
+     },
+     "answer": "[4.00000,0.25000,-1.00000]"
+    }
+   ],
+   "setup": {
+    "prices": {
+     "nodes": [
+      {
+       "id": "x"
+      },
+      {
+       "id": "y"
+      }
+     ],
+     "edges": [
+      {
+       "from": "x",
+       "to": "y",
+       "label": "4.0"
+      }
+     ]
+    }
+   },
+   "sampleInput": "[[\"x\",\"y\"]]\n[4.0]\n[[\"x\",\"y\"],[\"y\",\"x\"],[\"x\",\"z\"]]"
+  }
+ ]
+}

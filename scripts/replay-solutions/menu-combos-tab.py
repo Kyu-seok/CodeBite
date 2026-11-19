@@ -1,5 +1,5 @@
 class Solution:
-    def listQuotaBatches(self, pastries: list[int], tab: int) -> list[list[int]]:
+    def listTabCombos(self, pastries: list[int], tab: int) -> list[list[int]]:
         prices = sorted(pastries)
         combos: list[list[int]] = []
         chosen: list[int] = []

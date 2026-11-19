@@ -10,7 +10,7 @@ public class Main {
         String line = sc.nextLine().trim();
         int k = Integer.parseInt(sc.nextLine().trim());
         ListNode head = ListNode.fromArray(line);
-        head = new Solution().flipSorterSegments(head, k);
+        head = new Solution().flipChunks(head, k);
         System.out.println(ListNode.toJsonArray(head));
     }
 }

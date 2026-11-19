@@ -1,8 +1,8 @@
 {USER_CODE}
 
 const input = require('fs').readFileSync('/dev/stdin', 'utf8').trim();
-const nums = JSON.parse(input);
-const result = new Solution().listStationOrders(nums);
+const stops = JSON.parse(input);
+const result = new Solution().listVisitOrders(stops);
 result.sort((a, b) => {
     for (let i = 0; i < Math.min(a.length, b.length); i++) {
         if (a[i] !== b[i]) return a[i] - b[i];

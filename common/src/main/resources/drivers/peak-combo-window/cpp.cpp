@@ -10,18 +10,18 @@ using namespace std;
 {USER_CODE}
 
 int main() {
-    string numsLine;
-    getline(cin, numsLine);
-    string inner = numsLine.substr(1, numsLine.size() - 2);
-    vector<int> nums;
+    string comboLine;
+    getline(cin, comboLine);
+    string inner = comboLine.substr(1, comboLine.size() - 2);
+    vector<int> combo;
     stringstream ss(inner);
     string token;
     while (getline(ss, token, ',')) {
-        nums.push_back(stoi(token));
+        combo.push_back(stoi(token));
     }
     int k;
     cin >> k;
-    vector<int> result = Solution().peakFlowPerStretch(nums, k);
+    vector<int> result = Solution().peakComboPerWindow(combo, k);
     cout << JsonOutput::intVector(result) << endl;
     return 0;
 }

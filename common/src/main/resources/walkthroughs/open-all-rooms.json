@@ -1,0 +1,1295 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Open All Rooms",
+  "ko": "모든 방 열 수 있는지"
+ },
+ "approach": {
+  "en": "Search from room 0 with a stack: entering a room takes its keys, and each key to a room not visited yet marks that room visited and pushes it. Every room is visited exactly when every room can be opened.",
+  "ko": "방 0에서 스택으로 찾습니다. 방에 들어가면 열쇠를 모두 얻고, 아직 방문하지 않은 방의 열쇠마다 그 방을 방문한 것으로 표시해 스택에 넣습니다. 모든 방이 방문되면 모든 방을 열 수 있습니다."
+ },
+ "views": [
+  {
+   "id": "rooms",
+   "type": "graph",
+   "directed": true,
+   "title": {
+    "en": "rooms (arrow: a key inside opens that room)",
+    "ko": "방 (화살표: 안의 열쇠로 그 방을 엶)"
+   }
+  },
+  {
+   "id": "visited",
+   "type": "set",
+   "title": {
+    "en": "visited",
+    "ko": "visited (방문한 방)"
+   },
+   "hit": {
+    "en": "visited",
+    "ko": "방문함"
+   },
+   "miss": {
+    "en": "new",
+    "ko": "새 방"
+   }
+  },
+  {
+   "id": "stack",
+   "type": "stack",
+   "title": {
+    "en": "stack: rooms to enter",
+    "ko": "스택: 들어갈 방"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "rooms = [[2,1],[4],[3],[],[3,0]]",
+   "expected": "true",
+   "frames": [
+    {
+     "caption": {
+      "en": "5 rooms, and only room 0 is open: it starts visited and on the stack. Rooms not visited yet are faded.",
+      "ko": "방이 5개 있고 방 0만 열려 있으므로, 방 0을 방문한 것으로 표시하고 스택에 넣고 시작합니다. 아직 방문하지 않은 방은 흐리게 그립니다."
+     },
+     "views": {
+      "rooms": {
+       "nodeMarks": {
+        "dim": [
+         1,
+         2,
+         3,
+         4
+        ],
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": [
+         0
+        ]
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "visited": {
+       "members": [
+        0
+       ],
+       "probes": [],
+       "marks": {}
+      },
+      "stack": {
+       "values": [
+        0
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Pop room 0: its keys 2, 1 open rooms not visited yet, so mark them visited.",
+      "ko": "방 0을 꺼냅니다. 열쇠 2, 1의 방은 아직 방문하지 않았으므로 방문한 것으로 표시합니다."
+     },
+     "views": {
+      "rooms": {
+       "nodeMarks": {
+        "dim": [
+         3,
+         4
+        ],
+        "path": [],
+        "bad": [],
+        "good": [
+         2,
+         1
+        ],
+        "lit": [
+         0
+        ]
+       },
+       "edgeMarks": {
+        "lit": [
+         0,
+         1
+        ]
+       }
+      },
+      "visited": {
+       "members": [
+        0,
+        2,
+        1
+       ],
+       "probes": [
+        {
+         "value": 2,
+         "hit": false
+        },
+        {
+         "value": 1,
+         "hit": false
+        }
+       ],
+       "marks": {
+        "good": [
+         2,
+         1
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        0
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "rooms",
+        "at": [
+         0,
+         2
+        ]
+       },
+       "to": {
+        "view": "visited",
+        "at": 2
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "rooms",
+        "at": [
+         0,
+         1
+        ]
+       },
+       "to": {
+        "view": "visited",
+        "at": 1
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Push rooms 2, 1, to enter them later.",
+      "ko": "방 2, 1을 스택에 넣어 나중에 들어갑니다."
+     },
+     "views": {
+      "rooms": {
+       "nodeMarks": {
+        "dim": [
+         3,
+         4
+        ],
+        "path": [],
+        "bad": [],
+        "good": [
+         2,
+         1
+        ],
+        "lit": []
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "visited": {
+       "members": [
+        0,
+        2,
+        1
+       ],
+       "probes": [],
+       "marks": {}
+      },
+      "stack": {
+       "values": [
+        2,
+        1
+       ],
+       "marks": {
+        "good": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "rooms",
+        "at": 2
+       },
+       "to": {
+        "view": "stack",
+        "at": 0
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "rooms",
+        "at": 1
+       },
+       "to": {
+        "view": "stack",
+        "at": 1
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop room 1: its key 4 opens a room not visited yet, so mark it visited.",
+      "ko": "방 1을 꺼냅니다. 열쇠 4의 방은 아직 방문하지 않았으므로 방문한 것으로 표시합니다."
+     },
+     "views": {
+      "rooms": {
+       "nodeMarks": {
+        "dim": [
+         3
+        ],
+        "path": [],
+        "bad": [],
+        "good": [
+         4
+        ],
+        "lit": [
+         1
+        ]
+       },
+       "edgeMarks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "visited": {
+       "members": [
+        0,
+        2,
+        1,
+        4
+       ],
+       "probes": [
+        {
+         "value": 4,
+         "hit": false
+        }
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        2,
+        1
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "rooms",
+        "at": [
+         1,
+         4
+        ]
+       },
+       "to": {
+        "view": "visited",
+        "at": 4
+       },
+       "value": "4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Push room 4, to enter it later.",
+      "ko": "방 4를 스택에 넣어 나중에 들어갑니다."
+     },
+     "views": {
+      "rooms": {
+       "nodeMarks": {
+        "dim": [
+         3
+        ],
+        "path": [],
+        "bad": [],
+        "good": [
+         4
+        ],
+        "lit": []
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "visited": {
+       "members": [
+        0,
+        2,
+        1,
+        4
+       ],
+       "probes": [],
+       "marks": {}
+      },
+      "stack": {
+       "values": [
+        2,
+        4
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "rooms",
+        "at": 4
+       },
+       "to": {
+        "view": "stack",
+        "at": 1
+       },
+       "value": "4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop room 4: its key 3 opens a room not visited yet, so mark it visited. Key 0 opens a room already visited.",
+      "ko": "방 4를 꺼냅니다. 열쇠 3의 방은 아직 방문하지 않았으므로 방문한 것으로 표시하고, 열쇠 0의 방은 이미 방문했습니다."
+     },
+     "views": {
+      "rooms": {
+       "nodeMarks": {
+        "dim": [],
+        "path": [],
+        "bad": [],
+        "good": [
+         3
+        ],
+        "lit": [
+         4
+        ]
+       },
+       "edgeMarks": {
+        "lit": [
+         4,
+         5
+        ]
+       }
+      },
+      "visited": {
+       "members": [
+        0,
+        2,
+        1,
+        4,
+        3
+       ],
+       "probes": [
+        {
+         "value": 3,
+         "hit": false
+        },
+        {
+         "value": 0,
+         "hit": true
+        }
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        2,
+        4
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "rooms",
+        "at": [
+         4,
+         3
+        ]
+       },
+       "to": {
+        "view": "visited",
+        "at": 3
+       },
+       "value": "3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Push room 3, to enter it later.",
+      "ko": "방 3을 스택에 넣어 나중에 들어갑니다."
+     },
+     "views": {
+      "rooms": {
+       "nodeMarks": {
+        "dim": [],
+        "path": [],
+        "bad": [],
+        "good": [
+         3
+        ],
+        "lit": []
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "visited": {
+       "members": [
+        0,
+        2,
+        1,
+        4,
+        3
+       ],
+       "probes": [],
+       "marks": {}
+      },
+      "stack": {
+       "values": [
+        2,
+        3
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "rooms",
+        "at": 3
+       },
+       "to": {
+        "view": "stack",
+        "at": 1
+       },
+       "value": "3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop rooms 3, 2: room 3 holds no key; room 2's key 3 opens only rooms already visited.",
+      "ko": "방 3, 2를 차례로 꺼냅니다. 방 3에는 열쇠가 없고, 방 2의 열쇠 3의 방은 이미 방문했습니다."
+     },
+     "views": {
+      "rooms": {
+       "nodeMarks": {
+        "dim": [],
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": [
+         3,
+         2
+        ]
+       },
+       "edgeMarks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "visited": {
+       "members": [
+        0,
+        2,
+        1,
+        4,
+        3
+       ],
+       "probes": [
+        {
+         "value": 3,
+         "hit": true
+        }
+       ],
+       "marks": {}
+      },
+      "stack": {
+       "values": [
+        2,
+        3
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stack",
+        "at": 0
+       }
+      },
+      {
+       "from": {
+        "view": "stack",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The stack is empty and all 5 rooms were visited: answer true.",
+      "ko": "스택이 비었고 방 5개를 모두 방문했으므로 답은 true입니다."
+     },
+     "views": {
+      "rooms": {
+       "nodeMarks": {
+        "dim": [],
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ],
+        "bad": [],
+        "good": [],
+        "lit": []
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "visited": {
+       "members": [
+        0,
+        2,
+        1,
+        4,
+        3
+       ],
+       "probes": [],
+       "marks": {}
+      },
+      "stack": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "answer": "true"
+    }
+   ],
+   "setup": {
+    "rooms": {
+     "nodes": [
+      {
+       "id": 0
+      },
+      {
+       "id": 2
+      },
+      {
+       "id": 1
+      },
+      {
+       "id": 4
+      },
+      {
+       "id": 3
+      }
+     ],
+     "edges": [
+      {
+       "from": 0,
+       "to": 2
+      },
+      {
+       "from": 0,
+       "to": 1
+      },
+      {
+       "from": 1,
+       "to": 4
+      },
+      {
+       "from": 2,
+       "to": 3
+      },
+      {
+       "from": 4,
+       "to": 3
+      },
+      {
+       "from": 4,
+       "to": 0
+      }
+     ]
+    }
+   },
+   "sampleInput": "[[2,1],[4],[3],[],[3,0]]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "rooms = [[2],[3],[],[4],[1]]",
+   "expected": "false",
+   "frames": [
+    {
+     "caption": {
+      "en": "5 rooms, and only room 0 is open: it starts visited and on the stack. Rooms not visited yet are faded.",
+      "ko": "방이 5개 있고 방 0만 열려 있으므로, 방 0을 방문한 것으로 표시하고 스택에 넣고 시작합니다. 아직 방문하지 않은 방은 흐리게 그립니다."
+     },
+     "views": {
+      "rooms": {
+       "nodeMarks": {
+        "dim": [
+         1,
+         2,
+         3,
+         4
+        ],
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": [
+         0
+        ]
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "visited": {
+       "members": [
+        0
+       ],
+       "probes": [],
+       "marks": {}
+      },
+      "stack": {
+       "values": [
+        0
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Pop room 0: its key 2 opens a room not visited yet, so mark it visited.",
+      "ko": "방 0을 꺼냅니다. 열쇠 2의 방은 아직 방문하지 않았으므로 방문한 것으로 표시합니다."
+     },
+     "views": {
+      "rooms": {
+       "nodeMarks": {
+        "dim": [
+         1,
+         3,
+         4
+        ],
+        "path": [],
+        "bad": [],
+        "good": [
+         2
+        ],
+        "lit": [
+         0
+        ]
+       },
+       "edgeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "visited": {
+       "members": [
+        0,
+        2
+       ],
+       "probes": [
+        {
+         "value": 2,
+         "hit": false
+        }
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        0
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "rooms",
+        "at": [
+         0,
+         2
+        ]
+       },
+       "to": {
+        "view": "visited",
+        "at": 2
+       },
+       "value": "2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Push room 2, to enter it later.",
+      "ko": "방 2를 스택에 넣어 나중에 들어갑니다."
+     },
+     "views": {
+      "rooms": {
+       "nodeMarks": {
+        "dim": [
+         1,
+         3,
+         4
+        ],
+        "path": [],
+        "bad": [],
+        "good": [
+         2
+        ],
+        "lit": []
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "visited": {
+       "members": [
+        0,
+        2
+       ],
+       "probes": [],
+       "marks": {}
+      },
+      "stack": {
+       "values": [
+        2
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "rooms",
+        "at": 2
+       },
+       "to": {
+        "view": "stack",
+        "at": 0
+       },
+       "value": "2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop room 2: room 2 holds no key.",
+      "ko": "방 2를 꺼냅니다. 방 2에는 열쇠가 없습니다."
+     },
+     "views": {
+      "rooms": {
+       "nodeMarks": {
+        "dim": [
+         1,
+         3,
+         4
+        ],
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": [
+         2
+        ]
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "visited": {
+       "members": [
+        0,
+        2
+       ],
+       "probes": [],
+       "marks": {}
+      },
+      "stack": {
+       "values": [
+        2
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stack",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The stack is empty after 2 of 5 rooms: the keys to rooms 1, 3, 4 are only inside rooms never opened. Answer: false.",
+      "ko": "방 5개 중 2개만 방문하고 스택이 비었습니다. 방 1, 3, 4의 열쇠는 열리지 않은 방 안에만 있으므로 답은 false입니다."
+     },
+     "views": {
+      "rooms": {
+       "nodeMarks": {
+        "dim": [],
+        "path": [],
+        "bad": [
+         1,
+         3,
+         4
+        ],
+        "good": [],
+        "lit": []
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "visited": {
+       "members": [
+        0,
+        2
+       ],
+       "probes": [],
+       "marks": {}
+      },
+      "stack": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "answer": "false"
+    }
+   ],
+   "setup": {
+    "rooms": {
+     "nodes": [
+      {
+       "id": 0
+      },
+      {
+       "id": 2
+      },
+      {
+       "id": 1
+      },
+      {
+       "id": 3
+      },
+      {
+       "id": 4
+      }
+     ],
+     "edges": [
+      {
+       "from": 0,
+       "to": 2
+      },
+      {
+       "from": 1,
+       "to": 3
+      },
+      {
+       "from": 3,
+       "to": 4
+      },
+      {
+       "from": 4,
+       "to": 1
+      }
+     ]
+    }
+   },
+   "sampleInput": "[[2],[3],[],[4],[1]]"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "rooms = [[1],[0]]",
+   "expected": "true",
+   "frames": [
+    {
+     "caption": {
+      "en": "2 rooms, and only room 0 is open: it starts visited and on the stack. Rooms not visited yet are faded.",
+      "ko": "방이 2개 있고 방 0만 열려 있으므로, 방 0을 방문한 것으로 표시하고 스택에 넣고 시작합니다. 아직 방문하지 않은 방은 흐리게 그립니다."
+     },
+     "views": {
+      "rooms": {
+       "nodeMarks": {
+        "dim": [
+         1
+        ],
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": [
+         0
+        ]
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "visited": {
+       "members": [
+        0
+       ],
+       "probes": [],
+       "marks": {}
+      },
+      "stack": {
+       "values": [
+        0
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Pop room 0: its key 1 opens a room not visited yet, so mark it visited.",
+      "ko": "방 0을 꺼냅니다. 열쇠 1의 방은 아직 방문하지 않았으므로 방문한 것으로 표시합니다."
+     },
+     "views": {
+      "rooms": {
+       "nodeMarks": {
+        "dim": [],
+        "path": [],
+        "bad": [],
+        "good": [
+         1
+        ],
+        "lit": [
+         0
+        ]
+       },
+       "edgeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "visited": {
+       "members": [
+        0,
+        1
+       ],
+       "probes": [
+        {
+         "value": 1,
+         "hit": false
+        }
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "stack": {
+       "values": [
+        0
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "rooms",
+        "at": [
+         0,
+         1
+        ]
+       },
+       "to": {
+        "view": "visited",
+        "at": 1
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Push room 1, to enter it later.",
+      "ko": "방 1을 스택에 넣어 나중에 들어갑니다."
+     },
+     "views": {
+      "rooms": {
+       "nodeMarks": {
+        "dim": [],
+        "path": [],
+        "bad": [],
+        "good": [
+         1
+        ],
+        "lit": []
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "visited": {
+       "members": [
+        0,
+        1
+       ],
+       "probes": [],
+       "marks": {}
+      },
+      "stack": {
+       "values": [
+        1
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "rooms",
+        "at": 1
+       },
+       "to": {
+        "view": "stack",
+        "at": 0
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop room 1: room 1's key 0 opens only rooms already visited.",
+      "ko": "방 1을 꺼냅니다. 방 1의 열쇠 0의 방은 이미 방문했습니다."
+     },
+     "views": {
+      "rooms": {
+       "nodeMarks": {
+        "dim": [],
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": [
+         1
+        ]
+       },
+       "edgeMarks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "visited": {
+       "members": [
+        0,
+        1
+       ],
+       "probes": [
+        {
+         "value": 0,
+         "hit": true
+        }
+       ],
+       "marks": {}
+      },
+      "stack": {
+       "values": [
+        1
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "stack",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The stack is empty and all 2 rooms were visited: answer true.",
+      "ko": "스택이 비었고 방 2개를 모두 방문했으므로 답은 true입니다."
+     },
+     "views": {
+      "rooms": {
+       "nodeMarks": {
+        "dim": [],
+        "path": [
+         0,
+         1
+        ],
+        "bad": [],
+        "good": [],
+        "lit": []
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "visited": {
+       "members": [
+        0,
+        1
+       ],
+       "probes": [],
+       "marks": {}
+      },
+      "stack": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "answer": "true"
+    }
+   ],
+   "setup": {
+    "rooms": {
+     "nodes": [
+      {
+       "id": 0
+      },
+      {
+       "id": 1
+      }
+     ],
+     "edges": [
+      {
+       "from": 0,
+       "to": 1
+      },
+      {
+       "from": 1,
+       "to": 0
+      }
+     ]
+    }
+   },
+   "sampleInput": "[[1],[0]]"
+  }
+ ]
+}

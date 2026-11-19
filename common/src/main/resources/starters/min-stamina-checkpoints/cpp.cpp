@@ -1,6 +1,6 @@
 class Solution {
 public:
-    int pickLeastEffort(vector<int>& effort) {
+    int minStaminaToFinish(vector<int>& cost) {
         // Write your solution here
     }
 };

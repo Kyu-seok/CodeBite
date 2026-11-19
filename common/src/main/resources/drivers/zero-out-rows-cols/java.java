@@ -24,8 +24,8 @@ public class Main {
                 i++;
             }
         }
-        int[][] matrix = rows.toArray(new int[0][]);
-        new Solution().clearDefectRows(matrix);
-        System.out.println(JsonOutput.intArray2D(matrix));
+        int[][] board = rows.toArray(new int[0][]);
+        new Solution().zeroOutRowsAndCols(board);
+        System.out.println(JsonOutput.intArray2D(board));
     }
 }

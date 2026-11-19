@@ -1,5 +1,5 @@
 class Solution {
-    public int countActiveSensors(int sensorMask) {
+    public int countOnlineFriends(int friendMask) {
         // Write your solution here
     }
 }

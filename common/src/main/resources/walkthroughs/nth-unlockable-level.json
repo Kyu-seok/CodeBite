@@ -1,0 +1,3180 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Nth Unlockable Level",
+  "ko": "N번째 해금 가능 레벨"
+ },
+ "approach": {
+  "en": "Every unlockable level after 1 is an earlier one times 2, 3 or 5. Keep a pointer per factor at the smallest level not yet multiplied by it; the next level is the smallest of the three products.",
+  "ko": "1 다음의 해금 가능 레벨은 모두 앞선 레벨에 2, 3, 5 중 하나를 곱한 수입니다. 곱마다 아직 그 수를 곱하지 않은 가장 작은 레벨을 가리키는 포인터를 두면, 다음 레벨은 세 곱 중 가장 작은 값입니다."
+ },
+ "views": [
+  {
+   "id": "levels",
+   "type": "array",
+   "title": {
+    "en": "unlockable levels, in order",
+    "ko": "levels (해금 가능 레벨, 작은 순)"
+   }
+  },
+  {
+   "id": "products",
+   "type": "array",
+   "title": {
+    "en": "next product per factor",
+    "ko": "곱마다 다음 후보"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "n = 7",
+   "expected": "8",
+   "frames": [
+    {
+     "caption": {
+      "en": "Level 1 comes first, and all three pointers start on it since nothing has been multiplied yet; 7 levels are needed.",
+      "ko": "레벨 1이 가장 먼저이고, 아직 아무것도 곱하지 않았으니 세 포인터 모두 1을 가리킵니다. 레벨이 7개 필요합니다."
+     },
+     "views": {
+      "levels": {
+       "values": [
+        1,
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "i2": 0,
+        "i3": 0,
+        "i5": 0
+       },
+       "marks": {
+        "good": [
+         0
+        ]
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+       ]
+      },
+      "products": {
+       "values": [
+        "",
+        "",
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "×2"
+        ],
+        [
+         1,
+         "×3"
+        ],
+        [
+         2,
+         "×5"
+        ]
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "New products: 1×2 = 2, 1×3 = 3, 1×5 = 5. The smallest of the three is 2.",
+      "ko": "새 후보: 1×2 = 2, 1×3 = 3, 1×5 = 5. 세 후보 중 가장 작은 값은 2입니다."
+     },
+     "views": {
+      "levels": {
+       "values": [
+        1,
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "i2": 0,
+        "i3": 0,
+        "i5": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+       ]
+      },
+      "products": {
+       "values": [
+        2,
+        3,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         "×2"
+        ],
+        [
+         1,
+         "×3"
+        ],
+        [
+         2,
+         "×5"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0,
+         1,
+         2
+        ],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "levels",
+        "at": 0
+       },
+       "to": {
+        "view": "products",
+        "at": 0
+       },
+       "value": "1×2"
+      },
+      {
+       "from": {
+        "view": "levels",
+        "at": 0
+       },
+       "to": {
+        "view": "products",
+        "at": 1
+       },
+       "value": "1×3"
+      },
+      {
+       "from": {
+        "view": "levels",
+        "at": 0
+       },
+       "to": {
+        "view": "products",
+        "at": 2
+       },
+       "value": "1×5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "2 is the 2nd level. i2 made it, so it steps to the next level.",
+      "ko": "2는 2번째 레벨입니다. i2에서 만들었으므로 다음 레벨로 넘어갑니다."
+     },
+     "views": {
+      "levels": {
+       "values": [
+        1,
+        2,
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "i2": 1,
+        "i3": 0,
+        "i5": 0
+       },
+       "marks": {
+        "good": [
+         1
+        ]
+       },
+       "unread": [
+        2,
+        3,
+        4,
+        5,
+        6
+       ]
+      },
+      "products": {
+       "values": [
+        2,
+        3,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         "×2"
+        ],
+        [
+         1,
+         "×3"
+        ],
+        [
+         2,
+         "×5"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "products",
+        "at": 0
+       },
+       "to": {
+        "view": "levels",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "New products: 2×2 = 4. The smallest of the three is 3.",
+      "ko": "새 후보: 2×2 = 4. 세 후보 중 가장 작은 값은 3입니다."
+     },
+     "views": {
+      "levels": {
+       "values": [
+        1,
+        2,
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "i2": 1,
+        "i3": 0,
+        "i5": 0
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       },
+       "unread": [
+        2,
+        3,
+        4,
+        5,
+        6
+       ]
+      },
+      "products": {
+       "values": [
+        4,
+        3,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         "×2"
+        ],
+        [
+         1,
+         "×3"
+        ],
+        [
+         2,
+         "×5"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "levels",
+        "at": 1
+       },
+       "to": {
+        "view": "products",
+        "at": 0
+       },
+       "value": "2×2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "3 is the 3rd level. i3 made it, so it steps to the next level.",
+      "ko": "3은 3번째 레벨입니다. i3에서 만들었으므로 다음 레벨로 넘어갑니다."
+     },
+     "views": {
+      "levels": {
+       "values": [
+        1,
+        2,
+        3,
+        "",
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "i2": 1,
+        "i3": 1,
+        "i5": 0
+       },
+       "marks": {
+        "good": [
+         2
+        ]
+       },
+       "unread": [
+        3,
+        4,
+        5,
+        6
+       ]
+      },
+      "products": {
+       "values": [
+        4,
+        3,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         "×2"
+        ],
+        [
+         1,
+         "×3"
+        ],
+        [
+         2,
+         "×5"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "products",
+        "at": 1
+       },
+       "to": {
+        "view": "levels",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "New products: 2×3 = 6. The smallest of the three is 4.",
+      "ko": "새 후보: 2×3 = 6. 세 후보 중 가장 작은 값은 4입니다."
+     },
+     "views": {
+      "levels": {
+       "values": [
+        1,
+        2,
+        3,
+        "",
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "i2": 1,
+        "i3": 1,
+        "i5": 0
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       },
+       "unread": [
+        3,
+        4,
+        5,
+        6
+       ]
+      },
+      "products": {
+       "values": [
+        4,
+        6,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         "×2"
+        ],
+        [
+         1,
+         "×3"
+        ],
+        [
+         2,
+         "×5"
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ],
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "levels",
+        "at": 1
+       },
+       "to": {
+        "view": "products",
+        "at": 1
+       },
+       "value": "2×3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "4 is the 4th level. i2 made it, so it steps to the next level.",
+      "ko": "4는 4번째 레벨입니다. i2에서 만들었으므로 다음 레벨로 넘어갑니다."
+     },
+     "views": {
+      "levels": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "i2": 2,
+        "i3": 1,
+        "i5": 0
+       },
+       "marks": {
+        "good": [
+         3
+        ]
+       },
+       "unread": [
+        4,
+        5,
+        6
+       ]
+      },
+      "products": {
+       "values": [
+        4,
+        6,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         "×2"
+        ],
+        [
+         1,
+         "×3"
+        ],
+        [
+         2,
+         "×5"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "products",
+        "at": 0
+       },
+       "to": {
+        "view": "levels",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "New products: 3×2 = 6. The smallest of the three is 5.",
+      "ko": "새 후보: 3×2 = 6. 세 후보 중 가장 작은 값은 5입니다."
+     },
+     "views": {
+      "levels": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "i2": 2,
+        "i3": 1,
+        "i5": 0
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       },
+       "unread": [
+        4,
+        5,
+        6
+       ]
+      },
+      "products": {
+       "values": [
+        6,
+        6,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         "×2"
+        ],
+        [
+         1,
+         "×3"
+        ],
+        [
+         2,
+         "×5"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ],
+        "lit": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "levels",
+        "at": 2
+       },
+       "to": {
+        "view": "products",
+        "at": 0
+       },
+       "value": "3×2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "5 is the 5th level. i5 made it, so it steps to the next level.",
+      "ko": "5는 5번째 레벨입니다. i5에서 만들었으므로 다음 레벨로 넘어갑니다."
+     },
+     "views": {
+      "levels": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        "",
+        ""
+       ],
+       "pointers": {
+        "i2": 2,
+        "i3": 1,
+        "i5": 1
+       },
+       "marks": {
+        "good": [
+         4
+        ]
+       },
+       "unread": [
+        5,
+        6
+       ]
+      },
+      "products": {
+       "values": [
+        6,
+        6,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         "×2"
+        ],
+        [
+         1,
+         "×3"
+        ],
+        [
+         2,
+         "×5"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "products",
+        "at": 2
+       },
+       "to": {
+        "view": "levels",
+        "at": 4
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "New products: 2×5 = 10. The smallest of the three is 6.",
+      "ko": "새 후보: 2×5 = 10. 세 후보 중 가장 작은 값은 6입니다."
+     },
+     "views": {
+      "levels": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        "",
+        ""
+       ],
+       "pointers": {
+        "i2": 2,
+        "i3": 1,
+        "i5": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       },
+       "unread": [
+        5,
+        6
+       ]
+      },
+      "products": {
+       "values": [
+        6,
+        6,
+        10
+       ],
+       "tags": [
+        [
+         0,
+         "×2"
+        ],
+        [
+         1,
+         "×3"
+        ],
+        [
+         2,
+         "×5"
+        ]
+       ],
+       "marks": {
+        "good": [
+         2
+        ],
+        "lit": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "levels",
+        "at": 1
+       },
+       "to": {
+        "view": "products",
+        "at": 2
+       },
+       "value": "2×5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "6 is the 6th level. i2 and i3 made it, so they step to the next level.",
+      "ko": "6은 6번째 레벨입니다. i2, i3에서 만들었으므로 모두 다음 레벨로 넘어갑니다."
+     },
+     "views": {
+      "levels": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        ""
+       ],
+       "pointers": {
+        "i2": 3,
+        "i3": 2,
+        "i5": 1
+       },
+       "marks": {
+        "good": [
+         5
+        ]
+       },
+       "unread": [
+        6
+       ]
+      },
+      "products": {
+       "values": [
+        6,
+        6,
+        10
+       ],
+       "tags": [
+        [
+         0,
+         "×2"
+        ],
+        [
+         1,
+         "×3"
+        ],
+        [
+         2,
+         "×5"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "products",
+        "at": 0
+       },
+       "to": {
+        "view": "levels",
+        "at": 5
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "New products: 4×2 = 8, 3×3 = 9. The smallest of the three is 8.",
+      "ko": "새 후보: 4×2 = 8, 3×3 = 9. 세 후보 중 가장 작은 값은 8입니다."
+     },
+     "views": {
+      "levels": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        ""
+       ],
+       "pointers": {
+        "i2": 3,
+        "i3": 2,
+        "i5": 1
+       },
+       "marks": {
+        "lit": [
+         2,
+         3
+        ]
+       },
+       "unread": [
+        6
+       ]
+      },
+      "products": {
+       "values": [
+        8,
+        9,
+        10
+       ],
+       "tags": [
+        [
+         0,
+         "×2"
+        ],
+        [
+         1,
+         "×3"
+        ],
+        [
+         2,
+         "×5"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0,
+         1
+        ],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "levels",
+        "at": 3
+       },
+       "to": {
+        "view": "products",
+        "at": 0
+       },
+       "value": "4×2"
+      },
+      {
+       "from": {
+        "view": "levels",
+        "at": 2
+       },
+       "to": {
+        "view": "products",
+        "at": 1
+       },
+       "value": "3×3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "8 is the 7th level. i2 made it, so it steps to the next level.",
+      "ko": "8은 7번째 레벨입니다. i2에서 만들었으므로 다음 레벨로 넘어갑니다."
+     },
+     "views": {
+      "levels": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        8
+       ],
+       "pointers": {
+        "i2": 4,
+        "i3": 2,
+        "i5": 1
+       },
+       "marks": {
+        "good": [
+         6
+        ]
+       },
+       "unread": []
+      },
+      "products": {
+       "values": [
+        8,
+        9,
+        10
+       ],
+       "tags": [
+        [
+         0,
+         "×2"
+        ],
+        [
+         1,
+         "×3"
+        ],
+        [
+         2,
+         "×5"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "products",
+        "at": 0
+       },
+       "to": {
+        "view": "levels",
+        "at": 6
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "7 levels are built. The 7th unlockable level is 8.",
+      "ko": "레벨 7개를 다 만들었습니다. 7번째 해금 가능 레벨은 8입니다."
+     },
+     "views": {
+      "levels": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        8
+       ],
+       "pointers": {
+        "i2": 4,
+        "i3": 2,
+        "i5": 1
+       },
+       "marks": {
+        "path": [
+         6
+        ]
+       },
+       "unread": []
+      },
+      "products": {
+       "values": [
+        8,
+        9,
+        10
+       ],
+       "tags": [
+        [
+         0,
+         "×2"
+        ],
+        [
+         1,
+         "×3"
+        ],
+        [
+         2,
+         "×5"
+        ]
+       ],
+       "marks": {}
+      }
+     },
+     "answer": "8"
+    }
+   ],
+   "sampleInput": "7"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "n = 12",
+   "expected": "16",
+   "frames": [
+    {
+     "caption": {
+      "en": "Level 1 comes first, and all three pointers start on it since nothing has been multiplied yet; 12 levels are needed.",
+      "ko": "레벨 1이 가장 먼저이고, 아직 아무것도 곱하지 않았으니 세 포인터 모두 1을 가리킵니다. 레벨이 12개 필요합니다."
+     },
+     "views": {
+      "levels": {
+       "values": [
+        1,
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "i2": 0,
+        "i3": 0,
+        "i5": 0
+       },
+       "marks": {
+        "good": [
+         0
+        ]
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+       ]
+      },
+      "products": {
+       "values": [
+        "",
+        "",
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "×2"
+        ],
+        [
+         1,
+         "×3"
+        ],
+        [
+         2,
+         "×5"
+        ]
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "New products: 1×2 = 2, 1×3 = 3, 1×5 = 5. The smallest of the three is 2.",
+      "ko": "새 후보: 1×2 = 2, 1×3 = 3, 1×5 = 5. 세 후보 중 가장 작은 값은 2입니다."
+     },
+     "views": {
+      "levels": {
+       "values": [
+        1,
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "i2": 0,
+        "i3": 0,
+        "i5": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+       ]
+      },
+      "products": {
+       "values": [
+        2,
+        3,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         "×2"
+        ],
+        [
+         1,
+         "×3"
+        ],
+        [
+         2,
+         "×5"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0,
+         1,
+         2
+        ],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "levels",
+        "at": 0
+       },
+       "to": {
+        "view": "products",
+        "at": 0
+       },
+       "value": "1×2"
+      },
+      {
+       "from": {
+        "view": "levels",
+        "at": 0
+       },
+       "to": {
+        "view": "products",
+        "at": 1
+       },
+       "value": "1×3"
+      },
+      {
+       "from": {
+        "view": "levels",
+        "at": 0
+       },
+       "to": {
+        "view": "products",
+        "at": 2
+       },
+       "value": "1×5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "2 is the 2nd level. i2 made it, so it steps to the next level.",
+      "ko": "2는 2번째 레벨입니다. i2에서 만들었으므로 다음 레벨로 넘어갑니다."
+     },
+     "views": {
+      "levels": {
+       "values": [
+        1,
+        2,
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "i2": 1,
+        "i3": 0,
+        "i5": 0
+       },
+       "marks": {
+        "good": [
+         1
+        ]
+       },
+       "unread": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+       ]
+      },
+      "products": {
+       "values": [
+        2,
+        3,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         "×2"
+        ],
+        [
+         1,
+         "×3"
+        ],
+        [
+         2,
+         "×5"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "products",
+        "at": 0
+       },
+       "to": {
+        "view": "levels",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "New products: 2×2 = 4. The smallest of the three is 3.",
+      "ko": "새 후보: 2×2 = 4. 세 후보 중 가장 작은 값은 3입니다."
+     },
+     "views": {
+      "levels": {
+       "values": [
+        1,
+        2,
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "i2": 1,
+        "i3": 0,
+        "i5": 0
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       },
+       "unread": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+       ]
+      },
+      "products": {
+       "values": [
+        4,
+        3,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         "×2"
+        ],
+        [
+         1,
+         "×3"
+        ],
+        [
+         2,
+         "×5"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "levels",
+        "at": 1
+       },
+       "to": {
+        "view": "products",
+        "at": 0
+       },
+       "value": "2×2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "3 is the 3rd level. i3 made it, so it steps to the next level.",
+      "ko": "3은 3번째 레벨입니다. i3에서 만들었으므로 다음 레벨로 넘어갑니다."
+     },
+     "views": {
+      "levels": {
+       "values": [
+        1,
+        2,
+        3,
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "i2": 1,
+        "i3": 1,
+        "i5": 0
+       },
+       "marks": {
+        "good": [
+         2
+        ]
+       },
+       "unread": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+       ]
+      },
+      "products": {
+       "values": [
+        4,
+        3,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         "×2"
+        ],
+        [
+         1,
+         "×3"
+        ],
+        [
+         2,
+         "×5"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "products",
+        "at": 1
+       },
+       "to": {
+        "view": "levels",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "New products: 2×3 = 6. The smallest of the three is 4.",
+      "ko": "새 후보: 2×3 = 6. 세 후보 중 가장 작은 값은 4입니다."
+     },
+     "views": {
+      "levels": {
+       "values": [
+        1,
+        2,
+        3,
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "i2": 1,
+        "i3": 1,
+        "i5": 0
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       },
+       "unread": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+       ]
+      },
+      "products": {
+       "values": [
+        4,
+        6,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         "×2"
+        ],
+        [
+         1,
+         "×3"
+        ],
+        [
+         2,
+         "×5"
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ],
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "levels",
+        "at": 1
+       },
+       "to": {
+        "view": "products",
+        "at": 1
+       },
+       "value": "2×3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "4 is the 4th level. i2 made it, so it steps to the next level.",
+      "ko": "4는 4번째 레벨입니다. i2에서 만들었으므로 다음 레벨로 넘어갑니다."
+     },
+     "views": {
+      "levels": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "i2": 2,
+        "i3": 1,
+        "i5": 0
+       },
+       "marks": {
+        "good": [
+         3
+        ]
+       },
+       "unread": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+       ]
+      },
+      "products": {
+       "values": [
+        4,
+        6,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         "×2"
+        ],
+        [
+         1,
+         "×3"
+        ],
+        [
+         2,
+         "×5"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "products",
+        "at": 0
+       },
+       "to": {
+        "view": "levels",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "New products: 3×2 = 6. The smallest of the three is 5.",
+      "ko": "새 후보: 3×2 = 6. 세 후보 중 가장 작은 값은 5입니다."
+     },
+     "views": {
+      "levels": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "i2": 2,
+        "i3": 1,
+        "i5": 0
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       },
+       "unread": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+       ]
+      },
+      "products": {
+       "values": [
+        6,
+        6,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         "×2"
+        ],
+        [
+         1,
+         "×3"
+        ],
+        [
+         2,
+         "×5"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ],
+        "lit": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "levels",
+        "at": 2
+       },
+       "to": {
+        "view": "products",
+        "at": 0
+       },
+       "value": "3×2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "5 is the 5th level. i5 made it, so it steps to the next level.",
+      "ko": "5는 5번째 레벨입니다. i5에서 만들었으므로 다음 레벨로 넘어갑니다."
+     },
+     "views": {
+      "levels": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "i2": 2,
+        "i3": 1,
+        "i5": 1
+       },
+       "marks": {
+        "good": [
+         4
+        ]
+       },
+       "unread": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+       ]
+      },
+      "products": {
+       "values": [
+        6,
+        6,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         "×2"
+        ],
+        [
+         1,
+         "×3"
+        ],
+        [
+         2,
+         "×5"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "products",
+        "at": 2
+       },
+       "to": {
+        "view": "levels",
+        "at": 4
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "New products: 2×5 = 10. The smallest of the three is 6.",
+      "ko": "새 후보: 2×5 = 10. 세 후보 중 가장 작은 값은 6입니다."
+     },
+     "views": {
+      "levels": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "i2": 2,
+        "i3": 1,
+        "i5": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       },
+       "unread": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+       ]
+      },
+      "products": {
+       "values": [
+        6,
+        6,
+        10
+       ],
+       "tags": [
+        [
+         0,
+         "×2"
+        ],
+        [
+         1,
+         "×3"
+        ],
+        [
+         2,
+         "×5"
+        ]
+       ],
+       "marks": {
+        "good": [
+         2
+        ],
+        "lit": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "levels",
+        "at": 1
+       },
+       "to": {
+        "view": "products",
+        "at": 2
+       },
+       "value": "2×5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "6 is the 6th level. i2 and i3 made it, so they step to the next level.",
+      "ko": "6은 6번째 레벨입니다. i2, i3에서 만들었으므로 모두 다음 레벨로 넘어갑니다."
+     },
+     "views": {
+      "levels": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "i2": 3,
+        "i3": 2,
+        "i5": 1
+       },
+       "marks": {
+        "good": [
+         5
+        ]
+       },
+       "unread": [
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+       ]
+      },
+      "products": {
+       "values": [
+        6,
+        6,
+        10
+       ],
+       "tags": [
+        [
+         0,
+         "×2"
+        ],
+        [
+         1,
+         "×3"
+        ],
+        [
+         2,
+         "×5"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "products",
+        "at": 0
+       },
+       "to": {
+        "view": "levels",
+        "at": 5
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "New products: 4×2 = 8, 3×3 = 9. The smallest of the three is 8.",
+      "ko": "새 후보: 4×2 = 8, 3×3 = 9. 세 후보 중 가장 작은 값은 8입니다."
+     },
+     "views": {
+      "levels": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "i2": 3,
+        "i3": 2,
+        "i5": 1
+       },
+       "marks": {
+        "lit": [
+         2,
+         3
+        ]
+       },
+       "unread": [
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+       ]
+      },
+      "products": {
+       "values": [
+        8,
+        9,
+        10
+       ],
+       "tags": [
+        [
+         0,
+         "×2"
+        ],
+        [
+         1,
+         "×3"
+        ],
+        [
+         2,
+         "×5"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0,
+         1
+        ],
+        "lit": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "levels",
+        "at": 3
+       },
+       "to": {
+        "view": "products",
+        "at": 0
+       },
+       "value": "4×2"
+      },
+      {
+       "from": {
+        "view": "levels",
+        "at": 2
+       },
+       "to": {
+        "view": "products",
+        "at": 1
+       },
+       "value": "3×3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "8 is the 7th level. i2 made it, so it steps to the next level.",
+      "ko": "8은 7번째 레벨입니다. i2에서 만들었으므로 다음 레벨로 넘어갑니다."
+     },
+     "views": {
+      "levels": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        8,
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "i2": 4,
+        "i3": 2,
+        "i5": 1
+       },
+       "marks": {
+        "good": [
+         6
+        ]
+       },
+       "unread": [
+        7,
+        8,
+        9,
+        10,
+        11
+       ]
+      },
+      "products": {
+       "values": [
+        8,
+        9,
+        10
+       ],
+       "tags": [
+        [
+         0,
+         "×2"
+        ],
+        [
+         1,
+         "×3"
+        ],
+        [
+         2,
+         "×5"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "products",
+        "at": 0
+       },
+       "to": {
+        "view": "levels",
+        "at": 6
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "New products: 5×2 = 10. The smallest of the three is 9.",
+      "ko": "새 후보: 5×2 = 10. 세 후보 중 가장 작은 값은 9입니다."
+     },
+     "views": {
+      "levels": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        8,
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "i2": 4,
+        "i3": 2,
+        "i5": 1
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       },
+       "unread": [
+        7,
+        8,
+        9,
+        10,
+        11
+       ]
+      },
+      "products": {
+       "values": [
+        10,
+        9,
+        10
+       ],
+       "tags": [
+        [
+         0,
+         "×2"
+        ],
+        [
+         1,
+         "×3"
+        ],
+        [
+         2,
+         "×5"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "levels",
+        "at": 4
+       },
+       "to": {
+        "view": "products",
+        "at": 0
+       },
+       "value": "5×2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "9 is the 8th level. i3 made it, so it steps to the next level.",
+      "ko": "9는 8번째 레벨입니다. i3에서 만들었으므로 다음 레벨로 넘어갑니다."
+     },
+     "views": {
+      "levels": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        8,
+        9,
+        "",
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "i2": 4,
+        "i3": 3,
+        "i5": 1
+       },
+       "marks": {
+        "good": [
+         7
+        ]
+       },
+       "unread": [
+        8,
+        9,
+        10,
+        11
+       ]
+      },
+      "products": {
+       "values": [
+        10,
+        9,
+        10
+       ],
+       "tags": [
+        [
+         0,
+         "×2"
+        ],
+        [
+         1,
+         "×3"
+        ],
+        [
+         2,
+         "×5"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "products",
+        "at": 1
+       },
+       "to": {
+        "view": "levels",
+        "at": 7
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "New products: 4×3 = 12. The smallest of the three is 10.",
+      "ko": "새 후보: 4×3 = 12. 세 후보 중 가장 작은 값은 10입니다."
+     },
+     "views": {
+      "levels": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        8,
+        9,
+        "",
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "i2": 4,
+        "i3": 3,
+        "i5": 1
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       },
+       "unread": [
+        8,
+        9,
+        10,
+        11
+       ]
+      },
+      "products": {
+       "values": [
+        10,
+        12,
+        10
+       ],
+       "tags": [
+        [
+         0,
+         "×2"
+        ],
+        [
+         1,
+         "×3"
+        ],
+        [
+         2,
+         "×5"
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ],
+        "lit": [
+         0,
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "levels",
+        "at": 3
+       },
+       "to": {
+        "view": "products",
+        "at": 1
+       },
+       "value": "4×3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "10 is the 9th level. i2 and i5 made it, so they step to the next level.",
+      "ko": "10은 9번째 레벨입니다. i2, i5에서 만들었으므로 모두 다음 레벨로 넘어갑니다."
+     },
+     "views": {
+      "levels": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        8,
+        9,
+        10,
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "i2": 5,
+        "i3": 3,
+        "i5": 2
+       },
+       "marks": {
+        "good": [
+         8
+        ]
+       },
+       "unread": [
+        9,
+        10,
+        11
+       ]
+      },
+      "products": {
+       "values": [
+        10,
+        12,
+        10
+       ],
+       "tags": [
+        [
+         0,
+         "×2"
+        ],
+        [
+         1,
+         "×3"
+        ],
+        [
+         2,
+         "×5"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0,
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "products",
+        "at": 0
+       },
+       "to": {
+        "view": "levels",
+        "at": 8
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "New products: 6×2 = 12, 3×5 = 15. The smallest of the three is 12.",
+      "ko": "새 후보: 6×2 = 12, 3×5 = 15. 세 후보 중 가장 작은 값은 12입니다."
+     },
+     "views": {
+      "levels": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        8,
+        9,
+        10,
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "i2": 5,
+        "i3": 3,
+        "i5": 2
+       },
+       "marks": {
+        "lit": [
+         2,
+         5
+        ]
+       },
+       "unread": [
+        9,
+        10,
+        11
+       ]
+      },
+      "products": {
+       "values": [
+        12,
+        12,
+        15
+       ],
+       "tags": [
+        [
+         0,
+         "×2"
+        ],
+        [
+         1,
+         "×3"
+        ],
+        [
+         2,
+         "×5"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0,
+         2
+        ],
+        "lit": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "levels",
+        "at": 5
+       },
+       "to": {
+        "view": "products",
+        "at": 0
+       },
+       "value": "6×2"
+      },
+      {
+       "from": {
+        "view": "levels",
+        "at": 2
+       },
+       "to": {
+        "view": "products",
+        "at": 2
+       },
+       "value": "3×5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "12 is the 10th level. i2 and i3 made it, so they step to the next level.",
+      "ko": "12는 10번째 레벨입니다. i2, i3에서 만들었으므로 모두 다음 레벨로 넘어갑니다."
+     },
+     "views": {
+      "levels": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        8,
+        9,
+        10,
+        12,
+        "",
+        ""
+       ],
+       "pointers": {
+        "i2": 6,
+        "i3": 4,
+        "i5": 2
+       },
+       "marks": {
+        "good": [
+         9
+        ]
+       },
+       "unread": [
+        10,
+        11
+       ]
+      },
+      "products": {
+       "values": [
+        12,
+        12,
+        15
+       ],
+       "tags": [
+        [
+         0,
+         "×2"
+        ],
+        [
+         1,
+         "×3"
+        ],
+        [
+         2,
+         "×5"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "products",
+        "at": 0
+       },
+       "to": {
+        "view": "levels",
+        "at": 9
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "New products: 8×2 = 16, 5×3 = 15. The smallest of the three is 15.",
+      "ko": "새 후보: 8×2 = 16, 5×3 = 15. 세 후보 중 가장 작은 값은 15입니다."
+     },
+     "views": {
+      "levels": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        8,
+        9,
+        10,
+        12,
+        "",
+        ""
+       ],
+       "pointers": {
+        "i2": 6,
+        "i3": 4,
+        "i5": 2
+       },
+       "marks": {
+        "lit": [
+         4,
+         6
+        ]
+       },
+       "unread": [
+        10,
+        11
+       ]
+      },
+      "products": {
+       "values": [
+        16,
+        15,
+        15
+       ],
+       "tags": [
+        [
+         0,
+         "×2"
+        ],
+        [
+         1,
+         "×3"
+        ],
+        [
+         2,
+         "×5"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0,
+         1
+        ],
+        "lit": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "levels",
+        "at": 6
+       },
+       "to": {
+        "view": "products",
+        "at": 0
+       },
+       "value": "8×2"
+      },
+      {
+       "from": {
+        "view": "levels",
+        "at": 4
+       },
+       "to": {
+        "view": "products",
+        "at": 1
+       },
+       "value": "5×3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "15 is the 11th level. i3 and i5 made it, so they step to the next level.",
+      "ko": "15는 11번째 레벨입니다. i3, i5에서 만들었으므로 모두 다음 레벨로 넘어갑니다."
+     },
+     "views": {
+      "levels": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        8,
+        9,
+        10,
+        12,
+        15,
+        ""
+       ],
+       "pointers": {
+        "i2": 6,
+        "i3": 5,
+        "i5": 3
+       },
+       "marks": {
+        "good": [
+         10
+        ]
+       },
+       "unread": [
+        11
+       ]
+      },
+      "products": {
+       "values": [
+        16,
+        15,
+        15
+       ],
+       "tags": [
+        [
+         0,
+         "×2"
+        ],
+        [
+         1,
+         "×3"
+        ],
+        [
+         2,
+         "×5"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         1,
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "products",
+        "at": 1
+       },
+       "to": {
+        "view": "levels",
+        "at": 10
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "New products: 6×3 = 18, 4×5 = 20. The smallest of the three is 16.",
+      "ko": "새 후보: 6×3 = 18, 4×5 = 20. 세 후보 중 가장 작은 값은 16입니다."
+     },
+     "views": {
+      "levels": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        8,
+        9,
+        10,
+        12,
+        15,
+        ""
+       ],
+       "pointers": {
+        "i2": 6,
+        "i3": 5,
+        "i5": 3
+       },
+       "marks": {
+        "lit": [
+         3,
+         5
+        ]
+       },
+       "unread": [
+        11
+       ]
+      },
+      "products": {
+       "values": [
+        16,
+        18,
+        20
+       ],
+       "tags": [
+        [
+         0,
+         "×2"
+        ],
+        [
+         1,
+         "×3"
+        ],
+        [
+         2,
+         "×5"
+        ]
+       ],
+       "marks": {
+        "good": [
+         1,
+         2
+        ],
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "levels",
+        "at": 5
+       },
+       "to": {
+        "view": "products",
+        "at": 1
+       },
+       "value": "6×3"
+      },
+      {
+       "from": {
+        "view": "levels",
+        "at": 3
+       },
+       "to": {
+        "view": "products",
+        "at": 2
+       },
+       "value": "4×5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "16 is the 12th level. i2 made it, so it steps to the next level.",
+      "ko": "16은 12번째 레벨입니다. i2에서 만들었으므로 다음 레벨로 넘어갑니다."
+     },
+     "views": {
+      "levels": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        8,
+        9,
+        10,
+        12,
+        15,
+        16
+       ],
+       "pointers": {
+        "i2": 7,
+        "i3": 5,
+        "i5": 3
+       },
+       "marks": {
+        "good": [
+         11
+        ]
+       },
+       "unread": []
+      },
+      "products": {
+       "values": [
+        16,
+        18,
+        20
+       ],
+       "tags": [
+        [
+         0,
+         "×2"
+        ],
+        [
+         1,
+         "×3"
+        ],
+        [
+         2,
+         "×5"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "products",
+        "at": 0
+       },
+       "to": {
+        "view": "levels",
+        "at": 11
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "12 levels are built. The 12th unlockable level is 16.",
+      "ko": "레벨 12개를 다 만들었습니다. 12번째 해금 가능 레벨은 16입니다."
+     },
+     "views": {
+      "levels": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        8,
+        9,
+        10,
+        12,
+        15,
+        16
+       ],
+       "pointers": {
+        "i2": 7,
+        "i3": 5,
+        "i5": 3
+       },
+       "marks": {
+        "path": [
+         11
+        ]
+       },
+       "unread": []
+      },
+      "products": {
+       "values": [
+        16,
+        18,
+        20
+       ],
+       "tags": [
+        [
+         0,
+         "×2"
+        ],
+        [
+         1,
+         "×3"
+        ],
+        [
+         2,
+         "×5"
+        ]
+       ],
+       "marks": {}
+      }
+     },
+     "answer": "16"
+    }
+   ],
+   "sampleInput": "12"
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "n = 1",
+   "expected": "1",
+   "frames": [
+    {
+     "caption": {
+      "en": "The first unlockable level is 1, and n = 1 asks for the first, so nothing needs building.",
+      "ko": "첫 번째 해금 가능 레벨은 1이고 n = 1은 첫 번째를 묻으므로 더 만들 것이 없습니다."
+     },
+     "views": {
+      "levels": {
+       "values": [
+        1
+       ],
+       "pointers": {},
+       "marks": {
+        "good": [
+         0
+        ]
+       },
+       "unread": []
+      },
+      "products": {
+       "values": [
+        "",
+        "",
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "×2"
+        ],
+        [
+         1,
+         "×3"
+        ],
+        [
+         2,
+         "×5"
+        ]
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Answer: 1.",
+      "ko": "답은 1입니다."
+     },
+     "views": {
+      "levels": {
+       "values": [
+        1
+       ],
+       "pointers": {},
+       "marks": {
+        "path": [
+         0
+        ]
+       },
+       "unread": []
+      },
+      "products": {
+       "values": [
+        "",
+        "",
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "×2"
+        ],
+        [
+         1,
+         "×3"
+        ],
+        [
+         2,
+         "×5"
+        ]
+       ],
+       "marks": {}
+      }
+     },
+     "answer": "1"
+    }
+   ],
+   "sampleInput": "1"
+  }
+ ]
+}

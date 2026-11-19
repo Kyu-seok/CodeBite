@@ -1,0 +1,1330 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Pick Snack Haul",
+  "ko": "간식 털이 최대화"
+ },
+ "approach": {
+  "en": "Only two numbers carry over from machine to machine: the best haul with the last machine skipped, and with it taken. Skipping keeps the larger; taking adds the snacks to the skipped one.",
+  "ko": "자판기마다 넘겨받는 수는 둘뿐입니다: 직전 자판기를 건너뛴 최대 합과 고른 최대 합. 건너뛰면 둘 중 큰 값을, 고르면 건너뛴 합에 간식 수를 더한 값을 씁니다."
+ },
+ "views": [
+  {
+   "id": "snacks",
+   "type": "array",
+   "title": {
+    "en": "snacks",
+    "ko": "snacks (자판기별 간식)"
+   }
+  },
+  {
+   "id": "best",
+   "type": "array",
+   "title": {
+    "en": "best haul so far",
+    "ko": "지금까지의 최대 합"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "snacks = [4,1,1,9,1,3]",
+   "expected": "16",
+   "frames": [
+    {
+     "caption": {
+      "en": "6 machines. Before any machine, both the haul with the last one skipped and with it taken are 0.",
+      "ko": "자판기가 6대입니다. 아직 아무 자판기도 보지 않았으니 건너뛴 합과 고른 합 모두 0입니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        4,
+        1,
+        1,
+        9,
+        1,
+        3
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+       ]
+      },
+      "best": {
+       "values": [
+        0,
+        0
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Machine 0 has 4: skipping it keeps 0, and taking it gives 0 + 4 = 4.",
+      "ko": "자판기 0에는 4개가 있습니다. 건너뛰면 0, 고르면 0 + 4 = 4입니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        4,
+        1,
+        1,
+        9,
+        1,
+        3
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4,
+        5
+       ]
+      },
+      "best": {
+       "values": [
+        0,
+        4
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "snacks",
+        "at": 0
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "4"
+      },
+      {
+       "from": {
+        "view": "best",
+        "at": 0
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Machine 1 has 1: skipping it keeps the larger of 0 and 4, 4. Taking it adds 1 to the skipped haul, 0 + 1 = 1, since machine 0 must then be skipped.",
+      "ko": "자판기 1에는 1개가 있습니다. 건너뛰면 0과 4 중 큰 값 4, 고르면 자판기 0을 건너뛰어야 하므로 0 + 1 = 1입니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        4,
+        1,
+        1,
+        9,
+        1,
+        3
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       },
+       "unread": [
+        2,
+        3,
+        4,
+        5
+       ]
+      },
+      "best": {
+       "values": [
+        4,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 1
+       },
+       "to": {
+        "view": "best",
+        "at": 0
+       },
+       "value": "4"
+      },
+      {
+       "from": {
+        "view": "snacks",
+        "at": 1
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "best",
+        "at": 0
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Machine 2 has 1: skipping it keeps the larger of 4 and 1, 4. Taking it adds 1 to the skipped haul, 4 + 1 = 5, since machine 1 must then be skipped.",
+      "ko": "자판기 2에는 1개가 있습니다. 건너뛰면 4와 1 중 큰 값 4, 고르면 자판기 1을 건너뛰어야 하므로 4 + 1 = 5입니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        4,
+        1,
+        1,
+        9,
+        1,
+        3
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       },
+       "unread": [
+        3,
+        4,
+        5
+       ]
+      },
+      "best": {
+       "values": [
+        4,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "snacks",
+        "at": 2
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "best",
+        "at": 0
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Machine 3 has 9: skipping it keeps the larger of 4 and 5, 5. Taking it adds 9 to the skipped haul, 4 + 9 = 13, since machine 2 must then be skipped.",
+      "ko": "자판기 3에는 9개가 있습니다. 건너뛰면 4와 5 중 큰 값 5, 고르면 자판기 2를 건너뛰어야 하므로 4 + 9 = 13입니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        4,
+        1,
+        1,
+        9,
+        1,
+        3
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       },
+       "unread": [
+        4,
+        5
+       ]
+      },
+      "best": {
+       "values": [
+        5,
+        13
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 1
+       },
+       "to": {
+        "view": "best",
+        "at": 0
+       },
+       "value": "5"
+      },
+      {
+       "from": {
+        "view": "snacks",
+        "at": 3
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "9"
+      },
+      {
+       "from": {
+        "view": "best",
+        "at": 0
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Machine 4 has 1: skipping it keeps the larger of 5 and 13, 13. Taking it adds 1 to the skipped haul, 5 + 1 = 6, since machine 3 must then be skipped.",
+      "ko": "자판기 4에는 1개가 있습니다. 건너뛰면 5와 13 중 큰 값 13, 고르면 자판기 3을 건너뛰어야 하므로 5 + 1 = 6입니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        4,
+        1,
+        1,
+        9,
+        1,
+        3
+       ],
+       "pointers": {
+        "i": 4
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       },
+       "unread": [
+        5
+       ]
+      },
+      "best": {
+       "values": [
+        13,
+        6
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 1
+       },
+       "to": {
+        "view": "best",
+        "at": 0
+       },
+       "value": "13"
+      },
+      {
+       "from": {
+        "view": "snacks",
+        "at": 4
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "best",
+        "at": 0
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Machine 5 has 3: skipping it keeps the larger of 13 and 6, 13. Taking it adds 3 to the skipped haul, 13 + 3 = 16, since machine 4 must then be skipped.",
+      "ko": "자판기 5에는 3개가 있습니다. 건너뛰면 13과 6 중 큰 값 13, 고르면 자판기 4를 건너뛰어야 하므로 13 + 3 = 16입니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        4,
+        1,
+        1,
+        9,
+        1,
+        3
+       ],
+       "pointers": {
+        "i": 5
+       },
+       "marks": {
+        "lit": [
+         5
+        ]
+       },
+       "unread": []
+      },
+      "best": {
+       "values": [
+        13,
+        16
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "snacks",
+        "at": 5
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "3"
+      },
+      {
+       "from": {
+        "view": "best",
+        "at": 0
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "13"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every machine is passed. The answer is the larger of the two, 16: machines 0, 3, 5, 4 + 9 + 3 = 16.",
+      "ko": "모든 자판기를 지났습니다. 답은 둘 중 큰 값 16이고, 자판기 0, 3, 5번의 4 + 9 + 3 = 16입니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        4,
+        1,
+        1,
+        9,
+        1,
+        3
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "path": [
+         0,
+         3,
+         5
+        ],
+        "dim": [
+         1,
+         2,
+         4
+        ]
+       },
+       "unread": []
+      },
+      "best": {
+       "values": [
+        13,
+        16
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {
+        "path": [
+         1
+        ]
+       }
+      }
+     },
+     "answer": "16"
+    }
+   ],
+   "sampleInput": "[4,1,1,9,1,3]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "snacks = [5,5,10,100,10,5]",
+   "expected": "110",
+   "frames": [
+    {
+     "caption": {
+      "en": "6 machines. Before any machine, both the haul with the last one skipped and with it taken are 0.",
+      "ko": "자판기가 6대입니다. 아직 아무 자판기도 보지 않았으니 건너뛴 합과 고른 합 모두 0입니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        5,
+        5,
+        10,
+        100,
+        10,
+        5
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+       ]
+      },
+      "best": {
+       "values": [
+        0,
+        0
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Machine 0 has 5: skipping it keeps 0, and taking it gives 0 + 5 = 5.",
+      "ko": "자판기 0에는 5개가 있습니다. 건너뛰면 0, 고르면 0 + 5 = 5입니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        5,
+        5,
+        10,
+        100,
+        10,
+        5
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4,
+        5
+       ]
+      },
+      "best": {
+       "values": [
+        0,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "snacks",
+        "at": 0
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "5"
+      },
+      {
+       "from": {
+        "view": "best",
+        "at": 0
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Machine 1 has 5: skipping it keeps the larger of 0 and 5, 5. Taking it adds 5 to the skipped haul, 0 + 5 = 5, since machine 0 must then be skipped.",
+      "ko": "자판기 1에는 5개가 있습니다. 건너뛰면 0과 5 중 큰 값 5, 고르면 자판기 0을 건너뛰어야 하므로 0 + 5 = 5입니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        5,
+        5,
+        10,
+        100,
+        10,
+        5
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       },
+       "unread": [
+        2,
+        3,
+        4,
+        5
+       ]
+      },
+      "best": {
+       "values": [
+        5,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 1
+       },
+       "to": {
+        "view": "best",
+        "at": 0
+       },
+       "value": "5"
+      },
+      {
+       "from": {
+        "view": "snacks",
+        "at": 1
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "5"
+      },
+      {
+       "from": {
+        "view": "best",
+        "at": 0
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Machine 2 has 10: skipping it keeps the larger of 5 and 5, 5. Taking it adds 10 to the skipped haul, 5 + 10 = 15, since machine 1 must then be skipped.",
+      "ko": "자판기 2에는 10개가 있습니다. 건너뛰면 5와 5 중 큰 값 5, 고르면 자판기 1을 건너뛰어야 하므로 5 + 10 = 15입니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        5,
+        5,
+        10,
+        100,
+        10,
+        5
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       },
+       "unread": [
+        3,
+        4,
+        5
+       ]
+      },
+      "best": {
+       "values": [
+        5,
+        15
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "snacks",
+        "at": 2
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "10"
+      },
+      {
+       "from": {
+        "view": "best",
+        "at": 0
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Machine 3 has 100: skipping it keeps the larger of 5 and 15, 15. Taking it adds 100 to the skipped haul, 5 + 100 = 105, since machine 2 must then be skipped.",
+      "ko": "자판기 3에는 100개가 있습니다. 건너뛰면 5와 15 중 큰 값 15, 고르면 자판기 2를 건너뛰어야 하므로 5 + 100 = 105입니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        5,
+        5,
+        10,
+        100,
+        10,
+        5
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       },
+       "unread": [
+        4,
+        5
+       ]
+      },
+      "best": {
+       "values": [
+        15,
+        105
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 1
+       },
+       "to": {
+        "view": "best",
+        "at": 0
+       },
+       "value": "15"
+      },
+      {
+       "from": {
+        "view": "snacks",
+        "at": 3
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "100"
+      },
+      {
+       "from": {
+        "view": "best",
+        "at": 0
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Machine 4 has 10: skipping it keeps the larger of 15 and 105, 105. Taking it adds 10 to the skipped haul, 15 + 10 = 25, since machine 3 must then be skipped.",
+      "ko": "자판기 4에는 10개가 있습니다. 건너뛰면 15와 105 중 큰 값 105, 고르면 자판기 3을 건너뛰어야 하므로 15 + 10 = 25입니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        5,
+        5,
+        10,
+        100,
+        10,
+        5
+       ],
+       "pointers": {
+        "i": 4
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       },
+       "unread": [
+        5
+       ]
+      },
+      "best": {
+       "values": [
+        105,
+        25
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 1
+       },
+       "to": {
+        "view": "best",
+        "at": 0
+       },
+       "value": "105"
+      },
+      {
+       "from": {
+        "view": "snacks",
+        "at": 4
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "10"
+      },
+      {
+       "from": {
+        "view": "best",
+        "at": 0
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "15"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Machine 5 has 5: skipping it keeps the larger of 105 and 25, 105. Taking it adds 5 to the skipped haul, 105 + 5 = 110, since machine 4 must then be skipped.",
+      "ko": "자판기 5에는 5개가 있습니다. 건너뛰면 105와 25 중 큰 값 105, 고르면 자판기 4를 건너뛰어야 하므로 105 + 5 = 110입니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        5,
+        5,
+        10,
+        100,
+        10,
+        5
+       ],
+       "pointers": {
+        "i": 5
+       },
+       "marks": {
+        "lit": [
+         5
+        ]
+       },
+       "unread": []
+      },
+      "best": {
+       "values": [
+        105,
+        110
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "snacks",
+        "at": 5
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "5"
+      },
+      {
+       "from": {
+        "view": "best",
+        "at": 0
+       },
+       "to": {
+        "view": "best",
+        "at": 1
+       },
+       "value": "105"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every machine is passed. The answer is the larger of the two, 110: machines 0, 3, 5, 5 + 100 + 5 = 110.",
+      "ko": "모든 자판기를 지났습니다. 답은 둘 중 큰 값 110이고, 자판기 0, 3, 5번의 5 + 100 + 5 = 110입니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        5,
+        5,
+        10,
+        100,
+        10,
+        5
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "path": [
+         0,
+         3,
+         5
+        ],
+        "dim": [
+         1,
+         2,
+         4
+        ]
+       },
+       "unread": []
+      },
+      "best": {
+       "values": [
+        105,
+        110
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "skip",
+          "ko": "건너뜀"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "take",
+          "ko": "고름"
+         }
+        ]
+       ],
+       "marks": {
+        "path": [
+         1
+        ]
+       }
+      }
+     },
+     "answer": "110"
+    }
+   ],
+   "sampleInput": "[5,5,10,100,10,5]"
+  }
+ ]
+}

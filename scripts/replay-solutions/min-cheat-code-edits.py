@@ -1,5 +1,5 @@
 class Solution:
-    def min_distance(self, source: str, target: str) -> int:
+    def minCheatCodeEdits(self, source: str, target: str) -> int:
         previous = list(range(len(target) + 1))
         for i, a in enumerate(source, 1):
             current = [i]

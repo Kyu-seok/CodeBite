@@ -1,6 +1,6 @@
 # shellcheck shell=bash
-# Helpers scripts/dev-status.sh, scripts/dev-branch-servers.sh, scripts/problem-text.sh and
-# scripts/db-sql.sh share. Sourcing it runs nothing.
+# Helpers scripts/dev-status.sh, scripts/dev-branch-servers.sh, scripts/problem-text.sh,
+# scripts/db-sql.sh and scripts/judge-local.sh share. Sourcing it runs nothing.
 
 # The main checkout, which runs the shared dev servers: the parent of the common .git, the same
 # from the main checkout and from every worktree.
@@ -55,7 +55,7 @@ db_unreachable_message() {
 }
 
 # For a script reading database $1 from checkout $2: the database is only as new as the last
-# backend start, so a database missing migrations this checkout has (BEHIND) would show problems as
+# backend start or migrate, so a database missing migrations this checkout has (BEHIND) would show problems as
 # they were, not as they are. This refuses one on stderr, naming both versions, and returns 1; with
 # CODEBITE_ALLOW_STALE=1 it only warns. A checkout with no migrations at all has nothing to be
 # behind. Returns 1, with db_unreachable_message prefixed by $3 (the script's name), when the
@@ -72,7 +72,7 @@ require_current_db() {
     if [[ "${CODEBITE_ALLOW_STALE:-}" == 1 ]]; then
       echo "WARNING: database $database at V$db, this checkout's migrations reach V$ours; reading it anyway (CODEBITE_ALLOW_STALE=1)" >&2
     else
-      echo "$script: database $database at V$db, this checkout's migrations reach V$ours, so it may show problems as they were; start scripts/dev-branch-servers.sh and rerun with CODEBITE_DB=<the database it prints>, or set CODEBITE_ALLOW_STALE=1 to read it anyway" >&2
+      echo "$script: database $database at V$db, this checkout's migrations reach V$ours, so it may show problems as they were; run scripts/dev-branch-servers.sh migrate (seconds, no servers) and rerun with CODEBITE_DB=<the database it prints>, or set CODEBITE_ALLOW_STALE=1 to read it anyway" >&2
       return 1
     fi
   fi

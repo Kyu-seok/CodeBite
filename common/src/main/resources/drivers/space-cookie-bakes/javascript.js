@@ -2,7 +2,7 @@
 
 const input = require('fs').readFileSync('/dev/stdin', 'utf8').trim();
 const s = input.split('\n')[0];
-const result = new Solution().orderRecipeBakes(s);
+const result = new Solution().spaceBakes(s);
 if (!result || result.length === 0) {
     console.log("");
 } else {

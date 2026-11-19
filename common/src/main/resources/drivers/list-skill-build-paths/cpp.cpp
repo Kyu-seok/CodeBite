@@ -18,7 +18,7 @@ int main() {
     getline(cin, targetStr);
     int target = stoi(targetStr);
     TreeNode* root = treeFromArray(line);
-    vector<vector<int>> result = Solution().listRuntimeBranches(root, target);
+    vector<vector<int>> result = Solution().listBuildPaths(root, target);
     sort(result.begin(), result.end());
     cout << JsonOutput::intVector2D(result) << endl;
     return 0;

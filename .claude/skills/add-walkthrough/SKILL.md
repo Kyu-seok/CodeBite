@@ -19,7 +19,7 @@ Done when you can say what each sample's answer is and why, and the reference so
 
 ## 2. Write the tracer
 
-Copy the tracer closest to your problem's shape: one in `scripts/walkthroughs/` (`rotting-donuts.py`: grid, `cheapest-courier-route.py`: graph and cost table, and the Arrays & Hashing ones for maps, sets, strings and windows), or the public skill's example. [views.md](views.md) says which view each common shape takes, and the marks and tags that read right. Name it `scripts/walkthroughs/<slug>.py`, keep its `#!/usr/bin/env python3.12` shebang and `chmod +x` it. CodeBite's tracers differ from the public examples in three ways, all through `scripts/walkthroughs/codebite.py`, which also holds the caption helpers `driver_list`, `plural` and `josa`:
+Copy the tracer closest to your problem's shape: one in `scripts/walkthroughs/` (`rotting-donuts.py`: grid and BFS queue, `cheapest-courier-route.py`: graph relaxations into cost arrays, `rotate-pixel-art.py`: a grid rotated through a one-cell temp, `valid-sudoku.py`: a board with boxes and a map per region, and the Arrays & Hashing ones for maps, sets, strings and windows), or the public skill's example. [views.md](views.md) says which view each common shape takes, and the marks and tags that read right. Name it `scripts/walkthroughs/<slug>.py`, keep its `#!/usr/bin/env python3.12` shebang and `chmod +x` it. CodeBite's tracers differ from the public examples in three ways, all through `scripts/walkthroughs/codebite.py`, which also holds the caption helpers (`driver_list`, `driver_value`, `plural`, `ordinal`, `listed`, `listed_cells`, `centre_text` and `josa`) and `node_order` (a graph Diagram's node order):
 
 - **Samples come from the database**, never a literal list: `sample_cases(slug)` returns them in `order_index` order as `{"input", "expected", "label"}`, input and expected verbatim. Parse `input` exactly as the problem's Python Driver (`common/src/main/resources/drivers/<slug>/python.py`) reads it: usually one parameter per line, a list as JSON.
 - **One run per sample** through `sample_run(wt, n, sample, input=...)`: it pins the run to the sample (`sampleInput`, and `expected` as the sample's expected-output text) and labels it "Example N"/"예시 N" when the description shows that example, else "Case N"/"케이스 N" as the test panel numbers samples (a problem often has more samples than Examples). `input=` is the display line, written like the description's `Input:` line. An extra run is `wt.run(..., extra=True)` after the sample runs; it has no `sampleInput`, and its `expected` is what the Driver prints for that input, written as a literal (for a round trip, the input itself).
@@ -35,6 +35,20 @@ A caption is one or two sentences in each language, and the setup frame names th
 
 ## 3. Review the frames
 
+Besides the public checklist, hold every frame to the two rules (#273). A frame failing either goes back to the tracer; step 4's test checks both, as stated here, except the review items listed under rule 2:
+
+1. **The drawing shows where the step's value came from and where it went.** Every place of an addressed view (array, output, queue, map, set, grid, table, intervals, graph node) that is new or holds a new value since the frame before has a move into it in that frame. Excepted: a step that only reads changes nothing, and its marks show what it read; a run's first frame (the setup); a value leaving a place shown by its move out marked `bad`, which excuses only the place emptied or its count going down, never a value that grows or is replaced; a place that disappears (it stayed drawn the step it left); and a graph node's value reached by the move out of the edge into it (the address table's edge form). A list by index is compared in place or as shifted values (a queue's front leaving), whichever changes fewer places.
+2. **A value with a position or range (a pointer, a window, the best range, a count per key, the answer so far) is drawn on the data, and `vars` holds only values with no place in it**, such as `k`. A `vars` item fails when it changes in any run of the Walkthrough and, in every frame of a run that draws both (two or more), equals the same value on the data: a place's value in a view, a pointer, a span's start, end or length, a label under an array, or a whole list. It also fails on a value derived from one: a pointer or a span's start or end plus or minus 1 (a 1-based position beside a 0-based pointer), a span's exclusive length (`to - from`), or a whole list in another order. Following none of these, it fails when it equals one of the drawn values a frame early or a frame late, in every pair of frames of a run that draws both (two pairs or more): a tracer updating `vars` before or after the pointer moves. So a run where it holds still is checked too. An item that keeps one value in every run (a parameter) equals data only by chance and passes. An item that must stay anyway carries `"why": "<reason>"` (the public skill's `references/format.md`, `vars`), set in the tracer; a `why` on any frame excuses the item in every run, and a `why` on an item that repeats nothing in any run fails, so drop it when the item stops repeating.
+
+   The test can't catch these; check them by eye:
+   - **A part of a drawn list** (the window's values, the prefix so far) in `vars`: nearly any short list is part of a longer one, so a check would fail items that repeat nothing.
+   - **A value with a position kept only in `vars`**, such as an index `i` with no pointer drawn: the test compares `vars` with what is drawn and can't tell a value with a position from one without. Every index, pointer or window bound the captions name is drawn on the data.
+
+The rules can hold while the picture still doesn't teach; the owner sent back three that passed them (#286). Check each Walkthrough for these too:
+- **Each structure drawn in the shape the solver pictures.** A key packed into a string (`"1:5"`, `"0,1:2"`) is a structure flattened: draw what it encodes, such as one card per region holding its digits ([views.md](views.md), sets of composite keys).
+- **One assignment per frame.** Where the code moves a value through a temp, or one cell at a time, the frames do too, with the temp a view of its own; two cells changing at once hides the order.
+- **The description's Diagram look.** A view drawing a structure the description draws with a Diagram (a graph, a grid, intervals) matches its layout, so the learner recognises the picture. Step 5's app check shoots the two together and prints the path: `<slug>-diagram-beside-frame-1440.png`, the description's Diagrams beside the first frame (no shot when the description has no Diagram). Hold the frames to it there; before step 5, open the description beside the capture shots.
+
 The public skill's steps 5 and 6, with the pages and shots kept out of the repo under a name of your own (`<scratch>` below: another session's review script or page in a shared scratchpad gets overwritten):
 
 ```sh
@@ -42,9 +56,9 @@ node ~/.agents/skills/walkthrough/scripts/build.mjs common/src/main/resources/wa
 node ~/.agents/skills/walkthrough/scripts/capture.mjs <scratch>/<slug>.html --review --dir <scratch>/<slug>-review
 ```
 
-and again with `--lang ko` on the build, into a `-ko` page and review directory. Build prints the page's path; when it prints nothing, no page was written (an older `build.mjs` run through the `~/.agents` symlink exits 0 silently: run `~/Work/walkthrough-skill/scripts/build.mjs` instead, or update the skill). Read every PNG against the public skill's `references/verify.md`, the Korean sheets too (a caption cut short, a label that wraps over a value). Read the 390 shots view by view: capture.mjs only catches the page scrolling sideways, so a table wider than about 7 data columns loses its right-hand columns inside the card while the capture still passes (lay it out as rows instead, [views.md](views.md)). Fix the tracer, run it, rebuild, shoot again.
+and again with `--lang ko` on the build, into a `-ko` page and review directory. Build prints the page's path; when it prints nothing, no page was written (an older `build.mjs` run through the `~/.agents` symlink exits 0 silently: run `~/Work/walkthrough-skill/scripts/build.mjs` instead, or update the skill). Read every PNG against the public skill's `references/verify.md`, the Korean sheets too (a caption cut short, a label that wraps over a value). The capture fails on a view clipped in its card at 1440 or 390, naming the view's `id`, the width and the frames (a table wider than about 7 data columns is the usual one): lay that view out narrower, as rows instead of columns ([views.md](views.md)). Fix the tracer, run it, rebuild, shoot again.
 
-Done when both captures end `✓ no console errors, no sideways scroll` and every checklist item holds in every shot, in both languages.
+Done when both captures end `✓ no console errors, no sideways scroll, no view clipped in its card` and every checklist item holds in every shot, in both languages.
 
 ## 4. Run the answer test
 
@@ -52,7 +66,7 @@ Done when both captures end `✓ no console errors, no sideways scroll` and ever
 ./gradlew :backend:test --tests 'com.codebite.problem.*'
 ```
 
-`WalkthroughsMatchSamplesTest` checks every file in `walkthroughs/` against the migrated samples (one run per sample, in order, by `sampleInput` and `expected`, each ending on its answer) and the format; `ProblemSlugsTest` that the file names a current Slug. The rest of the package runs too because a new file changes what the endpoint and `hasWalkthrough` answer: #264's first file broke `WalkthroughEndpointTest`. It also fails on a caption of three or more sentences in either language. Wait until no other worktree's Gradle test run is going (`pgrep -f "Gradle Test Executor"` prints nothing): the machine fits one. Don't run it while `dev-branch-servers.sh` is compiling the backend: two Gradle builds in one worktree corrupt the backend build output (`./gradlew :backend:clean` recovers). Done when the package is green.
+`WalkthroughsMatchSamplesTest` checks every file in `walkthroughs/` against the migrated samples (one run per sample, in order, by `sampleInput` and `expected`, each ending on its answer) and the format; `ProblemSlugsTest` that the file names a current Slug. The rest of the package runs too because a new file changes what the endpoint and `hasWalkthrough` answer: #264's first file broke `WalkthroughEndpointTest`. It also fails on a run labelled against the description (run N is "Example N"/"예시 N" exactly when the description has `**Example N:**`/`**예시 N:**`, else "Case N"/"케이스 N"), on a caption of three or more sentences in either language, and on a frame breaking either of step 3's two rules. Wait until no other worktree's Gradle test run is going (`pgrep -f "Gradle Test Executor"` prints nothing): the machine fits one. Don't run it while `dev-branch-servers.sh` is compiling the backend: two Gradle builds in one worktree corrupt the backend build output (`./gradlew :backend:clean` recovers). Done when the package is green.
 
 ## 5. Check the tab
 
@@ -62,7 +76,7 @@ The backend reads `walkthroughs/` once at startup, so restart the branch servers
 node scripts/walkthrough-app-check.mjs <vite url> <backend api url> <scratchpad>/shots/<slug>-app <slug>
 ```
 
-It drives `/problems/<slug>` signed out and signed in, at 1440 and 390, dark and light, English and Korean: the tab, the reveal, the player's theme, language and labels, sideways scroll, ←/→ stepping only while the player has focus and never from the editor, the run kept across a tab switch, and no tab on a problem without a Walkthrough. Read its shots, the `-3b-last` ones above all: the last frame is where a wrong answer path or an unexplained value shows.
+It drives `/problems/<slug>` signed out and signed in, at 1440 and 390, dark and light, English and Korean: the tab, the reveal, the player's theme, language and labels, sideways scroll, ←/→ stepping only while the player has focus and never from the editor, the run kept across a tab switch, and no tab on a problem without a Walkthrough. Read its shots, the `-3b-last` ones above all: the last frame is where a wrong answer path or an unexplained value shows. When the description has a Diagram, hold `<slug>-diagram-beside-frame-1440` to step 3's Diagram look.
 
 Done when the check exits 0 and the shots show the drawing as the capture.mjs sheets did. Stop the servers with `scripts/dev-branch-servers.sh stop`.
 
@@ -71,4 +85,4 @@ Commit `feat(problem): Walkthrough for <slug>` with the tracer and the JSON toge
 ## When a problem changes
 
 - **A sample Test Case changes** (`correct-test-cases`): `WalkthroughsMatchSamplesTest` goes red; run the tracer against a database with the correction and commit the new JSON with it.
-- **The Slug, title or parameter names change**: `.claude/skills/restate-problem/SKILL.md`, step 4, moves or regenerates the Walkthrough.
+- **The Slug, title, parameter names or Examples change**: `.claude/skills/restate-problem/SKILL.md`, step 4, moves or regenerates the Walkthrough.

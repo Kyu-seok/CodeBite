@@ -10,7 +10,7 @@
  * }
  */
 class Solution {
-    public List<List<Integer>> alternateWardSweep(TreeNode root) {
+    public List<List<Integer>> zigzagRows(TreeNode root) {
         // Write your solution here
     }
 }

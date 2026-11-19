@@ -9,7 +9,7 @@
  * }
  */
 class Solution {
-    public ListNode mergeFlightRosters(ListNode[] queues) {
+    public ListNode mergeCafeQueues(ListNode[] queues) {
         // Write your solution here
     }
 }

@@ -2,7 +2,7 @@ from collections import deque
 
 
 class Solution:
-    def peakFlowPerStretch(self, combo: list[int], k: int) -> list[int]:
+    def peakComboPerWindow(self, combo: list[int], k: int) -> list[int]:
         # Indices in the deque hold decreasing values; the front is the window's max.
         window: deque[int] = deque()
         peaks: list[int] = []

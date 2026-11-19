@@ -25,5 +25,5 @@ const lines = require('fs').readFileSync('/dev/stdin', 'utf8').trim().split('\n'
 const arr = JSON.parse(lines[0]);
 const k = parseInt(lines[1]);
 const root = _buildTree(arr);
-const result = new Solution().pickNthTarget(root, k);
+const result = new Solution().nthLowestScore(root, k);
 console.log(result);

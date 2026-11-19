@@ -16,10 +16,6 @@
     "en": "books",
     "ko": "books (책꽂이)"
    }
-  },
-  {
-   "id": "state",
-   "type": "vars"
   }
  ],
  "runs": [
@@ -47,6 +43,16 @@
         "k": 1,
         "i": null
        },
+       "spans": {
+        "kept": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "kept 1",
+          "ko": "남긴 책 1권"
+         }
+        }
+       },
        "marks": {
         "dim": [
          1,
@@ -58,18 +64,6 @@
         ],
         "lit": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "k (books kept)",
-          "ko": "k (남긴 책 수)"
-         },
-         "value": 1,
-         "mark": null
-        }
-       ]
       }
      }
     },
@@ -89,6 +83,16 @@
         "k": 1,
         "i": 1
        },
+       "spans": {
+        "kept": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "kept 1",
+          "ko": "남긴 책 1권"
+         }
+        }
+       },
        "marks": {
         "dim": [
          2
@@ -100,25 +104,13 @@
          0
         ]
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "k (books kept)",
-          "ko": "k (남긴 책 수)"
-         },
-         "value": 1,
-         "mark": null
-        }
-       ]
       }
      }
     },
     {
      "caption": {
-      "en": "books[2] = 5 differs from the last kept book, 2: a new value. Write it to slot 1 and k becomes 2.",
-      "ko": "books[2] = 5 ≠ 2(마지막으로 남긴 책): 새 값입니다. 1번 자리에 쓰고 k를 늘려 k = 2입니다."
+      "en": "books[2] = 5 differs from the last kept book, 2: a new value. Copy it into slot 1, and the kept front grows to k = 2.",
+      "ko": "books[2] = 5 ≠ 2(마지막으로 남긴 책): 새 값입니다. 1번 자리에 옮겨 쓰고, 남긴 앞쪽이 늘어나 k = 2입니다."
      },
      "views": {
       "books": {
@@ -131,6 +123,17 @@
         "k": 2,
         "i": 2
        },
+       "spans": {
+        "kept": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "kept 2",
+          "ko": "남긴 책 2권"
+         },
+         "mark": "good"
+        }
+       },
        "marks": {
         "dim": [],
         "path": [],
@@ -141,20 +144,20 @@
          2
         ]
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "k (books kept)",
-          "ko": "k (남긴 책 수)"
-         },
-         "value": 2,
-         "mark": "good"
-        }
-       ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "books",
+        "at": 2
+       },
+       "to": {
+        "view": "books",
+        "at": 1
+       }
+      }
+     ]
     },
     {
      "caption": {
@@ -169,8 +172,19 @@
         5
        ],
        "pointers": {
-        "k": 2,
+        "k": null,
         "i": null
+       },
+       "spans": {
+        "kept": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "kept 2",
+          "ko": "남긴 책 2권"
+         },
+         "mark": "path"
+        }
        },
        "marks": {
         "dim": [
@@ -183,18 +197,6 @@
         "good": [],
         "lit": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "k (books kept)",
-          "ko": "k (남긴 책 수)"
-         },
-         "value": 2,
-         "mark": "good"
-        }
-       ]
       }
      },
      "answer": "2\n[2,5]"
@@ -233,6 +235,16 @@
         "k": 1,
         "i": null
        },
+       "spans": {
+        "kept": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "kept 1",
+          "ko": "남긴 책 1권"
+         }
+        }
+       },
        "marks": {
         "dim": [
          1,
@@ -251,18 +263,6 @@
         ],
         "lit": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "k (books kept)",
-          "ko": "k (남긴 책 수)"
-         },
-         "value": 1,
-         "mark": null
-        }
-       ]
       }
      }
     },
@@ -289,6 +289,16 @@
         "k": 1,
         "i": 1
        },
+       "spans": {
+        "kept": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "kept 1",
+          "ko": "남긴 책 1권"
+         }
+        }
+       },
        "marks": {
         "dim": [
          2,
@@ -307,25 +317,13 @@
          0
         ]
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "k (books kept)",
-          "ko": "k (남긴 책 수)"
-         },
-         "value": 1,
-         "mark": null
-        }
-       ]
       }
      }
     },
     {
      "caption": {
-      "en": "books[2] = 2 differs from the last kept book, 1: a new value. Write it to slot 1 and k becomes 2.",
-      "ko": "books[2] = 2 ≠ 1(마지막으로 남긴 책): 새 값입니다. 1번 자리에 쓰고 k를 늘려 k = 2입니다."
+      "en": "books[2] = 2 differs from the last kept book, 1: a new value. Copy it into slot 1, and the kept front grows to k = 2.",
+      "ko": "books[2] = 2 ≠ 1(마지막으로 남긴 책): 새 값입니다. 1번 자리에 옮겨 쓰고, 남긴 앞쪽이 늘어나 k = 2입니다."
      },
      "views": {
       "books": {
@@ -345,6 +343,17 @@
         "k": 2,
         "i": 2
        },
+       "spans": {
+        "kept": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "kept 2",
+          "ko": "남긴 책 2권"
+         },
+         "mark": "good"
+        }
+       },
        "marks": {
         "dim": [
          3,
@@ -363,20 +372,20 @@
          2
         ]
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "k (books kept)",
-          "ko": "k (남긴 책 수)"
-         },
-         "value": 2,
-         "mark": "good"
-        }
-       ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "books",
+        "at": 2
+       },
+       "to": {
+        "view": "books",
+        "at": 1
+       }
+      }
+     ]
     },
     {
      "caption": {
@@ -401,6 +410,16 @@
         "k": 2,
         "i": 3
        },
+       "spans": {
+        "kept": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "kept 2",
+          "ko": "남긴 책 2권"
+         }
+        }
+       },
        "marks": {
         "dim": [
          2,
@@ -418,25 +437,13 @@
          1
         ]
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "k (books kept)",
-          "ko": "k (남긴 책 수)"
-         },
-         "value": 2,
-         "mark": null
-        }
-       ]
       }
      }
     },
     {
      "caption": {
-      "en": "books[4] = 3 differs from the last kept book, 2: a new value. Write it to slot 2 and k becomes 3.",
-      "ko": "books[4] = 3 ≠ 2(마지막으로 남긴 책): 새 값입니다. 2번 자리에 쓰고 k를 늘려 k = 3입니다."
+      "en": "books[4] = 3 differs from the last kept book, 2: a new value. Copy it into slot 2, and the kept front grows to k = 3.",
+      "ko": "books[4] = 3 ≠ 2(마지막으로 남긴 책): 새 값입니다. 2번 자리에 옮겨 쓰고, 남긴 앞쪽이 늘어나 k = 3입니다."
      },
      "views": {
       "books": {
@@ -456,6 +463,17 @@
         "k": 3,
         "i": 4
        },
+       "spans": {
+        "kept": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "kept 3",
+          "ko": "남긴 책 3권"
+         },
+         "mark": "good"
+        }
+       },
        "marks": {
         "dim": [
          3,
@@ -473,25 +491,25 @@
          4
         ]
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "k (books kept)",
-          "ko": "k (남긴 책 수)"
-         },
-         "value": 3,
-         "mark": "good"
-        }
-       ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "books",
+        "at": 4
+       },
+       "to": {
+        "view": "books",
+        "at": 2
+       }
+      }
+     ]
     },
     {
      "caption": {
-      "en": "books[5] = 4 differs from the last kept book, 3: a new value. Write it to slot 3 and k becomes 4.",
-      "ko": "books[5] = 4 ≠ 3(마지막으로 남긴 책): 새 값입니다. 3번 자리에 쓰고 k를 늘려 k = 4입니다."
+      "en": "books[5] = 4 differs from the last kept book, 3: a new value. Copy it into slot 3, and the kept front grows to k = 4.",
+      "ko": "books[5] = 4 ≠ 3(마지막으로 남긴 책): 새 값입니다. 3번 자리에 옮겨 쓰고, 남긴 앞쪽이 늘어나 k = 4입니다."
      },
      "views": {
       "books": {
@@ -511,6 +529,17 @@
         "k": 4,
         "i": 5
        },
+       "spans": {
+        "kept": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "kept 4",
+          "ko": "남긴 책 4권"
+         },
+         "mark": "good"
+        }
+       },
        "marks": {
         "dim": [
          4,
@@ -527,20 +556,20 @@
          5
         ]
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "k (books kept)",
-          "ko": "k (남긴 책 수)"
-         },
-         "value": 4,
-         "mark": "good"
-        }
-       ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "books",
+        "at": 5
+       },
+       "to": {
+        "view": "books",
+        "at": 3
+       }
+      }
+     ]
     },
     {
      "caption": {
@@ -565,6 +594,16 @@
         "k": 4,
         "i": 6
        },
+       "spans": {
+        "kept": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "kept 4",
+          "ko": "남긴 책 4권"
+         }
+        }
+       },
        "marks": {
         "dim": [
          4,
@@ -580,25 +619,13 @@
          3
         ]
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "k (books kept)",
-          "ko": "k (남긴 책 수)"
-         },
-         "value": 4,
-         "mark": null
-        }
-       ]
       }
      }
     },
     {
      "caption": {
-      "en": "books[7] = 6 differs from the last kept book, 4: a new value. Write it to slot 4 and k becomes 5.",
-      "ko": "books[7] = 6 ≠ 4(마지막으로 남긴 책): 새 값입니다. 4번 자리에 쓰고 k를 늘려 k = 5입니다."
+      "en": "books[7] = 6 differs from the last kept book, 4: a new value. Copy it into slot 4, and the kept front grows to k = 5.",
+      "ko": "books[7] = 6 ≠ 4(마지막으로 남긴 책): 새 값입니다. 4번 자리에 옮겨 쓰고, 남긴 앞쪽이 늘어나 k = 5입니다."
      },
      "views": {
       "books": {
@@ -618,6 +645,17 @@
         "k": 5,
         "i": 7
        },
+       "spans": {
+        "kept": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "kept 5",
+          "ko": "남긴 책 5권"
+         },
+         "mark": "good"
+        }
+       },
        "marks": {
         "dim": [
          5,
@@ -633,20 +671,20 @@
          7
         ]
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "k (books kept)",
-          "ko": "k (남긴 책 수)"
-         },
-         "value": 5,
-         "mark": "good"
-        }
-       ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "books",
+        "at": 7
+       },
+       "to": {
+        "view": "books",
+        "at": 4
+       }
+      }
+     ]
     },
     {
      "caption": {
@@ -671,6 +709,16 @@
         "k": 5,
         "i": 8
        },
+       "spans": {
+        "kept": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "kept 5",
+          "ko": "남긴 책 5권"
+         }
+        }
+       },
        "marks": {
         "dim": [
          5,
@@ -685,18 +733,6 @@
          4
         ]
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "k (books kept)",
-          "ko": "k (남긴 책 수)"
-         },
-         "value": 5,
-         "mark": null
-        }
-       ]
       }
      }
     },
@@ -723,6 +759,16 @@
         "k": 5,
         "i": 9
        },
+       "spans": {
+        "kept": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "kept 5",
+          "ko": "남긴 책 5권"
+         }
+        }
+       },
        "marks": {
         "dim": [
          5,
@@ -737,18 +783,6 @@
          4
         ]
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "k (books kept)",
-          "ko": "k (남긴 책 수)"
-         },
-         "value": 5,
-         "mark": null
-        }
-       ]
       }
      }
     },
@@ -772,8 +806,19 @@
         6
        ],
        "pointers": {
-        "k": 5,
+        "k": null,
         "i": null
+       },
+       "spans": {
+        "kept": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "kept 5",
+          "ko": "남긴 책 5권"
+         },
+         "mark": "path"
+        }
        },
        "marks": {
         "dim": [
@@ -793,18 +838,6 @@
         "good": [],
         "lit": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "k (books kept)",
-          "ko": "k (남긴 책 수)"
-         },
-         "value": 5,
-         "mark": "good"
-        }
-       ]
       }
      },
      "answer": "5\n[1,2,3,4,6]"
@@ -834,6 +867,16 @@
         "k": null,
         "i": null
        },
+       "spans": {
+        "kept": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "kept 1",
+          "ko": "남긴 책 1권"
+         }
+        }
+       },
        "marks": {
         "dim": [],
         "path": [],
@@ -842,18 +885,6 @@
         ],
         "lit": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "k (books kept)",
-          "ko": "k (남긴 책 수)"
-         },
-         "value": 1,
-         "mark": null
-        }
-       ]
       }
      }
     },
@@ -871,6 +902,17 @@
         "k": null,
         "i": null
        },
+       "spans": {
+        "kept": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "kept 1",
+          "ko": "남긴 책 1권"
+         },
+         "mark": "path"
+        }
+       },
        "marks": {
         "dim": [],
         "path": [
@@ -879,18 +921,6 @@
         "good": [],
         "lit": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "k (books kept)",
-          "ko": "k (남긴 책 수)"
-         },
-         "value": 1,
-         "mark": "good"
-        }
-       ]
       }
      },
      "answer": "1\n[8]"

@@ -10,7 +10,7 @@
  * }
  */
 class Solution {
-    public boolean verifyWardOrder(TreeNode root) {
+    public boolean isValidBST(TreeNode root) {
         // Write your solution here
     }
 }

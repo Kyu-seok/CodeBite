@@ -24,7 +24,7 @@ function _buildTree(arr) {
 const input = require('fs').readFileSync('/dev/stdin', 'utf8').trim();
 const arr = JSON.parse(input);
 const root = _buildTree(arr);
-new Solution().unrollSchedule(root);
+new Solution().flattenAgenda(root);
 const result = [];
 let curr = root;
 while (curr) {

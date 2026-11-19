@@ -2,5 +2,5 @@
 
 const input = require('fs').readFileSync('/dev/stdin', 'utf8').trim();
 const n = parseInt(input);
-const result = new Solution().isSoloSpecies(n);
+const result = new Solution().isPowerOfTwo(n);
 console.log(result);

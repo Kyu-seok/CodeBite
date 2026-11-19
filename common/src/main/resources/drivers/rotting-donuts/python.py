@@ -2,6 +2,6 @@
 
 import json
 
-grid = json.loads(input())
-result = Solution().oranges_rotting(grid)
+tray = json.loads(input())
+result = Solution().minutesUntilStale(tray)
 print(result)

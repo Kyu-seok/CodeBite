@@ -10,13 +10,13 @@ int main() {
     string line;
     getline(cin, line);
     string inner = line.substr(1, line.size() - 2);
-    vector<int> nums;
+    vector<int> tastiness;
     stringstream ss(inner);
     string token;
     while (getline(ss, token, ',')) {
-        nums.push_back(stoi(token));
+        tastiness.push_back(stoi(token));
     }
-    int result = Solution().pickCircuitTargets(nums);
+    int result = Solution().maxTastiness(tastiness);
     cout << result << endl;
     return 0;
 }

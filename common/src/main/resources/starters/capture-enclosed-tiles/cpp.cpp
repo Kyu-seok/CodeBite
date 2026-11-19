@@ -1,6 +1,6 @@
 class Solution {
 public:
-    void seizeEnclosedZones(vector<vector<char>>& board) {
+    void captureEnclosedTiles(vector<vector<char>>& board) {
         // Write your solution here
     }
 };

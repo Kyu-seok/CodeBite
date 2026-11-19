@@ -10,7 +10,7 @@ int main() {
     string line;
     getline(cin, line);
     // Parse [[9,9,4],[6,6,8],[2,1,1]]
-    vector<vector<int>> matrix;
+    vector<vector<int>> scores;
     int i = 0;
     while (i < (int)line.size()) {
         if (line[i] == '[' && i > 0) {
@@ -22,12 +22,12 @@ int main() {
             while (getline(ss, token, ',')) {
                 row.push_back(stoi(token));
             }
-            matrix.push_back(row);
+            scores.push_back(row);
             i = j + 1;
         } else {
             i++;
         }
     }
-    cout << Solution().longestVineAscent(matrix) << endl;
+    cout << Solution().longestIncreasingPath(scores) << endl;
     return 0;
 }

@@ -4,7 +4,7 @@ class Solution {
      * @param {string} target
      * @return {number}
      */
-    minZoneEdits(source, target) {
+    minCheatCodeEdits(source, target) {
         // Write your solution here
     }
 }

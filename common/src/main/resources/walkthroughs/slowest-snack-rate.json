@@ -1,0 +1,4091 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Slowest Snack Rate",
+  "ko": "가장 느린 간식 속도"
+ },
+ "approach": {
+  "en": "Binary search over the answer: a faster rate never needs more hours, so for any rate k one pass over the piles says whether k is fast enough, and each try halves the range of rates still possible.",
+  "ko": "답 위에서 하는 이분 탐색입니다. 속도가 빠를수록 시간은 늘지 않으므로, 속도 k마다 더미를 한 번 훑으면 k가 충분히 빠른지 알 수 있고, 시도할 때마다 가능한 속도의 범위가 절반으로 줄어듭니다."
+ },
+ "views": [
+  {
+   "id": "piles",
+   "type": "array",
+   "title": {
+    "en": "piles (hours each at k, under)",
+    "ko": "piles (아래: k일 때 더미별 시간)"
+   }
+  },
+  {
+   "id": "rates",
+   "type": "intervals",
+   "title": {
+    "en": "rates still possible",
+    "ko": "아직 가능한 속도"
+   }
+  },
+  {
+   "id": "needed",
+   "type": "output",
+   "title": {
+    "en": "hours needed at k",
+    "ko": "k일 때 필요한 시간"
+   }
+  },
+  {
+   "id": "state",
+   "type": "vars"
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "piles = [5,8,12,20], hours = 9",
+   "expected": "6",
+   "frames": [
+    {
+     "caption": {
+      "en": "k can't usefully pass the largest pile, 20 (every pile then takes one hour), and it is at least 1, so the answer is in [1, 20].",
+      "ko": "가장 큰 더미가 20개라서 k가 그보다 커도 소용없고(모든 더미가 한 시간), k는 1 이상이므로 답은 [1, 20] 범위에 있습니다."
+     },
+     "views": {
+      "piles": {
+       "values": [
+        5,
+        8,
+        12,
+        20
+       ],
+       "under": [],
+       "marks": {
+        "lit": []
+       }
+      },
+      "rates": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           1,
+           20
+          ]
+         ],
+         "marks": {}
+        }
+       ],
+       "points": []
+      },
+      "needed": {
+       "values": []
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "hours (limit)",
+          "ko": "hours (제한 시간)"
+         },
+         "value": 9
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Try the middle rate k = (1 + 20) // 2 = 10: pile p takes ⌈p / 10⌉ hours, 1 + 1 + 2 + 2 = 6 in all.",
+      "ko": "가운데 속도 k = (1 + 20) // 2 = 10을 시도합니다. 더미 p는 ⌈p / 10⌉시간이 걸려 모두 1 + 1 + 2 + 2 = 6시간입니다."
+     },
+     "views": {
+      "piles": {
+       "values": [
+        5,
+        8,
+        12,
+        20
+       ],
+       "under": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "1"
+        ],
+        [
+         2,
+         "2"
+        ],
+        [
+         3,
+         "2"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "rates": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           1,
+           20
+          ]
+         ],
+         "marks": {}
+        }
+       ],
+       "points": [
+        {
+         "at": 10,
+         "label": "k",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        6
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "hours (limit)",
+          "ko": "hours (제한 시간)"
+         },
+         "value": 9
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "piles",
+        "at": 0
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 1
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 2
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 3
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "6 ≤ 9 hours, so k = 10 is fast enough and so is any faster rate: keep k = 10 as the top of the range, [1, 10].",
+      "ko": "6 ≤ 9시간이므로 k = 10은 충분히 빠르고, 더 빠른 속도도 마찬가지입니다. k = 10을 범위의 위 끝으로 두어 [1, 10]입니다."
+     },
+     "views": {
+      "piles": {
+       "values": [
+        5,
+        8,
+        12,
+        20
+       ],
+       "under": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "1"
+        ],
+        [
+         2,
+         "2"
+        ],
+        [
+         3,
+         "2"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "rates": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           1,
+           10
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 10,
+         "label": "k",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        6
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "hours (limit)",
+          "ko": "hours (제한 시간)"
+         },
+         "value": 9
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "needed",
+        "at": 0
+       },
+       "to": {
+        "view": "rates",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "value": "6 ≤ 9"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Try the middle rate k = (1 + 10) // 2 = 5: pile p takes ⌈p / 5⌉ hours, 1 + 2 + 3 + 4 = 10 in all.",
+      "ko": "가운데 속도 k = (1 + 10) // 2 = 5를 시도합니다. 더미 p는 ⌈p / 5⌉시간이 걸려 모두 1 + 2 + 3 + 4 = 10시간입니다."
+     },
+     "views": {
+      "piles": {
+       "values": [
+        5,
+        8,
+        12,
+        20
+       ],
+       "under": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "2"
+        ],
+        [
+         2,
+         "3"
+        ],
+        [
+         3,
+         "4"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "rates": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           1,
+           10
+          ]
+         ],
+         "marks": {}
+        }
+       ],
+       "points": [
+        {
+         "at": 5,
+         "label": "k",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        10
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "hours (limit)",
+          "ko": "hours (제한 시간)"
+         },
+         "value": 9
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "piles",
+        "at": 0
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 1
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 2
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "3"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 3
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "10 > 9 hours, so k = 5 is too slow and so is any slower rate: the range starts above it, [6, 10].",
+      "ko": "10 > 9시간이므로 k = 5는 너무 느리고, 더 느린 속도도 마찬가지입니다. 범위는 그 위부터인 [6, 10]입니다."
+     },
+     "views": {
+      "piles": {
+       "values": [
+        5,
+        8,
+        12,
+        20
+       ],
+       "under": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "2"
+        ],
+        [
+         2,
+         "3"
+        ],
+        [
+         3,
+         "4"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "rates": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           6,
+           10
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 5,
+         "label": "k",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        10
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "hours (limit)",
+          "ko": "hours (제한 시간)"
+         },
+         "value": 9
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "needed",
+        "at": 0
+       },
+       "to": {
+        "view": "rates",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "value": "10 > 9"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Try the middle rate k = (6 + 10) // 2 = 8: pile p takes ⌈p / 8⌉ hours, 1 + 1 + 2 + 3 = 7 in all.",
+      "ko": "가운데 속도 k = (6 + 10) // 2 = 8을 시도합니다. 더미 p는 ⌈p / 8⌉시간이 걸려 모두 1 + 1 + 2 + 3 = 7시간입니다."
+     },
+     "views": {
+      "piles": {
+       "values": [
+        5,
+        8,
+        12,
+        20
+       ],
+       "under": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "1"
+        ],
+        [
+         2,
+         "2"
+        ],
+        [
+         3,
+         "3"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "rates": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           6,
+           10
+          ]
+         ],
+         "marks": {}
+        }
+       ],
+       "points": [
+        {
+         "at": 8,
+         "label": "k",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        7
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "hours (limit)",
+          "ko": "hours (제한 시간)"
+         },
+         "value": 9
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "piles",
+        "at": 0
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 1
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 2
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 3
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "7 ≤ 9 hours, so k = 8 is fast enough and so is any faster rate: keep k = 8 as the top of the range, [6, 8].",
+      "ko": "7 ≤ 9시간이므로 k = 8은 충분히 빠르고, 더 빠른 속도도 마찬가지입니다. k = 8을 범위의 위 끝으로 두어 [6, 8]입니다."
+     },
+     "views": {
+      "piles": {
+       "values": [
+        5,
+        8,
+        12,
+        20
+       ],
+       "under": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "1"
+        ],
+        [
+         2,
+         "2"
+        ],
+        [
+         3,
+         "3"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "rates": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           6,
+           8
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 8,
+         "label": "k",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        7
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "hours (limit)",
+          "ko": "hours (제한 시간)"
+         },
+         "value": 9
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "needed",
+        "at": 0
+       },
+       "to": {
+        "view": "rates",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "value": "7 ≤ 9"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Try the middle rate k = (6 + 8) // 2 = 7: pile p takes ⌈p / 7⌉ hours, 1 + 2 + 2 + 3 = 8 in all.",
+      "ko": "가운데 속도 k = (6 + 8) // 2 = 7을 시도합니다. 더미 p는 ⌈p / 7⌉시간이 걸려 모두 1 + 2 + 2 + 3 = 8시간입니다."
+     },
+     "views": {
+      "piles": {
+       "values": [
+        5,
+        8,
+        12,
+        20
+       ],
+       "under": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "2"
+        ],
+        [
+         2,
+         "2"
+        ],
+        [
+         3,
+         "3"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "rates": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           6,
+           8
+          ]
+         ],
+         "marks": {}
+        }
+       ],
+       "points": [
+        {
+         "at": 7,
+         "label": "k",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        8
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "hours (limit)",
+          "ko": "hours (제한 시간)"
+         },
+         "value": 9
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "piles",
+        "at": 0
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 1
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 2
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 3
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "8 ≤ 9 hours, so k = 7 is fast enough and so is any faster rate: keep k = 7 as the top of the range, [6, 7].",
+      "ko": "8 ≤ 9시간이므로 k = 7은 충분히 빠르고, 더 빠른 속도도 마찬가지입니다. k = 7을 범위의 위 끝으로 두어 [6, 7]입니다."
+     },
+     "views": {
+      "piles": {
+       "values": [
+        5,
+        8,
+        12,
+        20
+       ],
+       "under": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "2"
+        ],
+        [
+         2,
+         "2"
+        ],
+        [
+         3,
+         "3"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "rates": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           6,
+           7
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 7,
+         "label": "k",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        8
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "hours (limit)",
+          "ko": "hours (제한 시간)"
+         },
+         "value": 9
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "needed",
+        "at": 0
+       },
+       "to": {
+        "view": "rates",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "value": "8 ≤ 9"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Try the middle rate k = (6 + 7) // 2 = 6: pile p takes ⌈p / 6⌉ hours, 1 + 2 + 2 + 4 = 9 in all.",
+      "ko": "가운데 속도 k = (6 + 7) // 2 = 6을 시도합니다. 더미 p는 ⌈p / 6⌉시간이 걸려 모두 1 + 2 + 2 + 4 = 9시간입니다."
+     },
+     "views": {
+      "piles": {
+       "values": [
+        5,
+        8,
+        12,
+        20
+       ],
+       "under": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "2"
+        ],
+        [
+         2,
+         "2"
+        ],
+        [
+         3,
+         "4"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "rates": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           6,
+           7
+          ]
+         ],
+         "marks": {}
+        }
+       ],
+       "points": [
+        {
+         "at": 6,
+         "label": "k",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        9
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "hours (limit)",
+          "ko": "hours (제한 시간)"
+         },
+         "value": 9
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "piles",
+        "at": 0
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 1
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 2
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 3
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "9 ≤ 9 hours, so k = 6 is fast enough and so is any faster rate: keep k = 6 as the top of the range, [6, 6].",
+      "ko": "9 ≤ 9시간이므로 k = 6은 충분히 빠르고, 더 빠른 속도도 마찬가지입니다. k = 6을 범위의 위 끝으로 두어 [6, 6]입니다."
+     },
+     "views": {
+      "piles": {
+       "values": [
+        5,
+        8,
+        12,
+        20
+       ],
+       "under": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "2"
+        ],
+        [
+         2,
+         "2"
+        ],
+        [
+         3,
+         "4"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "rates": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           6,
+           6
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 6,
+         "label": "k",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        9
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "hours (limit)",
+          "ko": "hours (제한 시간)"
+         },
+         "value": 9
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "needed",
+        "at": 0
+       },
+       "to": {
+        "view": "rates",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "value": "9 ≤ 9"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The range closed on one rate, [6, 6]: k = 6 is the slowest rate that finishes within 9 hours.",
+      "ko": "범위가 [6, 6] 구간으로 좁혀져 속도가 하나만 남았습니다. 9시간 안에 다 먹는 가장 느린 속도는 k = 6입니다."
+     },
+     "views": {
+      "piles": {
+       "values": [
+        5,
+        8,
+        12,
+        20
+       ],
+       "under": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "2"
+        ],
+        [
+         2,
+         "2"
+        ],
+        [
+         3,
+         "4"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "rates": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           6,
+           6
+          ]
+         ],
+         "marks": {
+          "path": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": []
+      },
+      "needed": {
+       "values": [
+        9
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "hours (limit)",
+          "ko": "hours (제한 시간)"
+         },
+         "value": 9
+        }
+       ]
+      }
+     },
+     "answer": "6"
+    }
+   ],
+   "setup": {
+    "rates": {
+     "domain": [
+      1,
+      20
+     ]
+    }
+   },
+   "sampleInput": "[5,8,12,20]\n9"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "piles = [40,25,18,33,12], hours = 5",
+   "expected": "40",
+   "frames": [
+    {
+     "caption": {
+      "en": "k can't usefully pass the largest pile, 40 (every pile then takes one hour), and it is at least 1, so the answer is in [1, 40].",
+      "ko": "가장 큰 더미가 40개라서 k가 그보다 커도 소용없고(모든 더미가 한 시간), k는 1 이상이므로 답은 [1, 40] 범위에 있습니다."
+     },
+     "views": {
+      "piles": {
+       "values": [
+        40,
+        25,
+        18,
+        33,
+        12
+       ],
+       "under": [],
+       "marks": {
+        "lit": []
+       }
+      },
+      "rates": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           1,
+           40
+          ]
+         ],
+         "marks": {}
+        }
+       ],
+       "points": []
+      },
+      "needed": {
+       "values": []
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "hours (limit)",
+          "ko": "hours (제한 시간)"
+         },
+         "value": 5
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Try the middle rate k = (1 + 40) // 2 = 20: pile p takes ⌈p / 20⌉ hours, 2 + 2 + 1 + 2 + 1 = 8 in all.",
+      "ko": "가운데 속도 k = (1 + 40) // 2 = 20을 시도합니다. 더미 p는 ⌈p / 20⌉시간이 걸려 모두 2 + 2 + 1 + 2 + 1 = 8시간입니다."
+     },
+     "views": {
+      "piles": {
+       "values": [
+        40,
+        25,
+        18,
+        33,
+        12
+       ],
+       "under": [
+        [
+         0,
+         "2"
+        ],
+        [
+         1,
+         "2"
+        ],
+        [
+         2,
+         "1"
+        ],
+        [
+         3,
+         "2"
+        ],
+        [
+         4,
+         "1"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "rates": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           1,
+           40
+          ]
+         ],
+         "marks": {}
+        }
+       ],
+       "points": [
+        {
+         "at": 20,
+         "label": "k",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        8
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "hours (limit)",
+          "ko": "hours (제한 시간)"
+         },
+         "value": 5
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "piles",
+        "at": 0
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 1
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 2
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 3
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 4
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "8 > 5 hours, so k = 20 is too slow and so is any slower rate: the range starts above it, [21, 40].",
+      "ko": "8 > 5시간이므로 k = 20은 너무 느리고, 더 느린 속도도 마찬가지입니다. 범위는 그 위부터인 [21, 40]입니다."
+     },
+     "views": {
+      "piles": {
+       "values": [
+        40,
+        25,
+        18,
+        33,
+        12
+       ],
+       "under": [
+        [
+         0,
+         "2"
+        ],
+        [
+         1,
+         "2"
+        ],
+        [
+         2,
+         "1"
+        ],
+        [
+         3,
+         "2"
+        ],
+        [
+         4,
+         "1"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "rates": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           21,
+           40
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 20,
+         "label": "k",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        8
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "hours (limit)",
+          "ko": "hours (제한 시간)"
+         },
+         "value": 5
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "needed",
+        "at": 0
+       },
+       "to": {
+        "view": "rates",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "value": "8 > 5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Try the middle rate k = (21 + 40) // 2 = 30: pile p takes ⌈p / 30⌉ hours, 2 + 1 + 1 + 2 + 1 = 7 in all.",
+      "ko": "가운데 속도 k = (21 + 40) // 2 = 30을 시도합니다. 더미 p는 ⌈p / 30⌉시간이 걸려 모두 2 + 1 + 1 + 2 + 1 = 7시간입니다."
+     },
+     "views": {
+      "piles": {
+       "values": [
+        40,
+        25,
+        18,
+        33,
+        12
+       ],
+       "under": [
+        [
+         0,
+         "2"
+        ],
+        [
+         1,
+         "1"
+        ],
+        [
+         2,
+         "1"
+        ],
+        [
+         3,
+         "2"
+        ],
+        [
+         4,
+         "1"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "rates": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           21,
+           40
+          ]
+         ],
+         "marks": {}
+        }
+       ],
+       "points": [
+        {
+         "at": 30,
+         "label": "k",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        7
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "hours (limit)",
+          "ko": "hours (제한 시간)"
+         },
+         "value": 5
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "piles",
+        "at": 0
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 1
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 2
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 3
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 4
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "7 > 5 hours, so k = 30 is too slow and so is any slower rate: the range starts above it, [31, 40].",
+      "ko": "7 > 5시간이므로 k = 30은 너무 느리고, 더 느린 속도도 마찬가지입니다. 범위는 그 위부터인 [31, 40]입니다."
+     },
+     "views": {
+      "piles": {
+       "values": [
+        40,
+        25,
+        18,
+        33,
+        12
+       ],
+       "under": [
+        [
+         0,
+         "2"
+        ],
+        [
+         1,
+         "1"
+        ],
+        [
+         2,
+         "1"
+        ],
+        [
+         3,
+         "2"
+        ],
+        [
+         4,
+         "1"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "rates": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           31,
+           40
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 30,
+         "label": "k",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        7
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "hours (limit)",
+          "ko": "hours (제한 시간)"
+         },
+         "value": 5
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "needed",
+        "at": 0
+       },
+       "to": {
+        "view": "rates",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "value": "7 > 5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Try the middle rate k = (31 + 40) // 2 = 35: pile p takes ⌈p / 35⌉ hours, 2 + 1 + 1 + 1 + 1 = 6 in all.",
+      "ko": "가운데 속도 k = (31 + 40) // 2 = 35를 시도합니다. 더미 p는 ⌈p / 35⌉시간이 걸려 모두 2 + 1 + 1 + 1 + 1 = 6시간입니다."
+     },
+     "views": {
+      "piles": {
+       "values": [
+        40,
+        25,
+        18,
+        33,
+        12
+       ],
+       "under": [
+        [
+         0,
+         "2"
+        ],
+        [
+         1,
+         "1"
+        ],
+        [
+         2,
+         "1"
+        ],
+        [
+         3,
+         "1"
+        ],
+        [
+         4,
+         "1"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "rates": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           31,
+           40
+          ]
+         ],
+         "marks": {}
+        }
+       ],
+       "points": [
+        {
+         "at": 35,
+         "label": "k",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        6
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "hours (limit)",
+          "ko": "hours (제한 시간)"
+         },
+         "value": 5
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "piles",
+        "at": 0
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 1
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 2
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 3
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 4
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "6 > 5 hours, so k = 35 is too slow and so is any slower rate: the range starts above it, [36, 40].",
+      "ko": "6 > 5시간이므로 k = 35는 너무 느리고, 더 느린 속도도 마찬가지입니다. 범위는 그 위부터인 [36, 40]입니다."
+     },
+     "views": {
+      "piles": {
+       "values": [
+        40,
+        25,
+        18,
+        33,
+        12
+       ],
+       "under": [
+        [
+         0,
+         "2"
+        ],
+        [
+         1,
+         "1"
+        ],
+        [
+         2,
+         "1"
+        ],
+        [
+         3,
+         "1"
+        ],
+        [
+         4,
+         "1"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "rates": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           36,
+           40
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 35,
+         "label": "k",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        6
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "hours (limit)",
+          "ko": "hours (제한 시간)"
+         },
+         "value": 5
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "needed",
+        "at": 0
+       },
+       "to": {
+        "view": "rates",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "value": "6 > 5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Try the middle rate k = (36 + 40) // 2 = 38: pile p takes ⌈p / 38⌉ hours, 2 + 1 + 1 + 1 + 1 = 6 in all.",
+      "ko": "가운데 속도 k = (36 + 40) // 2 = 38을 시도합니다. 더미 p는 ⌈p / 38⌉시간이 걸려 모두 2 + 1 + 1 + 1 + 1 = 6시간입니다."
+     },
+     "views": {
+      "piles": {
+       "values": [
+        40,
+        25,
+        18,
+        33,
+        12
+       ],
+       "under": [
+        [
+         0,
+         "2"
+        ],
+        [
+         1,
+         "1"
+        ],
+        [
+         2,
+         "1"
+        ],
+        [
+         3,
+         "1"
+        ],
+        [
+         4,
+         "1"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "rates": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           36,
+           40
+          ]
+         ],
+         "marks": {}
+        }
+       ],
+       "points": [
+        {
+         "at": 38,
+         "label": "k",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        6
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "hours (limit)",
+          "ko": "hours (제한 시간)"
+         },
+         "value": 5
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "piles",
+        "at": 0
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 1
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 2
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 3
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 4
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "6 > 5 hours, so k = 38 is too slow and so is any slower rate: the range starts above it, [39, 40].",
+      "ko": "6 > 5시간이므로 k = 38은 너무 느리고, 더 느린 속도도 마찬가지입니다. 범위는 그 위부터인 [39, 40]입니다."
+     },
+     "views": {
+      "piles": {
+       "values": [
+        40,
+        25,
+        18,
+        33,
+        12
+       ],
+       "under": [
+        [
+         0,
+         "2"
+        ],
+        [
+         1,
+         "1"
+        ],
+        [
+         2,
+         "1"
+        ],
+        [
+         3,
+         "1"
+        ],
+        [
+         4,
+         "1"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "rates": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           39,
+           40
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 38,
+         "label": "k",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        6
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "hours (limit)",
+          "ko": "hours (제한 시간)"
+         },
+         "value": 5
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "needed",
+        "at": 0
+       },
+       "to": {
+        "view": "rates",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "value": "6 > 5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Try the middle rate k = (39 + 40) // 2 = 39: pile p takes ⌈p / 39⌉ hours, 2 + 1 + 1 + 1 + 1 = 6 in all.",
+      "ko": "가운데 속도 k = (39 + 40) // 2 = 39를 시도합니다. 더미 p는 ⌈p / 39⌉시간이 걸려 모두 2 + 1 + 1 + 1 + 1 = 6시간입니다."
+     },
+     "views": {
+      "piles": {
+       "values": [
+        40,
+        25,
+        18,
+        33,
+        12
+       ],
+       "under": [
+        [
+         0,
+         "2"
+        ],
+        [
+         1,
+         "1"
+        ],
+        [
+         2,
+         "1"
+        ],
+        [
+         3,
+         "1"
+        ],
+        [
+         4,
+         "1"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "rates": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           39,
+           40
+          ]
+         ],
+         "marks": {}
+        }
+       ],
+       "points": [
+        {
+         "at": 39,
+         "label": "k",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        6
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "hours (limit)",
+          "ko": "hours (제한 시간)"
+         },
+         "value": 5
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "piles",
+        "at": 0
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 1
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 2
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 3
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 4
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "6 > 5 hours, so k = 39 is too slow and so is any slower rate: the range starts above it, [40, 40].",
+      "ko": "6 > 5시간이므로 k = 39는 너무 느리고, 더 느린 속도도 마찬가지입니다. 범위는 그 위부터인 [40, 40]입니다."
+     },
+     "views": {
+      "piles": {
+       "values": [
+        40,
+        25,
+        18,
+        33,
+        12
+       ],
+       "under": [
+        [
+         0,
+         "2"
+        ],
+        [
+         1,
+         "1"
+        ],
+        [
+         2,
+         "1"
+        ],
+        [
+         3,
+         "1"
+        ],
+        [
+         4,
+         "1"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "rates": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           40,
+           40
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 39,
+         "label": "k",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        6
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "hours (limit)",
+          "ko": "hours (제한 시간)"
+         },
+         "value": 5
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "needed",
+        "at": 0
+       },
+       "to": {
+        "view": "rates",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "value": "6 > 5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The range closed on one rate, [40, 40]: k = 40 is the slowest rate that finishes within 5 hours.",
+      "ko": "범위가 [40, 40] 구간으로 좁혀져 속도가 하나만 남았습니다. 5시간 안에 다 먹는 가장 느린 속도는 k = 40입니다."
+     },
+     "views": {
+      "piles": {
+       "values": [
+        40,
+        25,
+        18,
+        33,
+        12
+       ],
+       "under": [
+        [
+         0,
+         "2"
+        ],
+        [
+         1,
+         "1"
+        ],
+        [
+         2,
+         "1"
+        ],
+        [
+         3,
+         "1"
+        ],
+        [
+         4,
+         "1"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "rates": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           40,
+           40
+          ]
+         ],
+         "marks": {
+          "path": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": []
+      },
+      "needed": {
+       "values": [
+        6
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "hours (limit)",
+          "ko": "hours (제한 시간)"
+         },
+         "value": 5
+        }
+       ]
+      }
+     },
+     "answer": "40"
+    }
+   ],
+   "setup": {
+    "rates": {
+     "domain": [
+      1,
+      40
+     ]
+    }
+   },
+   "sampleInput": "[40,25,18,33,12]\n5"
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "piles = [40,25,18,33,12], hours = 7",
+   "expected": "25",
+   "frames": [
+    {
+     "caption": {
+      "en": "k can't usefully pass the largest pile, 40 (every pile then takes one hour), and it is at least 1, so the answer is in [1, 40].",
+      "ko": "가장 큰 더미가 40개라서 k가 그보다 커도 소용없고(모든 더미가 한 시간), k는 1 이상이므로 답은 [1, 40] 범위에 있습니다."
+     },
+     "views": {
+      "piles": {
+       "values": [
+        40,
+        25,
+        18,
+        33,
+        12
+       ],
+       "under": [],
+       "marks": {
+        "lit": []
+       }
+      },
+      "rates": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           1,
+           40
+          ]
+         ],
+         "marks": {}
+        }
+       ],
+       "points": []
+      },
+      "needed": {
+       "values": []
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "hours (limit)",
+          "ko": "hours (제한 시간)"
+         },
+         "value": 7
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Try the middle rate k = (1 + 40) // 2 = 20: pile p takes ⌈p / 20⌉ hours, 2 + 2 + 1 + 2 + 1 = 8 in all.",
+      "ko": "가운데 속도 k = (1 + 40) // 2 = 20을 시도합니다. 더미 p는 ⌈p / 20⌉시간이 걸려 모두 2 + 2 + 1 + 2 + 1 = 8시간입니다."
+     },
+     "views": {
+      "piles": {
+       "values": [
+        40,
+        25,
+        18,
+        33,
+        12
+       ],
+       "under": [
+        [
+         0,
+         "2"
+        ],
+        [
+         1,
+         "2"
+        ],
+        [
+         2,
+         "1"
+        ],
+        [
+         3,
+         "2"
+        ],
+        [
+         4,
+         "1"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "rates": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           1,
+           40
+          ]
+         ],
+         "marks": {}
+        }
+       ],
+       "points": [
+        {
+         "at": 20,
+         "label": "k",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        8
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "hours (limit)",
+          "ko": "hours (제한 시간)"
+         },
+         "value": 7
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "piles",
+        "at": 0
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 1
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 2
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 3
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 4
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "8 > 7 hours, so k = 20 is too slow and so is any slower rate: the range starts above it, [21, 40].",
+      "ko": "8 > 7시간이므로 k = 20은 너무 느리고, 더 느린 속도도 마찬가지입니다. 범위는 그 위부터인 [21, 40]입니다."
+     },
+     "views": {
+      "piles": {
+       "values": [
+        40,
+        25,
+        18,
+        33,
+        12
+       ],
+       "under": [
+        [
+         0,
+         "2"
+        ],
+        [
+         1,
+         "2"
+        ],
+        [
+         2,
+         "1"
+        ],
+        [
+         3,
+         "2"
+        ],
+        [
+         4,
+         "1"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "rates": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           21,
+           40
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 20,
+         "label": "k",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        8
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "hours (limit)",
+          "ko": "hours (제한 시간)"
+         },
+         "value": 7
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "needed",
+        "at": 0
+       },
+       "to": {
+        "view": "rates",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "value": "8 > 7"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Try the middle rate k = (21 + 40) // 2 = 30: pile p takes ⌈p / 30⌉ hours, 2 + 1 + 1 + 2 + 1 = 7 in all.",
+      "ko": "가운데 속도 k = (21 + 40) // 2 = 30을 시도합니다. 더미 p는 ⌈p / 30⌉시간이 걸려 모두 2 + 1 + 1 + 2 + 1 = 7시간입니다."
+     },
+     "views": {
+      "piles": {
+       "values": [
+        40,
+        25,
+        18,
+        33,
+        12
+       ],
+       "under": [
+        [
+         0,
+         "2"
+        ],
+        [
+         1,
+         "1"
+        ],
+        [
+         2,
+         "1"
+        ],
+        [
+         3,
+         "2"
+        ],
+        [
+         4,
+         "1"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "rates": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           21,
+           40
+          ]
+         ],
+         "marks": {}
+        }
+       ],
+       "points": [
+        {
+         "at": 30,
+         "label": "k",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        7
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "hours (limit)",
+          "ko": "hours (제한 시간)"
+         },
+         "value": 7
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "piles",
+        "at": 0
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 1
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 2
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 3
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 4
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "7 ≤ 7 hours, so k = 30 is fast enough and so is any faster rate: keep k = 30 as the top of the range, [21, 30].",
+      "ko": "7 ≤ 7시간이므로 k = 30은 충분히 빠르고, 더 빠른 속도도 마찬가지입니다. k = 30을 범위의 위 끝으로 두어 [21, 30]입니다."
+     },
+     "views": {
+      "piles": {
+       "values": [
+        40,
+        25,
+        18,
+        33,
+        12
+       ],
+       "under": [
+        [
+         0,
+         "2"
+        ],
+        [
+         1,
+         "1"
+        ],
+        [
+         2,
+         "1"
+        ],
+        [
+         3,
+         "2"
+        ],
+        [
+         4,
+         "1"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "rates": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           21,
+           30
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 30,
+         "label": "k",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        7
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "hours (limit)",
+          "ko": "hours (제한 시간)"
+         },
+         "value": 7
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "needed",
+        "at": 0
+       },
+       "to": {
+        "view": "rates",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "value": "7 ≤ 7"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Try the middle rate k = (21 + 30) // 2 = 25: pile p takes ⌈p / 25⌉ hours, 2 + 1 + 1 + 2 + 1 = 7 in all.",
+      "ko": "가운데 속도 k = (21 + 30) // 2 = 25를 시도합니다. 더미 p는 ⌈p / 25⌉시간이 걸려 모두 2 + 1 + 1 + 2 + 1 = 7시간입니다."
+     },
+     "views": {
+      "piles": {
+       "values": [
+        40,
+        25,
+        18,
+        33,
+        12
+       ],
+       "under": [
+        [
+         0,
+         "2"
+        ],
+        [
+         1,
+         "1"
+        ],
+        [
+         2,
+         "1"
+        ],
+        [
+         3,
+         "2"
+        ],
+        [
+         4,
+         "1"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "rates": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           21,
+           30
+          ]
+         ],
+         "marks": {}
+        }
+       ],
+       "points": [
+        {
+         "at": 25,
+         "label": "k",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        7
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "hours (limit)",
+          "ko": "hours (제한 시간)"
+         },
+         "value": 7
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "piles",
+        "at": 0
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 1
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 2
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 3
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 4
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "7 ≤ 7 hours, so k = 25 is fast enough and so is any faster rate: keep k = 25 as the top of the range, [21, 25].",
+      "ko": "7 ≤ 7시간이므로 k = 25는 충분히 빠르고, 더 빠른 속도도 마찬가지입니다. k = 25를 범위의 위 끝으로 두어 [21, 25]입니다."
+     },
+     "views": {
+      "piles": {
+       "values": [
+        40,
+        25,
+        18,
+        33,
+        12
+       ],
+       "under": [
+        [
+         0,
+         "2"
+        ],
+        [
+         1,
+         "1"
+        ],
+        [
+         2,
+         "1"
+        ],
+        [
+         3,
+         "2"
+        ],
+        [
+         4,
+         "1"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "rates": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           21,
+           25
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 25,
+         "label": "k",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        7
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "hours (limit)",
+          "ko": "hours (제한 시간)"
+         },
+         "value": 7
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "needed",
+        "at": 0
+       },
+       "to": {
+        "view": "rates",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "value": "7 ≤ 7"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Try the middle rate k = (21 + 25) // 2 = 23: pile p takes ⌈p / 23⌉ hours, 2 + 2 + 1 + 2 + 1 = 8 in all.",
+      "ko": "가운데 속도 k = (21 + 25) // 2 = 23을 시도합니다. 더미 p는 ⌈p / 23⌉시간이 걸려 모두 2 + 2 + 1 + 2 + 1 = 8시간입니다."
+     },
+     "views": {
+      "piles": {
+       "values": [
+        40,
+        25,
+        18,
+        33,
+        12
+       ],
+       "under": [
+        [
+         0,
+         "2"
+        ],
+        [
+         1,
+         "2"
+        ],
+        [
+         2,
+         "1"
+        ],
+        [
+         3,
+         "2"
+        ],
+        [
+         4,
+         "1"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "rates": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           21,
+           25
+          ]
+         ],
+         "marks": {}
+        }
+       ],
+       "points": [
+        {
+         "at": 23,
+         "label": "k",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        8
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "hours (limit)",
+          "ko": "hours (제한 시간)"
+         },
+         "value": 7
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "piles",
+        "at": 0
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 1
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 2
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 3
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 4
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "8 > 7 hours, so k = 23 is too slow and so is any slower rate: the range starts above it, [24, 25].",
+      "ko": "8 > 7시간이므로 k = 23은 너무 느리고, 더 느린 속도도 마찬가지입니다. 범위는 그 위부터인 [24, 25]입니다."
+     },
+     "views": {
+      "piles": {
+       "values": [
+        40,
+        25,
+        18,
+        33,
+        12
+       ],
+       "under": [
+        [
+         0,
+         "2"
+        ],
+        [
+         1,
+         "2"
+        ],
+        [
+         2,
+         "1"
+        ],
+        [
+         3,
+         "2"
+        ],
+        [
+         4,
+         "1"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "rates": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           24,
+           25
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 23,
+         "label": "k",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        8
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "hours (limit)",
+          "ko": "hours (제한 시간)"
+         },
+         "value": 7
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "needed",
+        "at": 0
+       },
+       "to": {
+        "view": "rates",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "value": "8 > 7"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Try the middle rate k = (24 + 25) // 2 = 24: pile p takes ⌈p / 24⌉ hours, 2 + 2 + 1 + 2 + 1 = 8 in all.",
+      "ko": "가운데 속도 k = (24 + 25) // 2 = 24를 시도합니다. 더미 p는 ⌈p / 24⌉시간이 걸려 모두 2 + 2 + 1 + 2 + 1 = 8시간입니다."
+     },
+     "views": {
+      "piles": {
+       "values": [
+        40,
+        25,
+        18,
+        33,
+        12
+       ],
+       "under": [
+        [
+         0,
+         "2"
+        ],
+        [
+         1,
+         "2"
+        ],
+        [
+         2,
+         "1"
+        ],
+        [
+         3,
+         "2"
+        ],
+        [
+         4,
+         "1"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "rates": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           24,
+           25
+          ]
+         ],
+         "marks": {}
+        }
+       ],
+       "points": [
+        {
+         "at": 24,
+         "label": "k",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        8
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "hours (limit)",
+          "ko": "hours (제한 시간)"
+         },
+         "value": 7
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "piles",
+        "at": 0
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 1
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 2
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 3
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "piles",
+        "at": 4
+       },
+       "to": {
+        "view": "needed",
+        "at": 0
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "8 > 7 hours, so k = 24 is too slow and so is any slower rate: the range starts above it, [25, 25].",
+      "ko": "8 > 7시간이므로 k = 24는 너무 느리고, 더 느린 속도도 마찬가지입니다. 범위는 그 위부터인 [25, 25]입니다."
+     },
+     "views": {
+      "piles": {
+       "values": [
+        40,
+        25,
+        18,
+        33,
+        12
+       ],
+       "under": [
+        [
+         0,
+         "2"
+        ],
+        [
+         1,
+         "2"
+        ],
+        [
+         2,
+         "1"
+        ],
+        [
+         3,
+         "2"
+        ],
+        [
+         4,
+         "1"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "rates": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           25,
+           25
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 24,
+         "label": "k",
+         "mark": "lit"
+        }
+       ]
+      },
+      "needed": {
+       "values": [
+        8
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "hours (limit)",
+          "ko": "hours (제한 시간)"
+         },
+         "value": 7
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "needed",
+        "at": 0
+       },
+       "to": {
+        "view": "rates",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "value": "8 > 7"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The range closed on one rate, [25, 25]: k = 25 is the slowest rate that finishes within 7 hours.",
+      "ko": "범위가 [25, 25] 구간으로 좁혀져 속도가 하나만 남았습니다. 7시간 안에 다 먹는 가장 느린 속도는 k = 25입니다."
+     },
+     "views": {
+      "piles": {
+       "values": [
+        40,
+        25,
+        18,
+        33,
+        12
+       ],
+       "under": [
+        [
+         0,
+         "2"
+        ],
+        [
+         1,
+         "2"
+        ],
+        [
+         2,
+         "1"
+        ],
+        [
+         3,
+         "2"
+        ],
+        [
+         4,
+         "1"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "rates": {
+       "groups": [
+        {
+         "label": {
+          "en": "possible",
+          "ko": "가능"
+         },
+         "intervals": [
+          [
+           25,
+           25
+          ]
+         ],
+         "marks": {
+          "path": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": []
+      },
+      "needed": {
+       "values": [
+        8
+       ]
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "hours (limit)",
+          "ko": "hours (제한 시간)"
+         },
+         "value": 7
+        }
+       ]
+      }
+     },
+     "answer": "25"
+    }
+   ],
+   "setup": {
+    "rates": {
+     "domain": [
+      1,
+      40
+     ]
+    }
+   },
+   "sampleInput": "[40,25,18,33,12]\n7"
+  }
+ ]
+}

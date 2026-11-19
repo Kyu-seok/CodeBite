@@ -11,7 +11,7 @@ public class Main {
         String line2 = sc.nextLine().trim();
         TreeNode p = TreeNode.fromArray(line1);
         TreeNode q = TreeNode.fromArray(line2);
-        boolean result = new Solution().matchCatalogLayout(p, q);
+        boolean result = new Solution().isSameTree(p, q);
         System.out.println(result);
     }
 }

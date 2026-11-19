@@ -23,5 +23,5 @@ def _build_tree(arr):
 
 arr = json.loads(input())
 root = _build_tree(arr)
-result = Solution().tallyDominantBlocks(root)
+result = Solution().countDominantHeroes(root)
 print(result)

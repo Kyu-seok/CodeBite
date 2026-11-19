@@ -10,7 +10,7 @@ int main() {
     string line;
     getline(cin, line);
 
-    vector<vector<int>> matrix;
+    vector<vector<int>> shelf;
     string inner = line.substr(1, line.size() - 2);
     int depth = 0, start = 0;
     for (int i = 0; i < (int)inner.size(); i++) {
@@ -23,12 +23,12 @@ int main() {
                 stringstream ss(rowStr);
                 string token;
                 while (getline(ss, token, ',')) row.push_back(stoi(token));
-                matrix.push_back(row);
+                shelf.push_back(row);
             }
         }
     }
 
-    vector<int> result = Solution().traceOutwardWalk(matrix);
+    vector<int> result = Solution().spiralOrder(shelf);
     cout << "[";
     for (int i = 0; i < (int)result.size(); i++) {
         if (i > 0) cout << ",";

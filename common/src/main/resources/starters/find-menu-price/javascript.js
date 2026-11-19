@@ -4,7 +4,7 @@ class Solution {
      * @param {number} target
      * @return {boolean}
      */
-    detectFlowValue(menu, target) {
+    hasPrice(menu, target) {
         // Write your solution here
     }
 }

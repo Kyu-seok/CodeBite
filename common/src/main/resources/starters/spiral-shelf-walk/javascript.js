@@ -1,9 +1,9 @@
 class Solution {
     /**
-     * @param {number[][]} board
+     * @param {number[][]} shelf
      * @return {number[]}
      */
-    traceOutwardWalk(board) {
+    spiralOrder(shelf) {
         // Write your solution here
     }
 }

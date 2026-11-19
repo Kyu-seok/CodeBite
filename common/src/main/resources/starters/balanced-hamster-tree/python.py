@@ -7,6 +7,6 @@ class TreeNode:
         self.right = right
 
 class Solution:
-    def checkHubEvenness(self, root: Optional[TreeNode]) -> bool:
+    def isBalanced(self, root: Optional[TreeNode]) -> bool:
         # Write your solution here
         pass

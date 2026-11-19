@@ -3,5 +3,5 @@
 import json
 jobs = json.loads(input())
 n = int(input())
-result = Solution().planStationRuns(jobs, n)
+result = Solution().minPrintSlots(jobs, n)
 print(result)

@@ -1,5 +1,5 @@
 {USER_CODE}
 
-s = input().strip()
-result = Solution().verifyMirrorCode(s)
+phrase = input().strip()
+result = Solution().isPalindrome(phrase)
 print(str(result).lower())

@@ -1,6 +1,6 @@
 {USER_CODE}
 
-nums = eval(input())
+lockers = eval(input())
 target = int(input())
-result = Solution().locateCallNumber(nums, target)
+result = Solution().findLocker(lockers, target)
 print(result)

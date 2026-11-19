@@ -1,5 +1,5 @@
 class Solution:
-    def shortestBakeSpan(self, trays: list[int], target: int) -> int:
+    def shortestCookieSpan(self, trays: list[int], target: int) -> int:
         best = len(trays) + 1
         total = 0
         left = 0

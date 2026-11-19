@@ -1,8 +1,8 @@
 {USER_CODE}
 
 const input = require('fs').readFileSync('/dev/stdin', 'utf8').trim();
-const nums = JSON.parse(input);
-const result = new Solution().listMontageScenes(nums);
+const snacks = JSON.parse(input);
+const result = new Solution().listSnackCombos(snacks);
 result.forEach(s => s.sort((a, b) => a - b));
 result.sort((a, b) => {
     for (let i = 0; i < Math.min(a.length, b.length); i++) {

@@ -9,7 +9,7 @@
  * }
  */
 class Solution {
-    public ListNode flipSorterSegments(ListNode head, int k) {
+    public ListNode flipChunks(ListNode head, int k) {
         // Write your solution here
     }
 }

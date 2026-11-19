@@ -1,10 +1,10 @@
 class Solution {
     /**
-     * @param {number[]} zonesA
-     * @param {number[]} zonesB
+     * @param {number[]} pricesA
+     * @param {number[]} pricesB
      * @return {number}
      */
-    mergedZoneMedian(zonesA, zonesB) {
+    mergedPriceMedian(pricesA, pricesB) {
         // Write your solution here
     }
 }

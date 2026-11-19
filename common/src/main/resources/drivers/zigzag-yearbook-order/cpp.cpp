@@ -14,7 +14,7 @@ int main() {
     string line;
     getline(cin, line);
     TreeNode* root = treeFromArray(line);
-    vector<vector<int>> result = Solution().alternateWardSweep(root);
+    vector<vector<int>> result = Solution().zigzagRows(root);
     cout << JsonOutput::intVector2D(result) << endl;
     return 0;
 }

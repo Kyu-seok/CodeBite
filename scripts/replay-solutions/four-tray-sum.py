@@ -1,5 +1,5 @@
 class Solution:
-    def quadTrayDemand(self, trays: list[int], demand: int) -> list[list[int]]:
+    def fourTraySum(self, trays: list[int], demand: int) -> list[list[int]]:
         nums = sorted(trays)
         n = len(nums)
         result: list[list[int]] = []

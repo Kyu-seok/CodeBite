@@ -1,0 +1,1010 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Pair Lunchbox Snacks",
+  "ko": "도시락 상자 짝짓기"
+ },
+ "approach": {
+  "en": "Sort, then pack the heaviest snack left each time: it needs a lunchbox anyway, and the only partner worth trying is the lightest one. If even that one doesn't fit, nothing does, so the heaviest goes alone.",
+  "ko": "정렬한 뒤 매번 남은 가장 무거운 간식을 담습니다. 어차피 도시락 하나가 필요하고, 짝으로 시도할 만한 건 가장 가벼운 간식뿐입니다. 그것도 안 들어가면 어떤 간식도 안 들어가니 무거운 간식은 혼자 들어갑니다."
+ },
+ "views": [
+  {
+   "id": "weights",
+   "type": "array",
+   "title": {
+    "en": "weights (sorted)",
+    "ko": "weights (정렬한 간식 무게)"
+   }
+  },
+  {
+   "id": "boxes",
+   "type": "output",
+   "title": {
+    "en": "lunchboxes",
+    "ko": "도시락"
+   },
+   "empty": {
+    "en": "none yet",
+    "ko": "아직 없음"
+   }
+  },
+  {
+   "id": "state",
+   "type": "vars"
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "weights = [2,4], capacity = 6",
+   "expected": "1",
+   "frames": [
+    {
+     "caption": {
+      "en": "2 snacks, sorted by weight; each lunchbox holds two at most and 6 grams. light starts at the lightest, heavy at the heaviest.",
+      "ko": "간식 2개를 무게순으로 정렬했고, 도시락에는 최대 두 개, 6그램까지 들어갑니다. light는 가장 가벼운 간식, heavy는 가장 무거운 간식에서 시작합니다."
+     },
+     "views": {
+      "weights": {
+       "values": [
+        2,
+        4
+       ],
+       "spans": {
+        "left": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "unpacked",
+          "ko": "남은 간식"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "light": 0,
+        "heavy": 1
+       },
+       "marks": {
+        "dim": [],
+        "bad": [],
+        "good": [],
+        "lit": []
+       }
+      },
+      "boxes": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (도시락 한도)"
+         },
+         "value": 6
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Heaviest 4 + lightest 2 = 6 ≤ 6: they share lunchbox 1, and both pointers move in.",
+      "ko": "가장 무거운 4 + 가장 가벼운 2 = 6 ≤ 6, 1번 도시락에 같이 들어가고 두 포인터가 모두 안으로 옵니다."
+     },
+     "views": {
+      "weights": {
+       "values": [
+        2,
+        4
+       ],
+       "spans": {
+        "left": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "unpacked",
+          "ko": "남은 간식"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "light": 0,
+        "heavy": 1
+       },
+       "marks": {
+        "dim": [],
+        "bad": [],
+        "good": [
+         0,
+         1
+        ],
+        "lit": []
+       }
+      },
+      "boxes": {
+       "values": [
+        "4 + 2"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (도시락 한도)"
+         },
+         "value": 6
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "weights",
+        "at": 1
+       },
+       "to": {
+        "view": "boxes",
+        "at": 0
+       },
+       "mark": "good"
+      },
+      {
+       "from": {
+        "view": "weights",
+        "at": 0
+       },
+       "to": {
+        "view": "boxes",
+        "at": 0
+       },
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every snack is packed: 1 lunchbox, 1 of them holding a pair. Answer 1.",
+      "ko": "모든 간식을 담았습니다. 도시락 1개 중 1개에 두 개씩 들어갔고, 답은 1입니다."
+     },
+     "views": {
+      "weights": {
+       "values": [
+        2,
+        4
+       ],
+       "spans": {
+        "left": null
+       },
+       "pointers": {
+        "light": null,
+        "heavy": null
+       },
+       "marks": {
+        "dim": [],
+        "bad": [],
+        "good": [],
+        "lit": []
+       }
+      },
+      "boxes": {
+       "values": [
+        "4 + 2"
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (도시락 한도)"
+         },
+         "value": 6
+        }
+       ]
+      }
+     },
+     "answer": "1"
+    }
+   ],
+   "sampleInput": "[2,4]\n6"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "weights = [4,3,1,2], capacity = 4",
+   "expected": "3",
+   "frames": [
+    {
+     "caption": {
+      "en": "4 snacks, sorted by weight; each lunchbox holds two at most and 4 grams. light starts at the lightest, heavy at the heaviest.",
+      "ko": "간식 4개를 무게순으로 정렬했고, 도시락에는 최대 두 개, 4그램까지 들어갑니다. light는 가장 가벼운 간식, heavy는 가장 무거운 간식에서 시작합니다."
+     },
+     "views": {
+      "weights": {
+       "values": [
+        1,
+        2,
+        3,
+        4
+       ],
+       "spans": {
+        "left": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "unpacked",
+          "ko": "남은 간식"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "light": 0,
+        "heavy": 3
+       },
+       "marks": {
+        "dim": [],
+        "bad": [],
+        "good": [],
+        "lit": []
+       }
+      },
+      "boxes": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (도시락 한도)"
+         },
+         "value": 4
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Heaviest 4 + lightest 1 = 5 > 4: no snack fits beside 4, so it takes lunchbox 1 alone and heavy moves in.",
+      "ko": "가장 무거운 4 + 가장 가벼운 1 = 5 > 4, 4그램 간식 옆에는 어떤 간식도 안 들어가 1번 도시락에 혼자 들어가고 heavy가 안으로 옵니다."
+     },
+     "views": {
+      "weights": {
+       "values": [
+        1,
+        2,
+        3,
+        4
+       ],
+       "spans": {
+        "left": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "unpacked",
+          "ko": "남은 간식"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "light": 0,
+        "heavy": 3
+       },
+       "marks": {
+        "dim": [],
+        "bad": [
+         0
+        ],
+        "good": [
+         3
+        ],
+        "lit": []
+       }
+      },
+      "boxes": {
+       "values": [
+        "4"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (도시락 한도)"
+         },
+         "value": 4
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "weights",
+        "at": 3
+       },
+       "to": {
+        "view": "boxes",
+        "at": 0
+       },
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Heaviest 3 + lightest 1 = 4 ≤ 4: they share lunchbox 2, and both pointers move in.",
+      "ko": "가장 무거운 3 + 가장 가벼운 1 = 4 ≤ 4, 2번 도시락에 같이 들어가고 두 포인터가 모두 안으로 옵니다."
+     },
+     "views": {
+      "weights": {
+       "values": [
+        1,
+        2,
+        3,
+        4
+       ],
+       "spans": {
+        "left": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "unpacked",
+          "ko": "남은 간식"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "light": 0,
+        "heavy": 2
+       },
+       "marks": {
+        "dim": [],
+        "bad": [],
+        "good": [
+         0,
+         2
+        ],
+        "lit": []
+       }
+      },
+      "boxes": {
+       "values": [
+        "4",
+        "3 + 1"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (도시락 한도)"
+         },
+         "value": 4
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "weights",
+        "at": 2
+       },
+       "to": {
+        "view": "boxes",
+        "at": 1
+       },
+       "mark": "good"
+      },
+      {
+       "from": {
+        "view": "weights",
+        "at": 0
+       },
+       "to": {
+        "view": "boxes",
+        "at": 1
+       },
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "One snack is left, 2 grams: it takes lunchbox 3 alone.",
+      "ko": "간식이 하나 남았습니다. 2그램 간식이 3번 도시락에 혼자 들어갑니다."
+     },
+     "views": {
+      "weights": {
+       "values": [
+        1,
+        2,
+        3,
+        4
+       ],
+       "spans": {
+        "left": {
+         "from": 1,
+         "to": 1,
+         "label": {
+          "en": "unpacked",
+          "ko": "남은 간식"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "light": 1,
+        "heavy": null
+       },
+       "marks": {
+        "dim": [],
+        "bad": [],
+        "good": [
+         1
+        ],
+        "lit": []
+       }
+      },
+      "boxes": {
+       "values": [
+        "4",
+        "3 + 1",
+        "2"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (도시락 한도)"
+         },
+         "value": 4
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "weights",
+        "at": 1
+       },
+       "to": {
+        "view": "boxes",
+        "at": 2
+       },
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every snack is packed: 3 lunchboxes, 1 of them holding a pair. Answer 3.",
+      "ko": "모든 간식을 담았습니다. 도시락 3개 중 1개에 두 개씩 들어갔고, 답은 3입니다."
+     },
+     "views": {
+      "weights": {
+       "values": [
+        1,
+        2,
+        3,
+        4
+       ],
+       "spans": {
+        "left": null
+       },
+       "pointers": {
+        "light": null,
+        "heavy": null
+       },
+       "marks": {
+        "dim": [],
+        "bad": [],
+        "good": [],
+        "lit": []
+       }
+      },
+      "boxes": {
+       "values": [
+        "4",
+        "3 + 1",
+        "2"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (도시락 한도)"
+         },
+         "value": 4
+        }
+       ]
+      }
+     },
+     "answer": "3"
+    }
+   ],
+   "sampleInput": "[4,3,1,2]\n4"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "weights = [6,7,5,8], capacity = 9",
+   "expected": "4",
+   "frames": [
+    {
+     "caption": {
+      "en": "4 snacks, sorted by weight; each lunchbox holds two at most and 9 grams. light starts at the lightest, heavy at the heaviest.",
+      "ko": "간식 4개를 무게순으로 정렬했고, 도시락에는 최대 두 개, 9그램까지 들어갑니다. light는 가장 가벼운 간식, heavy는 가장 무거운 간식에서 시작합니다."
+     },
+     "views": {
+      "weights": {
+       "values": [
+        5,
+        6,
+        7,
+        8
+       ],
+       "spans": {
+        "left": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "unpacked",
+          "ko": "남은 간식"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "light": 0,
+        "heavy": 3
+       },
+       "marks": {
+        "dim": [],
+        "bad": [],
+        "good": [],
+        "lit": []
+       }
+      },
+      "boxes": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (도시락 한도)"
+         },
+         "value": 9
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Heaviest 8 + lightest 5 = 13 > 9: no snack fits beside 8, so it takes lunchbox 1 alone and heavy moves in.",
+      "ko": "가장 무거운 8 + 가장 가벼운 5 = 13 > 9, 8그램 간식 옆에는 어떤 간식도 안 들어가 1번 도시락에 혼자 들어가고 heavy가 안으로 옵니다."
+     },
+     "views": {
+      "weights": {
+       "values": [
+        5,
+        6,
+        7,
+        8
+       ],
+       "spans": {
+        "left": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "unpacked",
+          "ko": "남은 간식"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "light": 0,
+        "heavy": 3
+       },
+       "marks": {
+        "dim": [],
+        "bad": [
+         0
+        ],
+        "good": [
+         3
+        ],
+        "lit": []
+       }
+      },
+      "boxes": {
+       "values": [
+        "8"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (도시락 한도)"
+         },
+         "value": 9
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "weights",
+        "at": 3
+       },
+       "to": {
+        "view": "boxes",
+        "at": 0
+       },
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Heaviest 7 + lightest 5 = 12 > 9: no snack fits beside 7, so it takes lunchbox 2 alone and heavy moves in.",
+      "ko": "가장 무거운 7 + 가장 가벼운 5 = 12 > 9, 7그램 간식 옆에는 어떤 간식도 안 들어가 2번 도시락에 혼자 들어가고 heavy가 안으로 옵니다."
+     },
+     "views": {
+      "weights": {
+       "values": [
+        5,
+        6,
+        7,
+        8
+       ],
+       "spans": {
+        "left": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "unpacked",
+          "ko": "남은 간식"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "light": 0,
+        "heavy": 2
+       },
+       "marks": {
+        "dim": [],
+        "bad": [
+         0
+        ],
+        "good": [
+         2
+        ],
+        "lit": []
+       }
+      },
+      "boxes": {
+       "values": [
+        "8",
+        "7"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (도시락 한도)"
+         },
+         "value": 9
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "weights",
+        "at": 2
+       },
+       "to": {
+        "view": "boxes",
+        "at": 1
+       },
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Heaviest 6 + lightest 5 = 11 > 9: no snack fits beside 6, so it takes lunchbox 3 alone and heavy moves in.",
+      "ko": "가장 무거운 6 + 가장 가벼운 5 = 11 > 9, 6그램 간식 옆에는 어떤 간식도 안 들어가 3번 도시락에 혼자 들어가고 heavy가 안으로 옵니다."
+     },
+     "views": {
+      "weights": {
+       "values": [
+        5,
+        6,
+        7,
+        8
+       ],
+       "spans": {
+        "left": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "unpacked",
+          "ko": "남은 간식"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "light": 0,
+        "heavy": 1
+       },
+       "marks": {
+        "dim": [],
+        "bad": [
+         0
+        ],
+        "good": [
+         1
+        ],
+        "lit": []
+       }
+      },
+      "boxes": {
+       "values": [
+        "8",
+        "7",
+        "6"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (도시락 한도)"
+         },
+         "value": 9
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "weights",
+        "at": 1
+       },
+       "to": {
+        "view": "boxes",
+        "at": 2
+       },
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "One snack is left, 5 grams: it takes lunchbox 4 alone.",
+      "ko": "간식이 하나 남았습니다. 5그램 간식이 4번 도시락에 혼자 들어갑니다."
+     },
+     "views": {
+      "weights": {
+       "values": [
+        5,
+        6,
+        7,
+        8
+       ],
+       "spans": {
+        "left": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "unpacked",
+          "ko": "남은 간식"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "light": 0,
+        "heavy": null
+       },
+       "marks": {
+        "dim": [],
+        "bad": [],
+        "good": [
+         0
+        ],
+        "lit": []
+       }
+      },
+      "boxes": {
+       "values": [
+        "8",
+        "7",
+        "6",
+        "5"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (도시락 한도)"
+         },
+         "value": 9
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "weights",
+        "at": 0
+       },
+       "to": {
+        "view": "boxes",
+        "at": 3
+       },
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every snack is packed: 4 lunchboxes, no two snacks could share one. Answer 4.",
+      "ko": "모든 간식을 담았습니다. 두 간식이 함께 들어간 도시락 없이 4개를 썼고, 답은 4입니다."
+     },
+     "views": {
+      "weights": {
+       "values": [
+        5,
+        6,
+        7,
+        8
+       ],
+       "spans": {
+        "left": null
+       },
+       "pointers": {
+        "light": null,
+        "heavy": null
+       },
+       "marks": {
+        "dim": [],
+        "bad": [],
+        "good": [],
+        "lit": []
+       }
+      },
+      "boxes": {
+       "values": [
+        "8",
+        "7",
+        "6",
+        "5"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "capacity",
+          "ko": "capacity (도시락 한도)"
+         },
+         "value": 9
+        }
+       ]
+      }
+     },
+     "answer": "4"
+    }
+   ],
+   "sampleInput": "[6,7,5,8]\n9"
+  }
+ ]
+}

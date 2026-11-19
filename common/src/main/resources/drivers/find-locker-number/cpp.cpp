@@ -7,19 +7,19 @@ using namespace std;
 {USER_CODE}
 
 int main() {
-    string numsLine;
-    getline(cin, numsLine);
+    string lockersLine;
+    getline(cin, lockersLine);
     // Parse [x,y,z] -> vector<int>
-    string inner = numsLine.substr(1, numsLine.size() - 2);
-    vector<int> nums;
+    string inner = lockersLine.substr(1, lockersLine.size() - 2);
+    vector<int> lockers;
     stringstream ss(inner);
     string token;
     while (getline(ss, token, ',')) {
-        nums.push_back(stoi(token));
+        lockers.push_back(stoi(token));
     }
     int target;
     cin >> target;
-    int result = Solution().locateCallNumber(nums, target);
+    int result = Solution().findLocker(lockers, target);
     cout << result << endl;
     return 0;
 }

@@ -1,5 +1,5 @@
 class Solution:
-    def tallyPlantedRegions(self, board: list[list[str]]) -> int:
+    def countClusters(self, board: list[list[str]]) -> int:
         rows = len(board)
         cols = len(board[0]) if board else 0
         seen: set[tuple[int, int]] = set()

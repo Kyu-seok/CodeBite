@@ -2,5 +2,5 @@
 
 import json
 tokens = json.loads(input())
-result = Solution().foldBaleOps(tokens)
+result = Solution().evalPostfix(tokens)
 print(result)

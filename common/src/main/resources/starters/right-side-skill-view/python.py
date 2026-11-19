@@ -7,6 +7,6 @@ class TreeNode:
         self.right = right
 
 class Solution:
-    def captureDockSilhouette(self, root: Optional[TreeNode]) -> list[int]:
+    def rightSideView(self, root: Optional[TreeNode]) -> list[int]:
         # Write your solution here
         pass

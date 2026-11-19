@@ -5,25 +5,33 @@
   "ko": "가장 싼 배송 경로"
  },
  "approach": {
-  "en": "Bellman-Ford limited to maxHops + 1 rounds: each round reads only last round's costs, so round r finds the cheapest route of at most r legs.",
-  "ko": "maxHops + 1번으로 제한한 벨만-포드: 각 라운드는 지난 라운드의 비용만 읽으므로, r번째 라운드는 구간 r개 이하로 가는 가장 싼 경로를 찾습니다."
+  "en": "Bellman-Ford limited to maxStops + 1 rounds: each round reads only last round's costs, so round r finds the cheapest route of at most r legs.",
+  "ko": "maxStops + 1번으로 제한한 벨만-포드: 각 라운드는 지난 라운드의 비용만 읽으므로, r번째 라운드는 구간 r개 이하로 가는 가장 싼 경로를 찾습니다."
  },
  "views": [
   {
    "id": "cafes",
    "type": "graph",
    "title": {
-    "en": "cafes and links (minutes)",
-    "ko": "카페와 링크 (분)"
+    "en": "cafes and links (cost)",
+    "ko": "카페와 링크 (비용)"
    },
    "directed": true
   },
   {
-   "id": "costs",
-   "type": "table",
+   "id": "last",
+   "type": "array",
    "title": {
-    "en": "cheapest minutes so far",
-    "ko": "지금까지의 최소 분"
+    "en": "last round (cost, by cafe)",
+    "ko": "지난 라운드 (비용, 카페별)"
+   }
+  },
+  {
+   "id": "now",
+   "type": "array",
+   "title": {
+    "en": "this round (cost, by cafe)",
+    "ko": "이번 라운드 (비용, 카페별)"
    }
   },
   {
@@ -37,13 +45,13 @@
     "en": "Example 1",
     "ko": "예시 1"
    },
-   "input": "n = 5, links = [[0,1,50],[1,2,40],[0,2,200],[2,3,30],[3,4,20],[1,3,150]], src = 0, dst = 4, maxHops = 2",
+   "input": "n = 5, links = [[0,1,50],[1,2,40],[0,2,200],[2,3,30],[3,4,20],[1,3,150]], src = 0, dst = 4, maxStops = 2",
    "expected": "220",
    "frames": [
     {
      "caption": {
-      "en": "Before any leg only cafe 0 is reached: 0 minutes there, ∞ elsewhere. maxHops = 2 allows 3 legs, so 3 rounds, each adding at most one leg.",
-      "ko": "아직 구간을 하나도 쓰지 않았으니 카페 0만 0분이고 나머지는 ∞입니다. maxHops = 2일 때 구간을 3개까지 쓸 수 있으므로, 구간을 하나씩 더하는 라운드를 3번 돕니다."
+      "en": "Before any leg only cafe 0 is reached: cost 0 there, ∞ elsewhere. maxStops = 2 allows 3 legs, so 3 rounds, each adding at most one leg.",
+      "ko": "아직 구간을 하나도 쓰지 않았으니 카페 0만 비용 0이고 나머지는 ∞입니다. maxStops = 2일 때 구간을 3개까지 쓸 수 있으므로, 구간을 하나씩 더하는 라운드를 3번 돕니다."
      },
      "views": {
       "cafes": {
@@ -67,60 +75,25 @@
         "path": []
        }
       },
-      "costs": {
-       "columns": [
-        {
-         "en": "cafe 0",
-         "ko": "카페 0"
-        },
-        {
-         "en": "cafe 1",
-         "ko": "카페 1"
-        },
-        {
-         "en": "cafe 2",
-         "ko": "카페 2"
-        },
-        {
-         "en": "cafe 3",
-         "ko": "카페 3"
-        },
-        {
-         "en": "cafe 4",
-         "ko": "카페 4"
-        }
+      "last": {
+       "values": [
+        0,
+        "∞",
+        "∞",
+        "∞",
+        "∞"
        ],
-       "rows": [
-        {
-         "label": {
-          "en": "last round",
-          "ko": "지난 라운드"
-         },
-         "cells": [
-          0,
-          "∞",
-          "∞",
-          "∞",
-          "∞"
-         ]
-        },
-        {
-         "label": {
-          "en": "this round",
-          "ko": "이번 라운드"
-         },
-         "cells": [
-          0,
-          "∞",
-          "∞",
-          "∞",
-          "∞"
-         ]
-        }
+       "marks": {}
+      },
+      "now": {
+       "values": [
+        0,
+        "∞",
+        "∞",
+        "∞",
+        "∞"
        ],
-       "marks": {
-        "path": []
-       }
+       "marks": {}
       },
       "state": {
        "items": [
@@ -169,60 +142,25 @@
         "path": []
        }
       },
-      "costs": {
-       "columns": [
-        {
-         "en": "cafe 0",
-         "ko": "카페 0"
-        },
-        {
-         "en": "cafe 1",
-         "ko": "카페 1"
-        },
-        {
-         "en": "cafe 2",
-         "ko": "카페 2"
-        },
-        {
-         "en": "cafe 3",
-         "ko": "카페 3"
-        },
-        {
-         "en": "cafe 4",
-         "ko": "카페 4"
-        }
+      "last": {
+       "values": [
+        0,
+        "∞",
+        "∞",
+        "∞",
+        "∞"
        ],
-       "rows": [
-        {
-         "label": {
-          "en": "last round",
-          "ko": "지난 라운드"
-         },
-         "cells": [
-          0,
-          "∞",
-          "∞",
-          "∞",
-          "∞"
-         ]
-        },
-        {
-         "label": {
-          "en": "this round",
-          "ko": "이번 라운드"
-         },
-         "cells": [
-          0,
-          "∞",
-          "∞",
-          "∞",
-          "∞"
-         ]
-        }
+       "marks": {}
+      },
+      "now": {
+       "values": [
+        0,
+        "∞",
+        "∞",
+        "∞",
+        "∞"
        ],
-       "marks": {
-        "path": []
-       }
+       "marks": {}
       },
       "state": {
        "items": [
@@ -242,12 +180,24 @@
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "now",
+        "at": 0
+       },
+       "to": {
+        "view": "last",
+        "at": 0
+       }
+      }
+     ]
     },
     {
      "caption": {
       "en": "Link 0→1: 0 + 50 = 50 beats ∞, so cafe 1 costs 50 now.",
-      "ko": "링크 0→1: 0 + 50 = 50분이 기존 ∞보다 짧으므로 카페 1의 비용을 50분으로 바꿉니다."
+      "ko": "링크 0→1: 0 + 50 = 50. 기존 값 ∞보다 작으므로 카페 1의 비용을 이 값으로 바꿉니다."
      },
      "views": {
       "cafes": {
@@ -279,70 +229,31 @@
         ]
        }
       },
-      "costs": {
-       "columns": [
-        {
-         "en": "cafe 0",
-         "ko": "카페 0"
-        },
-        {
-         "en": "cafe 1",
-         "ko": "카페 1"
-        },
-        {
-         "en": "cafe 2",
-         "ko": "카페 2"
-        },
-        {
-         "en": "cafe 3",
-         "ko": "카페 3"
-        },
-        {
-         "en": "cafe 4",
-         "ko": "카페 4"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "last round",
-          "ko": "지난 라운드"
-         },
-         "cells": [
-          0,
-          "∞",
-          "∞",
-          "∞",
-          "∞"
-         ]
-        },
-        {
-         "label": {
-          "en": "this round",
-          "ko": "이번 라운드"
-         },
-         "cells": [
-          0,
-          50,
-          "∞",
-          "∞",
-          "∞"
-         ]
-        }
+      "last": {
+       "values": [
+        0,
+        "∞",
+        "∞",
+        "∞",
+        "∞"
        ],
        "marks": {
-        "path": [],
         "lit": [
-         [
-          0,
-          0
-         ]
-        ],
+         0
+        ]
+       }
+      },
+      "now": {
+       "values": [
+        0,
+        50,
+        "∞",
+        "∞",
+        "∞"
+       ],
+       "marks": {
         "good": [
-         [
-          1,
-          1
-         ]
+         1
         ]
        }
       },
@@ -364,12 +275,41 @@
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "last",
+        "at": 0
+       },
+       "to": {
+        "view": "cafes",
+        "at": [
+         0,
+         1
+        ]
+       }
+      },
+      {
+       "from": {
+        "view": "cafes",
+        "at": [
+         0,
+         1
+        ]
+       },
+       "to": {
+        "view": "now",
+        "at": 1
+       },
+       "value": 50
+      }
+     ]
     },
     {
      "caption": {
       "en": "Link 1→2: cafe 1 was ∞ last round. Its 50 is from this round, and using it would chain two legs in one round, so skip.",
-      "ko": "링크 1→2: 카페 1의 지난 라운드 비용은 ∞입니다. 지금 보이는 50분은 이번 라운드에 생긴 값이라, 쓰면 한 라운드에 구간 두 개를 잇게 되므로 건너뜁니다."
+      "ko": "링크 1→2: 카페 1의 지난 라운드 비용은 ∞입니다. 지금 보이는 값(50)은 이번 라운드에 생긴 값이라, 쓰면 한 라운드에 구간 두 개를 잇게 되므로 건너뜁니다."
      },
      "views": {
       "cafes": {
@@ -398,66 +338,29 @@
         ]
        }
       },
-      "costs": {
-       "columns": [
-        {
-         "en": "cafe 0",
-         "ko": "카페 0"
-        },
-        {
-         "en": "cafe 1",
-         "ko": "카페 1"
-        },
-        {
-         "en": "cafe 2",
-         "ko": "카페 2"
-        },
-        {
-         "en": "cafe 3",
-         "ko": "카페 3"
-        },
-        {
-         "en": "cafe 4",
-         "ko": "카페 4"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "last round",
-          "ko": "지난 라운드"
-         },
-         "cells": [
-          0,
-          "∞",
-          "∞",
-          "∞",
-          "∞"
-         ]
-        },
-        {
-         "label": {
-          "en": "this round",
-          "ko": "이번 라운드"
-         },
-         "cells": [
-          0,
-          50,
-          "∞",
-          "∞",
-          "∞"
-         ]
-        }
+      "last": {
+       "values": [
+        0,
+        "∞",
+        "∞",
+        "∞",
+        "∞"
        ],
        "marks": {
-        "path": [],
         "lit": [
-         [
-          0,
-          1
-         ]
+         1
         ]
        }
+      },
+      "now": {
+       "values": [
+        0,
+        50,
+        "∞",
+        "∞",
+        "∞"
+       ],
+       "marks": {}
       },
       "state": {
        "items": [
@@ -482,7 +385,7 @@
     {
      "caption": {
       "en": "Link 0→2: 0 + 200 = 200 beats ∞, so cafe 2 costs 200 now.",
-      "ko": "링크 0→2: 0 + 200 = 200분이 기존 ∞보다 짧으므로 카페 2의 비용을 200분으로 바꿉니다."
+      "ko": "링크 0→2: 0 + 200 = 200. 기존 값 ∞보다 작으므로 카페 2의 비용을 이 값으로 바꿉니다."
      },
      "views": {
       "cafes": {
@@ -513,70 +416,31 @@
         ]
        }
       },
-      "costs": {
-       "columns": [
-        {
-         "en": "cafe 0",
-         "ko": "카페 0"
-        },
-        {
-         "en": "cafe 1",
-         "ko": "카페 1"
-        },
-        {
-         "en": "cafe 2",
-         "ko": "카페 2"
-        },
-        {
-         "en": "cafe 3",
-         "ko": "카페 3"
-        },
-        {
-         "en": "cafe 4",
-         "ko": "카페 4"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "last round",
-          "ko": "지난 라운드"
-         },
-         "cells": [
-          0,
-          "∞",
-          "∞",
-          "∞",
-          "∞"
-         ]
-        },
-        {
-         "label": {
-          "en": "this round",
-          "ko": "이번 라운드"
-         },
-         "cells": [
-          0,
-          50,
-          200,
-          "∞",
-          "∞"
-         ]
-        }
+      "last": {
+       "values": [
+        0,
+        "∞",
+        "∞",
+        "∞",
+        "∞"
        ],
        "marks": {
-        "path": [],
         "lit": [
-         [
-          0,
-          0
-         ]
-        ],
+         0
+        ]
+       }
+      },
+      "now": {
+       "values": [
+        0,
+        50,
+        200,
+        "∞",
+        "∞"
+       ],
+       "marks": {
         "good": [
-         [
-          1,
-          2
-         ]
+         2
         ]
        }
       },
@@ -598,12 +462,41 @@
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "last",
+        "at": 0
+       },
+       "to": {
+        "view": "cafes",
+        "at": [
+         0,
+         2
+        ]
+       }
+      },
+      {
+       "from": {
+        "view": "cafes",
+        "at": [
+         0,
+         2
+        ]
+       },
+       "to": {
+        "view": "now",
+        "at": 2
+       },
+       "value": 200
+      }
+     ]
     },
     {
      "caption": {
       "en": "Link 2→3: cafe 2 was ∞ last round. Its 200 is from this round, and using it would chain two legs in one round, so skip.",
-      "ko": "링크 2→3: 카페 2의 지난 라운드 비용은 ∞입니다. 지금 보이는 200분은 이번 라운드에 생긴 값이라, 쓰면 한 라운드에 구간 두 개를 잇게 되므로 건너뜁니다."
+      "ko": "링크 2→3: 카페 2의 지난 라운드 비용은 ∞입니다. 지금 보이는 값(200)은 이번 라운드에 생긴 값이라, 쓰면 한 라운드에 구간 두 개를 잇게 되므로 건너뜁니다."
      },
      "views": {
       "cafes": {
@@ -631,66 +524,29 @@
         ]
        }
       },
-      "costs": {
-       "columns": [
-        {
-         "en": "cafe 0",
-         "ko": "카페 0"
-        },
-        {
-         "en": "cafe 1",
-         "ko": "카페 1"
-        },
-        {
-         "en": "cafe 2",
-         "ko": "카페 2"
-        },
-        {
-         "en": "cafe 3",
-         "ko": "카페 3"
-        },
-        {
-         "en": "cafe 4",
-         "ko": "카페 4"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "last round",
-          "ko": "지난 라운드"
-         },
-         "cells": [
-          0,
-          "∞",
-          "∞",
-          "∞",
-          "∞"
-         ]
-        },
-        {
-         "label": {
-          "en": "this round",
-          "ko": "이번 라운드"
-         },
-         "cells": [
-          0,
-          50,
-          200,
-          "∞",
-          "∞"
-         ]
-        }
+      "last": {
+       "values": [
+        0,
+        "∞",
+        "∞",
+        "∞",
+        "∞"
        ],
        "marks": {
-        "path": [],
         "lit": [
-         [
-          0,
-          2
-         ]
+         2
         ]
        }
+      },
+      "now": {
+       "values": [
+        0,
+        50,
+        200,
+        "∞",
+        "∞"
+       ],
+       "marks": {}
       },
       "state": {
        "items": [
@@ -743,66 +599,29 @@
         ]
        }
       },
-      "costs": {
-       "columns": [
-        {
-         "en": "cafe 0",
-         "ko": "카페 0"
-        },
-        {
-         "en": "cafe 1",
-         "ko": "카페 1"
-        },
-        {
-         "en": "cafe 2",
-         "ko": "카페 2"
-        },
-        {
-         "en": "cafe 3",
-         "ko": "카페 3"
-        },
-        {
-         "en": "cafe 4",
-         "ko": "카페 4"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "last round",
-          "ko": "지난 라운드"
-         },
-         "cells": [
-          0,
-          "∞",
-          "∞",
-          "∞",
-          "∞"
-         ]
-        },
-        {
-         "label": {
-          "en": "this round",
-          "ko": "이번 라운드"
-         },
-         "cells": [
-          0,
-          50,
-          200,
-          "∞",
-          "∞"
-         ]
-        }
+      "last": {
+       "values": [
+        0,
+        "∞",
+        "∞",
+        "∞",
+        "∞"
        ],
        "marks": {
-        "path": [],
         "lit": [
-         [
-          0,
-          3
-         ]
+         3
         ]
        }
+      },
+      "now": {
+       "values": [
+        0,
+        50,
+        200,
+        "∞",
+        "∞"
+       ],
+       "marks": {}
       },
       "state": {
        "items": [
@@ -827,7 +646,7 @@
     {
      "caption": {
       "en": "Link 1→3: cafe 1 was ∞ last round. Its 50 is from this round, and using it would chain two legs in one round, so skip.",
-      "ko": "링크 1→3: 카페 1의 지난 라운드 비용은 ∞입니다. 지금 보이는 50분은 이번 라운드에 생긴 값이라, 쓰면 한 라운드에 구간 두 개를 잇게 되므로 건너뜁니다."
+      "ko": "링크 1→3: 카페 1의 지난 라운드 비용은 ∞입니다. 지금 보이는 값(50)은 이번 라운드에 생긴 값이라, 쓰면 한 라운드에 구간 두 개를 잇게 되므로 건너뜁니다."
      },
      "views": {
       "cafes": {
@@ -855,66 +674,29 @@
         ]
        }
       },
-      "costs": {
-       "columns": [
-        {
-         "en": "cafe 0",
-         "ko": "카페 0"
-        },
-        {
-         "en": "cafe 1",
-         "ko": "카페 1"
-        },
-        {
-         "en": "cafe 2",
-         "ko": "카페 2"
-        },
-        {
-         "en": "cafe 3",
-         "ko": "카페 3"
-        },
-        {
-         "en": "cafe 4",
-         "ko": "카페 4"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "last round",
-          "ko": "지난 라운드"
-         },
-         "cells": [
-          0,
-          "∞",
-          "∞",
-          "∞",
-          "∞"
-         ]
-        },
-        {
-         "label": {
-          "en": "this round",
-          "ko": "이번 라운드"
-         },
-         "cells": [
-          0,
-          50,
-          200,
-          "∞",
-          "∞"
-         ]
-        }
+      "last": {
+       "values": [
+        0,
+        "∞",
+        "∞",
+        "∞",
+        "∞"
        ],
        "marks": {
-        "path": [],
         "lit": [
-         [
-          0,
-          1
-         ]
+         1
         ]
        }
+      },
+      "now": {
+       "values": [
+        0,
+        50,
+        200,
+        "∞",
+        "∞"
+       ],
+       "marks": {}
       },
       "state": {
        "items": [
@@ -961,60 +743,25 @@
         "path": []
        }
       },
-      "costs": {
-       "columns": [
-        {
-         "en": "cafe 0",
-         "ko": "카페 0"
-        },
-        {
-         "en": "cafe 1",
-         "ko": "카페 1"
-        },
-        {
-         "en": "cafe 2",
-         "ko": "카페 2"
-        },
-        {
-         "en": "cafe 3",
-         "ko": "카페 3"
-        },
-        {
-         "en": "cafe 4",
-         "ko": "카페 4"
-        }
+      "last": {
+       "values": [
+        0,
+        50,
+        200,
+        "∞",
+        "∞"
        ],
-       "rows": [
-        {
-         "label": {
-          "en": "last round",
-          "ko": "지난 라운드"
-         },
-         "cells": [
-          0,
-          50,
-          200,
-          "∞",
-          "∞"
-         ]
-        },
-        {
-         "label": {
-          "en": "this round",
-          "ko": "이번 라운드"
-         },
-         "cells": [
-          0,
-          50,
-          200,
-          "∞",
-          "∞"
-         ]
-        }
+       "marks": {}
+      },
+      "now": {
+       "values": [
+        0,
+        50,
+        200,
+        "∞",
+        "∞"
        ],
-       "marks": {
-        "path": []
-       }
+       "marks": {}
       },
       "state": {
        "items": [
@@ -1034,12 +781,44 @@
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "now",
+        "at": 0
+       },
+       "to": {
+        "view": "last",
+        "at": 0
+       }
+      },
+      {
+       "from": {
+        "view": "now",
+        "at": 1
+       },
+       "to": {
+        "view": "last",
+        "at": 1
+       }
+      },
+      {
+       "from": {
+        "view": "now",
+        "at": 2
+       },
+       "to": {
+        "view": "last",
+        "at": 2
+       }
+      }
+     ]
     },
     {
      "caption": {
       "en": "Link 0→1: 0 + 50 = 50 doesn't beat 50, so cafe 1 keeps it.",
-      "ko": "링크 0→1: 0 + 50 = 50분이 기존 50보다 짧지 않으므로 카페 1의 비용은 그대로입니다."
+      "ko": "링크 0→1: 0 + 50 = 50. 기존 값 50보다 작지 않으므로 카페 1의 비용은 그대로입니다."
      },
      "views": {
       "cafes": {
@@ -1067,66 +846,29 @@
         ]
        }
       },
-      "costs": {
-       "columns": [
-        {
-         "en": "cafe 0",
-         "ko": "카페 0"
-        },
-        {
-         "en": "cafe 1",
-         "ko": "카페 1"
-        },
-        {
-         "en": "cafe 2",
-         "ko": "카페 2"
-        },
-        {
-         "en": "cafe 3",
-         "ko": "카페 3"
-        },
-        {
-         "en": "cafe 4",
-         "ko": "카페 4"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "last round",
-          "ko": "지난 라운드"
-         },
-         "cells": [
-          0,
-          50,
-          200,
-          "∞",
-          "∞"
-         ]
-        },
-        {
-         "label": {
-          "en": "this round",
-          "ko": "이번 라운드"
-         },
-         "cells": [
-          0,
-          50,
-          200,
-          "∞",
-          "∞"
-         ]
-        }
+      "last": {
+       "values": [
+        0,
+        50,
+        200,
+        "∞",
+        "∞"
        ],
        "marks": {
-        "path": [],
         "lit": [
-         [
-          0,
-          0
-         ]
+         0
         ]
        }
+      },
+      "now": {
+       "values": [
+        0,
+        50,
+        200,
+        "∞",
+        "∞"
+       ],
+       "marks": {}
       },
       "state": {
        "items": [
@@ -1146,12 +888,37 @@
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "last",
+        "at": 0
+       },
+       "to": {
+        "view": "cafes",
+        "at": [
+         0,
+         1
+        ]
+       }
+      },
+      {
+       "from": {
+        "view": "cafes",
+        "at": [
+         0,
+         1
+        ]
+       },
+       "value": 50
+      }
+     ]
     },
     {
      "caption": {
       "en": "Link 1→2: 50 + 40 = 90 beats 200, so cafe 2 costs 90 now.",
-      "ko": "링크 1→2: 50 + 40 = 90분이 기존 200보다 짧으므로 카페 2의 비용을 90분으로 바꿉니다."
+      "ko": "링크 1→2: 50 + 40 = 90. 기존 값 200보다 작으므로 카페 2의 비용을 이 값으로 바꿉니다."
      },
      "views": {
       "cafes": {
@@ -1182,70 +949,31 @@
         ]
        }
       },
-      "costs": {
-       "columns": [
-        {
-         "en": "cafe 0",
-         "ko": "카페 0"
-        },
-        {
-         "en": "cafe 1",
-         "ko": "카페 1"
-        },
-        {
-         "en": "cafe 2",
-         "ko": "카페 2"
-        },
-        {
-         "en": "cafe 3",
-         "ko": "카페 3"
-        },
-        {
-         "en": "cafe 4",
-         "ko": "카페 4"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "last round",
-          "ko": "지난 라운드"
-         },
-         "cells": [
-          0,
-          50,
-          200,
-          "∞",
-          "∞"
-         ]
-        },
-        {
-         "label": {
-          "en": "this round",
-          "ko": "이번 라운드"
-         },
-         "cells": [
-          0,
-          50,
-          90,
-          "∞",
-          "∞"
-         ]
-        }
+      "last": {
+       "values": [
+        0,
+        50,
+        200,
+        "∞",
+        "∞"
        ],
        "marks": {
-        "path": [],
         "lit": [
-         [
-          0,
-          1
-         ]
-        ],
+         1
+        ]
+       }
+      },
+      "now": {
+       "values": [
+        0,
+        50,
+        90,
+        "∞",
+        "∞"
+       ],
+       "marks": {
         "good": [
-         [
-          1,
-          2
-         ]
+         2
         ]
        }
       },
@@ -1267,12 +995,41 @@
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "last",
+        "at": 1
+       },
+       "to": {
+        "view": "cafes",
+        "at": [
+         1,
+         2
+        ]
+       }
+      },
+      {
+       "from": {
+        "view": "cafes",
+        "at": [
+         1,
+         2
+        ]
+       },
+       "to": {
+        "view": "now",
+        "at": 2
+       },
+       "value": 90
+      }
+     ]
     },
     {
      "caption": {
       "en": "Link 0→2: 0 + 200 = 200 doesn't beat 90, so cafe 2 keeps it.",
-      "ko": "링크 0→2: 0 + 200 = 200분이 기존 90보다 짧지 않으므로 카페 2의 비용은 그대로입니다."
+      "ko": "링크 0→2: 0 + 200 = 200. 기존 값 90보다 작지 않으므로 카페 2의 비용은 그대로입니다."
      },
      "views": {
       "cafes": {
@@ -1300,66 +1057,29 @@
         ]
        }
       },
-      "costs": {
-       "columns": [
-        {
-         "en": "cafe 0",
-         "ko": "카페 0"
-        },
-        {
-         "en": "cafe 1",
-         "ko": "카페 1"
-        },
-        {
-         "en": "cafe 2",
-         "ko": "카페 2"
-        },
-        {
-         "en": "cafe 3",
-         "ko": "카페 3"
-        },
-        {
-         "en": "cafe 4",
-         "ko": "카페 4"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "last round",
-          "ko": "지난 라운드"
-         },
-         "cells": [
-          0,
-          50,
-          200,
-          "∞",
-          "∞"
-         ]
-        },
-        {
-         "label": {
-          "en": "this round",
-          "ko": "이번 라운드"
-         },
-         "cells": [
-          0,
-          50,
-          90,
-          "∞",
-          "∞"
-         ]
-        }
+      "last": {
+       "values": [
+        0,
+        50,
+        200,
+        "∞",
+        "∞"
        ],
        "marks": {
-        "path": [],
         "lit": [
-         [
-          0,
-          0
-         ]
+         0
         ]
        }
+      },
+      "now": {
+       "values": [
+        0,
+        50,
+        90,
+        "∞",
+        "∞"
+       ],
+       "marks": {}
       },
       "state": {
        "items": [
@@ -1379,12 +1099,37 @@
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "last",
+        "at": 0
+       },
+       "to": {
+        "view": "cafes",
+        "at": [
+         0,
+         2
+        ]
+       }
+      },
+      {
+       "from": {
+        "view": "cafes",
+        "at": [
+         0,
+         2
+        ]
+       },
+       "value": 200
+      }
+     ]
     },
     {
      "caption": {
       "en": "Link 2→3: 200 + 30 = 230 beats ∞, so cafe 3 costs 230 now.",
-      "ko": "링크 2→3: 200 + 30 = 230분이 기존 ∞보다 짧으므로 카페 3의 비용을 230분으로 바꿉니다."
+      "ko": "링크 2→3: 200 + 30 = 230. 기존 값 ∞보다 작으므로 카페 3의 비용을 이 값으로 바꿉니다."
      },
      "views": {
       "cafes": {
@@ -1414,70 +1159,31 @@
         ]
        }
       },
-      "costs": {
-       "columns": [
-        {
-         "en": "cafe 0",
-         "ko": "카페 0"
-        },
-        {
-         "en": "cafe 1",
-         "ko": "카페 1"
-        },
-        {
-         "en": "cafe 2",
-         "ko": "카페 2"
-        },
-        {
-         "en": "cafe 3",
-         "ko": "카페 3"
-        },
-        {
-         "en": "cafe 4",
-         "ko": "카페 4"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "last round",
-          "ko": "지난 라운드"
-         },
-         "cells": [
-          0,
-          50,
-          200,
-          "∞",
-          "∞"
-         ]
-        },
-        {
-         "label": {
-          "en": "this round",
-          "ko": "이번 라운드"
-         },
-         "cells": [
-          0,
-          50,
-          90,
-          230,
-          "∞"
-         ]
-        }
+      "last": {
+       "values": [
+        0,
+        50,
+        200,
+        "∞",
+        "∞"
        ],
        "marks": {
-        "path": [],
         "lit": [
-         [
-          0,
-          2
-         ]
-        ],
+         2
+        ]
+       }
+      },
+      "now": {
+       "values": [
+        0,
+        50,
+        90,
+        230,
+        "∞"
+       ],
+       "marks": {
         "good": [
-         [
-          1,
-          3
-         ]
+         3
         ]
        }
       },
@@ -1499,12 +1205,41 @@
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "last",
+        "at": 2
+       },
+       "to": {
+        "view": "cafes",
+        "at": [
+         2,
+         3
+        ]
+       }
+      },
+      {
+       "from": {
+        "view": "cafes",
+        "at": [
+         2,
+         3
+        ]
+       },
+       "to": {
+        "view": "now",
+        "at": 3
+       },
+       "value": 230
+      }
+     ]
     },
     {
      "caption": {
       "en": "Link 3→4: cafe 3 was ∞ last round. Its 230 is from this round, and using it would chain two legs in one round, so skip.",
-      "ko": "링크 3→4: 카페 3의 지난 라운드 비용은 ∞입니다. 지금 보이는 230분은 이번 라운드에 생긴 값이라, 쓰면 한 라운드에 구간 두 개를 잇게 되므로 건너뜁니다."
+      "ko": "링크 3→4: 카페 3의 지난 라운드 비용은 ∞입니다. 지금 보이는 값(230)은 이번 라운드에 생긴 값이라, 쓰면 한 라운드에 구간 두 개를 잇게 되므로 건너뜁니다."
      },
      "views": {
       "cafes": {
@@ -1531,66 +1266,29 @@
         ]
        }
       },
-      "costs": {
-       "columns": [
-        {
-         "en": "cafe 0",
-         "ko": "카페 0"
-        },
-        {
-         "en": "cafe 1",
-         "ko": "카페 1"
-        },
-        {
-         "en": "cafe 2",
-         "ko": "카페 2"
-        },
-        {
-         "en": "cafe 3",
-         "ko": "카페 3"
-        },
-        {
-         "en": "cafe 4",
-         "ko": "카페 4"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "last round",
-          "ko": "지난 라운드"
-         },
-         "cells": [
-          0,
-          50,
-          200,
-          "∞",
-          "∞"
-         ]
-        },
-        {
-         "label": {
-          "en": "this round",
-          "ko": "이번 라운드"
-         },
-         "cells": [
-          0,
-          50,
-          90,
-          230,
-          "∞"
-         ]
-        }
+      "last": {
+       "values": [
+        0,
+        50,
+        200,
+        "∞",
+        "∞"
        ],
        "marks": {
-        "path": [],
         "lit": [
-         [
-          0,
-          3
-         ]
+         3
         ]
        }
+      },
+      "now": {
+       "values": [
+        0,
+        50,
+        90,
+        230,
+        "∞"
+       ],
+       "marks": {}
       },
       "state": {
        "items": [
@@ -1615,7 +1313,7 @@
     {
      "caption": {
       "en": "Link 1→3: 50 + 150 = 200 beats 230, so cafe 3 costs 200 now.",
-      "ko": "링크 1→3: 50 + 150 = 200분이 기존 230보다 짧으므로 카페 3의 비용을 200분으로 바꿉니다."
+      "ko": "링크 1→3: 50 + 150 = 200. 기존 값 230보다 작으므로 카페 3의 비용을 이 값으로 바꿉니다."
      },
      "views": {
       "cafes": {
@@ -1645,70 +1343,31 @@
         ]
        }
       },
-      "costs": {
-       "columns": [
-        {
-         "en": "cafe 0",
-         "ko": "카페 0"
-        },
-        {
-         "en": "cafe 1",
-         "ko": "카페 1"
-        },
-        {
-         "en": "cafe 2",
-         "ko": "카페 2"
-        },
-        {
-         "en": "cafe 3",
-         "ko": "카페 3"
-        },
-        {
-         "en": "cafe 4",
-         "ko": "카페 4"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "last round",
-          "ko": "지난 라운드"
-         },
-         "cells": [
-          0,
-          50,
-          200,
-          "∞",
-          "∞"
-         ]
-        },
-        {
-         "label": {
-          "en": "this round",
-          "ko": "이번 라운드"
-         },
-         "cells": [
-          0,
-          50,
-          90,
-          200,
-          "∞"
-         ]
-        }
+      "last": {
+       "values": [
+        0,
+        50,
+        200,
+        "∞",
+        "∞"
        ],
        "marks": {
-        "path": [],
         "lit": [
-         [
-          0,
-          1
-         ]
-        ],
+         1
+        ]
+       }
+      },
+      "now": {
+       "values": [
+        0,
+        50,
+        90,
+        200,
+        "∞"
+       ],
+       "marks": {
         "good": [
-         [
-          1,
-          3
-         ]
+         3
         ]
        }
       },
@@ -1730,7 +1389,36 @@
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "last",
+        "at": 1
+       },
+       "to": {
+        "view": "cafes",
+        "at": [
+         1,
+         3
+        ]
+       }
+      },
+      {
+       "from": {
+        "view": "cafes",
+        "at": [
+         1,
+         3
+        ]
+       },
+       "to": {
+        "view": "now",
+        "at": 3
+       },
+       "value": 200
+      }
+     ]
     },
     {
      "caption": {
@@ -1756,60 +1444,25 @@
         "path": []
        }
       },
-      "costs": {
-       "columns": [
-        {
-         "en": "cafe 0",
-         "ko": "카페 0"
-        },
-        {
-         "en": "cafe 1",
-         "ko": "카페 1"
-        },
-        {
-         "en": "cafe 2",
-         "ko": "카페 2"
-        },
-        {
-         "en": "cafe 3",
-         "ko": "카페 3"
-        },
-        {
-         "en": "cafe 4",
-         "ko": "카페 4"
-        }
+      "last": {
+       "values": [
+        0,
+        50,
+        90,
+        200,
+        "∞"
        ],
-       "rows": [
-        {
-         "label": {
-          "en": "last round",
-          "ko": "지난 라운드"
-         },
-         "cells": [
-          0,
-          50,
-          90,
-          200,
-          "∞"
-         ]
-        },
-        {
-         "label": {
-          "en": "this round",
-          "ko": "이번 라운드"
-         },
-         "cells": [
-          0,
-          50,
-          90,
-          200,
-          "∞"
-         ]
-        }
+       "marks": {}
+      },
+      "now": {
+       "values": [
+        0,
+        50,
+        90,
+        200,
+        "∞"
        ],
-       "marks": {
-        "path": []
-       }
+       "marks": {}
       },
       "state": {
        "items": [
@@ -1829,12 +1482,54 @@
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "now",
+        "at": 0
+       },
+       "to": {
+        "view": "last",
+        "at": 0
+       }
+      },
+      {
+       "from": {
+        "view": "now",
+        "at": 1
+       },
+       "to": {
+        "view": "last",
+        "at": 1
+       }
+      },
+      {
+       "from": {
+        "view": "now",
+        "at": 2
+       },
+       "to": {
+        "view": "last",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "now",
+        "at": 3
+       },
+       "to": {
+        "view": "last",
+        "at": 3
+       }
+      }
+     ]
     },
     {
      "caption": {
       "en": "Link 0→1: 0 + 50 = 50 doesn't beat 50, so cafe 1 keeps it.",
-      "ko": "링크 0→1: 0 + 50 = 50분이 기존 50보다 짧지 않으므로 카페 1의 비용은 그대로입니다."
+      "ko": "링크 0→1: 0 + 50 = 50. 기존 값 50보다 작지 않으므로 카페 1의 비용은 그대로입니다."
      },
      "views": {
       "cafes": {
@@ -1861,66 +1556,29 @@
         ]
        }
       },
-      "costs": {
-       "columns": [
-        {
-         "en": "cafe 0",
-         "ko": "카페 0"
-        },
-        {
-         "en": "cafe 1",
-         "ko": "카페 1"
-        },
-        {
-         "en": "cafe 2",
-         "ko": "카페 2"
-        },
-        {
-         "en": "cafe 3",
-         "ko": "카페 3"
-        },
-        {
-         "en": "cafe 4",
-         "ko": "카페 4"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "last round",
-          "ko": "지난 라운드"
-         },
-         "cells": [
-          0,
-          50,
-          90,
-          200,
-          "∞"
-         ]
-        },
-        {
-         "label": {
-          "en": "this round",
-          "ko": "이번 라운드"
-         },
-         "cells": [
-          0,
-          50,
-          90,
-          200,
-          "∞"
-         ]
-        }
+      "last": {
+       "values": [
+        0,
+        50,
+        90,
+        200,
+        "∞"
        ],
        "marks": {
-        "path": [],
         "lit": [
-         [
-          0,
-          0
-         ]
+         0
         ]
        }
+      },
+      "now": {
+       "values": [
+        0,
+        50,
+        90,
+        200,
+        "∞"
+       ],
+       "marks": {}
       },
       "state": {
        "items": [
@@ -1940,12 +1598,37 @@
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "last",
+        "at": 0
+       },
+       "to": {
+        "view": "cafes",
+        "at": [
+         0,
+         1
+        ]
+       }
+      },
+      {
+       "from": {
+        "view": "cafes",
+        "at": [
+         0,
+         1
+        ]
+       },
+       "value": 50
+      }
+     ]
     },
     {
      "caption": {
       "en": "Link 1→2: 50 + 40 = 90 doesn't beat 90, so cafe 2 keeps it.",
-      "ko": "링크 1→2: 50 + 40 = 90분이 기존 90보다 짧지 않으므로 카페 2의 비용은 그대로입니다."
+      "ko": "링크 1→2: 50 + 40 = 90. 기존 값 90보다 작지 않으므로 카페 2의 비용은 그대로입니다."
      },
      "views": {
       "cafes": {
@@ -1972,66 +1655,29 @@
         ]
        }
       },
-      "costs": {
-       "columns": [
-        {
-         "en": "cafe 0",
-         "ko": "카페 0"
-        },
-        {
-         "en": "cafe 1",
-         "ko": "카페 1"
-        },
-        {
-         "en": "cafe 2",
-         "ko": "카페 2"
-        },
-        {
-         "en": "cafe 3",
-         "ko": "카페 3"
-        },
-        {
-         "en": "cafe 4",
-         "ko": "카페 4"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "last round",
-          "ko": "지난 라운드"
-         },
-         "cells": [
-          0,
-          50,
-          90,
-          200,
-          "∞"
-         ]
-        },
-        {
-         "label": {
-          "en": "this round",
-          "ko": "이번 라운드"
-         },
-         "cells": [
-          0,
-          50,
-          90,
-          200,
-          "∞"
-         ]
-        }
+      "last": {
+       "values": [
+        0,
+        50,
+        90,
+        200,
+        "∞"
        ],
        "marks": {
-        "path": [],
         "lit": [
-         [
-          0,
-          1
-         ]
+         1
         ]
        }
+      },
+      "now": {
+       "values": [
+        0,
+        50,
+        90,
+        200,
+        "∞"
+       ],
+       "marks": {}
       },
       "state": {
        "items": [
@@ -2051,12 +1697,37 @@
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "last",
+        "at": 1
+       },
+       "to": {
+        "view": "cafes",
+        "at": [
+         1,
+         2
+        ]
+       }
+      },
+      {
+       "from": {
+        "view": "cafes",
+        "at": [
+         1,
+         2
+        ]
+       },
+       "value": 90
+      }
+     ]
     },
     {
      "caption": {
       "en": "Link 0→2: 0 + 200 = 200 doesn't beat 90, so cafe 2 keeps it.",
-      "ko": "링크 0→2: 0 + 200 = 200분이 기존 90보다 짧지 않으므로 카페 2의 비용은 그대로입니다."
+      "ko": "링크 0→2: 0 + 200 = 200. 기존 값 90보다 작지 않으므로 카페 2의 비용은 그대로입니다."
      },
      "views": {
       "cafes": {
@@ -2083,66 +1754,29 @@
         ]
        }
       },
-      "costs": {
-       "columns": [
-        {
-         "en": "cafe 0",
-         "ko": "카페 0"
-        },
-        {
-         "en": "cafe 1",
-         "ko": "카페 1"
-        },
-        {
-         "en": "cafe 2",
-         "ko": "카페 2"
-        },
-        {
-         "en": "cafe 3",
-         "ko": "카페 3"
-        },
-        {
-         "en": "cafe 4",
-         "ko": "카페 4"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "last round",
-          "ko": "지난 라운드"
-         },
-         "cells": [
-          0,
-          50,
-          90,
-          200,
-          "∞"
-         ]
-        },
-        {
-         "label": {
-          "en": "this round",
-          "ko": "이번 라운드"
-         },
-         "cells": [
-          0,
-          50,
-          90,
-          200,
-          "∞"
-         ]
-        }
+      "last": {
+       "values": [
+        0,
+        50,
+        90,
+        200,
+        "∞"
        ],
        "marks": {
-        "path": [],
         "lit": [
-         [
-          0,
-          0
-         ]
+         0
         ]
        }
+      },
+      "now": {
+       "values": [
+        0,
+        50,
+        90,
+        200,
+        "∞"
+       ],
+       "marks": {}
       },
       "state": {
        "items": [
@@ -2162,12 +1796,37 @@
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "last",
+        "at": 0
+       },
+       "to": {
+        "view": "cafes",
+        "at": [
+         0,
+         2
+        ]
+       }
+      },
+      {
+       "from": {
+        "view": "cafes",
+        "at": [
+         0,
+         2
+        ]
+       },
+       "value": 200
+      }
+     ]
     },
     {
      "caption": {
       "en": "Link 2→3: 90 + 30 = 120 beats 200, so cafe 3 costs 120 now.",
-      "ko": "링크 2→3: 90 + 30 = 120분이 기존 200보다 짧으므로 카페 3의 비용을 120분으로 바꿉니다."
+      "ko": "링크 2→3: 90 + 30 = 120. 기존 값 200보다 작으므로 카페 3의 비용을 이 값으로 바꿉니다."
      },
      "views": {
       "cafes": {
@@ -2197,70 +1856,31 @@
         ]
        }
       },
-      "costs": {
-       "columns": [
-        {
-         "en": "cafe 0",
-         "ko": "카페 0"
-        },
-        {
-         "en": "cafe 1",
-         "ko": "카페 1"
-        },
-        {
-         "en": "cafe 2",
-         "ko": "카페 2"
-        },
-        {
-         "en": "cafe 3",
-         "ko": "카페 3"
-        },
-        {
-         "en": "cafe 4",
-         "ko": "카페 4"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "last round",
-          "ko": "지난 라운드"
-         },
-         "cells": [
-          0,
-          50,
-          90,
-          200,
-          "∞"
-         ]
-        },
-        {
-         "label": {
-          "en": "this round",
-          "ko": "이번 라운드"
-         },
-         "cells": [
-          0,
-          50,
-          90,
-          120,
-          "∞"
-         ]
-        }
+      "last": {
+       "values": [
+        0,
+        50,
+        90,
+        200,
+        "∞"
        ],
        "marks": {
-        "path": [],
         "lit": [
-         [
-          0,
-          2
-         ]
-        ],
+         2
+        ]
+       }
+      },
+      "now": {
+       "values": [
+        0,
+        50,
+        90,
+        120,
+        "∞"
+       ],
+       "marks": {
         "good": [
-         [
-          1,
-          3
-         ]
+         3
         ]
        }
       },
@@ -2282,12 +1902,41 @@
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "last",
+        "at": 2
+       },
+       "to": {
+        "view": "cafes",
+        "at": [
+         2,
+         3
+        ]
+       }
+      },
+      {
+       "from": {
+        "view": "cafes",
+        "at": [
+         2,
+         3
+        ]
+       },
+       "to": {
+        "view": "now",
+        "at": 3
+       },
+       "value": 120
+      }
+     ]
     },
     {
      "caption": {
       "en": "Link 3→4: 200 + 20 = 220 beats ∞, so cafe 4 costs 220 now.",
-      "ko": "링크 3→4: 200 + 20 = 220분이 기존 ∞보다 짧으므로 카페 4의 비용을 220분으로 바꿉니다."
+      "ko": "링크 3→4: 200 + 20 = 220. 기존 값 ∞보다 작으므로 카페 4의 비용을 이 값으로 바꿉니다."
      },
      "views": {
       "cafes": {
@@ -2315,70 +1964,31 @@
         ]
        }
       },
-      "costs": {
-       "columns": [
-        {
-         "en": "cafe 0",
-         "ko": "카페 0"
-        },
-        {
-         "en": "cafe 1",
-         "ko": "카페 1"
-        },
-        {
-         "en": "cafe 2",
-         "ko": "카페 2"
-        },
-        {
-         "en": "cafe 3",
-         "ko": "카페 3"
-        },
-        {
-         "en": "cafe 4",
-         "ko": "카페 4"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "last round",
-          "ko": "지난 라운드"
-         },
-         "cells": [
-          0,
-          50,
-          90,
-          200,
-          "∞"
-         ]
-        },
-        {
-         "label": {
-          "en": "this round",
-          "ko": "이번 라운드"
-         },
-         "cells": [
-          0,
-          50,
-          90,
-          120,
-          220
-         ]
-        }
+      "last": {
+       "values": [
+        0,
+        50,
+        90,
+        200,
+        "∞"
        ],
        "marks": {
-        "path": [],
         "lit": [
-         [
-          0,
-          3
-         ]
-        ],
+         3
+        ]
+       }
+      },
+      "now": {
+       "values": [
+        0,
+        50,
+        90,
+        120,
+        220
+       ],
+       "marks": {
         "good": [
-         [
-          1,
-          4
-         ]
+         4
         ]
        }
       },
@@ -2400,12 +2010,41 @@
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "last",
+        "at": 3
+       },
+       "to": {
+        "view": "cafes",
+        "at": [
+         3,
+         4
+        ]
+       }
+      },
+      {
+       "from": {
+        "view": "cafes",
+        "at": [
+         3,
+         4
+        ]
+       },
+       "to": {
+        "view": "now",
+        "at": 4
+       },
+       "value": 220
+      }
+     ]
     },
     {
      "caption": {
       "en": "Link 1→3: 50 + 150 = 200 doesn't beat 120, so cafe 3 keeps it.",
-      "ko": "링크 1→3: 50 + 150 = 200분이 기존 120보다 짧지 않으므로 카페 3의 비용은 그대로입니다."
+      "ko": "링크 1→3: 50 + 150 = 200. 기존 값 120보다 작지 않으므로 카페 3의 비용은 그대로입니다."
      },
      "views": {
       "cafes": {
@@ -2430,66 +2069,29 @@
         ]
        }
       },
-      "costs": {
-       "columns": [
-        {
-         "en": "cafe 0",
-         "ko": "카페 0"
-        },
-        {
-         "en": "cafe 1",
-         "ko": "카페 1"
-        },
-        {
-         "en": "cafe 2",
-         "ko": "카페 2"
-        },
-        {
-         "en": "cafe 3",
-         "ko": "카페 3"
-        },
-        {
-         "en": "cafe 4",
-         "ko": "카페 4"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "last round",
-          "ko": "지난 라운드"
-         },
-         "cells": [
-          0,
-          50,
-          90,
-          200,
-          "∞"
-         ]
-        },
-        {
-         "label": {
-          "en": "this round",
-          "ko": "이번 라운드"
-         },
-         "cells": [
-          0,
-          50,
-          90,
-          120,
-          220
-         ]
-        }
+      "last": {
+       "values": [
+        0,
+        50,
+        90,
+        200,
+        "∞"
        ],
        "marks": {
-        "path": [],
         "lit": [
-         [
-          0,
-          1
-         ]
+         1
         ]
        }
+      },
+      "now": {
+       "values": [
+        0,
+        50,
+        90,
+        120,
+        220
+       ],
+       "marks": {}
       },
       "state": {
        "items": [
@@ -2509,12 +2111,37 @@
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "last",
+        "at": 1
+       },
+       "to": {
+        "view": "cafes",
+        "at": [
+         1,
+         3
+        ]
+       }
+      },
+      {
+       "from": {
+        "view": "cafes",
+        "at": [
+         1,
+         3
+        ]
+       },
+       "value": 200
+      }
+     ]
     },
     {
      "caption": {
-      "en": "After 3 rounds cafe 4 costs 220, by 0 → 1 → 3 → 4 (3 legs): answer 220. Cafe 3 shows 200, its cost when the route left it: its final 120 takes 3 legs (0 → 1 → 2 → 3), and the leg on from cafe 3 would make 4, more than the 3 legs maxHops = 2 allows.",
-      "ko": "3라운드 뒤 카페 4의 비용은 220분, 경로는 0 → 1 → 3 → 4(구간 3개)이므로 답은 220입니다. 카페 3의 200분은 경로가 그 카페를 떠날 때의 비용이고, 최종 120분은 구간 3개(0 → 1 → 2 → 3)가 필요해 카페 3에서 한 구간 더 가면 4개로 maxHops = 2일 때 허용되는 3개를 넘습니다."
+      "en": "After 3 rounds cafe 4 costs 220, by 0 → 1 → 3 → 4 (3 legs): answer 220. Cafe 3 shows 200, its cost when the route left it: its final 120 takes 3 legs (0 → 1 → 2 → 3), and the leg on from cafe 3 would make 4, more than the 3 legs maxStops = 2 allows.",
+      "ko": "3라운드 뒤 카페 4의 비용은 220, 경로는 0 → 1 → 3 → 4(구간 3개)이므로 답은 220입니다. 카페 3에 보이는 값(200)은 경로가 그 카페를 떠날 때의 비용이고, 최종 비용(120)은 구간 3개(0 → 1 → 2 → 3)가 필요해 카페 3에서 한 구간 더 가면 4개로 maxStops = 2일 때 허용되는 3개를 넘습니다."
      },
      "views": {
       "cafes": {
@@ -2542,75 +2169,33 @@
         ]
        }
       },
-      "costs": {
-       "columns": [
-        {
-         "en": "cafe 0",
-         "ko": "카페 0"
-        },
-        {
-         "en": "cafe 1",
-         "ko": "카페 1"
-        },
-        {
-         "en": "cafe 2",
-         "ko": "카페 2"
-        },
-        {
-         "en": "cafe 3",
-         "ko": "카페 3"
-        },
-        {
-         "en": "cafe 4",
-         "ko": "카페 4"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "last round",
-          "ko": "지난 라운드"
-         },
-         "cells": [
-          0,
-          50,
-          90,
-          200,
-          "∞"
-         ]
-        },
-        {
-         "label": {
-          "en": "this round",
-          "ko": "이번 라운드"
-         },
-         "cells": [
-          0,
-          50,
-          90,
-          120,
-          220
-         ]
-        }
+      "last": {
+       "values": [
+        0,
+        50,
+        90,
+        200,
+        "∞"
        ],
        "marks": {
         "path": [
-         [
-          0,
-          0
-         ],
-         [
-          0,
-          1
-         ],
-         [
-          0,
-          3
-         ],
-         [
-          1,
-          4
-         ]
+         0,
+         1,
+         3
+        ]
+       }
+      },
+      "now": {
+       "values": [
+        0,
+        50,
+        90,
+        120,
+        220
+       ],
+       "marks": {
+        "path": [
+         4
         ]
        }
       },
@@ -2633,6 +2218,18 @@
        ]
       }
      },
+     "moves": [
+      {
+       "from": {
+        "view": "last",
+        "at": 3
+       },
+       "to": {
+        "view": "cafes",
+        "at": 3
+       }
+      }
+     ],
      "answer": "220"
     }
    ],
@@ -2704,13 +2301,13 @@
     "en": "Example 2",
     "ko": "예시 2"
    },
-   "input": "n = 4, links = [[0,1,80],[1,2,40],[0,2,300],[2,3,90],[0,3,400]], src = 0, dst = 3, maxHops = 0",
+   "input": "n = 4, links = [[0,1,80],[1,2,40],[0,2,300],[2,3,90],[0,3,400]], src = 0, dst = 3, maxStops = 0",
    "expected": "400",
    "frames": [
     {
      "caption": {
-      "en": "Before any leg only cafe 0 is reached: 0 minutes there, ∞ elsewhere. maxHops = 0 allows 1 leg, so 1 round, which adds at most one leg.",
-      "ko": "아직 구간을 하나도 쓰지 않았으니 카페 0만 0분이고 나머지는 ∞입니다. maxHops = 0일 때 구간을 1개까지 쓸 수 있으므로, 구간을 하나씩 더하는 라운드를 1번 돕니다."
+      "en": "Before any leg only cafe 0 is reached: cost 0 there, ∞ elsewhere. maxStops = 0 allows 1 leg, so 1 round, which adds at most one leg.",
+      "ko": "아직 구간을 하나도 쓰지 않았으니 카페 0만 비용 0이고 나머지는 ∞입니다. maxStops = 0일 때 구간을 1개까지 쓸 수 있으므로, 구간을 하나씩 더하는 라운드를 1번 돕니다."
      },
      "views": {
       "cafes": {
@@ -2732,54 +2329,23 @@
         "path": []
        }
       },
-      "costs": {
-       "columns": [
-        {
-         "en": "cafe 0",
-         "ko": "카페 0"
-        },
-        {
-         "en": "cafe 1",
-         "ko": "카페 1"
-        },
-        {
-         "en": "cafe 2",
-         "ko": "카페 2"
-        },
-        {
-         "en": "cafe 3",
-         "ko": "카페 3"
-        }
+      "last": {
+       "values": [
+        0,
+        "∞",
+        "∞",
+        "∞"
        ],
-       "rows": [
-        {
-         "label": {
-          "en": "last round",
-          "ko": "지난 라운드"
-         },
-         "cells": [
-          0,
-          "∞",
-          "∞",
-          "∞"
-         ]
-        },
-        {
-         "label": {
-          "en": "this round",
-          "ko": "이번 라운드"
-         },
-         "cells": [
-          0,
-          "∞",
-          "∞",
-          "∞"
-         ]
-        }
+       "marks": {}
+      },
+      "now": {
+       "values": [
+        0,
+        "∞",
+        "∞",
+        "∞"
        ],
-       "marks": {
-        "path": []
-       }
+       "marks": {}
       },
       "state": {
        "items": [
@@ -2826,54 +2392,23 @@
         "path": []
        }
       },
-      "costs": {
-       "columns": [
-        {
-         "en": "cafe 0",
-         "ko": "카페 0"
-        },
-        {
-         "en": "cafe 1",
-         "ko": "카페 1"
-        },
-        {
-         "en": "cafe 2",
-         "ko": "카페 2"
-        },
-        {
-         "en": "cafe 3",
-         "ko": "카페 3"
-        }
+      "last": {
+       "values": [
+        0,
+        "∞",
+        "∞",
+        "∞"
        ],
-       "rows": [
-        {
-         "label": {
-          "en": "last round",
-          "ko": "지난 라운드"
-         },
-         "cells": [
-          0,
-          "∞",
-          "∞",
-          "∞"
-         ]
-        },
-        {
-         "label": {
-          "en": "this round",
-          "ko": "이번 라운드"
-         },
-         "cells": [
-          0,
-          "∞",
-          "∞",
-          "∞"
-         ]
-        }
+       "marks": {}
+      },
+      "now": {
+       "values": [
+        0,
+        "∞",
+        "∞",
+        "∞"
        ],
-       "marks": {
-        "path": []
-       }
+       "marks": {}
       },
       "state": {
        "items": [
@@ -2893,12 +2428,24 @@
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "now",
+        "at": 0
+       },
+       "to": {
+        "view": "last",
+        "at": 0
+       }
+      }
+     ]
     },
     {
      "caption": {
       "en": "Link 0→1: 0 + 80 = 80 beats ∞, so cafe 1 costs 80 now.",
-      "ko": "링크 0→1: 0 + 80 = 80분이 기존 ∞보다 짧으므로 카페 1의 비용을 80분으로 바꿉니다."
+      "ko": "링크 0→1: 0 + 80 = 80. 기존 값 ∞보다 작으므로 카페 1의 비용을 이 값으로 바꿉니다."
      },
      "views": {
       "cafes": {
@@ -2928,64 +2475,29 @@
         ]
        }
       },
-      "costs": {
-       "columns": [
-        {
-         "en": "cafe 0",
-         "ko": "카페 0"
-        },
-        {
-         "en": "cafe 1",
-         "ko": "카페 1"
-        },
-        {
-         "en": "cafe 2",
-         "ko": "카페 2"
-        },
-        {
-         "en": "cafe 3",
-         "ko": "카페 3"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "last round",
-          "ko": "지난 라운드"
-         },
-         "cells": [
-          0,
-          "∞",
-          "∞",
-          "∞"
-         ]
-        },
-        {
-         "label": {
-          "en": "this round",
-          "ko": "이번 라운드"
-         },
-         "cells": [
-          0,
-          80,
-          "∞",
-          "∞"
-         ]
-        }
+      "last": {
+       "values": [
+        0,
+        "∞",
+        "∞",
+        "∞"
        ],
        "marks": {
-        "path": [],
         "lit": [
-         [
-          0,
-          0
-         ]
-        ],
+         0
+        ]
+       }
+      },
+      "now": {
+       "values": [
+        0,
+        80,
+        "∞",
+        "∞"
+       ],
+       "marks": {
         "good": [
-         [
-          1,
-          1
-         ]
+         1
         ]
        }
       },
@@ -3007,12 +2519,41 @@
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "last",
+        "at": 0
+       },
+       "to": {
+        "view": "cafes",
+        "at": [
+         0,
+         1
+        ]
+       }
+      },
+      {
+       "from": {
+        "view": "cafes",
+        "at": [
+         0,
+         1
+        ]
+       },
+       "to": {
+        "view": "now",
+        "at": 1
+       },
+       "value": 80
+      }
+     ]
     },
     {
      "caption": {
       "en": "Link 1→2: cafe 1 was ∞ last round. Its 80 is from this round, and using it would chain two legs in one round, so skip.",
-      "ko": "링크 1→2: 카페 1의 지난 라운드 비용은 ∞입니다. 지금 보이는 80분은 이번 라운드에 생긴 값이라, 쓰면 한 라운드에 구간 두 개를 잇게 되므로 건너뜁니다."
+      "ko": "링크 1→2: 카페 1의 지난 라운드 비용은 ∞입니다. 지금 보이는 값(80)은 이번 라운드에 생긴 값이라, 쓰면 한 라운드에 구간 두 개를 잇게 되므로 건너뜁니다."
      },
      "views": {
       "cafes": {
@@ -3039,60 +2580,27 @@
         ]
        }
       },
-      "costs": {
-       "columns": [
-        {
-         "en": "cafe 0",
-         "ko": "카페 0"
-        },
-        {
-         "en": "cafe 1",
-         "ko": "카페 1"
-        },
-        {
-         "en": "cafe 2",
-         "ko": "카페 2"
-        },
-        {
-         "en": "cafe 3",
-         "ko": "카페 3"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "last round",
-          "ko": "지난 라운드"
-         },
-         "cells": [
-          0,
-          "∞",
-          "∞",
-          "∞"
-         ]
-        },
-        {
-         "label": {
-          "en": "this round",
-          "ko": "이번 라운드"
-         },
-         "cells": [
-          0,
-          80,
-          "∞",
-          "∞"
-         ]
-        }
+      "last": {
+       "values": [
+        0,
+        "∞",
+        "∞",
+        "∞"
        ],
        "marks": {
-        "path": [],
         "lit": [
-         [
-          0,
-          1
-         ]
+         1
         ]
        }
+      },
+      "now": {
+       "values": [
+        0,
+        80,
+        "∞",
+        "∞"
+       ],
+       "marks": {}
       },
       "state": {
        "items": [
@@ -3117,7 +2625,7 @@
     {
      "caption": {
       "en": "Link 0→2: 0 + 300 = 300 beats ∞, so cafe 2 costs 300 now.",
-      "ko": "링크 0→2: 0 + 300 = 300분이 기존 ∞보다 짧으므로 카페 2의 비용을 300분으로 바꿉니다."
+      "ko": "링크 0→2: 0 + 300 = 300. 기존 값 ∞보다 작으므로 카페 2의 비용을 이 값으로 바꿉니다."
      },
      "views": {
       "cafes": {
@@ -3146,64 +2654,29 @@
         ]
        }
       },
-      "costs": {
-       "columns": [
-        {
-         "en": "cafe 0",
-         "ko": "카페 0"
-        },
-        {
-         "en": "cafe 1",
-         "ko": "카페 1"
-        },
-        {
-         "en": "cafe 2",
-         "ko": "카페 2"
-        },
-        {
-         "en": "cafe 3",
-         "ko": "카페 3"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "last round",
-          "ko": "지난 라운드"
-         },
-         "cells": [
-          0,
-          "∞",
-          "∞",
-          "∞"
-         ]
-        },
-        {
-         "label": {
-          "en": "this round",
-          "ko": "이번 라운드"
-         },
-         "cells": [
-          0,
-          80,
-          300,
-          "∞"
-         ]
-        }
+      "last": {
+       "values": [
+        0,
+        "∞",
+        "∞",
+        "∞"
        ],
        "marks": {
-        "path": [],
         "lit": [
-         [
-          0,
-          0
-         ]
-        ],
+         0
+        ]
+       }
+      },
+      "now": {
+       "values": [
+        0,
+        80,
+        300,
+        "∞"
+       ],
+       "marks": {
         "good": [
-         [
-          1,
-          2
-         ]
+         2
         ]
        }
       },
@@ -3225,12 +2698,41 @@
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "last",
+        "at": 0
+       },
+       "to": {
+        "view": "cafes",
+        "at": [
+         0,
+         2
+        ]
+       }
+      },
+      {
+       "from": {
+        "view": "cafes",
+        "at": [
+         0,
+         2
+        ]
+       },
+       "to": {
+        "view": "now",
+        "at": 2
+       },
+       "value": 300
+      }
+     ]
     },
     {
      "caption": {
       "en": "Link 2→3: cafe 2 was ∞ last round. Its 300 is from this round, and using it would chain two legs in one round, so skip.",
-      "ko": "링크 2→3: 카페 2의 지난 라운드 비용은 ∞입니다. 지금 보이는 300분은 이번 라운드에 생긴 값이라, 쓰면 한 라운드에 구간 두 개를 잇게 되므로 건너뜁니다."
+      "ko": "링크 2→3: 카페 2의 지난 라운드 비용은 ∞입니다. 지금 보이는 값(300)은 이번 라운드에 생긴 값이라, 쓰면 한 라운드에 구간 두 개를 잇게 되므로 건너뜁니다."
      },
      "views": {
       "cafes": {
@@ -3256,60 +2758,27 @@
         ]
        }
       },
-      "costs": {
-       "columns": [
-        {
-         "en": "cafe 0",
-         "ko": "카페 0"
-        },
-        {
-         "en": "cafe 1",
-         "ko": "카페 1"
-        },
-        {
-         "en": "cafe 2",
-         "ko": "카페 2"
-        },
-        {
-         "en": "cafe 3",
-         "ko": "카페 3"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "last round",
-          "ko": "지난 라운드"
-         },
-         "cells": [
-          0,
-          "∞",
-          "∞",
-          "∞"
-         ]
-        },
-        {
-         "label": {
-          "en": "this round",
-          "ko": "이번 라운드"
-         },
-         "cells": [
-          0,
-          80,
-          300,
-          "∞"
-         ]
-        }
+      "last": {
+       "values": [
+        0,
+        "∞",
+        "∞",
+        "∞"
        ],
        "marks": {
-        "path": [],
         "lit": [
-         [
-          0,
-          2
-         ]
+         2
         ]
        }
+      },
+      "now": {
+       "values": [
+        0,
+        80,
+        300,
+        "∞"
+       ],
+       "marks": {}
       },
       "state": {
        "items": [
@@ -3334,7 +2803,7 @@
     {
      "caption": {
       "en": "Link 0→3: 0 + 400 = 400 beats ∞, so cafe 3 costs 400 now.",
-      "ko": "링크 0→3: 0 + 400 = 400분이 기존 ∞보다 짧으므로 카페 3의 비용을 400분으로 바꿉니다."
+      "ko": "링크 0→3: 0 + 400 = 400. 기존 값 ∞보다 작으므로 카페 3의 비용을 이 값으로 바꿉니다."
      },
      "views": {
       "cafes": {
@@ -3361,64 +2830,29 @@
         ]
        }
       },
-      "costs": {
-       "columns": [
-        {
-         "en": "cafe 0",
-         "ko": "카페 0"
-        },
-        {
-         "en": "cafe 1",
-         "ko": "카페 1"
-        },
-        {
-         "en": "cafe 2",
-         "ko": "카페 2"
-        },
-        {
-         "en": "cafe 3",
-         "ko": "카페 3"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "last round",
-          "ko": "지난 라운드"
-         },
-         "cells": [
-          0,
-          "∞",
-          "∞",
-          "∞"
-         ]
-        },
-        {
-         "label": {
-          "en": "this round",
-          "ko": "이번 라운드"
-         },
-         "cells": [
-          0,
-          80,
-          300,
-          400
-         ]
-        }
+      "last": {
+       "values": [
+        0,
+        "∞",
+        "∞",
+        "∞"
        ],
        "marks": {
-        "path": [],
         "lit": [
-         [
-          0,
-          0
-         ]
-        ],
+         0
+        ]
+       }
+      },
+      "now": {
+       "values": [
+        0,
+        80,
+        300,
+        400
+       ],
+       "marks": {
         "good": [
-         [
-          1,
-          3
-         ]
+         3
         ]
        }
       },
@@ -3440,12 +2874,41 @@
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "last",
+        "at": 0
+       },
+       "to": {
+        "view": "cafes",
+        "at": [
+         0,
+         3
+        ]
+       }
+      },
+      {
+       "from": {
+        "view": "cafes",
+        "at": [
+         0,
+         3
+        ]
+       },
+       "to": {
+        "view": "now",
+        "at": 3
+       },
+       "value": 400
+      }
+     ]
     },
     {
      "caption": {
-      "en": "After 1 round cafe 3 costs 400, by 0 → 3 (1 leg): answer 400. The cheaper 0 → 1 → 2 → 3 (210) takes 3 legs, more than the 1 leg maxHops = 0 allows.",
-      "ko": "1라운드 뒤 카페 3의 비용은 400분, 경로는 0 → 3(구간 1개)이므로 답은 400입니다. 더 싼 0 → 1 → 2 → 3(210분)은 구간 3개가 필요해 maxHops = 0일 때 허용되는 1개를 넘습니다."
+      "en": "After 1 round cafe 3 costs 400, by 0 → 3 (1 leg): answer 400. The cheaper 0 → 1 → 2 → 3 (210) takes 3 legs, more than the 1 leg maxStops = 0 allows.",
+      "ko": "1라운드 뒤 카페 3의 비용은 400, 경로는 0 → 3(구간 1개)이므로 답은 400입니다. 더 싼 경로 0 → 1 → 2 → 3(비용 210)의 경우 구간 3개가 필요해 maxStops = 0일 때 허용되는 1개를 넘습니다."
      },
      "views": {
       "cafes": {
@@ -3468,61 +2931,29 @@
         ]
        }
       },
-      "costs": {
-       "columns": [
-        {
-         "en": "cafe 0",
-         "ko": "카페 0"
-        },
-        {
-         "en": "cafe 1",
-         "ko": "카페 1"
-        },
-        {
-         "en": "cafe 2",
-         "ko": "카페 2"
-        },
-        {
-         "en": "cafe 3",
-         "ko": "카페 3"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "last round",
-          "ko": "지난 라운드"
-         },
-         "cells": [
-          0,
-          "∞",
-          "∞",
-          "∞"
-         ]
-        },
-        {
-         "label": {
-          "en": "this round",
-          "ko": "이번 라운드"
-         },
-         "cells": [
-          0,
-          80,
-          300,
-          400
-         ]
-        }
+      "last": {
+       "values": [
+        0,
+        "∞",
+        "∞",
+        "∞"
        ],
        "marks": {
         "path": [
-         [
-          0,
-          0
-         ],
-         [
-          1,
-          3
-         ]
+         0
+        ]
+       }
+      },
+      "now": {
+       "values": [
+        0,
+        80,
+        300,
+        400
+       ],
+       "marks": {
+        "path": [
+         3
         ]
        }
       },
@@ -3608,13 +3039,13 @@
     "en": "Case 3",
     "ko": "케이스 3"
    },
-   "input": "n = 3, links = [[0,1,100],[1,2,100],[0,2,500]], src = 0, dst = 2, maxHops = 0",
+   "input": "n = 3, links = [[0,1,100],[1,2,100],[0,2,500]], src = 0, dst = 2, maxStops = 0",
    "expected": "500",
    "frames": [
     {
      "caption": {
-      "en": "Before any leg only cafe 0 is reached: 0 minutes there, ∞ elsewhere. maxHops = 0 allows 1 leg, so 1 round, which adds at most one leg.",
-      "ko": "아직 구간을 하나도 쓰지 않았으니 카페 0만 0분이고 나머지는 ∞입니다. maxHops = 0일 때 구간을 1개까지 쓸 수 있으므로, 구간을 하나씩 더하는 라운드를 1번 돕니다."
+      "en": "Before any leg only cafe 0 is reached: cost 0 there, ∞ elsewhere. maxStops = 0 allows 1 leg, so 1 round, which adds at most one leg.",
+      "ko": "아직 구간을 하나도 쓰지 않았으니 카페 0만 비용 0이고 나머지는 ∞입니다. maxStops = 0일 때 구간을 1개까지 쓸 수 있으므로, 구간을 하나씩 더하는 라운드를 1번 돕니다."
      },
      "views": {
       "cafes": {
@@ -3634,48 +3065,21 @@
         "path": []
        }
       },
-      "costs": {
-       "columns": [
-        {
-         "en": "cafe 0",
-         "ko": "카페 0"
-        },
-        {
-         "en": "cafe 1",
-         "ko": "카페 1"
-        },
-        {
-         "en": "cafe 2",
-         "ko": "카페 2"
-        }
+      "last": {
+       "values": [
+        0,
+        "∞",
+        "∞"
        ],
-       "rows": [
-        {
-         "label": {
-          "en": "last round",
-          "ko": "지난 라운드"
-         },
-         "cells": [
-          0,
-          "∞",
-          "∞"
-         ]
-        },
-        {
-         "label": {
-          "en": "this round",
-          "ko": "이번 라운드"
-         },
-         "cells": [
-          0,
-          "∞",
-          "∞"
-         ]
-        }
+       "marks": {}
+      },
+      "now": {
+       "values": [
+        0,
+        "∞",
+        "∞"
        ],
-       "marks": {
-        "path": []
-       }
+       "marks": {}
       },
       "state": {
        "items": [
@@ -3720,48 +3124,21 @@
         "path": []
        }
       },
-      "costs": {
-       "columns": [
-        {
-         "en": "cafe 0",
-         "ko": "카페 0"
-        },
-        {
-         "en": "cafe 1",
-         "ko": "카페 1"
-        },
-        {
-         "en": "cafe 2",
-         "ko": "카페 2"
-        }
+      "last": {
+       "values": [
+        0,
+        "∞",
+        "∞"
        ],
-       "rows": [
-        {
-         "label": {
-          "en": "last round",
-          "ko": "지난 라운드"
-         },
-         "cells": [
-          0,
-          "∞",
-          "∞"
-         ]
-        },
-        {
-         "label": {
-          "en": "this round",
-          "ko": "이번 라운드"
-         },
-         "cells": [
-          0,
-          "∞",
-          "∞"
-         ]
-        }
+       "marks": {}
+      },
+      "now": {
+       "values": [
+        0,
+        "∞",
+        "∞"
        ],
-       "marks": {
-        "path": []
-       }
+       "marks": {}
       },
       "state": {
        "items": [
@@ -3781,12 +3158,24 @@
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "now",
+        "at": 0
+       },
+       "to": {
+        "view": "last",
+        "at": 0
+       }
+      }
+     ]
     },
     {
      "caption": {
       "en": "Link 0→1: 0 + 100 = 100 beats ∞, so cafe 1 costs 100 now.",
-      "ko": "링크 0→1: 0 + 100 = 100분이 기존 ∞보다 짧으므로 카페 1의 비용을 100분으로 바꿉니다."
+      "ko": "링크 0→1: 0 + 100 = 100. 기존 값 ∞보다 작으므로 카페 1의 비용을 이 값으로 바꿉니다."
      },
      "views": {
       "cafes": {
@@ -3814,58 +3203,27 @@
         ]
        }
       },
-      "costs": {
-       "columns": [
-        {
-         "en": "cafe 0",
-         "ko": "카페 0"
-        },
-        {
-         "en": "cafe 1",
-         "ko": "카페 1"
-        },
-        {
-         "en": "cafe 2",
-         "ko": "카페 2"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "last round",
-          "ko": "지난 라운드"
-         },
-         "cells": [
-          0,
-          "∞",
-          "∞"
-         ]
-        },
-        {
-         "label": {
-          "en": "this round",
-          "ko": "이번 라운드"
-         },
-         "cells": [
-          0,
-          100,
-          "∞"
-         ]
-        }
+      "last": {
+       "values": [
+        0,
+        "∞",
+        "∞"
        ],
        "marks": {
-        "path": [],
         "lit": [
-         [
-          0,
-          0
-         ]
-        ],
+         0
+        ]
+       }
+      },
+      "now": {
+       "values": [
+        0,
+        100,
+        "∞"
+       ],
+       "marks": {
         "good": [
-         [
-          1,
-          1
-         ]
+         1
         ]
        }
       },
@@ -3887,12 +3245,41 @@
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "last",
+        "at": 0
+       },
+       "to": {
+        "view": "cafes",
+        "at": [
+         0,
+         1
+        ]
+       }
+      },
+      {
+       "from": {
+        "view": "cafes",
+        "at": [
+         0,
+         1
+        ]
+       },
+       "to": {
+        "view": "now",
+        "at": 1
+       },
+       "value": 100
+      }
+     ]
     },
     {
      "caption": {
       "en": "Link 1→2: cafe 1 was ∞ last round. Its 100 is from this round, and using it would chain two legs in one round, so skip.",
-      "ko": "링크 1→2: 카페 1의 지난 라운드 비용은 ∞입니다. 지금 보이는 100분은 이번 라운드에 생긴 값이라, 쓰면 한 라운드에 구간 두 개를 잇게 되므로 건너뜁니다."
+      "ko": "링크 1→2: 카페 1의 지난 라운드 비용은 ∞입니다. 지금 보이는 값(100)은 이번 라운드에 생긴 값이라, 쓰면 한 라운드에 구간 두 개를 잇게 되므로 건너뜁니다."
      },
      "views": {
       "cafes": {
@@ -3917,54 +3304,25 @@
         ]
        }
       },
-      "costs": {
-       "columns": [
-        {
-         "en": "cafe 0",
-         "ko": "카페 0"
-        },
-        {
-         "en": "cafe 1",
-         "ko": "카페 1"
-        },
-        {
-         "en": "cafe 2",
-         "ko": "카페 2"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "last round",
-          "ko": "지난 라운드"
-         },
-         "cells": [
-          0,
-          "∞",
-          "∞"
-         ]
-        },
-        {
-         "label": {
-          "en": "this round",
-          "ko": "이번 라운드"
-         },
-         "cells": [
-          0,
-          100,
-          "∞"
-         ]
-        }
+      "last": {
+       "values": [
+        0,
+        "∞",
+        "∞"
        ],
        "marks": {
-        "path": [],
         "lit": [
-         [
-          0,
-          1
-         ]
+         1
         ]
        }
+      },
+      "now": {
+       "values": [
+        0,
+        100,
+        "∞"
+       ],
+       "marks": {}
       },
       "state": {
        "items": [
@@ -3989,7 +3347,7 @@
     {
      "caption": {
       "en": "Link 0→2: 0 + 500 = 500 beats ∞, so cafe 2 costs 500 now.",
-      "ko": "링크 0→2: 0 + 500 = 500분이 기존 ∞보다 짧으므로 카페 2의 비용을 500분으로 바꿉니다."
+      "ko": "링크 0→2: 0 + 500 = 500. 기존 값 ∞보다 작으므로 카페 2의 비용을 이 값으로 바꿉니다."
      },
      "views": {
       "cafes": {
@@ -4015,58 +3373,27 @@
         ]
        }
       },
-      "costs": {
-       "columns": [
-        {
-         "en": "cafe 0",
-         "ko": "카페 0"
-        },
-        {
-         "en": "cafe 1",
-         "ko": "카페 1"
-        },
-        {
-         "en": "cafe 2",
-         "ko": "카페 2"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "last round",
-          "ko": "지난 라운드"
-         },
-         "cells": [
-          0,
-          "∞",
-          "∞"
-         ]
-        },
-        {
-         "label": {
-          "en": "this round",
-          "ko": "이번 라운드"
-         },
-         "cells": [
-          0,
-          100,
-          500
-         ]
-        }
+      "last": {
+       "values": [
+        0,
+        "∞",
+        "∞"
        ],
        "marks": {
-        "path": [],
         "lit": [
-         [
-          0,
-          0
-         ]
-        ],
+         0
+        ]
+       }
+      },
+      "now": {
+       "values": [
+        0,
+        100,
+        500
+       ],
+       "marks": {
         "good": [
-         [
-          1,
-          2
-         ]
+         2
         ]
        }
       },
@@ -4088,12 +3415,41 @@
         }
        ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "last",
+        "at": 0
+       },
+       "to": {
+        "view": "cafes",
+        "at": [
+         0,
+         2
+        ]
+       }
+      },
+      {
+       "from": {
+        "view": "cafes",
+        "at": [
+         0,
+         2
+        ]
+       },
+       "to": {
+        "view": "now",
+        "at": 2
+       },
+       "value": 500
+      }
+     ]
     },
     {
      "caption": {
-      "en": "After 1 round cafe 2 costs 500, by 0 → 2 (1 leg): answer 500. The cheaper 0 → 1 → 2 (200) takes 2 legs, more than the 1 leg maxHops = 0 allows.",
-      "ko": "1라운드 뒤 카페 2의 비용은 500분, 경로는 0 → 2(구간 1개)이므로 답은 500입니다. 더 싼 0 → 1 → 2(200분)은 구간 2개가 필요해 maxHops = 0일 때 허용되는 1개를 넘습니다."
+      "en": "After 1 round cafe 2 costs 500, by 0 → 2 (1 leg): answer 500. The cheaper 0 → 1 → 2 (200) takes 2 legs, more than the 1 leg maxStops = 0 allows.",
+      "ko": "1라운드 뒤 카페 2의 비용은 500, 경로는 0 → 2(구간 1개)이므로 답은 500입니다. 더 싼 경로 0 → 1 → 2(비용 200)의 경우 구간 2개가 필요해 maxStops = 0일 때 허용되는 1개를 넘습니다."
      },
      "views": {
       "cafes": {
@@ -4115,55 +3471,27 @@
         ]
        }
       },
-      "costs": {
-       "columns": [
-        {
-         "en": "cafe 0",
-         "ko": "카페 0"
-        },
-        {
-         "en": "cafe 1",
-         "ko": "카페 1"
-        },
-        {
-         "en": "cafe 2",
-         "ko": "카페 2"
-        }
-       ],
-       "rows": [
-        {
-         "label": {
-          "en": "last round",
-          "ko": "지난 라운드"
-         },
-         "cells": [
-          0,
-          "∞",
-          "∞"
-         ]
-        },
-        {
-         "label": {
-          "en": "this round",
-          "ko": "이번 라운드"
-         },
-         "cells": [
-          0,
-          100,
-          500
-         ]
-        }
+      "last": {
+       "values": [
+        0,
+        "∞",
+        "∞"
        ],
        "marks": {
         "path": [
-         [
-          0,
-          0
-         ],
-         [
-          1,
-          2
-         ]
+         0
+        ]
+       }
+      },
+      "now": {
+       "values": [
+        0,
+        100,
+        500
+       ],
+       "marks": {
+        "path": [
+         2
         ]
        }
       },

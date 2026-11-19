@@ -23,5 +23,5 @@ def _build_tree(arr):
 
 arr = json.loads(input())
 root = _build_tree(arr)
-result = Solution().captureDockSilhouette(root)
+result = Solution().rightSideView(root)
 print(json.dumps(result, separators=(',', ':')))

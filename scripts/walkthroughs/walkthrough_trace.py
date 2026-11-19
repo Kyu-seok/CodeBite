@@ -12,6 +12,20 @@
     run.frame("Answer 4.", answer=4, board=...)   # the last frame carries the answer
     wt.write("walkthrough.json")                  # fails if a run's answer is not its expected output
 
+A value going from one place to another is a move, by address (an array or output index, a map key, a set member,
+a queue position from the front, a grid or table [row, col], an intervals [group, index], a graph or tree node id or
+[from, to] edge, a linked-list node id, a call-stack or stack position from the bottom):
+
+    from walkthrough_trace import at, move, map_entries, probe, span
+    run.frame("4 goes into the map.", xs={"values": nums}, uses={"entries": map_entries(counts)},
+              moves=[move(at("xs", i), at("uses", 4))])   # move(dst=...) creates, move(src) drops
+
+Two values trading places are `swap(view, a, b, was_at_a, was_at_b)`, the two moves of one swap.
+
+A lookup in a `set` view is a probe: `seen={"members": list(seen), "probes": [probe(x, hit=x in seen)]}`.
+
+A window or a record on an array is a span: `xs={"values": nums, "spans": {"window": span(left, right, "window")}}`.
+
 Every state you pass is snapshotted (deep-copied through JSON) when `frame` is called, so keep mutating
 your own structures freely. Floats like inf are rejected: show them as a string ("∞").
 """
@@ -35,6 +49,175 @@ def _snapshot(value, where):
     return json.loads(json.dumps(value, ensure_ascii=False))
 
 
+def at(view, where):
+    """An address: a place in a view (an array or output index, a map key, a set member, a queue position from the
+    front, a grid or table [row, col], an intervals [group, index], a graph node id or [from, to] edge)."""
+    return {"view": view, "at": where}
+
+
+def move(src=None, dst=None, value=_MISSING, mark=None):
+    """A value going from `src` to `dst` (addresses from `at`). No src: created at dst; no dst: dropped from src.
+    `value` is the flying chip's text (default: the source's); `mark` ("good", "bad", "path") overrides its colour."""
+    if src is None and dst is None:
+        raise ValueError("a move needs a src, a dst or both")
+    m = {}
+    if src is not None:
+        m["from"] = src
+    if dst is not None:
+        m["to"] = dst
+    if value is not _MISSING:
+        m["value"] = value
+    if mark is not None:
+        m["mark"] = mark
+    return m
+
+
+def swap(view, a, b, was_at_a, was_at_b):
+    """The two moves of a swap in one view: the value that was at `a` flies to `b`, and the one at `b` to `a`.
+    Pass the values as they were before the swap, so each chip carries what left its place."""
+    return [move(at(view, a), at(view, b), value=was_at_a), move(at(view, b), at(view, a), value=was_at_b)]
+
+
+def span(start, end, label=None, mark=None, below=False, fade=False):
+    """An `array` view's span: the range start..end (inclusive) with a label and a mark. Above the cells by default
+    (a live window); `below=True` draws it dashed under them (a record, such as the best so far). `fade=True` fades
+    the cells outside it. Pass spans by name: `queue={"values": q, "spans": {"window": span(l, r, "window")}}`."""
+    s = {"from": start, "to": end}
+    if label is not None:
+        s["label"] = label
+    if mark is not None:
+        s["mark"] = mark
+    if below:
+        s["below"] = True
+    if fade:
+        s["fade"] = True
+    return s
+
+
+def probe(value, hit=None, label=None):
+    """A `set` view's lookup of `value`: `set={"members": list(seen), "probes": [probe(x)]}`. Whether it hits defaults to
+    whether `value` is a member; pass `hit=False` for a value looked up and then added in the same step."""
+    p = {"value": value}
+    if hit is not None:
+        p["hit"] = hit
+    if label is not None:
+        p["label"] = label
+    return p
+
+
+def level_order_tree(values):
+    """A binary tree given as a Level-Order Array (None where a child is missing) as a `tree` view's nodes and edges,
+    for a view with `"arity": 2`. A node's id is its index in the array, so a heap's ids are its array indexes; each
+    edge's slot is 0 for a left child and 1 for a right one, so a missing left child leaves a gap."""
+    nodes, edges = [], []
+    if not values or values[0] is None:
+        return {"nodes": nodes, "edges": edges}
+    nodes.append({"id": 0, "value": values[0]})
+    queue, i = [0], 1
+    while queue and i < len(values):
+        parent = queue.pop(0)
+        for slot in (0, 1):
+            if i < len(values) and values[i] is not None:
+                nodes.append({"id": i, "value": values[i]})
+                edges.append({"from": parent, "to": i, "slot": slot})
+                queue.append(i)
+            i += 1
+    return {"nodes": nodes, "edges": edges}
+
+
+def tree_links(nodes, link):
+    """A `tree` view's second link from the solution's own nodes: `nodes` are every node drawn, each carrying its
+    view id as `id` (as `level_order_tree`'s index), and `link` the attribute each holds (`"next"`); a node's link is
+    the id of the node it reaches, None when unset. Returns {"links": {link: {id: id or None}}}, to spread into the
+    view's state; leave out the nodes whose link the drawing doesn't show yet."""
+    return {"links": {link: {n.id: (None if getattr(n, link) is None else getattr(n, link).id) for n in nodes}}}
+
+
+def linked_list(order, link=None):
+    """A `linkedlist` view's state from the solution's own nodes: `order` lists every node in the order to draw them
+    (keep it fixed for the run, so a reversal redraws arrows, not nodes). A node's id is its place in `order` and its
+    `next` the id of the node its `next` reaches (None at the end), found by identity, so a loop back is drawn too.
+    `link` names a second pointer each node holds (`"random"`, `"prev"`), drawn under the row as `links`."""
+    def value(n):
+        return n.val if hasattr(n, "val") else n.value
+    state = {"nodes": [{"id": i, "value": value(n)} for i, n in enumerate(order)],
+             "next": {i: node_id(order, n.next) for i, n in enumerate(order)}}
+    if link:
+        state["links"] = {link: {i: node_id(order, getattr(n, link)) for i, n in enumerate(order)}}
+    return state
+
+
+def node_id(order, node):
+    """The id `linked_list(order)` gives `node` (None for None): a pointer's value, `"pointers": {"slow": node_id(order, slow)}`."""
+    if node is None:
+        return None
+    for i, n in enumerate(order):
+        if n is node:
+            return i
+    raise ValueError("that node is not in the drawing order")
+
+
+class Tree:
+    """A `tree` view's nodes and edges, grown one node at a time (a recursion tree's calls, a trie's letters).
+    `add(value, parent=None, label=None, slot=None)` returns the new node's id; `label` is written on the edge into
+    it ("take 5", a trie's letter) and `slot` places it among its parent's children in a view with an `arity`.
+    `state()` is the tree so far, to pass as the view's state: `run.frame(..., calls={**t.state(), "nodeMarks": ...})`."""
+
+    def __init__(self):
+        self.nodes, self.edges = [], []
+
+    def add(self, value, parent=None, label=None, slot=None, id=None):
+        node_id = len(self.nodes) if id is None else id
+        if parent is not None and not any(n["id"] == parent for n in self.nodes):
+            raise ValueError(f"no node {parent} to add a child to")
+        self.nodes.append({"id": node_id, "value": value})
+        if parent is not None:
+            edge = {"from": parent, "to": node_id}
+            if label is not None:
+                edge["label"] = label
+            if slot is not None:
+                edge["slot"] = slot
+            self.edges.append(edge)
+        return node_id
+
+    def set(self, node_id, value):
+        """A node's value changes (a trie node becoming the end of a word, a heap's sift)."""
+        for n in self.nodes:
+            if n["id"] == node_id:
+                n["value"] = value
+                return
+        raise ValueError(f"no node {node_id}")
+
+    def state(self):
+        return {"nodes": [dict(n) for n in self.nodes], "edges": [dict(e) for e in self.edges]}
+
+
+def call(name, note=None, **args):
+    """One card of a `callstack` view: the function's `name`, its arguments in order (`call("place", row=2)`) and an
+    optional `note` (Text) under them, such as the column it is trying. Calls are listed bottom first."""
+    c = {"name": name}
+    if args:
+        c["args"] = args
+    if note is not None:
+        c["note"] = note
+    return c
+
+
+def stack(items, value=None, tag=None):
+    """A `stack` view's state from the solution's own list, bottom first: each item's `value(item)` (the item itself
+    by default) and, with `tag`, `tag(item)` (Text) on its cell, such as the day a reading belongs to when the stack
+    holds days: `"pending": stack(pending, value=lambda d: temps[d], tag=lambda d: f"day {d}")`. Add `marks` to it."""
+    state = {"values": [item if value is None else value(item) for item in items]}
+    if tag is not None:
+        state["tags"] = [[i, tag(item)] for i, item in enumerate(items)]
+    return state
+
+
+def map_entries(mapping):
+    """A dict as a `map` view's entries, in its insertion order."""
+    return [{"key": k, "value": v} for k, v in mapping.items()]
+
+
 class Run:
     def __init__(self, label, input, expected, extra, setup):
         self.data = {"label": label, "input": input, "expected": expected, "frames": []}
@@ -43,9 +226,13 @@ class Run:
         if setup:
             self.data["setup"] = _snapshot(setup, f"{label} setup")
 
-    def frame(self, caption, answer=_MISSING, **views):
-        """One step: a caption (string, or {"en": ..., "ko": ...}) and each view's state by view id."""
-        f = {"caption": caption, "views": _snapshot(views, f"{self.data['label']} frame {len(self.data['frames'])}")}
+    def frame(self, caption, answer=_MISSING, moves=None, **views):
+        """One step: a caption (string, or {"en": ..., "ko": ...}), each view's state by view id, and the values
+        that moved in this step (`move(...)` items)."""
+        where = f"{self.data['label']} frame {len(self.data['frames'])}"
+        f = {"caption": caption, "views": _snapshot(views, where)}
+        if moves:
+            f["moves"] = _snapshot(moves, where)
         if answer is not _MISSING:
             f["answer"] = _snapshot(answer, "answer")
         self.data["frames"].append(f)
@@ -80,6 +267,10 @@ class Walkthrough:
                 unknown = set(f["views"]) - ids
                 if unknown:
                     raise ValueError(f"run {name} frame {i}: unknown view ids {sorted(unknown)}")
+                for m in f.get("moves", []):
+                    for end in ("from", "to"):
+                        if end in m and m[end]["view"] not in ids:
+                            raise ValueError(f"run {name} frame {i}: a move names unknown view {json.dumps(m[end]['view'])}")
             runs.append(d)
         return {**self.data, "runs": runs}
 

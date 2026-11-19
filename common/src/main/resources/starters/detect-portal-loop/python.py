@@ -6,6 +6,6 @@ class ListNode:
         self.next = next
 
 class Solution:
-    def detectTransferLoop(self, head: Optional[ListNode]) -> bool:
+    def hasPortalLoop(self, head: Optional[ListNode]) -> bool:
         # Write your solution here
         pass

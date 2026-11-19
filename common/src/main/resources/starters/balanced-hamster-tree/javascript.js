@@ -14,7 +14,7 @@ class Solution {
      * @param {TreeNode} root
      * @return {boolean}
      */
-    checkHubEvenness(root) {
+    isBalanced(root) {
         // Write your solution here
     }
 }

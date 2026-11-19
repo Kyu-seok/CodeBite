@@ -11,7 +11,7 @@
  */
 class Solution {
 public:
-    bool matchCatalogLayout(TreeNode* p, TreeNode* q) {
+    bool isSameTree(TreeNode* p, TreeNode* q) {
         // Write your solution here
     }
 };

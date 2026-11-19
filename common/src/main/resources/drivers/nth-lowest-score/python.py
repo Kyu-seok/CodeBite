@@ -24,5 +24,5 @@ def _build_tree(arr):
 arr = json.loads(input())
 k = int(input())
 root = _build_tree(arr)
-result = Solution().pickNthTarget(root, k)
+result = Solution().nthLowestScore(root, k)
 print(result)

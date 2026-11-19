@@ -40,6 +40,6 @@ def _tree_to_array(root):
 
 arr = json.loads(input())
 root = _build_tree(arr)
-root = Solution().reflectBlend(root)
+root = Solution().mirrorTree(root)
 result = _tree_to_array(root)
 print(json.dumps(result, separators=(',', ':')))

@@ -1,0 +1,6752 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Micro Feed",
+  "ko": "짧은 글 피드"
+ },
+ "approach": {
+  "en": "Each user's posts are kept oldest first, stamped with a clock. latestFeed puts each author's newest post in a max-heap by time; popping the top gives the newest post left, and that author's next older post takes its place, until 10 are taken or the heap is empty.",
+  "ko": "사용자마다 글을 시각과 함께 오래된 순으로 둡니다. latestFeed는 작성자마다 가장 최근 글을 시각 기준 최대 힙에 넣습니다. 맨 위를 꺼내면 남은 글 중 가장 최근 글이고, 그 작성자의 바로 이전 글이 대신 들어갑니다. 10개를 꺼내거나 힙이 빌 때까지 반복합니다."
+ },
+ "views": [
+  {
+   "id": "calls",
+   "type": "table",
+   "title": {
+    "en": "calls",
+    "ko": "호출"
+   }
+  },
+  {
+   "id": "posts",
+   "type": "map",
+   "title": {
+    "en": "posts per user (message@time)",
+    "ko": "사용자별 글 (메시지@시각)"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  },
+  {
+   "id": "following",
+   "type": "map",
+   "title": {
+    "en": "follows",
+    "ko": "팔로우"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  },
+  {
+   "id": "heap",
+   "type": "tree",
+   "arity": 2,
+   "title": {
+    "en": "max-heap: newest on top",
+    "ko": "최대 힙: 맨 위가 가장 최근"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  },
+  {
+   "id": "feed",
+   "type": "output",
+   "title": {
+    "en": "feed",
+    "ko": "피드"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  },
+  {
+   "id": "result",
+   "type": "output",
+   "title": {
+    "en": "returned",
+    "ko": "반환값"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "[\"MicroFeed\",\"publishPost\",\"publishPost\",\"latestFeed\"]\n[[],[1,10],[1,20],[1]]",
+   "expected": "[null,null,null,[20,10]]",
+   "frames": [
+    {
+     "caption": {
+      "en": "MicroFeed() starts an empty board, with the clock at 0; the constructor returns null.",
+      "ko": "생성자 MicroFeed() 호출은 시계를 0에 두고 빈 보드로 시작하며 null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "MicroFeed",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "publishPost",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "publishPost",
+          "1, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      },
+      "posts": {
+       "entries": [],
+       "marks": {}
+      },
+      "following": {
+       "entries": [],
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "feed": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "publishPost(1, 10): message 10 gets time 0 and goes at the end of user 1's posts, the newest end. Returns null.",
+      "ko": "publishPost(1, 10): 메시지 10에 시각 0을 붙여 사용자 1의 글 맨 끝, 가장 최근 쪽에 넣습니다. null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "MicroFeed",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "publishPost",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "publishPost",
+          "1, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "posts": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          "10@t0"
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "following": {
+       "entries": [],
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "feed": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "posts",
+        "at": 1
+       },
+       "value": "10@t0"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "publishPost(1, 20): message 20 gets time 1 and goes at the end of user 1's posts, the newest end. Returns null.",
+      "ko": "publishPost(1, 20): 메시지 20에 시각 1을 붙여 사용자 1의 글 맨 끝, 가장 최근 쪽에 넣습니다. null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "MicroFeed",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "publishPost",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "publishPost",
+          "1, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "posts": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          "10@t0",
+          "20@t1"
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "following": {
+       "entries": [],
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "feed": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         2,
+         1
+        ]
+       },
+       "to": {
+        "view": "posts",
+        "at": 1
+       },
+       "value": "20@t1"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         2,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "latestFeed(1): the authors are user 1 and everyone 1 follows: 1. Each one's newest post goes into the heap.",
+      "ko": "latestFeed(1): 작성자는 사용자 1 자신과 1이 팔로우하는 사용자로, 1입니다. 작성자마다 가장 최근 글을 힙에 넣습니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "MicroFeed",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "publishPost",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "publishPost",
+          "1, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "posts": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          "10@t0",
+          "20@t1"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "following": {
+       "entries": [],
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "feed": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "User 1's newest post, 20 at time 1, goes in at the heap's end.",
+      "ko": "사용자 1의 가장 최근 글, 시각 1의 20 글이 힙의 맨 끝에 들어갑니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "MicroFeed",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "publishPost",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "publishPost",
+          "1, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "posts": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          "10@t0",
+          "20@t1"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "following": {
+       "entries": [],
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "20"
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0] t1"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "feed": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "posts",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": "20"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "heappop: 20 (t1) on top is the newest post left, so it is next in the feed.",
+      "ko": "heappop: 맨 위의 20 (t1) 글이 남은 글 중 가장 최근이므로 피드의 다음 글입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "MicroFeed",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "publishPost",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "publishPost",
+          "1, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "posts": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          "10@t0",
+          "20@t1"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "following": {
+       "entries": [],
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "20"
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0] t1"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "feed": {
+       "values": [
+        "20"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "feed",
+        "at": 0
+       },
+       "value": "20"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "User 1's next older post, 10 at time 0, takes its place in the heap.",
+      "ko": "사용자 1의 바로 이전 글, 시각 0의 10 글이 힙에 대신 들어갑니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "MicroFeed",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "publishPost",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "publishPost",
+          "1, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "posts": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          "10@t0",
+          "20@t1"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "following": {
+       "entries": [],
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "10"
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0] t0"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "feed": {
+       "values": [
+        "20"
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "posts",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": "10"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "heappop: 10 (t0) on top is the newest post left, so it is next in the feed.",
+      "ko": "heappop: 맨 위의 10 (t0) 글이 남은 글 중 가장 최근이므로 피드의 다음 글입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "MicroFeed",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "publishPost",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "publishPost",
+          "1, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "posts": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          "10@t0",
+          "20@t1"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "following": {
+       "entries": [],
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "10"
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0] t0"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "feed": {
+       "values": [
+        "20",
+        "10"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "feed",
+        "at": 1
+       },
+       "value": "10"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The feed is done (the heap is empty): latestFeed(1) returns [20,10], newest first.",
+      "ko": "힙이 비었으므로 피드가 끝났습니다. latestFeed(1)의 반환값은 최신순으로 [20,10]입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "MicroFeed",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "publishPost",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "publishPost",
+          "1, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "posts": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          "10@t0",
+          "20@t1"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "following": {
+       "entries": [],
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "feed": {
+       "values": [
+        "20",
+        "10"
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "[20,10]"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "feed",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       },
+       "value": "[20,10]"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every call has run; the returned values, one per call, are [null,null,null,[20,10]].",
+      "ko": "모든 호출이 끝났습니다. 호출마다 하나씩 반환한 값은 [null,null,null,[20,10]]입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "MicroFeed",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "publishPost",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "publishPost",
+          "1, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "posts": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          "10@t0",
+          "20@t1"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "following": {
+       "entries": [],
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "feed": {
+       "values": [
+        "20",
+        "10"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "[20,10]"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      }
+     },
+     "answer": "[null,null,null,[20,10]]"
+    }
+   ],
+   "sampleInput": "[\"MicroFeed\",\"publishPost\",\"publishPost\",\"latestFeed\"]\n[[],[1,10],[1,20],[1]]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "[\"MicroFeed\",\"publishPost\",\"publishPost\",\"subscribe\",\"latestFeed\"]\n[[],[1,10],[2,20],[1,2],[1]]",
+   "expected": "[null,null,null,null,[20,10]]",
+   "frames": [
+    {
+     "caption": {
+      "en": "MicroFeed() starts an empty board, with the clock at 0; the constructor returns null.",
+      "ko": "생성자 MicroFeed() 호출은 시계를 0에 두고 빈 보드로 시작하며 null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "MicroFeed",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "publishPost",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "publishPost",
+          "2, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "subscribe",
+          "1, 2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      },
+      "posts": {
+       "entries": [],
+       "marks": {}
+      },
+      "following": {
+       "entries": [],
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "feed": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "publishPost(1, 10): message 10 gets time 0 and goes at the end of user 1's posts, the newest end. Returns null.",
+      "ko": "publishPost(1, 10): 메시지 10에 시각 0을 붙여 사용자 1의 글 맨 끝, 가장 최근 쪽에 넣습니다. null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "MicroFeed",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "publishPost",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "publishPost",
+          "2, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "subscribe",
+          "1, 2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "posts": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          "10@t0"
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "following": {
+       "entries": [],
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "feed": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "posts",
+        "at": 1
+       },
+       "value": "10@t0"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "publishPost(2, 20): message 20 gets time 1 and goes at the end of user 2's posts, the newest end. Returns null.",
+      "ko": "publishPost(2, 20): 메시지 20에 시각 1을 붙여 사용자 2의 글 맨 끝, 가장 최근 쪽에 넣습니다. null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "MicroFeed",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "publishPost",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "publishPost",
+          "2, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "subscribe",
+          "1, 2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "posts": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          "10@t0"
+         ]
+        },
+        {
+         "key": 2,
+         "value": [
+          "20@t1"
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "following": {
+       "entries": [],
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "feed": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         2,
+         1
+        ]
+       },
+       "to": {
+        "view": "posts",
+        "at": 2
+       },
+       "value": "20@t1"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         2,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "subscribe(1, 2): user 1 now follows user 2. Returns null.",
+      "ko": "subscribe(1, 2): 이제 사용자 1이 사용자 2를 팔로우합니다. null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "MicroFeed",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "publishPost",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "publishPost",
+          "2, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "subscribe",
+          "1, 2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "posts": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          "10@t0"
+         ]
+        },
+        {
+         "key": 2,
+         "value": [
+          "20@t1"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "following": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          2
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "feed": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         3,
+         1
+        ]
+       },
+       "to": {
+        "view": "following",
+        "at": 1
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         3,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "latestFeed(1): the authors are user 1 and everyone 1 follows: 1, 2. Each one's newest post goes into the heap.",
+      "ko": "latestFeed(1): 작성자는 사용자 1 자신과 1이 팔로우하는 사용자로, 1, 2입니다. 작성자마다 가장 최근 글을 힙에 넣습니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "MicroFeed",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "publishPost",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "publishPost",
+          "2, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "subscribe",
+          "1, 2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "posts": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          "10@t0"
+         ]
+        },
+        {
+         "key": 2,
+         "value": [
+          "20@t1"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         1,
+         2
+        ]
+       }
+      },
+      "following": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          2
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "feed": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "User 1's newest post, 10 at time 0, goes in at the heap's end.",
+      "ko": "사용자 1의 가장 최근 글, 시각 0의 10 글이 힙의 맨 끝에 들어갑니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "MicroFeed",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "publishPost",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "publishPost",
+          "2, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "subscribe",
+          "1, 2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "posts": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          "10@t0"
+         ]
+        },
+        {
+         "key": 2,
+         "value": [
+          "20@t1"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "following": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          2
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "10"
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0] t0"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "feed": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "posts",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": "10"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "User 2's newest post, 20 at time 1, goes in at the heap's end.",
+      "ko": "사용자 2의 가장 최근 글, 시각 1의 20 글이 힙의 맨 끝에 들어갑니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "MicroFeed",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "publishPost",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "publishPost",
+          "2, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "subscribe",
+          "1, 2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "posts": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          "10@t0"
+         ]
+        },
+        {
+         "key": 2,
+         "value": [
+          "20@t1"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "following": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          2
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "10"
+        },
+        {
+         "id": 1,
+         "value": "20"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0] t0"
+        ],
+        [
+         1,
+         "[1] t1"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "feed": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "posts",
+        "at": 2
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       },
+       "value": "20"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Sift up: 20 (t1) is newer than its parent 10 (t0), so they swap.",
+      "ko": "위로 올리기: 20 (t1) 글이 부모 10 (t0) 글보다 최근이므로 자리를 바꿉니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "MicroFeed",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "publishPost",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "publishPost",
+          "2, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "subscribe",
+          "1, 2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "posts": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          "10@t0"
+         ]
+        },
+        {
+         "key": 2,
+         "value": [
+          "20@t1"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "following": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          2
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "20"
+        },
+        {
+         "id": 1,
+         "value": "10"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0] t1"
+        ],
+        [
+         1,
+         "[1] t0"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "feed": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": "20"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       },
+       "value": "10"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "heappop: 20 (t1) on top is the newest post left, so it is next in the feed. The last node 10 fills the root.",
+      "ko": "heappop: 맨 위의 20 (t1) 글이 남은 글 중 가장 최근이므로 피드의 다음 글입니다. 마지막 노드 10 글이 루트를 채웁니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "MicroFeed",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "publishPost",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "publishPost",
+          "2, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "subscribe",
+          "1, 2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "posts": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          "10@t0"
+         ]
+        },
+        {
+         "key": 2,
+         "value": [
+          "20@t1"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "following": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          2
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "10"
+        },
+        {
+         "id": 1,
+         "value": "10"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0] t0"
+        ],
+        [
+         1,
+         "[1] t0"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "feed": {
+       "values": [
+        "20"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "feed",
+        "at": 0
+       },
+       "value": "20"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "heappop: 10 (t0) on top is the newest post left, so it is next in the feed.",
+      "ko": "heappop: 맨 위의 10 (t0) 글이 남은 글 중 가장 최근이므로 피드의 다음 글입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "MicroFeed",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "publishPost",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "publishPost",
+          "2, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "subscribe",
+          "1, 2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "posts": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          "10@t0"
+         ]
+        },
+        {
+         "key": 2,
+         "value": [
+          "20@t1"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "following": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          2
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "10"
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0] t0"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "feed": {
+       "values": [
+        "20",
+        "10"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "feed",
+        "at": 1
+       },
+       "value": "10"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The feed is done (the heap is empty): latestFeed(1) returns [20,10], newest first.",
+      "ko": "힙이 비었으므로 피드가 끝났습니다. latestFeed(1)의 반환값은 최신순으로 [20,10]입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "MicroFeed",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "publishPost",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "publishPost",
+          "2, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "subscribe",
+          "1, 2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "posts": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          "10@t0"
+         ]
+        },
+        {
+         "key": 2,
+         "value": [
+          "20@t1"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "following": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          2
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "feed": {
+       "values": [
+        "20",
+        "10"
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null",
+        "[20,10]"
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "feed",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       },
+       "value": "[20,10]"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every call has run; the returned values, one per call, are [null,null,null,null,[20,10]].",
+      "ko": "모든 호출이 끝났습니다. 호출마다 하나씩 반환한 값은 [null,null,null,null,[20,10]]입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "MicroFeed",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "publishPost",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "publishPost",
+          "2, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "subscribe",
+          "1, 2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "posts": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          "10@t0"
+         ]
+        },
+        {
+         "key": 2,
+         "value": [
+          "20@t1"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "following": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          2
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "feed": {
+       "values": [
+        "20",
+        "10"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null",
+        "[20,10]"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      }
+     },
+     "answer": "[null,null,null,null,[20,10]]"
+    }
+   ],
+   "sampleInput": "[\"MicroFeed\",\"publishPost\",\"publishPost\",\"subscribe\",\"latestFeed\"]\n[[],[1,10],[2,20],[1,2],[1]]"
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "[\"MicroFeed\",\"publishPost\",\"publishPost\",\"subscribe\",\"latestFeed\",\"unsubscribe\",\"latestFeed\"]\n[[],[1,10],[2,20],[1,2],[1],[1,2],[1]]",
+   "expected": "[null,null,null,null,[20,10],null,[10]]",
+   "frames": [
+    {
+     "caption": {
+      "en": "MicroFeed() starts an empty board, with the clock at 0; the constructor returns null.",
+      "ko": "생성자 MicroFeed() 호출은 시계를 0에 두고 빈 보드로 시작하며 null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "MicroFeed",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "publishPost",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "publishPost",
+          "2, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "subscribe",
+          "1, 2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "unsubscribe",
+          "1, 2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      },
+      "posts": {
+       "entries": [],
+       "marks": {}
+      },
+      "following": {
+       "entries": [],
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "feed": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "publishPost(1, 10): message 10 gets time 0 and goes at the end of user 1's posts, the newest end. Returns null.",
+      "ko": "publishPost(1, 10): 메시지 10에 시각 0을 붙여 사용자 1의 글 맨 끝, 가장 최근 쪽에 넣습니다. null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "MicroFeed",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "publishPost",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "publishPost",
+          "2, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "subscribe",
+          "1, 2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "unsubscribe",
+          "1, 2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "posts": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          "10@t0"
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "following": {
+       "entries": [],
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "feed": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "posts",
+        "at": 1
+       },
+       "value": "10@t0"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "publishPost(2, 20): message 20 gets time 1 and goes at the end of user 2's posts, the newest end. Returns null.",
+      "ko": "publishPost(2, 20): 메시지 20에 시각 1을 붙여 사용자 2의 글 맨 끝, 가장 최근 쪽에 넣습니다. null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "MicroFeed",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "publishPost",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "publishPost",
+          "2, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "subscribe",
+          "1, 2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "unsubscribe",
+          "1, 2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "posts": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          "10@t0"
+         ]
+        },
+        {
+         "key": 2,
+         "value": [
+          "20@t1"
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "following": {
+       "entries": [],
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "feed": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         2,
+         1
+        ]
+       },
+       "to": {
+        "view": "posts",
+        "at": 2
+       },
+       "value": "20@t1"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         2,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "subscribe(1, 2): user 1 now follows user 2. Returns null.",
+      "ko": "subscribe(1, 2): 이제 사용자 1이 사용자 2를 팔로우합니다. null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "MicroFeed",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "publishPost",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "publishPost",
+          "2, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "subscribe",
+          "1, 2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "unsubscribe",
+          "1, 2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "posts": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          "10@t0"
+         ]
+        },
+        {
+         "key": 2,
+         "value": [
+          "20@t1"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "following": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          2
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "feed": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         3,
+         1
+        ]
+       },
+       "to": {
+        "view": "following",
+        "at": 1
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         3,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "latestFeed(1): the authors are user 1 and everyone 1 follows: 1, 2. Each one's newest post goes into the heap.",
+      "ko": "latestFeed(1): 작성자는 사용자 1 자신과 1이 팔로우하는 사용자로, 1, 2입니다. 작성자마다 가장 최근 글을 힙에 넣습니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "MicroFeed",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "publishPost",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "publishPost",
+          "2, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "subscribe",
+          "1, 2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "unsubscribe",
+          "1, 2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "posts": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          "10@t0"
+         ]
+        },
+        {
+         "key": 2,
+         "value": [
+          "20@t1"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         1,
+         2
+        ]
+       }
+      },
+      "following": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          2
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "feed": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "User 1's newest post, 10 at time 0, goes in at the heap's end.",
+      "ko": "사용자 1의 가장 최근 글, 시각 0의 10 글이 힙의 맨 끝에 들어갑니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "MicroFeed",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "publishPost",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "publishPost",
+          "2, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "subscribe",
+          "1, 2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "unsubscribe",
+          "1, 2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "posts": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          "10@t0"
+         ]
+        },
+        {
+         "key": 2,
+         "value": [
+          "20@t1"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "following": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          2
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "10"
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0] t0"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "feed": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "posts",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": "10"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "User 2's newest post, 20 at time 1, goes in at the heap's end.",
+      "ko": "사용자 2의 가장 최근 글, 시각 1의 20 글이 힙의 맨 끝에 들어갑니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "MicroFeed",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "publishPost",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "publishPost",
+          "2, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "subscribe",
+          "1, 2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "unsubscribe",
+          "1, 2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "posts": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          "10@t0"
+         ]
+        },
+        {
+         "key": 2,
+         "value": [
+          "20@t1"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "following": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          2
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "10"
+        },
+        {
+         "id": 1,
+         "value": "20"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0] t0"
+        ],
+        [
+         1,
+         "[1] t1"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "feed": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "posts",
+        "at": 2
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       },
+       "value": "20"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Sift up: 20 (t1) is newer than its parent 10 (t0), so they swap.",
+      "ko": "위로 올리기: 20 (t1) 글이 부모 10 (t0) 글보다 최근이므로 자리를 바꿉니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "MicroFeed",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "publishPost",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "publishPost",
+          "2, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "subscribe",
+          "1, 2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "unsubscribe",
+          "1, 2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "posts": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          "10@t0"
+         ]
+        },
+        {
+         "key": 2,
+         "value": [
+          "20@t1"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "following": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          2
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "20"
+        },
+        {
+         "id": 1,
+         "value": "10"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0] t1"
+        ],
+        [
+         1,
+         "[1] t0"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "feed": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": "20"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       },
+       "value": "10"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "heappop: 20 (t1) on top is the newest post left, so it is next in the feed. The last node 10 fills the root.",
+      "ko": "heappop: 맨 위의 20 (t1) 글이 남은 글 중 가장 최근이므로 피드의 다음 글입니다. 마지막 노드 10 글이 루트를 채웁니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "MicroFeed",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "publishPost",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "publishPost",
+          "2, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "subscribe",
+          "1, 2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "unsubscribe",
+          "1, 2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "posts": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          "10@t0"
+         ]
+        },
+        {
+         "key": 2,
+         "value": [
+          "20@t1"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "following": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          2
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "10"
+        },
+        {
+         "id": 1,
+         "value": "10"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0] t0"
+        ],
+        [
+         1,
+         "[1] t0"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "feed": {
+       "values": [
+        "20"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "feed",
+        "at": 0
+       },
+       "value": "20"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "heappop: 10 (t0) on top is the newest post left, so it is next in the feed.",
+      "ko": "heappop: 맨 위의 10 (t0) 글이 남은 글 중 가장 최근이므로 피드의 다음 글입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "MicroFeed",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "publishPost",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "publishPost",
+          "2, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "subscribe",
+          "1, 2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "unsubscribe",
+          "1, 2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "posts": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          "10@t0"
+         ]
+        },
+        {
+         "key": 2,
+         "value": [
+          "20@t1"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "following": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          2
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "10"
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0] t0"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "feed": {
+       "values": [
+        "20",
+        "10"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "feed",
+        "at": 1
+       },
+       "value": "10"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The feed is done (the heap is empty): latestFeed(1) returns [20,10], newest first.",
+      "ko": "힙이 비었으므로 피드가 끝났습니다. latestFeed(1)의 반환값은 최신순으로 [20,10]입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "MicroFeed",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "publishPost",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "publishPost",
+          "2, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "subscribe",
+          "1, 2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "unsubscribe",
+          "1, 2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "posts": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          "10@t0"
+         ]
+        },
+        {
+         "key": 2,
+         "value": [
+          "20@t1"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "following": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          2
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "feed": {
+       "values": [
+        "20",
+        "10"
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null",
+        "[20,10]"
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "feed",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       },
+       "value": "[20,10]"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "unsubscribe(1, 2): user 2 leaves user 1's follows. Returns null.",
+      "ko": "unsubscribe(1, 2): 사용자 1의 팔로우에서 사용자 2가 빠집니다. null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "MicroFeed",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "publishPost",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "publishPost",
+          "2, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "subscribe",
+          "1, 2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "unsubscribe",
+          "1, 2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ]
+        ]
+       }
+      },
+      "posts": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          "10@t0"
+         ]
+        },
+        {
+         "key": 2,
+         "value": [
+          "20@t1"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "following": {
+       "entries": [
+        {
+         "key": 1,
+         "value": []
+        }
+       ],
+       "marks": {
+        "bad": [
+         1
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "feed": {
+       "values": [
+        "20",
+        "10"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null",
+        "[20,10]",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         5
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "following",
+        "at": 1
+       },
+       "value": "2",
+       "mark": "bad"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         5,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 5
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "latestFeed(1): the authors are user 1 and everyone 1 follows: 1. Each one's newest post goes into the heap.",
+      "ko": "latestFeed(1): 작성자는 사용자 1 자신과 1이 팔로우하는 사용자로, 1입니다. 작성자마다 가장 최근 글을 힙에 넣습니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "MicroFeed",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "publishPost",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "publishPost",
+          "2, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "subscribe",
+          "1, 2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "unsubscribe",
+          "1, 2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ],
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          6,
+          0
+         ],
+         [
+          6,
+          1
+         ]
+        ]
+       }
+      },
+      "posts": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          "10@t0"
+         ]
+        },
+        {
+         "key": 2,
+         "value": [
+          "20@t1"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "following": {
+       "entries": [
+        {
+         "key": 1,
+         "value": []
+        }
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "feed": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null",
+        "[20,10]",
+        "null"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "User 1's newest post, 10 at time 0, goes in at the heap's end.",
+      "ko": "사용자 1의 가장 최근 글, 시각 0의 10 글이 힙의 맨 끝에 들어갑니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "MicroFeed",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "publishPost",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "publishPost",
+          "2, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "subscribe",
+          "1, 2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "unsubscribe",
+          "1, 2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ],
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          6,
+          0
+         ],
+         [
+          6,
+          1
+         ]
+        ]
+       }
+      },
+      "posts": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          "10@t0"
+         ]
+        },
+        {
+         "key": 2,
+         "value": [
+          "20@t1"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "following": {
+       "entries": [
+        {
+         "key": 1,
+         "value": []
+        }
+       ],
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "10"
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0] t0"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "feed": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null",
+        "[20,10]",
+        "null"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "posts",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": "10"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "heappop: 10 (t0) on top is the newest post left, so it is next in the feed.",
+      "ko": "heappop: 맨 위의 10 (t0) 글이 남은 글 중 가장 최근이므로 피드의 다음 글입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "MicroFeed",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "publishPost",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "publishPost",
+          "2, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "subscribe",
+          "1, 2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "unsubscribe",
+          "1, 2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ],
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          6,
+          0
+         ],
+         [
+          6,
+          1
+         ]
+        ]
+       }
+      },
+      "posts": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          "10@t0"
+         ]
+        },
+        {
+         "key": 2,
+         "value": [
+          "20@t1"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "following": {
+       "entries": [
+        {
+         "key": 1,
+         "value": []
+        }
+       ],
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "10"
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0] t0"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "feed": {
+       "values": [
+        "10"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null",
+        "[20,10]",
+        "null"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "feed",
+        "at": 0
+       },
+       "value": "10"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The feed is done (the heap is empty): latestFeed(1) returns [10], newest first.",
+      "ko": "힙이 비었으므로 피드가 끝났습니다. latestFeed(1)의 반환값은 최신순으로 [10]입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "MicroFeed",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "publishPost",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "publishPost",
+          "2, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "subscribe",
+          "1, 2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "unsubscribe",
+          "1, 2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ],
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          6,
+          0
+         ],
+         [
+          6,
+          1
+         ]
+        ]
+       }
+      },
+      "posts": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          "10@t0"
+         ]
+        },
+        {
+         "key": 2,
+         "value": [
+          "20@t1"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "following": {
+       "entries": [
+        {
+         "key": 1,
+         "value": []
+        }
+       ],
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "feed": {
+       "values": [
+        "10"
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null",
+        "[20,10]",
+        "null",
+        "[10]"
+       ],
+       "marks": {
+        "good": [
+         6
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "feed",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 6
+       },
+       "value": "[10]"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every call has run; the returned values, one per call, are [null,null,null,null,[20,10],null,[10]].",
+      "ko": "모든 호출이 끝났습니다. 호출마다 하나씩 반환한 값은 [null,null,null,null,[20,10],null,[10]]입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "MicroFeed",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "publishPost",
+          "1, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "publishPost",
+          "2, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "subscribe",
+          "1, 2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "unsubscribe",
+          "1, 2"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "latestFeed",
+          "1"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "posts": {
+       "entries": [
+        {
+         "key": 1,
+         "value": [
+          "10@t0"
+         ]
+        },
+        {
+         "key": 2,
+         "value": [
+          "20@t1"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "following": {
+       "entries": [
+        {
+         "key": 1,
+         "value": []
+        }
+       ],
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "feed": {
+       "values": [
+        "10"
+       ],
+       "marks": {
+        "dim": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null",
+        "[20,10]",
+        "null",
+        "[10]"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6
+        ]
+       }
+      }
+     },
+     "answer": "[null,null,null,null,[20,10],null,[10]]"
+    }
+   ],
+   "sampleInput": "[\"MicroFeed\",\"publishPost\",\"publishPost\",\"subscribe\",\"latestFeed\",\"unsubscribe\",\"latestFeed\"]\n[[],[1,10],[2,20],[1,2],[1],[1,2],[1]]"
+  }
+ ]
+}

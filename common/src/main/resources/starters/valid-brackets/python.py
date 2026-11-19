@@ -1,4 +1,4 @@
 class Solution:
-    def verifyJobNesting(self, tape: str) -> bool:
+    def isValidBrackets(self, brackets: str) -> bool:
         # Write your solution here
         pass

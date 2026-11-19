@@ -7,6 +7,6 @@ class TreeNode:
         self.right = right
 
 class Solution:
-    def reflectBlend(self, root: Optional[TreeNode]) -> Optional[TreeNode]:
+    def mirrorTree(self, root: Optional[TreeNode]) -> Optional[TreeNode]:
         # Write your solution here
         pass

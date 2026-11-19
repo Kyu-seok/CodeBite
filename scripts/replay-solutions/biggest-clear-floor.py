@@ -1,5 +1,5 @@
 class Solution:
-    def largest_square(self, matrix: list[list[str]]) -> int:
+    def biggestClearFloor(self, matrix: list[list[str]]) -> int:
         cols = len(matrix[0])
         # side[c] = side of the largest clear square whose bottom-right is this row, column c - 1
         side = [0] * (cols + 1)

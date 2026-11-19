@@ -3,7 +3,7 @@ class Solution {
      * @param {number[][]} zones
      * @return {number}
      */
-    coverAllWindows(zones) {
+    minPellets(zones) {
         // Write your solution here
     }
 }

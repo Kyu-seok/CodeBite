@@ -13,10 +13,6 @@
    "id": "nums",
    "type": "array",
    "title": "nums"
-  },
-  {
-   "id": "state",
-   "type": "vars"
   }
  ],
  "runs": [
@@ -44,42 +40,30 @@
         0,
         1
        ],
+       "spans": {
+        "zeros": null,
+        "ones": null,
+        "twos": null
+       },
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
        "pointers": {
         "low": 0,
         "mid": 0,
         "high": 6
        },
        "marks": {
-        "dim": [],
         "lit": [],
         "good": [],
         "path": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "0s placed",
-          "ko": "자리 잡은 0"
-         },
-         "value": 0
-        },
-        {
-         "label": {
-          "en": "2s placed",
-          "ko": "자리 잡은 2"
-         },
-         "value": 0
-        },
-        {
-         "label": {
-          "en": "unread",
-          "ko": "안 읽은 칸"
-         },
-         "value": 7
-        }
-       ]
       }
      }
     },
@@ -99,44 +83,38 @@
         0,
         1
        ],
+       "spans": {
+        "zeros": null,
+        "ones": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "1s",
+          "ko": "1"
+         }
+        },
+        "twos": null
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
        "pointers": {
         "low": 0,
         "mid": 1,
         "high": 6
        },
        "marks": {
-        "dim": [],
         "lit": [
          0
         ],
         "good": [],
         "path": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "0s placed",
-          "ko": "자리 잡은 0"
-         },
-         "value": 0
-        },
-        {
-         "label": {
-          "en": "2s placed",
-          "ko": "자리 잡은 2"
-         },
-         "value": 0
-        },
-        {
-         "label": {
-          "en": "unread",
-          "ko": "안 읽은 칸"
-         },
-         "value": 6
-        }
-       ]
       }
      }
     },
@@ -156,15 +134,38 @@
         0,
         2
        ],
+       "spans": {
+        "zeros": null,
+        "ones": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "1s",
+          "ko": "1"
+         }
+        },
+        "twos": {
+         "from": 6,
+         "to": 6,
+         "label": {
+          "en": "2s",
+          "ko": "2"
+         }
+        }
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4,
+        5
+       ],
        "pointers": {
         "low": 0,
         "mid": 1,
         "high": 5
        },
        "marks": {
-        "dim": [
-         6
-        ],
         "lit": [],
         "good": [
          1,
@@ -172,33 +173,32 @@
         ],
         "path": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "0s placed",
-          "ko": "자리 잡은 0"
-         },
-         "value": 0
-        },
-        {
-         "label": {
-          "en": "2s placed",
-          "ko": "자리 잡은 2"
-         },
-         "value": 1
-        },
-        {
-         "label": {
-          "en": "unread",
-          "ko": "안 읽은 칸"
-         },
-         "value": 5
-        }
-       ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 1
+       },
+       "to": {
+        "view": "nums",
+        "at": 6
+       },
+       "value": 2
+      },
+      {
+       "from": {
+        "view": "nums",
+        "at": 6
+       },
+       "to": {
+        "view": "nums",
+        "at": 1
+       },
+       "value": 1
+      }
+     ]
     },
     {
      "caption": {
@@ -216,46 +216,43 @@
         0,
         2
        ],
+       "spans": {
+        "zeros": null,
+        "ones": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "1s",
+          "ko": "1"
+         }
+        },
+        "twos": {
+         "from": 6,
+         "to": 6,
+         "label": {
+          "en": "2s",
+          "ko": "2"
+         }
+        }
+       },
+       "unread": [
+        2,
+        3,
+        4,
+        5
+       ],
        "pointers": {
         "low": 0,
         "mid": 2,
         "high": 5
        },
        "marks": {
-        "dim": [
-         6
-        ],
         "lit": [
          1
         ],
         "good": [],
         "path": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "0s placed",
-          "ko": "자리 잡은 0"
-         },
-         "value": 0
-        },
-        {
-         "label": {
-          "en": "2s placed",
-          "ko": "자리 잡은 2"
-         },
-         "value": 1
-        },
-        {
-         "label": {
-          "en": "unread",
-          "ko": "안 읽은 칸"
-         },
-         "value": 4
-        }
-       ]
       }
      }
     },
@@ -275,16 +272,43 @@
         0,
         2
        ],
+       "spans": {
+        "zeros": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "0s",
+          "ko": "0"
+         }
+        },
+        "ones": {
+         "from": 1,
+         "to": 2,
+         "label": {
+          "en": "1s",
+          "ko": "1"
+         }
+        },
+        "twos": {
+         "from": 6,
+         "to": 6,
+         "label": {
+          "en": "2s",
+          "ko": "2"
+         }
+        }
+       },
+       "unread": [
+        3,
+        4,
+        5
+       ],
        "pointers": {
         "low": 1,
         "mid": 3,
         "high": 5
        },
        "marks": {
-        "dim": [
-         0,
-         6
-        ],
         "lit": [],
         "good": [
          0,
@@ -292,33 +316,32 @@
         ],
         "path": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "0s placed",
-          "ko": "자리 잡은 0"
-         },
-         "value": 1
-        },
-        {
-         "label": {
-          "en": "2s placed",
-          "ko": "자리 잡은 2"
-         },
-         "value": 1
-        },
-        {
-         "label": {
-          "en": "unread",
-          "ko": "안 읽은 칸"
-         },
-         "value": 3
-        }
-       ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 0
+       },
+       "to": {
+        "view": "nums",
+        "at": 2
+       },
+       "value": 1
+      },
+      {
+       "from": {
+        "view": "nums",
+        "at": 2
+       },
+       "to": {
+        "view": "nums",
+        "at": 0
+       },
+       "value": 0
+      }
+     ]
     },
     {
      "caption": {
@@ -336,17 +359,42 @@
         2,
         2
        ],
+       "spans": {
+        "zeros": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "0s",
+          "ko": "0"
+         }
+        },
+        "ones": {
+         "from": 1,
+         "to": 2,
+         "label": {
+          "en": "1s",
+          "ko": "1"
+         }
+        },
+        "twos": {
+         "from": 5,
+         "to": 6,
+         "label": {
+          "en": "2s",
+          "ko": "2"
+         }
+        }
+       },
+       "unread": [
+        3,
+        4
+       ],
        "pointers": {
         "low": 1,
         "mid": 3,
         "high": 4
        },
        "marks": {
-        "dim": [
-         0,
-         5,
-         6
-        ],
         "lit": [],
         "good": [
          3,
@@ -354,33 +402,32 @@
         ],
         "path": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "0s placed",
-          "ko": "자리 잡은 0"
-         },
-         "value": 1
-        },
-        {
-         "label": {
-          "en": "2s placed",
-          "ko": "자리 잡은 2"
-         },
-         "value": 2
-        },
-        {
-         "label": {
-          "en": "unread",
-          "ko": "안 읽은 칸"
-         },
-         "value": 2
-        }
-       ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 3
+       },
+       "to": {
+        "view": "nums",
+        "at": 5
+       },
+       "value": 2
+      },
+      {
+       "from": {
+        "view": "nums",
+        "at": 5
+       },
+       "to": {
+        "view": "nums",
+        "at": 3
+       },
+       "value": 0
+      }
+     ]
     },
     {
      "caption": {
@@ -398,18 +445,41 @@
         2,
         2
        ],
+       "spans": {
+        "zeros": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "0s",
+          "ko": "0"
+         }
+        },
+        "ones": {
+         "from": 2,
+         "to": 3,
+         "label": {
+          "en": "1s",
+          "ko": "1"
+         }
+        },
+        "twos": {
+         "from": 5,
+         "to": 6,
+         "label": {
+          "en": "2s",
+          "ko": "2"
+         }
+        }
+       },
+       "unread": [
+        4
+       ],
        "pointers": {
         "low": 2,
         "mid": 4,
         "high": 4
        },
        "marks": {
-        "dim": [
-         0,
-         1,
-         5,
-         6
-        ],
         "lit": [],
         "good": [
          1,
@@ -417,33 +487,32 @@
         ],
         "path": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "0s placed",
-          "ko": "자리 잡은 0"
-         },
-         "value": 2
-        },
-        {
-         "label": {
-          "en": "2s placed",
-          "ko": "자리 잡은 2"
-         },
-         "value": 2
-        },
-        {
-         "label": {
-          "en": "unread",
-          "ko": "안 읽은 칸"
-         },
-         "value": 1
-        }
-       ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 1
+       },
+       "to": {
+        "view": "nums",
+        "at": 3
+       },
+       "value": 1
+      },
+      {
+       "from": {
+        "view": "nums",
+        "at": 3
+       },
+       "to": {
+        "view": "nums",
+        "at": 1
+       },
+       "value": 0
+      }
+     ]
     },
     {
      "caption": {
@@ -461,49 +530,45 @@
         2,
         2
        ],
+       "spans": {
+        "zeros": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "0s",
+          "ko": "0"
+         }
+        },
+        "ones": {
+         "from": 2,
+         "to": 4,
+         "label": {
+          "en": "1s",
+          "ko": "1"
+         }
+        },
+        "twos": {
+         "from": 5,
+         "to": 6,
+         "label": {
+          "en": "2s",
+          "ko": "2"
+         }
+        }
+       },
+       "unread": [],
        "pointers": {
         "low": 2,
         "mid": 5,
         "high": 4
        },
        "marks": {
-        "dim": [
-         0,
-         1,
-         5,
-         6
-        ],
         "lit": [
          4
         ],
         "good": [],
         "path": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "0s placed",
-          "ko": "자리 잡은 0"
-         },
-         "value": 2
-        },
-        {
-         "label": {
-          "en": "2s placed",
-          "ko": "자리 잡은 2"
-         },
-         "value": 2
-        },
-        {
-         "label": {
-          "en": "unread",
-          "ko": "안 읽은 칸"
-         },
-         "value": 0
-        }
-       ]
       }
      }
     },
@@ -523,13 +588,10 @@
         2,
         2
        ],
-       "pointers": {
-        "low": 2,
-        "mid": 5,
-        "high": 4
-       },
+       "spans": {},
+       "unread": [],
+       "pointers": {},
        "marks": {
-        "dim": [],
         "lit": [],
         "good": [],
         "path": [
@@ -542,31 +604,6 @@
          6
         ]
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "0s placed",
-          "ko": "자리 잡은 0"
-         },
-         "value": 2
-        },
-        {
-         "label": {
-          "en": "2s placed",
-          "ko": "자리 잡은 2"
-         },
-         "value": 2
-        },
-        {
-         "label": {
-          "en": "unread",
-          "ko": "안 읽은 칸"
-         },
-         "value": 0
-        }
-       ]
       }
      },
      "answer": "[0,0,1,1,1,2,2]"
@@ -594,42 +631,26 @@
         1,
         0
        ],
+       "spans": {
+        "zeros": null,
+        "ones": null,
+        "twos": null
+       },
+       "unread": [
+        0,
+        1,
+        2
+       ],
        "pointers": {
         "low": 0,
         "mid": 0,
         "high": 2
        },
        "marks": {
-        "dim": [],
         "lit": [],
         "good": [],
         "path": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "0s placed",
-          "ko": "자리 잡은 0"
-         },
-         "value": 0
-        },
-        {
-         "label": {
-          "en": "2s placed",
-          "ko": "자리 잡은 2"
-         },
-         "value": 0
-        },
-        {
-         "label": {
-          "en": "unread",
-          "ko": "안 읽은 칸"
-         },
-         "value": 3
-        }
-       ]
       }
      }
     },
@@ -645,15 +666,28 @@
         1,
         2
        ],
+       "spans": {
+        "zeros": null,
+        "ones": null,
+        "twos": {
+         "from": 2,
+         "to": 2,
+         "label": {
+          "en": "2s",
+          "ko": "2"
+         }
+        }
+       },
+       "unread": [
+        0,
+        1
+       ],
        "pointers": {
         "low": 0,
         "mid": 0,
         "high": 1
        },
        "marks": {
-        "dim": [
-         2
-        ],
         "lit": [],
         "good": [
          0,
@@ -661,33 +695,32 @@
         ],
         "path": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "0s placed",
-          "ko": "자리 잡은 0"
-         },
-         "value": 0
-        },
-        {
-         "label": {
-          "en": "2s placed",
-          "ko": "자리 잡은 2"
-         },
-         "value": 1
-        },
-        {
-         "label": {
-          "en": "unread",
-          "ko": "안 읽은 칸"
-         },
-         "value": 2
-        }
-       ]
       }
-     }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 0
+       },
+       "to": {
+        "view": "nums",
+        "at": 2
+       },
+       "value": 2
+      },
+      {
+       "from": {
+        "view": "nums",
+        "at": 2
+       },
+       "to": {
+        "view": "nums",
+        "at": 0
+       },
+       "value": 0
+      }
+     ]
     },
     {
      "caption": {
@@ -701,47 +734,40 @@
         1,
         2
        ],
+       "spans": {
+        "zeros": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "0s",
+          "ko": "0"
+         }
+        },
+        "ones": null,
+        "twos": {
+         "from": 2,
+         "to": 2,
+         "label": {
+          "en": "2s",
+          "ko": "2"
+         }
+        }
+       },
+       "unread": [
+        1
+       ],
        "pointers": {
         "low": 1,
         "mid": 1,
         "high": 1
        },
        "marks": {
-        "dim": [
-         0,
-         2
-        ],
         "lit": [],
         "good": [
          0
         ],
         "path": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "0s placed",
-          "ko": "자리 잡은 0"
-         },
-         "value": 1
-        },
-        {
-         "label": {
-          "en": "2s placed",
-          "ko": "자리 잡은 2"
-         },
-         "value": 1
-        },
-        {
-         "label": {
-          "en": "unread",
-          "ko": "안 읽은 칸"
-         },
-         "value": 1
-        }
-       ]
       }
      }
     },
@@ -757,47 +783,45 @@
         1,
         2
        ],
+       "spans": {
+        "zeros": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "0s",
+          "ko": "0"
+         }
+        },
+        "ones": {
+         "from": 1,
+         "to": 1,
+         "label": {
+          "en": "1s",
+          "ko": "1"
+         }
+        },
+        "twos": {
+         "from": 2,
+         "to": 2,
+         "label": {
+          "en": "2s",
+          "ko": "2"
+         }
+        }
+       },
+       "unread": [],
        "pointers": {
         "low": 1,
         "mid": 2,
         "high": 1
        },
        "marks": {
-        "dim": [
-         0,
-         2
-        ],
         "lit": [
          1
         ],
         "good": [],
         "path": []
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "0s placed",
-          "ko": "자리 잡은 0"
-         },
-         "value": 1
-        },
-        {
-         "label": {
-          "en": "2s placed",
-          "ko": "자리 잡은 2"
-         },
-         "value": 1
-        },
-        {
-         "label": {
-          "en": "unread",
-          "ko": "안 읽은 칸"
-         },
-         "value": 0
-        }
-       ]
       }
      }
     },
@@ -813,13 +837,10 @@
         1,
         2
        ],
-       "pointers": {
-        "low": 1,
-        "mid": 2,
-        "high": 1
-       },
+       "spans": {},
+       "unread": [],
+       "pointers": {},
        "marks": {
-        "dim": [],
         "lit": [],
         "good": [],
         "path": [
@@ -828,31 +849,6 @@
          2
         ]
        }
-      },
-      "state": {
-       "items": [
-        {
-         "label": {
-          "en": "0s placed",
-          "ko": "자리 잡은 0"
-         },
-         "value": 1
-        },
-        {
-         "label": {
-          "en": "2s placed",
-          "ko": "자리 잡은 2"
-         },
-         "value": 1
-        },
-        {
-         "label": {
-          "en": "unread",
-          "ko": "안 읽은 칸"
-         },
-         "value": 0
-        }
-       ]
       }
      },
      "answer": "[0,1,2]"

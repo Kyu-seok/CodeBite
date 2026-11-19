@@ -1,5 +1,5 @@
 class Solution:
-    def detectFlowValue(self, menu: list[list[int]], target: int) -> bool:
+    def hasPrice(self, menu: list[list[int]], target: int) -> bool:
         if not menu or not menu[0]:
             return False
         cols = len(menu[0])

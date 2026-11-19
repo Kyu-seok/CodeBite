@@ -2,7 +2,7 @@
 
 const input = require('fs').readFileSync('/dev/stdin', 'utf8').trim();
 const lines = input.split('\n');
-const x = parseInt(lines[0]);
-const y = parseInt(lines[1]);
-const result = new Solution().countFlagMismatches(x, y);
+const leftFlags = parseInt(lines[0]);
+const rightFlags = parseInt(lines[1]);
+const result = new Solution().countFlagMismatches(leftFlags, rightFlags);
 console.log(result);

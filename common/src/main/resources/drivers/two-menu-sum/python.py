@@ -1,7 +1,7 @@
 {USER_CODE}
 
 import json
-numbers = eval(input())
-target = int(input())
-result = Solution().pairTiersBudget(numbers, target)
+menuPrice = eval(input())
+budget = int(input())
+result = Solution().findMenuPair(menuPrice, budget)
 print(json.dumps(result, separators=(',', ':')))

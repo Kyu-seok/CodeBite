@@ -8,9 +8,9 @@ public class Main {
         int n = Integer.parseInt(sc.nextLine().trim());
         String line = sc.nextLine().trim();
 
-        int[][] edges;
+        int[][] relays;
         if (line.equals("[]")) {
-            edges = new int[0][];
+            relays = new int[0][];
         } else {
             String inner = line.substring(1, line.length() - 1);
             List<int[]> list = new ArrayList<>();
@@ -27,10 +27,10 @@ public class Main {
                     }
                 }
             }
-            edges = list.toArray(new int[0][]);
+            relays = list.toArray(new int[0][]);
         }
 
-        int result = new Solution().tallyDeviceMeshes(n, edges);
+        int result = new Solution().countParties(n, relays);
         System.out.println(result);
     }
 }

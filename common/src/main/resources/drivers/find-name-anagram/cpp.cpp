@@ -9,7 +9,7 @@ int main() {
     string s1, s2;
     getline(cin, s1);
     getline(cin, s2);
-    bool result = Solution().matchesZoneAnagram(s1, s2);
+    bool result = Solution().containsNameAnagram(s1, s2);
     cout << (result ? "true" : "false") << endl;
     return 0;
 }

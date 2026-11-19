@@ -10,7 +10,7 @@ int main() {
     string line;
     getline(cin, line);
 
-    vector<vector<int>> grid;
+    vector<vector<int>> tray;
     string inner = line.substr(1, line.size() - 2);
     int depth = 0;
     int start = 0;
@@ -24,12 +24,12 @@ int main() {
                 stringstream ss(rowStr);
                 string token;
                 while (getline(ss, token, ',')) row.push_back(stoi(token));
-                grid.push_back(row);
+                tray.push_back(row);
             }
         }
     }
 
-    int result = Solution().spreadContaminationWave(grid);
+    int result = Solution().minutesUntilStale(tray);
     cout << result << endl;
     return 0;
 }

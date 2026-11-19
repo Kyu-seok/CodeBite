@@ -3,7 +3,7 @@ using namespace std;
 
 class Solution {
 public:
-    int tallyPlantedRegions(vector<vector<char>>& board) {
+    int countClusters(vector<vector<char>>& board) {
         // Write your solution here
     }
 };

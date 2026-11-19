@@ -92,6 +92,7 @@ Output: {output value}
 - Do NOT introduce new constraints or remove existing ones
 - Do NOT change example input/output values (the test cases depend on them)
 - Do NOT change problem difficulty
+- Do NOT reword the standard sentences for the judging rules (GLOSSARY.md: Level-Order Array, Any-Order Result, In-Place Method), as `V590__explain_level_order_arrays.java`, `V591__explain_any_order_results.java` and `V592__explain_in_place_methods.java` in `common/src/main/java/db/migration/` wrote them; `StatementsExplainJudgingTest` fails without them
 - Do NOT copy wording from LeetCode or NeetCode — keep descriptions original
 - Do NOT change the problem title or slug
 

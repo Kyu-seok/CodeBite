@@ -1,0 +1,2828 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Group Study Cards",
+  "ko": "스터디 카드 묶기"
+ },
+ "approach": {
+  "en": "Count each card. The smallest card left can only be the start of a group, so it starts as many groups as it has copies, and each of the next groupSize - 1 numbers must have that many copies to give.",
+  "ko": "카드마다 장수를 셉니다. 남은 카드 중 가장 작은 카드는 묶음의 첫 카드일 수밖에 없으므로 장수만큼 묶음을 시작하고, 그다음 groupSize - 1개의 숫자도 그만큼씩 내줄 수 있어야 합니다."
+ },
+ "views": [
+  {
+   "id": "cards",
+   "type": "array",
+   "title": {
+    "en": "cards",
+    "ko": "cards (카드)"
+   }
+  },
+  {
+   "id": "left",
+   "type": "map",
+   "title": {
+    "en": "copies left of each card",
+    "ko": "카드별 남은 장수"
+   },
+   "empty": {
+    "en": "none counted yet",
+    "ko": "아직 세지 않음"
+   }
+  },
+  {
+   "id": "groups",
+   "type": "output",
+   "title": {
+    "en": "groups",
+    "ko": "묶음"
+   },
+   "empty": {
+    "en": "none yet",
+    "ko": "아직 없음"
+   }
+  },
+  {
+   "id": "state",
+   "type": "vars"
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "cards = [1,2,3,4,5,6,7,8], groupSize = 2",
+   "expected": "true",
+   "frames": [
+    {
+     "caption": {
+      "en": "8 cards into groups of 2: 8 is a multiple of 2, so first count the copies of each card.",
+      "ko": "카드 8장을 2장씩 묶습니다. 8은 2의 배수이므로 먼저 카드마다 장수를 셉니다."
+     },
+     "views": {
+      "cards": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {
+        "all": {
+         "from": 0,
+         "to": 7,
+         "label": {
+          "en": "8 cards",
+          "ko": "카드 8장"
+         },
+         "mark": "good"
+        }
+       },
+       "marks": {}
+      },
+      "left": {
+       "entries": [],
+       "marks": {
+        "dim": []
+       }
+      },
+      "groups": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "groupSize",
+          "ko": "groupSize (묶음 크기)"
+         },
+         "value": 2
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Card 1: it now has 1 copy.",
+      "ko": "카드 1: 지금까지 1장입니다."
+     },
+     "views": {
+      "cards": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "spans": {},
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "left": {
+       "entries": [
+        {
+         "key": 1,
+         "value": 1
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "good": [
+         1
+        ]
+       }
+      },
+      "groups": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "groupSize",
+          "ko": "groupSize (묶음 크기)"
+         },
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "cards",
+        "at": 0
+       },
+       "to": {
+        "view": "left",
+        "at": 1
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Card 2: it now has 1 copy.",
+      "ko": "카드 2: 지금까지 1장입니다."
+     },
+     "views": {
+      "cards": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "spans": {},
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "left": {
+       "entries": [
+        {
+         "key": 1,
+         "value": 1
+        },
+        {
+         "key": 2,
+         "value": 1
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "good": [
+         2
+        ]
+       }
+      },
+      "groups": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "groupSize",
+          "ko": "groupSize (묶음 크기)"
+         },
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "cards",
+        "at": 1
+       },
+       "to": {
+        "view": "left",
+        "at": 2
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Card 3: it now has 1 copy.",
+      "ko": "카드 3: 지금까지 1장입니다."
+     },
+     "views": {
+      "cards": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "spans": {},
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "left": {
+       "entries": [
+        {
+         "key": 1,
+         "value": 1
+        },
+        {
+         "key": 2,
+         "value": 1
+        },
+        {
+         "key": 3,
+         "value": 1
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "good": [
+         3
+        ]
+       }
+      },
+      "groups": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "groupSize",
+          "ko": "groupSize (묶음 크기)"
+         },
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "cards",
+        "at": 2
+       },
+       "to": {
+        "view": "left",
+        "at": 3
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Card 4: it now has 1 copy.",
+      "ko": "카드 4: 지금까지 1장입니다."
+     },
+     "views": {
+      "cards": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "spans": {},
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "left": {
+       "entries": [
+        {
+         "key": 1,
+         "value": 1
+        },
+        {
+         "key": 2,
+         "value": 1
+        },
+        {
+         "key": 3,
+         "value": 1
+        },
+        {
+         "key": 4,
+         "value": 1
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "good": [
+         4
+        ]
+       }
+      },
+      "groups": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "groupSize",
+          "ko": "groupSize (묶음 크기)"
+         },
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "cards",
+        "at": 3
+       },
+       "to": {
+        "view": "left",
+        "at": 4
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Card 5: it now has 1 copy.",
+      "ko": "카드 5: 지금까지 1장입니다."
+     },
+     "views": {
+      "cards": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+       ],
+       "pointers": {
+        "i": 4
+       },
+       "spans": {},
+       "marks": {
+        "lit": [
+         4
+        ]
+       }
+      },
+      "left": {
+       "entries": [
+        {
+         "key": 1,
+         "value": 1
+        },
+        {
+         "key": 2,
+         "value": 1
+        },
+        {
+         "key": 3,
+         "value": 1
+        },
+        {
+         "key": 4,
+         "value": 1
+        },
+        {
+         "key": 5,
+         "value": 1
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "good": [
+         5
+        ]
+       }
+      },
+      "groups": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "groupSize",
+          "ko": "groupSize (묶음 크기)"
+         },
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "cards",
+        "at": 4
+       },
+       "to": {
+        "view": "left",
+        "at": 5
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Card 6: it now has 1 copy.",
+      "ko": "카드 6: 지금까지 1장입니다."
+     },
+     "views": {
+      "cards": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+       ],
+       "pointers": {
+        "i": 5
+       },
+       "spans": {},
+       "marks": {
+        "lit": [
+         5
+        ]
+       }
+      },
+      "left": {
+       "entries": [
+        {
+         "key": 1,
+         "value": 1
+        },
+        {
+         "key": 2,
+         "value": 1
+        },
+        {
+         "key": 3,
+         "value": 1
+        },
+        {
+         "key": 4,
+         "value": 1
+        },
+        {
+         "key": 5,
+         "value": 1
+        },
+        {
+         "key": 6,
+         "value": 1
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "good": [
+         6
+        ]
+       }
+      },
+      "groups": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "groupSize",
+          "ko": "groupSize (묶음 크기)"
+         },
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "cards",
+        "at": 5
+       },
+       "to": {
+        "view": "left",
+        "at": 6
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Card 7: it now has 1 copy.",
+      "ko": "카드 7: 지금까지 1장입니다."
+     },
+     "views": {
+      "cards": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+       ],
+       "pointers": {
+        "i": 6
+       },
+       "spans": {},
+       "marks": {
+        "lit": [
+         6
+        ]
+       }
+      },
+      "left": {
+       "entries": [
+        {
+         "key": 1,
+         "value": 1
+        },
+        {
+         "key": 2,
+         "value": 1
+        },
+        {
+         "key": 3,
+         "value": 1
+        },
+        {
+         "key": 4,
+         "value": 1
+        },
+        {
+         "key": 5,
+         "value": 1
+        },
+        {
+         "key": 6,
+         "value": 1
+        },
+        {
+         "key": 7,
+         "value": 1
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "good": [
+         7
+        ]
+       }
+      },
+      "groups": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "groupSize",
+          "ko": "groupSize (묶음 크기)"
+         },
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "cards",
+        "at": 6
+       },
+       "to": {
+        "view": "left",
+        "at": 7
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Card 8: it now has 1 copy.",
+      "ko": "카드 8: 지금까지 1장입니다."
+     },
+     "views": {
+      "cards": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+       ],
+       "pointers": {
+        "i": 7
+       },
+       "spans": {},
+       "marks": {
+        "lit": [
+         7
+        ]
+       }
+      },
+      "left": {
+       "entries": [
+        {
+         "key": 1,
+         "value": 1
+        },
+        {
+         "key": 2,
+         "value": 1
+        },
+        {
+         "key": 3,
+         "value": 1
+        },
+        {
+         "key": 4,
+         "value": 1
+        },
+        {
+         "key": 5,
+         "value": 1
+        },
+        {
+         "key": 6,
+         "value": 1
+        },
+        {
+         "key": 7,
+         "value": 1
+        },
+        {
+         "key": 8,
+         "value": 1
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "good": [
+         8
+        ]
+       }
+      },
+      "groups": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "groupSize",
+          "ko": "groupSize (묶음 크기)"
+         },
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "cards",
+        "at": 7
+       },
+       "to": {
+        "view": "left",
+        "at": 8
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The smallest card left is 1, with 1 copy: it can only start a group, so take 1.",
+      "ko": "남은 카드 중 가장 작은 카드는 1이고 1장 있습니다. 묶음의 첫 카드일 수밖에 없으므로 1을 가져갑니다."
+     },
+     "views": {
+      "cards": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {},
+       "marks": {}
+      },
+      "left": {
+       "entries": [
+        {
+         "key": 1,
+         "value": 0
+        },
+        {
+         "key": 2,
+         "value": 1
+        },
+        {
+         "key": 3,
+         "value": 1
+        },
+        {
+         "key": 4,
+         "value": 1
+        },
+        {
+         "key": 5,
+         "value": 1
+        },
+        {
+         "key": 6,
+         "value": 1
+        },
+        {
+         "key": 7,
+         "value": 1
+        },
+        {
+         "key": 8,
+         "value": 1
+        }
+       ],
+       "marks": {
+        "dim": [
+         1
+        ],
+        "lit": [
+         1
+        ]
+       },
+       "probe": {
+        "key": 1,
+        "hit": true,
+        "label": {
+         "en": "1 left?",
+         "ko": "1 남음?"
+        }
+       }
+      },
+      "groups": {
+       "values": [
+        "[1"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "groupSize",
+          "ko": "groupSize (묶음 크기)"
+         },
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "left",
+        "at": 1
+       },
+       "value": "−1"
+      },
+      {
+       "from": {
+        "view": "left",
+        "at": 1
+       },
+       "to": {
+        "view": "groups",
+        "at": 0
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The group from 1 needs 2 next, and 2 has 1 left: take 1 and the group is full.",
+      "ko": "1부터의 묶음에는 다음으로 2가 필요하고 1장 남았으니 1장을 가져갑니다. 묶음이 다 찼습니다."
+     },
+     "views": {
+      "cards": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {},
+       "marks": {}
+      },
+      "left": {
+       "entries": [
+        {
+         "key": 1,
+         "value": 0
+        },
+        {
+         "key": 2,
+         "value": 0
+        },
+        {
+         "key": 3,
+         "value": 1
+        },
+        {
+         "key": 4,
+         "value": 1
+        },
+        {
+         "key": 5,
+         "value": 1
+        },
+        {
+         "key": 6,
+         "value": 1
+        },
+        {
+         "key": 7,
+         "value": 1
+        },
+        {
+         "key": 8,
+         "value": 1
+        }
+       ],
+       "marks": {
+        "dim": [
+         1,
+         2
+        ],
+        "lit": [
+         2
+        ]
+       },
+       "probe": {
+        "key": 2,
+        "hit": true,
+        "label": {
+         "en": "2 left?",
+         "ko": "2 남음?"
+        }
+       }
+      },
+      "groups": {
+       "values": [
+        "[1,2]"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "groupSize",
+          "ko": "groupSize (묶음 크기)"
+         },
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "left",
+        "at": 2
+       },
+       "value": "−1"
+      },
+      {
+       "from": {
+        "view": "left",
+        "at": 2
+       },
+       "to": {
+        "view": "groups",
+        "at": 0
+       },
+       "value": "2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Card 2 has 0 copies left: every copy already went into an earlier group, so no group starts here.",
+      "ko": "카드 2에는 남은 장이 없습니다. 모두 앞의 묶음에 들어갔으므로 여기서 시작하는 묶음은 없습니다."
+     },
+     "views": {
+      "cards": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {},
+       "marks": {}
+      },
+      "left": {
+       "entries": [
+        {
+         "key": 1,
+         "value": 0
+        },
+        {
+         "key": 2,
+         "value": 0
+        },
+        {
+         "key": 3,
+         "value": 1
+        },
+        {
+         "key": 4,
+         "value": 1
+        },
+        {
+         "key": 5,
+         "value": 1
+        },
+        {
+         "key": 6,
+         "value": 1
+        },
+        {
+         "key": 7,
+         "value": 1
+        },
+        {
+         "key": 8,
+         "value": 1
+        }
+       ],
+       "marks": {
+        "dim": [
+         1,
+         2
+        ],
+        "lit": [
+         2
+        ]
+       },
+       "probe": {
+        "key": 2,
+        "hit": false,
+        "label": {
+         "en": "2 left?",
+         "ko": "2 남음?"
+        }
+       }
+      },
+      "groups": {
+       "values": [
+        "[1,2]"
+       ],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "groupSize",
+          "ko": "groupSize (묶음 크기)"
+         },
+         "value": 2
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The smallest card left is 3, with 1 copy: it can only start a group, so take 3.",
+      "ko": "남은 카드 중 가장 작은 카드는 3이고 1장 있습니다. 묶음의 첫 카드일 수밖에 없으므로 3을 가져갑니다."
+     },
+     "views": {
+      "cards": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {},
+       "marks": {}
+      },
+      "left": {
+       "entries": [
+        {
+         "key": 1,
+         "value": 0
+        },
+        {
+         "key": 2,
+         "value": 0
+        },
+        {
+         "key": 3,
+         "value": 0
+        },
+        {
+         "key": 4,
+         "value": 1
+        },
+        {
+         "key": 5,
+         "value": 1
+        },
+        {
+         "key": 6,
+         "value": 1
+        },
+        {
+         "key": 7,
+         "value": 1
+        },
+        {
+         "key": 8,
+         "value": 1
+        }
+       ],
+       "marks": {
+        "dim": [
+         1,
+         2,
+         3
+        ],
+        "lit": [
+         3
+        ]
+       },
+       "probe": {
+        "key": 3,
+        "hit": true,
+        "label": {
+         "en": "3 left?",
+         "ko": "3 남음?"
+        }
+       }
+      },
+      "groups": {
+       "values": [
+        "[1,2]",
+        "[3"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "groupSize",
+          "ko": "groupSize (묶음 크기)"
+         },
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "left",
+        "at": 3
+       },
+       "value": "−1"
+      },
+      {
+       "from": {
+        "view": "left",
+        "at": 3
+       },
+       "to": {
+        "view": "groups",
+        "at": 1
+       },
+       "value": "3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The group from 3 needs 4 next, and 4 has 1 left: take 1 and the group is full.",
+      "ko": "3부터의 묶음에는 다음으로 4가 필요하고 1장 남았으니 1장을 가져갑니다. 묶음이 다 찼습니다."
+     },
+     "views": {
+      "cards": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {},
+       "marks": {}
+      },
+      "left": {
+       "entries": [
+        {
+         "key": 1,
+         "value": 0
+        },
+        {
+         "key": 2,
+         "value": 0
+        },
+        {
+         "key": 3,
+         "value": 0
+        },
+        {
+         "key": 4,
+         "value": 0
+        },
+        {
+         "key": 5,
+         "value": 1
+        },
+        {
+         "key": 6,
+         "value": 1
+        },
+        {
+         "key": 7,
+         "value": 1
+        },
+        {
+         "key": 8,
+         "value": 1
+        }
+       ],
+       "marks": {
+        "dim": [
+         1,
+         2,
+         3,
+         4
+        ],
+        "lit": [
+         4
+        ]
+       },
+       "probe": {
+        "key": 4,
+        "hit": true,
+        "label": {
+         "en": "4 left?",
+         "ko": "4 남음?"
+        }
+       }
+      },
+      "groups": {
+       "values": [
+        "[1,2]",
+        "[3,4]"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "groupSize",
+          "ko": "groupSize (묶음 크기)"
+         },
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "left",
+        "at": 4
+       },
+       "value": "−1"
+      },
+      {
+       "from": {
+        "view": "left",
+        "at": 4
+       },
+       "to": {
+        "view": "groups",
+        "at": 1
+       },
+       "value": "4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Card 4 has 0 copies left: every copy already went into an earlier group, so no group starts here.",
+      "ko": "카드 4에는 남은 장이 없습니다. 모두 앞의 묶음에 들어갔으므로 여기서 시작하는 묶음은 없습니다."
+     },
+     "views": {
+      "cards": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {},
+       "marks": {}
+      },
+      "left": {
+       "entries": [
+        {
+         "key": 1,
+         "value": 0
+        },
+        {
+         "key": 2,
+         "value": 0
+        },
+        {
+         "key": 3,
+         "value": 0
+        },
+        {
+         "key": 4,
+         "value": 0
+        },
+        {
+         "key": 5,
+         "value": 1
+        },
+        {
+         "key": 6,
+         "value": 1
+        },
+        {
+         "key": 7,
+         "value": 1
+        },
+        {
+         "key": 8,
+         "value": 1
+        }
+       ],
+       "marks": {
+        "dim": [
+         1,
+         2,
+         3,
+         4
+        ],
+        "lit": [
+         4
+        ]
+       },
+       "probe": {
+        "key": 4,
+        "hit": false,
+        "label": {
+         "en": "4 left?",
+         "ko": "4 남음?"
+        }
+       }
+      },
+      "groups": {
+       "values": [
+        "[1,2]",
+        "[3,4]"
+       ],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "groupSize",
+          "ko": "groupSize (묶음 크기)"
+         },
+         "value": 2
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The smallest card left is 5, with 1 copy: it can only start a group, so take 5.",
+      "ko": "남은 카드 중 가장 작은 카드는 5이고 1장 있습니다. 묶음의 첫 카드일 수밖에 없으므로 5를 가져갑니다."
+     },
+     "views": {
+      "cards": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {},
+       "marks": {}
+      },
+      "left": {
+       "entries": [
+        {
+         "key": 1,
+         "value": 0
+        },
+        {
+         "key": 2,
+         "value": 0
+        },
+        {
+         "key": 3,
+         "value": 0
+        },
+        {
+         "key": 4,
+         "value": 0
+        },
+        {
+         "key": 5,
+         "value": 0
+        },
+        {
+         "key": 6,
+         "value": 1
+        },
+        {
+         "key": 7,
+         "value": 1
+        },
+        {
+         "key": 8,
+         "value": 1
+        }
+       ],
+       "marks": {
+        "dim": [
+         1,
+         2,
+         3,
+         4,
+         5
+        ],
+        "lit": [
+         5
+        ]
+       },
+       "probe": {
+        "key": 5,
+        "hit": true,
+        "label": {
+         "en": "5 left?",
+         "ko": "5 남음?"
+        }
+       }
+      },
+      "groups": {
+       "values": [
+        "[1,2]",
+        "[3,4]",
+        "[5"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "groupSize",
+          "ko": "groupSize (묶음 크기)"
+         },
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "left",
+        "at": 5
+       },
+       "value": "−1"
+      },
+      {
+       "from": {
+        "view": "left",
+        "at": 5
+       },
+       "to": {
+        "view": "groups",
+        "at": 2
+       },
+       "value": "5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The group from 5 needs 6 next, and 6 has 1 left: take 1 and the group is full.",
+      "ko": "5부터의 묶음에는 다음으로 6이 필요하고 1장 남았으니 1장을 가져갑니다. 묶음이 다 찼습니다."
+     },
+     "views": {
+      "cards": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {},
+       "marks": {}
+      },
+      "left": {
+       "entries": [
+        {
+         "key": 1,
+         "value": 0
+        },
+        {
+         "key": 2,
+         "value": 0
+        },
+        {
+         "key": 3,
+         "value": 0
+        },
+        {
+         "key": 4,
+         "value": 0
+        },
+        {
+         "key": 5,
+         "value": 0
+        },
+        {
+         "key": 6,
+         "value": 0
+        },
+        {
+         "key": 7,
+         "value": 1
+        },
+        {
+         "key": 8,
+         "value": 1
+        }
+       ],
+       "marks": {
+        "dim": [
+         1,
+         2,
+         3,
+         4,
+         5,
+         6
+        ],
+        "lit": [
+         6
+        ]
+       },
+       "probe": {
+        "key": 6,
+        "hit": true,
+        "label": {
+         "en": "6 left?",
+         "ko": "6 남음?"
+        }
+       }
+      },
+      "groups": {
+       "values": [
+        "[1,2]",
+        "[3,4]",
+        "[5,6]"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "groupSize",
+          "ko": "groupSize (묶음 크기)"
+         },
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "left",
+        "at": 6
+       },
+       "value": "−1"
+      },
+      {
+       "from": {
+        "view": "left",
+        "at": 6
+       },
+       "to": {
+        "view": "groups",
+        "at": 2
+       },
+       "value": "6"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Card 6 has 0 copies left: every copy already went into an earlier group, so no group starts here.",
+      "ko": "카드 6에는 남은 장이 없습니다. 모두 앞의 묶음에 들어갔으므로 여기서 시작하는 묶음은 없습니다."
+     },
+     "views": {
+      "cards": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {},
+       "marks": {}
+      },
+      "left": {
+       "entries": [
+        {
+         "key": 1,
+         "value": 0
+        },
+        {
+         "key": 2,
+         "value": 0
+        },
+        {
+         "key": 3,
+         "value": 0
+        },
+        {
+         "key": 4,
+         "value": 0
+        },
+        {
+         "key": 5,
+         "value": 0
+        },
+        {
+         "key": 6,
+         "value": 0
+        },
+        {
+         "key": 7,
+         "value": 1
+        },
+        {
+         "key": 8,
+         "value": 1
+        }
+       ],
+       "marks": {
+        "dim": [
+         1,
+         2,
+         3,
+         4,
+         5,
+         6
+        ],
+        "lit": [
+         6
+        ]
+       },
+       "probe": {
+        "key": 6,
+        "hit": false,
+        "label": {
+         "en": "6 left?",
+         "ko": "6 남음?"
+        }
+       }
+      },
+      "groups": {
+       "values": [
+        "[1,2]",
+        "[3,4]",
+        "[5,6]"
+       ],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "groupSize",
+          "ko": "groupSize (묶음 크기)"
+         },
+         "value": 2
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The smallest card left is 7, with 1 copy: it can only start a group, so take 7.",
+      "ko": "남은 카드 중 가장 작은 카드는 7이고 1장 있습니다. 묶음의 첫 카드일 수밖에 없으므로 7을 가져갑니다."
+     },
+     "views": {
+      "cards": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {},
+       "marks": {}
+      },
+      "left": {
+       "entries": [
+        {
+         "key": 1,
+         "value": 0
+        },
+        {
+         "key": 2,
+         "value": 0
+        },
+        {
+         "key": 3,
+         "value": 0
+        },
+        {
+         "key": 4,
+         "value": 0
+        },
+        {
+         "key": 5,
+         "value": 0
+        },
+        {
+         "key": 6,
+         "value": 0
+        },
+        {
+         "key": 7,
+         "value": 0
+        },
+        {
+         "key": 8,
+         "value": 1
+        }
+       ],
+       "marks": {
+        "dim": [
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7
+        ],
+        "lit": [
+         7
+        ]
+       },
+       "probe": {
+        "key": 7,
+        "hit": true,
+        "label": {
+         "en": "7 left?",
+         "ko": "7 남음?"
+        }
+       }
+      },
+      "groups": {
+       "values": [
+        "[1,2]",
+        "[3,4]",
+        "[5,6]",
+        "[7"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "groupSize",
+          "ko": "groupSize (묶음 크기)"
+         },
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "left",
+        "at": 7
+       },
+       "value": "−1"
+      },
+      {
+       "from": {
+        "view": "left",
+        "at": 7
+       },
+       "to": {
+        "view": "groups",
+        "at": 3
+       },
+       "value": "7"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The group from 7 needs 8 next, and 8 has 1 left: take 1 and the group is full.",
+      "ko": "7부터의 묶음에는 다음으로 8이 필요하고 1장 남았으니 1장을 가져갑니다. 묶음이 다 찼습니다."
+     },
+     "views": {
+      "cards": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {},
+       "marks": {}
+      },
+      "left": {
+       "entries": [
+        {
+         "key": 1,
+         "value": 0
+        },
+        {
+         "key": 2,
+         "value": 0
+        },
+        {
+         "key": 3,
+         "value": 0
+        },
+        {
+         "key": 4,
+         "value": 0
+        },
+        {
+         "key": 5,
+         "value": 0
+        },
+        {
+         "key": 6,
+         "value": 0
+        },
+        {
+         "key": 7,
+         "value": 0
+        },
+        {
+         "key": 8,
+         "value": 0
+        }
+       ],
+       "marks": {
+        "dim": [
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7,
+         8
+        ],
+        "lit": [
+         8
+        ]
+       },
+       "probe": {
+        "key": 8,
+        "hit": true,
+        "label": {
+         "en": "8 left?",
+         "ko": "8 남음?"
+        }
+       }
+      },
+      "groups": {
+       "values": [
+        "[1,2]",
+        "[3,4]",
+        "[5,6]",
+        "[7,8]"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "groupSize",
+          "ko": "groupSize (묶음 크기)"
+         },
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "left",
+        "at": 8
+       },
+       "value": "−1"
+      },
+      {
+       "from": {
+        "view": "left",
+        "at": 8
+       },
+       "to": {
+        "view": "groups",
+        "at": 3
+       },
+       "value": "8"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Card 8 has 0 copies left: every copy already went into an earlier group, so no group starts here.",
+      "ko": "카드 8에는 남은 장이 없습니다. 모두 앞의 묶음에 들어갔으므로 여기서 시작하는 묶음은 없습니다."
+     },
+     "views": {
+      "cards": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {},
+       "marks": {}
+      },
+      "left": {
+       "entries": [
+        {
+         "key": 1,
+         "value": 0
+        },
+        {
+         "key": 2,
+         "value": 0
+        },
+        {
+         "key": 3,
+         "value": 0
+        },
+        {
+         "key": 4,
+         "value": 0
+        },
+        {
+         "key": 5,
+         "value": 0
+        },
+        {
+         "key": 6,
+         "value": 0
+        },
+        {
+         "key": 7,
+         "value": 0
+        },
+        {
+         "key": 8,
+         "value": 0
+        }
+       ],
+       "marks": {
+        "dim": [
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7,
+         8
+        ],
+        "lit": [
+         8
+        ]
+       },
+       "probe": {
+        "key": 8,
+        "hit": false,
+        "label": {
+         "en": "8 left?",
+         "ko": "8 남음?"
+        }
+       }
+      },
+      "groups": {
+       "values": [
+        "[1,2]",
+        "[3,4]",
+        "[5,6]",
+        "[7,8]"
+       ],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "groupSize",
+          "ko": "groupSize (묶음 크기)"
+         },
+         "value": 2
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Every card went into a group: 4 groups of 2, [1,2], [3,4], [5,6], [7,8]. Answer: true.",
+      "ko": "모든 카드가 2장짜리 묶음 4개에 들어갔습니다([1,2], [3,4], [5,6], [7,8]). 답은 true입니다."
+     },
+     "views": {
+      "cards": {
+       "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {},
+       "marks": {}
+      },
+      "left": {
+       "entries": [
+        {
+         "key": 1,
+         "value": 0
+        },
+        {
+         "key": 2,
+         "value": 0
+        },
+        {
+         "key": 3,
+         "value": 0
+        },
+        {
+         "key": 4,
+         "value": 0
+        },
+        {
+         "key": 5,
+         "value": 0
+        },
+        {
+         "key": 6,
+         "value": 0
+        },
+        {
+         "key": 7,
+         "value": 0
+        },
+        {
+         "key": 8,
+         "value": 0
+        }
+       ],
+       "marks": {
+        "dim": [
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7,
+         8
+        ]
+       }
+      },
+      "groups": {
+       "values": [
+        "[1,2]",
+        "[3,4]",
+        "[5,6]",
+        "[7,8]"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "groupSize",
+          "ko": "groupSize (묶음 크기)"
+         },
+         "value": 2
+        }
+       ]
+      }
+     },
+     "answer": "true"
+    }
+   ],
+   "sampleInput": "[1,2,3,4,5,6,7,8]\n2"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "cards = [1,2,3,4], groupSize = 3",
+   "expected": "false",
+   "frames": [
+    {
+     "caption": {
+      "en": "4 cards, to be dealt into groups of 3.",
+      "ko": "카드 4장을 3장씩 묶어야 합니다."
+     },
+     "views": {
+      "cards": {
+       "values": [
+        1,
+        2,
+        3,
+        4
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {},
+       "marks": {}
+      },
+      "left": {
+       "entries": [],
+       "marks": {
+        "dim": []
+       }
+      },
+      "groups": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "groupSize",
+          "ko": "groupSize (묶음 크기)"
+         },
+         "value": 3
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "4 isn't a multiple of 3: 4 cards can't split evenly into groups of 3. Answer: false.",
+      "ko": "4는 3의 배수가 아니라서 카드 4장을 3장씩 나눌 수 없습니다. 답은 false입니다."
+     },
+     "views": {
+      "cards": {
+       "values": [
+        1,
+        2,
+        3,
+        4
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {
+        "all": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "4 cards",
+          "ko": "카드 4장"
+         },
+         "mark": "bad"
+        }
+       },
+       "marks": {
+        "bad": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "left": {
+       "entries": [],
+       "marks": {
+        "dim": []
+       }
+      },
+      "groups": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "groupSize",
+          "ko": "groupSize (묶음 크기)"
+         },
+         "value": 3
+        }
+       ]
+      }
+     },
+     "answer": "false"
+    }
+   ],
+   "sampleInput": "[1,2,3,4]\n3"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "cards = [5,1], groupSize = 1",
+   "expected": "true",
+   "frames": [
+    {
+     "caption": {
+      "en": "2 cards into groups of 1: 2 is a multiple of 1, so first count the copies of each card.",
+      "ko": "카드 2장을 1장씩 묶습니다. 2는 1의 배수이므로 먼저 카드마다 장수를 셉니다."
+     },
+     "views": {
+      "cards": {
+       "values": [
+        5,
+        1
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {
+        "all": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "2 cards",
+          "ko": "카드 2장"
+         },
+         "mark": "good"
+        }
+       },
+       "marks": {}
+      },
+      "left": {
+       "entries": [],
+       "marks": {
+        "dim": []
+       }
+      },
+      "groups": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "groupSize",
+          "ko": "groupSize (묶음 크기)"
+         },
+         "value": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Card 5: it now has 1 copy.",
+      "ko": "카드 5: 지금까지 1장입니다."
+     },
+     "views": {
+      "cards": {
+       "values": [
+        5,
+        1
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "spans": {},
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "left": {
+       "entries": [
+        {
+         "key": 5,
+         "value": 1
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "good": [
+         5
+        ]
+       }
+      },
+      "groups": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "groupSize",
+          "ko": "groupSize (묶음 크기)"
+         },
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "cards",
+        "at": 0
+       },
+       "to": {
+        "view": "left",
+        "at": 5
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Card 1: it now has 1 copy.",
+      "ko": "카드 1: 지금까지 1장입니다."
+     },
+     "views": {
+      "cards": {
+       "values": [
+        5,
+        1
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "spans": {},
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "left": {
+       "entries": [
+        {
+         "key": 1,
+         "value": 1
+        },
+        {
+         "key": 5,
+         "value": 1
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "good": [
+         1
+        ]
+       }
+      },
+      "groups": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "groupSize",
+          "ko": "groupSize (묶음 크기)"
+         },
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "cards",
+        "at": 1
+       },
+       "to": {
+        "view": "left",
+        "at": 1
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The smallest card left is 1, with 1 copy: it can only start a group, so take 1.",
+      "ko": "남은 카드 중 가장 작은 카드는 1이고 1장 있습니다. 묶음의 첫 카드일 수밖에 없으므로 1을 가져갑니다."
+     },
+     "views": {
+      "cards": {
+       "values": [
+        5,
+        1
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {},
+       "marks": {}
+      },
+      "left": {
+       "entries": [
+        {
+         "key": 1,
+         "value": 0
+        },
+        {
+         "key": 5,
+         "value": 1
+        }
+       ],
+       "marks": {
+        "dim": [
+         1
+        ],
+        "lit": [
+         1
+        ]
+       },
+       "probe": {
+        "key": 1,
+        "hit": true,
+        "label": {
+         "en": "1 left?",
+         "ko": "1 남음?"
+        }
+       }
+      },
+      "groups": {
+       "values": [
+        "[1]"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "groupSize",
+          "ko": "groupSize (묶음 크기)"
+         },
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "left",
+        "at": 1
+       },
+       "value": "−1"
+      },
+      {
+       "from": {
+        "view": "left",
+        "at": 1
+       },
+       "to": {
+        "view": "groups",
+        "at": 0
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The smallest card left is 5, with 1 copy: it can only start a group, so take 5.",
+      "ko": "남은 카드 중 가장 작은 카드는 5이고 1장 있습니다. 묶음의 첫 카드일 수밖에 없으므로 5를 가져갑니다."
+     },
+     "views": {
+      "cards": {
+       "values": [
+        5,
+        1
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {},
+       "marks": {}
+      },
+      "left": {
+       "entries": [
+        {
+         "key": 1,
+         "value": 0
+        },
+        {
+         "key": 5,
+         "value": 0
+        }
+       ],
+       "marks": {
+        "dim": [
+         1,
+         5
+        ],
+        "lit": [
+         5
+        ]
+       },
+       "probe": {
+        "key": 5,
+        "hit": true,
+        "label": {
+         "en": "5 left?",
+         "ko": "5 남음?"
+        }
+       }
+      },
+      "groups": {
+       "values": [
+        "[1]",
+        "[5]"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "groupSize",
+          "ko": "groupSize (묶음 크기)"
+         },
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "left",
+        "at": 5
+       },
+       "value": "−1"
+      },
+      {
+       "from": {
+        "view": "left",
+        "at": 5
+       },
+       "to": {
+        "view": "groups",
+        "at": 1
+       },
+       "value": "5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every card went into a group: 2 groups of 1, [1], [5]. Answer: true.",
+      "ko": "모든 카드가 1장짜리 묶음 2개에 들어갔습니다([1], [5]). 답은 true입니다."
+     },
+     "views": {
+      "cards": {
+       "values": [
+        5,
+        1
+       ],
+       "pointers": {
+        "i": null
+       },
+       "spans": {},
+       "marks": {}
+      },
+      "left": {
+       "entries": [
+        {
+         "key": 1,
+         "value": 0
+        },
+        {
+         "key": 5,
+         "value": 0
+        }
+       ],
+       "marks": {
+        "dim": [
+         1,
+         5
+        ]
+       }
+      },
+      "groups": {
+       "values": [
+        "[1]",
+        "[5]"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "groupSize",
+          "ko": "groupSize (묶음 크기)"
+         },
+         "value": 1
+        }
+       ]
+      }
+     },
+     "answer": "true"
+    }
+   ],
+   "sampleInput": "[5,1]\n1"
+  }
+ ]
+}

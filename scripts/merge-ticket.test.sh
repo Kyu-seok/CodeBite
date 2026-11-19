@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
-# Checks scripts/merge-ticket.sh without Gradle or npm: when it refuses to merge, the merge commit's
-# message, that the frontend checks lint with no warnings before the tests and build (npm faked), and
+# Checks scripts/merge-ticket.sh without Gradle or npm: the usage line, when it refuses to merge, the merge commit's
+# message, the warning on an integration branch CI doesn't run on, that the frontend checks lint with no warnings before the tests and build (npm faked), and
 # (in scratch repositories with the checks faked) that a conflict aborts and lists the
 # files, a failing check leaves the merge commit unpushed, green checks push it, a ticket that already
-# contains the integration branch's HEAD is pushed with no checks, a merge that changes
+# contains the integration branch's HEAD is pushed with no checks, a ticket with a commit subject over
+# 72 characters is refused, an unprefixed integration branch warns and still merges, a merge that changes
 # merge-ticket.sh hands the checks and the push to the merged copy, and two tickets in one call get
 # one run of the checks and one push, or stop at a conflict on the second with the first unpushed.
 set -euo pipefail
@@ -14,6 +15,16 @@ source "$script"
 
 fail=0
 check() { [[ "$2" == "$3" ]] || { echo "FAIL: $1: expected '$3', got '$2'"; fail=1; }; }
+
+# --- the usage line: both modes, the second also the rerun after a flaky check ----------------
+
+usage_out=$(bash "$script" 2>&1) && { echo "FAIL: no arguments must exit non-zero"; fail=1; }
+check "usage names both modes" "$usage_out" \
+"usage: scripts/merge-ticket.sh <branch> <title> [<branch> <title> ...]
+       scripts/merge-ticket.sh --checks-and-push <integration branch>"
+usage_out=$(bash "$script" --checks-and-push 2>&1) && { echo "FAIL: --checks-and-push alone must exit non-zero"; fail=1; }
+[[ "$usage_out" == *"--checks-and-push <integration branch>"* ]] \
+  || { echo "FAIL: --checks-and-push without a branch must print the usage: $usage_out"; fail=1; }
 
 # --- a red integration tip: CI's runs on HEAD, one "<conclusion> <url>" line each ------------------
 
@@ -30,6 +41,16 @@ check "cancelled counts as red" "$(red_tip_refusal 'cancelled https://ci/3')" \
 check "integration/ pushes run CI" "$(ci_checks_pushes integration/x && echo yes || echo no)" yes
 check "spec/ pushes run CI" "$(ci_checks_pushes spec/258-walkthroughs && echo yes || echo no)" yes
 check "other pushes run no CI" "$(ci_checks_pushes feat/x && echo yes || echo no)" no
+
+# --- an integration branch CI doesn't run on: a loud warning, and the merge goes on ------------
+
+check "no warning on spec/" "$(integration_branch_warning spec/301-statement-audit)" ""
+check "no warning on integration/" "$(integration_branch_warning integration/x)" ""
+check "warning elsewhere" "$(integration_branch_warning statement-audit-2026-11)" \
+"merge-ticket: WARNING: CI doesn't run on pushes to statement-audit-2026-11 (only spec/** and integration/**),
+merge-ticket: WARNING: so every merge runs the full local checks (about 1.5-3 min each), even a ticket
+merge-ticket: WARNING: that already contains HEAD. Rename it before the next merge:
+merge-ticket: WARNING:   git branch -m spec/<issue>-<slug> && git push -u origin spec/<issue>-<slug>"
 
 # --- refusals ----------------------------------------------------------------------------------
 
@@ -96,6 +117,7 @@ run_merge() {
     GIT_CONFIG_KEY_1=user.email GIT_CONFIG_VALUE_1=t@t GIT_CONFIG_KEY_2=core.hooksPath GIT_CONFIG_VALUE_2=/dev/null \
     merge_ticket "$@") 2>&1
 }
+repo_checks() { echo repo-ran; }
 backend_checks() { echo backend-ran; }
 frontend_checks() { echo frontend-ran; }
 ci_runs() { :; }  # no CI runs on HEAD unless a test says so
@@ -114,6 +136,7 @@ grep -q 'shared.txt' <<<"$out" || { echo "FAIL: conflict must list shared.txt: $
 check "conflict aborted" "$(git -C "$scratch/work" status --porcelain)" ""
 check "conflict leaves HEAD" "$(git -C "$scratch/work" rev-parse HEAD)" "$before"
 grep -q backend-ran <<<"$out" && { echo "FAIL: checks ran after a conflict"; fail=1; }
+grep -q WARNING <<<"$out" && { echo "FAIL: warned on integration/x: $out"; fail=1; }
 
 frontend_checks() { echo frontend-ran; return 1; }
 if out=$(run_merge ticket/ok 'Ok ticket'); then echo "FAIL: a failing check must fail"; fail=1; fi
@@ -124,8 +147,18 @@ check "red: two parents" "$(git -C "$scratch/work" rev-list --parents -1 HEAD | 
 g -C "$scratch/work" reset -q --hard "$before"
 
 frontend_checks() { echo frontend-ran; }
+# The checks the pre-commit hook runs and --no-verify skipped (doc references, kit copy, scripts) go
+# first: a red one stops the merge before the minutes of Gradle.
+repo_checks() { echo repo-ran; return 1; }
+if out=$(run_merge ticket/ok 'Ok ticket'); then echo "FAIL: a failing repo check must fail"; fail=1; fi
+grep -q 'repo checks failed' <<<"$out" || { echo "FAIL: must name the repo checks: $out"; fail=1; }
+grep -q backend-ran <<<"$out" && { echo "FAIL: Gradle ran after a red repo check: $out"; fail=1; }
+check "repo red: not pushed" "$(remote_head)" "$before"
+g -C "$scratch/work" reset -q --hard "$before"
+repo_checks() { echo repo-ran; }
+
 if ! out=$(run_merge ticket/ok 'Ok ticket'); then echo "FAIL: green merge failed: $out"; fail=1; fi
-[[ "$out" == *backend-ran*frontend-ran* ]] || { echo "FAIL: checks not run: $out"; fail=1; }
+[[ "$out" == *repo-ran*backend-ran*frontend-ran* ]] || { echo "FAIL: checks not run: $out"; fail=1; }
 check "green: pushed" "$(remote_head)" "$(git -C "$scratch/work" rev-parse HEAD)"
 check "green: trailer" "$(git -C "$scratch/work" log -1 --format=%B | sed "/^$/d" | tail -1)" \
   "Co-Authored-By: Claude <noreply@anthropic.com>"
@@ -182,6 +215,31 @@ check "two-conflict: clean tree" "$(git -C "$scratch/work" status --porcelain)" 
 check "two-conflict: first merge kept" "$(git -C "$scratch/work" log -1 --format=%s)" "Merge ticket/two-c: Two C"
 check "two-conflict: not pushed" "$(remote_head)" "$before"
 g -C "$scratch/work" reset -q --hard "$before"
+
+# A ticket with a commit subject over 72 characters (committed with --no-verify, which skips the
+# commit-msg hook) is refused before its merge: it names the commit and nothing runs or is pushed.
+before=$(remote_head)
+(cd "$scratch/seed" && g fetch -q origin && g switch -q --detach origin/integration/x \
+  && g switch -qc ticket/long && echo long > long.txt && g add . \
+  && g commit -qm "fix: $(printf 'z%.0s' $(seq 70))" && g push -q origin ticket/long)
+if out=$(run_merge ticket/long 'Long'); then echo "FAIL: a long subject must refuse the merge"; fail=1; fi
+grep -q "$(git -C "$scratch/seed" rev-parse --short ticket/long) has a 75-character subject" <<<"$out" \
+  || { echo "FAIL: must name the long commit: $out"; fail=1; }
+check "long subject: HEAD unchanged" "$(git -C "$scratch/work" rev-parse HEAD)" "$before"
+check "long subject: not pushed" "$(remote_head)" "$before"
+[[ "$out" == *-ran* ]] && { echo "FAIL: checks ran on a refused ticket: $out"; fail=1; }
+
+# An integration branch outside spec/ and integration/: the warning comes first, then the merge,
+# checks and push go ahead as usual.
+g -C "$scratch/work" switch -qc audit-2026-11
+(cd "$scratch/seed" && g fetch -q origin && g switch -q --detach origin/integration/x \
+  && g switch -qc ticket/audit && echo audit > audit.txt && g add . && g commit -qm audit && g push -q origin ticket/audit)
+if ! out=$(run_merge ticket/audit 'Audit'); then echo "FAIL: merge on an unprefixed branch failed: $out"; fail=1; fi
+check "unprefixed: warning first" "$(head -1 <<<"$out")" \
+  "merge-ticket: WARNING: CI doesn't run on pushes to audit-2026-11 (only spec/** and integration/**),"
+[[ "$out" == *backend-ran*frontend-ran* ]] || { echo "FAIL: unprefixed: checks not run: $out"; fail=1; }
+check "unprefixed: pushed" "$(git -C "$scratch/origin.git" rev-parse audit-2026-11)" "$(git -C "$scratch/work" rev-parse HEAD)"
+g -C "$scratch/work" switch -q integration/x
 
 echo dirt > "$scratch/work/dirt.txt"
 if out=$(run_merge ticket/clash 'Clash'); then echo "FAIL: a dirty tree must fail"; fail=1; fi

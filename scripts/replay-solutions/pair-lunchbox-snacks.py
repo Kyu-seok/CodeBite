@@ -1,6 +1,6 @@
 class Solution:
-    def pairCrates(self, crates: list[int], capacity: int) -> int:
-        weights = sorted(crates)
+    def minLunchboxes(self, weights: list[int], capacity: int) -> int:
+        weights = sorted(weights)
         light, heavy = 0, len(weights) - 1
         boxes = 0
         while light <= heavy:

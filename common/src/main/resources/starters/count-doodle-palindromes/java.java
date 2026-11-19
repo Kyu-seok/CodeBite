@@ -1,5 +1,5 @@
 class Solution {
-    public int countMirrorSpans(String code) {
+    public int countPalindromicSubstrings(String doodle) {
         // Write your solution here
     }
 }

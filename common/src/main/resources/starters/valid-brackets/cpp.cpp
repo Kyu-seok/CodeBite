@@ -1,6 +1,6 @@
 class Solution {
 public:
-    bool verifyJobNesting(string tape) {
+    bool isValidBrackets(string brackets) {
         // Write your solution here
     }
 };

@@ -28,6 +28,6 @@ int main() {
             i++;
         }
     }
-    cout << Solution().biggestClearBay(matrix) << endl;
+    cout << Solution().biggestClearFloor(matrix) << endl;
     return 0;
 }

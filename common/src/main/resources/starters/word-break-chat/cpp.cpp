@@ -1,6 +1,6 @@
 class Solution {
 public:
-    bool splitHeadlineTokens(string headline, vector<string>& topics) {
+    bool canSplitMessage(string message, vector<string>& words) {
         // Write your solution here
     }
 };

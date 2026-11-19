@@ -11,7 +11,7 @@
  */
 class Solution {
 public:
-    int maxBranchTotal(TreeNode* root) {
+    int maxPathSum(TreeNode* root) {
         // Write your solution here
     }
 };

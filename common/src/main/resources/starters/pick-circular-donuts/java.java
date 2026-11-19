@@ -1,5 +1,5 @@
 class Solution {
-    public int pickCircuitTargets(int[] yields) {
+    public int maxTastiness(int[] tastiness) {
         // Write your solution here
     }
 }

@@ -6,7 +6,7 @@ class TreeNode:
 
 
 class Solution:
-    def widestCatalogSpan(self, root: TreeNode | None) -> int:
+    def longestPathEdges(self, root: TreeNode | None) -> int:
         best = 0
 
         def depth(node: TreeNode | None) -> int:

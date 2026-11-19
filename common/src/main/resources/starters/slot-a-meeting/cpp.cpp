@@ -3,7 +3,7 @@ using namespace std;
 
 class Solution {
 public:
-    vector<vector<int>> scheduleObservingWindow(vector<vector<int>>& slots, vector<int>& newSlot) {
+    vector<vector<int>> insertMeeting(vector<vector<int>>& meetings, vector<int>& newMeeting) {
         // Write your solution here
     }
 };

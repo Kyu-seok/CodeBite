@@ -1,0 +1,1400 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Binary Tree Level Order Traversal",
+  "ko": "이진 트리 레벨 순서 순회"
+ },
+ "approach": {
+  "en": "Keep one level in a queue: read its values into the answer as one list, then replace each node with its children, left before right, so the queue then holds exactly the next level.",
+  "ko": "한 레벨을 큐에 둡니다. 그 값들을 리스트 하나로 답에 넣은 뒤 각 노드를 왼쪽, 오른쪽 자식 순으로 바꿔 넣으면 큐에는 정확히 다음 레벨이 남습니다."
+ },
+ "views": [
+  {
+   "id": "tree",
+   "type": "tree",
+   "arity": 2,
+   "title": {
+    "en": "root",
+    "ko": "root (트리)"
+   },
+   "empty": {
+    "en": "empty tree",
+    "ko": "빈 트리"
+   }
+  },
+  {
+   "id": "level",
+   "type": "queue",
+   "title": {
+    "en": "level queue",
+    "ko": "레벨 큐"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  },
+  {
+   "id": "result",
+   "type": "output",
+   "title": {
+    "en": "answer, one list per depth",
+    "ko": "답 (깊이마다 리스트 하나)"
+   },
+   "empty": {
+    "en": "none yet",
+    "ko": "아직 없음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "root = [10,5,15,null,null,12,20]",
+   "expected": "[[10],[5,15],[12,20]]",
+   "frames": [
+    {
+     "caption": {
+      "en": "A tree of 5 nodes with root 10. Read it level by level, left to right.",
+      "ko": "root가 10인 노드 5개짜리 트리입니다. 위 레벨부터 왼쪽에서 오른쪽으로 읽습니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "good": [],
+        "lit": []
+       },
+       "shade": []
+      },
+      "level": {
+       "values": [],
+       "tags": [],
+       "marks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Level 0 is just the root: 10 joins the queue.",
+      "ko": "레벨 0은 root뿐이므로 10이 큐에 들어갑니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "good": [
+         0
+        ],
+        "lit": []
+       },
+       "shade": []
+      },
+      "level": {
+       "values": [
+        10
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "depth 0",
+          "ko": "깊이 0"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 0
+       },
+       "to": {
+        "view": "level",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The queue holds depth 0: its 1 value goes into the answer as the list [10].",
+      "ko": "큐에는 깊이 0의 노드가 있습니다. 값 1개를 리스트 하나로 묶어 답에 넣습니다: [10]."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "good": [],
+        "lit": []
+       },
+       "shade": [
+        0
+       ]
+      },
+      "level": {
+       "values": [
+        10
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "depth 0",
+          "ko": "깊이 0"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": []
+       }
+      },
+      "result": {
+       "values": [
+        [
+         10
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "level",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "10 leaves the front; its children 5 and 15 join the back at depth 1.",
+      "ko": "10이 앞에서 나가고, 자식 5, 15가 깊이 1로 뒤에 들어갑니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "good": [
+         1,
+         2
+        ],
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ]
+      },
+      "level": {
+       "values": [
+        10,
+        5,
+        15
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "depth 0",
+          "ko": "깊이 0"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "depth 1",
+          "ko": "깊이 1"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "depth 1",
+          "ko": "깊이 1"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [
+         1,
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        [
+         10
+        ]
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 1
+       },
+       "to": {
+        "view": "level",
+        "at": 1
+       }
+      },
+      {
+       "from": {
+        "view": "tree",
+        "at": 2
+       },
+       "to": {
+        "view": "level",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The queue holds depth 1: its 2 values go into the answer as the list [5,15].",
+      "ko": "큐에는 깊이 1의 노드가 있습니다. 값 2개를 리스트 하나로 묶어 답에 넣습니다: [5,15]."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         0
+        ],
+        "good": [],
+        "lit": []
+       },
+       "shade": [
+        1,
+        2
+       ]
+      },
+      "level": {
+       "values": [
+        5,
+        15
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "depth 1",
+          "ko": "깊이 1"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "depth 1",
+          "ko": "깊이 1"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1
+        ],
+        "good": []
+       }
+      },
+      "result": {
+       "values": [
+        [
+         10
+        ],
+        [
+         5,
+         15
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "level",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       }
+      },
+      {
+       "from": {
+        "view": "level",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "5 leaves the front; it has no children, so nothing joins.",
+      "ko": "5가 앞에서 나갑니다. 자식이 없어 들어오는 노드가 없습니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         0
+        ],
+        "good": [],
+        "lit": [
+         1
+        ]
+       },
+       "shade": [
+        2,
+        1
+       ]
+      },
+      "level": {
+       "values": [
+        5,
+        15
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "depth 1",
+          "ko": "깊이 1"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "depth 1",
+          "ko": "깊이 1"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": []
+       }
+      },
+      "result": {
+       "values": [
+        [
+         10
+        ],
+        [
+         5,
+         15
+        ]
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "15 leaves the front; its children 12 and 20 join the back at depth 2.",
+      "ko": "15가 앞에서 나가고, 자식 12, 20이 깊이 2로 뒤에 들어갑니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         1
+        ],
+        "good": [
+         5,
+         6
+        ],
+        "lit": [
+         2
+        ]
+       },
+       "shade": [
+        2
+       ]
+      },
+      "level": {
+       "values": [
+        15,
+        12,
+        20
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "depth 1",
+          "ko": "깊이 1"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "depth 2",
+          "ko": "깊이 2"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "depth 2",
+          "ko": "깊이 2"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [
+         1,
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        [
+         10
+        ],
+        [
+         5,
+         15
+        ]
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 5
+       },
+       "to": {
+        "view": "level",
+        "at": 1
+       }
+      },
+      {
+       "from": {
+        "view": "tree",
+        "at": 6
+       },
+       "to": {
+        "view": "level",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The queue holds depth 2: its 2 values go into the answer as the list [12,20].",
+      "ko": "큐에는 깊이 2의 노드가 있습니다. 값 2개를 리스트 하나로 묶어 답에 넣습니다: [12,20]."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         1,
+         2
+        ],
+        "good": [],
+        "lit": []
+       },
+       "shade": [
+        5,
+        6
+       ]
+      },
+      "level": {
+       "values": [
+        12,
+        20
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "depth 2",
+          "ko": "깊이 2"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "depth 2",
+          "ko": "깊이 2"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1
+        ],
+        "good": []
+       }
+      },
+      "result": {
+       "values": [
+        [
+         10
+        ],
+        [
+         5,
+         15
+        ],
+        [
+         12,
+         20
+        ]
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "level",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "level",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "12 leaves the front; it has no children, so nothing joins.",
+      "ko": "12가 앞에서 나갑니다. 자식이 없어 들어오는 노드가 없습니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         1,
+         2
+        ],
+        "good": [],
+        "lit": [
+         5
+        ]
+       },
+       "shade": [
+        6,
+        5
+       ]
+      },
+      "level": {
+       "values": [
+        12,
+        20
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "depth 2",
+          "ko": "깊이 2"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "depth 2",
+          "ko": "깊이 2"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": []
+       }
+      },
+      "result": {
+       "values": [
+        [
+         10
+        ],
+        [
+         5,
+         15
+        ],
+        [
+         12,
+         20
+        ]
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "20 leaves the front; it has no children, so nothing joins.",
+      "ko": "20이 앞에서 나갑니다. 자식이 없어 들어오는 노드가 없습니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         1,
+         2,
+         5
+        ],
+        "good": [],
+        "lit": [
+         6
+        ]
+       },
+       "shade": [
+        6
+       ]
+      },
+      "level": {
+       "values": [
+        20
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "depth 2",
+          "ko": "깊이 2"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": []
+       }
+      },
+      "result": {
+       "values": [
+        [
+         10
+        ],
+        [
+         5,
+         15
+        ],
+        [
+         12,
+         20
+        ]
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The queue is empty: every depth is read, so the answer is [[10],[5,15],[12,20]].",
+      "ko": "큐가 비었습니다. 모든 깊이를 읽었으므로 답은 [[10],[5,15],[12,20]]입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "path": [
+         0,
+         1,
+         2,
+         5,
+         6
+        ]
+       },
+       "shade": []
+      },
+      "level": {
+       "values": [],
+       "tags": [],
+       "marks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "result": {
+       "values": [
+        [
+         10
+        ],
+        [
+         5,
+         15
+        ],
+        [
+         12,
+         20
+        ]
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2
+        ]
+       }
+      }
+     },
+     "answer": "[[10],[5,15],[12,20]]"
+    }
+   ],
+   "setup": {
+    "tree": {
+     "nodes": [
+      {
+       "id": 0,
+       "value": 10
+      },
+      {
+       "id": 1,
+       "value": 5
+      },
+      {
+       "id": 2,
+       "value": 15
+      },
+      {
+       "id": 5,
+       "value": 12
+      },
+      {
+       "id": 6,
+       "value": 20
+      }
+     ],
+     "edges": [
+      {
+       "from": 0,
+       "to": 1,
+       "slot": 0
+      },
+      {
+       "from": 0,
+       "to": 2,
+       "slot": 1
+      },
+      {
+       "from": 2,
+       "to": 5,
+       "slot": 0
+      },
+      {
+       "from": 2,
+       "to": 6,
+       "slot": 1
+      }
+     ]
+    }
+   },
+   "sampleInput": "[10,5,15,null,null,12,20]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "root = [42]",
+   "expected": "[[42]]",
+   "frames": [
+    {
+     "caption": {
+      "en": "A tree of 1 node with root 42. Read it level by level, left to right.",
+      "ko": "root가 42인 노드 1개짜리 트리입니다. 위 레벨부터 왼쪽에서 오른쪽으로 읽습니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "good": [],
+        "lit": []
+       },
+       "shade": []
+      },
+      "level": {
+       "values": [],
+       "tags": [],
+       "marks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Level 0 is just the root: 42 joins the queue.",
+      "ko": "레벨 0은 root뿐이므로 42가 큐에 들어갑니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "good": [
+         0
+        ],
+        "lit": []
+       },
+       "shade": []
+      },
+      "level": {
+       "values": [
+        42
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "depth 0",
+          "ko": "깊이 0"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 0
+       },
+       "to": {
+        "view": "level",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The queue holds depth 0: its 1 value goes into the answer as the list [42].",
+      "ko": "큐에는 깊이 0의 노드가 있습니다. 값 1개를 리스트 하나로 묶어 답에 넣습니다: [42]."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "good": [],
+        "lit": []
+       },
+       "shade": [
+        0
+       ]
+      },
+      "level": {
+       "values": [
+        42
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "depth 0",
+          "ko": "깊이 0"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": []
+       }
+      },
+      "result": {
+       "values": [
+        [
+         42
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "level",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "42 leaves the front; it has no children, so nothing joins.",
+      "ko": "42가 앞에서 나갑니다. 자식이 없어 들어오는 노드가 없습니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "good": [],
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ]
+      },
+      "level": {
+       "values": [
+        42
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "depth 0",
+          "ko": "깊이 0"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": []
+       }
+      },
+      "result": {
+       "values": [
+        [
+         42
+        ]
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The queue is empty: every depth is read, so the answer is [[42]].",
+      "ko": "큐가 비었습니다. 모든 깊이를 읽었으므로 답은 [[42]]입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "path": [
+         0
+        ]
+       },
+       "shade": []
+      },
+      "level": {
+       "values": [],
+       "tags": [],
+       "marks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "result": {
+       "values": [
+        [
+         42
+        ]
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      }
+     },
+     "answer": "[[42]]"
+    }
+   ],
+   "setup": {
+    "tree": {
+     "nodes": [
+      {
+       "id": 0,
+       "value": 42
+      }
+     ],
+     "edges": []
+    }
+   },
+   "sampleInput": "[42]"
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "root = [7]",
+   "expected": "[[7]]",
+   "frames": [
+    {
+     "caption": {
+      "en": "A tree of 1 node with root 7. Read it level by level, left to right.",
+      "ko": "root가 7인 노드 1개짜리 트리입니다. 위 레벨부터 왼쪽에서 오른쪽으로 읽습니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "good": [],
+        "lit": []
+       },
+       "shade": []
+      },
+      "level": {
+       "values": [],
+       "tags": [],
+       "marks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Level 0 is just the root: 7 joins the queue.",
+      "ko": "레벨 0은 root뿐이므로 7이 큐에 들어갑니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "good": [
+         0
+        ],
+        "lit": []
+       },
+       "shade": []
+      },
+      "level": {
+       "values": [
+        7
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "depth 0",
+          "ko": "깊이 0"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 0
+       },
+       "to": {
+        "view": "level",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The queue holds depth 0: its 1 value goes into the answer as the list [7].",
+      "ko": "큐에는 깊이 0의 노드가 있습니다. 값 1개를 리스트 하나로 묶어 답에 넣습니다: [7]."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "good": [],
+        "lit": []
+       },
+       "shade": [
+        0
+       ]
+      },
+      "level": {
+       "values": [
+        7
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "depth 0",
+          "ko": "깊이 0"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": []
+       }
+      },
+      "result": {
+       "values": [
+        [
+         7
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "level",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "7 leaves the front; it has no children, so nothing joins.",
+      "ko": "7이 앞에서 나갑니다. 자식이 없어 들어오는 노드가 없습니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "good": [],
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ]
+      },
+      "level": {
+       "values": [
+        7
+       ],
+       "tags": [
+        [
+         0,
+         {
+          "en": "depth 0",
+          "ko": "깊이 0"
+         }
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": []
+       }
+      },
+      "result": {
+       "values": [
+        [
+         7
+        ]
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The queue is empty: every depth is read, so the answer is [[7]].",
+      "ko": "큐가 비었습니다. 모든 깊이를 읽었으므로 답은 [[7]]입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "path": [
+         0
+        ]
+       },
+       "shade": []
+      },
+      "level": {
+       "values": [],
+       "tags": [],
+       "marks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "result": {
+       "values": [
+        [
+         7
+        ]
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      }
+     },
+     "answer": "[[7]]"
+    }
+   ],
+   "setup": {
+    "tree": {
+     "nodes": [
+      {
+       "id": 0,
+       "value": 7
+      }
+     ],
+     "edges": []
+    }
+   },
+   "sampleInput": "[7]"
+  }
+ ]
+}

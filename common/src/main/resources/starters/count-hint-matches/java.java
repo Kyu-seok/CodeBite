@@ -1,5 +1,5 @@
 class Solution {
-    public long countFilterMatches(String notes, String target) {
+    public long countHintMatches(String notes, String target) {
         // Write your solution here
     }
 }

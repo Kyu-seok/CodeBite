@@ -21,9 +21,9 @@ public class Main {
                 }
             }
         }
-        int[][] points = list.toArray(new int[0][]);
+        int[][] bowls = list.toArray(new int[0][]);
 
-        int result = new Solution().layPipeNetwork(points);
+        int result = new Solution().minHoseLength(bowls);
         System.out.println(result);
     }
 }

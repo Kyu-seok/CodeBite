@@ -8,12 +8,36 @@ on:
   workflow_dispatch:
 
 jobs:
+  # A squash merge of a PR whose branch already contained master has the tree the PR's CI tested,
+  # so re-running the tests would only repeat them (docs/adr/0013). Any doubt, a gh error included,
+  # leaves tested=false and the tests run.
+  gate:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      pull-requests: read
+    outputs:
+      tested: ${{ steps.tree.outputs.tested }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: tree
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if scripts/tested-tree.sh "$GITHUB_SHA"; then tested=true; else tested=false; fi
+          echo "tested=$tested" >> "$GITHUB_OUTPUT"
+
   test:
+    needs: [gate]
+    if: ${{ needs.gate.outputs.tested != 'true' }}
     uses: ./.github/workflows/ci.yml
 
   deploy:
     runs-on: ubuntu-latest
-    needs: [test]
+    needs: [gate, test]
+    # Runs after the tests pass, or when the gate skipped them; never after a failed or cancelled run.
+    if: ${{ !cancelled() && needs.gate.result == 'success' && (needs.test.result == 'success' || needs.test.result == 'skipped') }}
     # One deploy at a time: two merges seconds apart once rolled the backend
     # concurrently and collided on replica names. Never cancel a roll midway;
     # a queued run is replaced by a newer one, whose pull includes it.
@@ -28,131 +52,21 @@ jobs:
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           command_timeout: 20m
+          # scripts/deploy-prod.sh does the roll; it runs from the pulled checkout, so a deploy
+          # always runs the script of the commit it deploys.
           script: |
             set -e
             cd ~/CodeBite
-            COMPOSE="docker compose -f infra/docker-compose.prod.yml"
-
-            # Save current commit for rollback
             PREV_COMMIT=$(git rev-parse HEAD)
-            echo "--- Previous commit: $PREV_COMMIT ---"
-
-            # Pull latest code
             git pull origin master
-
-            # 1. Build new images without restarting anything
-            echo "--- Building new images ---"
-            $COMPOSE build
-
-            # 2. Record old backend container IDs
-            OLD_IDS=$($COMPOSE ps -q backend | tr '\n' ' ')
-            echo "--- Old backend containers: $OLD_IDS ---"
-
-            # 3. Scale to 6: start 3 NEW containers alongside 3 OLD ones
-            echo "--- Starting new replicas alongside old ones ---"
-            $COMPOSE up -d --no-deps --scale backend=6 --no-recreate backend
-
-            # 4. Compute NEW container IDs = all backends - OLD_IDS, then wait
-            # for each NEW container's own healthcheck to report healthy.
-            # Going direct to docker inspect (not through nginx) insulates this
-            # step from nginx being down or pointing at stale DNS.
-            ALL_IDS=$($COMPOSE ps -q backend | tr '\n' ' ')
-            NEW_IDS=""
-            for id in $ALL_IDS; do
-              case " $OLD_IDS " in
-                *" $id "*) ;;
-                *) NEW_IDS="$NEW_IDS $id" ;;
-              esac
-            done
-            echo "--- New backend containers:$NEW_IDS ---"
-
-            # Budget ~5 min: Spring Boot cold start on the mini PC is ~30-100s
-            # depending on JVM warm-up / disk cache, so give generous headroom.
-            echo "--- Waiting for new replicas to be healthy ---"
-            sleep 30
-            NEW_HEALTHY=false
-            for i in $(seq 1 30); do
-              ALL_HEALTHY=true
-              for id in $NEW_IDS; do
-                status=$(docker inspect -f '{{.State.Health.Status}}' "$id" 2>/dev/null || echo "missing")
-                if [ "$status" != "healthy" ]; then
-                  ALL_HEALTHY=false
-                  echo "--- attempt $i: $id -> $status ---"
-                fi
-              done
-              if [ "$ALL_HEALTHY" = true ]; then
-                echo "--- New replicas healthy (attempt $i) ---"
-                NEW_HEALTHY=true
-                break
-              fi
-              sleep 10
-            done
-
-            # Bail out before touching old containers if new ones never came up.
-            # Remove ONLY the new containers by ID (no --remove-orphans, which
-            # can nuke nginx) and leave the old healthy replicas serving traffic.
-            if [ "$NEW_HEALTHY" = false ]; then
-              echo "--- NEW REPLICAS NEVER HEALTHY — Rolling back to $PREV_COMMIT ---"
-              for id in $NEW_IDS; do
-                echo "--- Removing unhealthy new container $id ---"
-                docker stop --time 15 "$id" 2>/dev/null || true
-                docker rm -f "$id" 2>/dev/null || true
-              done
-              git checkout "$PREV_COMMIT"
-              $COMPOSE up -d --no-deps --scale backend=3 backend
-              docker exec codebite-nginx nginx -s reload 2>/dev/null || true
-              exit 1
-            fi
-
-            # 5. Drain and remove old containers one by one (graceful shutdown)
-            for id in $OLD_IDS; do
-              echo "--- Stopping old container $id ---"
-              docker stop --time 30 "$id"
-              docker rm "$id" 2>/dev/null || true
-              sleep 5
-            done
-
-            # 6. Scale back to 3 and update remaining services
-            $COMPOSE up -d --no-deps --scale backend=3 backend
-            $COMPOSE up -d --remove-orphans
-
-            # 7. Reload nginx to pick up new backend IPs
-            docker exec codebite-nginx nginx -s reload
-
-            # 8. Final health check with rollback
-            echo "--- Final health check ---"
-            HEALTHY=false
-            for i in $(seq 1 24); do
-              sleep 5
-              if curl -sf http://localhost/api/health > /dev/null 2>&1; then
-                HEALTHY=true
-                echo "--- Deploy healthy (attempt $i) ---"
-                break
-              fi
-              echo "--- Health check attempt $i failed, retrying... ---"
-            done
-
-            if [ "$HEALTHY" = false ]; then
-              echo "--- HEALTH CHECK FAILED — Rolling back to $PREV_COMMIT ---"
-              git checkout "$PREV_COMMIT"
-              $COMPOSE up -d --build --remove-orphans
-              echo "--- Rollback complete, waiting for recovery ---"
-              sleep 30
-              curl -sf http://localhost/api/health > /dev/null 2>&1 && echo "--- Rollback healthy ---" || echo "--- WARNING: Rollback also unhealthy ---"
-              exit 1
-            fi
-
-            # Cleanup
-            docker image prune -f
-            echo "--- Post-deploy status ---"
-            $COMPOSE ps
+            scripts/deploy-prod.sh "$PREV_COMMIT" "${{ github.event_name }}"
 
   # A failed deploy leaves production on the old code without telling anyone,
   # so push a phone notification through ntfy (topic in the NTFY_TOPIC secret).
   # Runs when the tests or the deploy fail; skipped when the secret is unset.
   notify-failure:
     runs-on: ubuntu-latest
-    needs: [test, deploy]
+    needs: [gate, test, deploy]
     if: failure()
     steps:
       - name: Push a notification

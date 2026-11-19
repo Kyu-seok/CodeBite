@@ -1,0 +1,3882 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Find the Empty Locker",
+  "ko": "비어 있는 사물함 찾기"
+ },
+ "approach": {
+  "en": "XOR every number 0..n and every claimed locker into one value: each claimed number meets itself and cancels (x ^ x = 0), so only the missing one is left.",
+  "ko": "0부터 n까지의 모든 수와 배정된 사물함 번호를 모두 XOR로 한 값에 모읍니다. 배정된 번호는 자기 자신과 만나 지워지므로(x ^ x = 0) 빠진 번호만 남습니다."
+ },
+ "views": [
+  {
+   "id": "range",
+   "type": "array",
+   "title": {
+    "en": "0..n (tag: bits)",
+    "ko": "0..n 전체 범위 (태그: 비트)"
+   }
+  },
+  {
+   "id": "lockers",
+   "type": "array",
+   "title": {
+    "en": "lockers (tag: bits)",
+    "ko": "lockers (배정된 번호, 태그: 비트)"
+   }
+  },
+  {
+   "id": "missing",
+   "type": "output",
+   "title": {
+    "en": "missing (running XOR)",
+    "ko": "missing (누적 XOR)"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "lockers = [4,2,0,1]",
+   "expected": "3",
+   "frames": [
+    {
+     "caption": {
+      "en": "4 lockers claimed, so the full range is 0..4. Start missing at 0 and XOR in every number of the range and every claimed locker.",
+      "ko": "배정된 사물함이 4개이니 전체 범위는 0..4입니다. missing = 0에서 시작해 범위의 모든 수와 배정된 번호를 하나씩 XOR합니다."
+     },
+     "views": {
+      "range": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "tags": [
+        [
+         0,
+         "000"
+        ],
+        [
+         1,
+         "001"
+        ],
+        [
+         2,
+         "010"
+        ],
+        [
+         3,
+         "011"
+        ],
+        [
+         4,
+         "100"
+        ]
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [],
+        "path": []
+       }
+      },
+      "lockers": {
+       "values": [
+        4,
+        2,
+        0,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         "100"
+        ],
+        [
+         1,
+         "010"
+        ],
+        [
+         2,
+         "000"
+        ],
+        [
+         3,
+         "001"
+        ]
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "dim": [],
+        "lit": []
+       }
+      },
+      "missing": {
+       "values": [
+        "0 (000)"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "First n itself: missing = 0 ^ 4 = 4.",
+      "ko": "먼저 n부터: missing = 0 ^ 4 = 4가 됩니다."
+     },
+     "views": {
+      "range": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "tags": [
+        [
+         0,
+         "000"
+        ],
+        [
+         1,
+         "001"
+        ],
+        [
+         2,
+         "010"
+        ],
+        [
+         3,
+         "011"
+        ],
+        [
+         4,
+         "100"
+        ]
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         4
+        ],
+        "path": []
+       }
+      },
+      "lockers": {
+       "values": [
+        4,
+        2,
+        0,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         "100"
+        ],
+        [
+         1,
+         "010"
+        ],
+        [
+         2,
+         "000"
+        ],
+        [
+         3,
+         "001"
+        ]
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "dim": [],
+        "lit": []
+       }
+      },
+      "missing": {
+       "values": [
+        "4 (100)"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "range",
+        "at": 4
+       },
+       "to": {
+        "view": "missing",
+        "at": 0
+       },
+       "value": "^ 4",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "i = 0: missing ^= 0 ^ 4, so 4 ^ 0 ^ 4 = 0. 4 has now come in from both arrays and cancelled.",
+      "ko": "i = 0: missing ^= 0 ^ 4, 즉 4 ^ 0 ^ 4 = 0이 됩니다. 4번은 이제 두 배열에서 모두 들어와 지워졌습니다."
+     },
+     "views": {
+      "range": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "tags": [
+        [
+         0,
+         "000"
+        ],
+        [
+         1,
+         "001"
+        ],
+        [
+         2,
+         "010"
+        ],
+        [
+         3,
+         "011"
+        ],
+        [
+         4,
+         "100"
+        ]
+       ],
+       "marks": {
+        "dim": [
+         4
+        ],
+        "lit": [
+         0
+        ],
+        "path": []
+       }
+      },
+      "lockers": {
+       "values": [
+        4,
+        2,
+        0,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         "100"
+        ],
+        [
+         1,
+         "010"
+        ],
+        [
+         2,
+         "000"
+        ],
+        [
+         3,
+         "001"
+        ]
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "missing": {
+       "values": [
+        "0 (000)"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "range",
+        "at": 0
+       },
+       "to": {
+        "view": "missing",
+        "at": 0
+       },
+       "value": "^ 0",
+       "mark": "good"
+      },
+      {
+       "from": {
+        "view": "lockers",
+        "at": 0
+       },
+       "to": {
+        "view": "missing",
+        "at": 0
+       },
+       "value": "^ 4",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "i = 1: missing ^= 1 ^ 2, so 0 ^ 1 ^ 2 = 3.",
+      "ko": "i = 1: missing ^= 1 ^ 2, 즉 0 ^ 1 ^ 2 = 3이 됩니다."
+     },
+     "views": {
+      "range": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "tags": [
+        [
+         0,
+         "000"
+        ],
+        [
+         1,
+         "001"
+        ],
+        [
+         2,
+         "010"
+        ],
+        [
+         3,
+         "011"
+        ],
+        [
+         4,
+         "100"
+        ]
+       ],
+       "marks": {
+        "dim": [
+         4
+        ],
+        "lit": [
+         1
+        ],
+        "path": []
+       }
+      },
+      "lockers": {
+       "values": [
+        4,
+        2,
+        0,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         "100"
+        ],
+        [
+         1,
+         "010"
+        ],
+        [
+         2,
+         "000"
+        ],
+        [
+         3,
+         "001"
+        ]
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "missing": {
+       "values": [
+        "3 (011)"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "range",
+        "at": 1
+       },
+       "to": {
+        "view": "missing",
+        "at": 0
+       },
+       "value": "^ 1",
+       "mark": "good"
+      },
+      {
+       "from": {
+        "view": "lockers",
+        "at": 1
+       },
+       "to": {
+        "view": "missing",
+        "at": 0
+       },
+       "value": "^ 2",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "i = 2: missing ^= 2 ^ 0, so 3 ^ 2 ^ 0 = 1. 0 and 2 have now come in from both arrays and cancelled.",
+      "ko": "i = 2: missing ^= 2 ^ 0, 즉 3 ^ 2 ^ 0 = 1이 됩니다. 0, 2번은 이제 두 배열에서 모두 들어와 지워졌습니다."
+     },
+     "views": {
+      "range": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "tags": [
+        [
+         0,
+         "000"
+        ],
+        [
+         1,
+         "001"
+        ],
+        [
+         2,
+         "010"
+        ],
+        [
+         3,
+         "011"
+        ],
+        [
+         4,
+         "100"
+        ]
+       ],
+       "marks": {
+        "dim": [
+         0,
+         2,
+         4
+        ],
+        "lit": [
+         2
+        ],
+        "path": []
+       }
+      },
+      "lockers": {
+       "values": [
+        4,
+        2,
+        0,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         "100"
+        ],
+        [
+         1,
+         "010"
+        ],
+        [
+         2,
+         "000"
+        ],
+        [
+         3,
+         "001"
+        ]
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2
+        ],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "missing": {
+       "values": [
+        "1 (001)"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "range",
+        "at": 2
+       },
+       "to": {
+        "view": "missing",
+        "at": 0
+       },
+       "value": "^ 2",
+       "mark": "good"
+      },
+      {
+       "from": {
+        "view": "lockers",
+        "at": 2
+       },
+       "to": {
+        "view": "missing",
+        "at": 0
+       },
+       "value": "^ 0",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "i = 3: missing ^= 3 ^ 1, so 1 ^ 3 ^ 1 = 3. 1 has now come in from both arrays and cancelled.",
+      "ko": "i = 3: missing ^= 3 ^ 1, 즉 1 ^ 3 ^ 1 = 3이 됩니다. 1번은 이제 두 배열에서 모두 들어와 지워졌습니다."
+     },
+     "views": {
+      "range": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "tags": [
+        [
+         0,
+         "000"
+        ],
+        [
+         1,
+         "001"
+        ],
+        [
+         2,
+         "010"
+        ],
+        [
+         3,
+         "011"
+        ],
+        [
+         4,
+         "100"
+        ]
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         4
+        ],
+        "lit": [
+         3
+        ],
+        "path": []
+       }
+      },
+      "lockers": {
+       "values": [
+        4,
+        2,
+        0,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         "100"
+        ],
+        [
+         1,
+         "010"
+        ],
+        [
+         2,
+         "000"
+        ],
+        [
+         3,
+         "001"
+        ]
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3
+        ],
+        "lit": [
+         3
+        ]
+       }
+      },
+      "missing": {
+       "values": [
+        "3 (011)"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "range",
+        "at": 3
+       },
+       "to": {
+        "view": "missing",
+        "at": 0
+       },
+       "value": "^ 3",
+       "mark": "good"
+      },
+      {
+       "from": {
+        "view": "lockers",
+        "at": 3
+       },
+       "to": {
+        "view": "missing",
+        "at": 0
+       },
+       "value": "^ 1",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every claimed number cancelled with its copy in the range; only 3 came in once, so it is the empty locker: answer 3.",
+      "ko": "배정된 번호는 모두 범위의 같은 수와 지워졌고 3만 한 번 들어왔으므로, 그 번호가 빈 사물함입니다. 답은 3입니다."
+     },
+     "views": {
+      "range": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "tags": [
+        [
+         0,
+         "000"
+        ],
+        [
+         1,
+         "001"
+        ],
+        [
+         2,
+         "010"
+        ],
+        [
+         3,
+         "011"
+        ],
+        [
+         4,
+         "100"
+        ]
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         4
+        ],
+        "lit": [],
+        "path": [
+         3
+        ]
+       }
+      },
+      "lockers": {
+       "values": [
+        4,
+        2,
+        0,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         "100"
+        ],
+        [
+         1,
+         "010"
+        ],
+        [
+         2,
+         "000"
+        ],
+        [
+         3,
+         "001"
+        ]
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3
+        ],
+        "lit": []
+       }
+      },
+      "missing": {
+       "values": [
+        "3 (011)"
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      }
+     },
+     "answer": "3"
+    }
+   ],
+   "sampleInput": "[4,2,0,1]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "lockers = [5,3,1,0,2]",
+   "expected": "4",
+   "frames": [
+    {
+     "caption": {
+      "en": "5 lockers claimed, so the full range is 0..5. Start missing at 0 and XOR in every number of the range and every claimed locker.",
+      "ko": "배정된 사물함이 5개이니 전체 범위는 0..5입니다. missing = 0에서 시작해 범위의 모든 수와 배정된 번호를 하나씩 XOR합니다."
+     },
+     "views": {
+      "range": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         "000"
+        ],
+        [
+         1,
+         "001"
+        ],
+        [
+         2,
+         "010"
+        ],
+        [
+         3,
+         "011"
+        ],
+        [
+         4,
+         "100"
+        ],
+        [
+         5,
+         "101"
+        ]
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [],
+        "path": []
+       }
+      },
+      "lockers": {
+       "values": [
+        5,
+        3,
+        1,
+        0,
+        2
+       ],
+       "tags": [
+        [
+         0,
+         "101"
+        ],
+        [
+         1,
+         "011"
+        ],
+        [
+         2,
+         "001"
+        ],
+        [
+         3,
+         "000"
+        ],
+        [
+         4,
+         "010"
+        ]
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "dim": [],
+        "lit": []
+       }
+      },
+      "missing": {
+       "values": [
+        "0 (000)"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "First n itself: missing = 0 ^ 5 = 5.",
+      "ko": "먼저 n부터: missing = 0 ^ 5 = 5가 됩니다."
+     },
+     "views": {
+      "range": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         "000"
+        ],
+        [
+         1,
+         "001"
+        ],
+        [
+         2,
+         "010"
+        ],
+        [
+         3,
+         "011"
+        ],
+        [
+         4,
+         "100"
+        ],
+        [
+         5,
+         "101"
+        ]
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         5
+        ],
+        "path": []
+       }
+      },
+      "lockers": {
+       "values": [
+        5,
+        3,
+        1,
+        0,
+        2
+       ],
+       "tags": [
+        [
+         0,
+         "101"
+        ],
+        [
+         1,
+         "011"
+        ],
+        [
+         2,
+         "001"
+        ],
+        [
+         3,
+         "000"
+        ],
+        [
+         4,
+         "010"
+        ]
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "dim": [],
+        "lit": []
+       }
+      },
+      "missing": {
+       "values": [
+        "5 (101)"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "range",
+        "at": 5
+       },
+       "to": {
+        "view": "missing",
+        "at": 0
+       },
+       "value": "^ 5",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "i = 0: missing ^= 0 ^ 5, so 5 ^ 0 ^ 5 = 0. 5 has now come in from both arrays and cancelled.",
+      "ko": "i = 0: missing ^= 0 ^ 5, 즉 5 ^ 0 ^ 5 = 0이 됩니다. 5번은 이제 두 배열에서 모두 들어와 지워졌습니다."
+     },
+     "views": {
+      "range": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         "000"
+        ],
+        [
+         1,
+         "001"
+        ],
+        [
+         2,
+         "010"
+        ],
+        [
+         3,
+         "011"
+        ],
+        [
+         4,
+         "100"
+        ],
+        [
+         5,
+         "101"
+        ]
+       ],
+       "marks": {
+        "dim": [
+         5
+        ],
+        "lit": [
+         0
+        ],
+        "path": []
+       }
+      },
+      "lockers": {
+       "values": [
+        5,
+        3,
+        1,
+        0,
+        2
+       ],
+       "tags": [
+        [
+         0,
+         "101"
+        ],
+        [
+         1,
+         "011"
+        ],
+        [
+         2,
+         "001"
+        ],
+        [
+         3,
+         "000"
+        ],
+        [
+         4,
+         "010"
+        ]
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "missing": {
+       "values": [
+        "0 (000)"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "range",
+        "at": 0
+       },
+       "to": {
+        "view": "missing",
+        "at": 0
+       },
+       "value": "^ 0",
+       "mark": "good"
+      },
+      {
+       "from": {
+        "view": "lockers",
+        "at": 0
+       },
+       "to": {
+        "view": "missing",
+        "at": 0
+       },
+       "value": "^ 5",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "i = 1: missing ^= 1 ^ 3, so 0 ^ 1 ^ 3 = 2.",
+      "ko": "i = 1: missing ^= 1 ^ 3, 즉 0 ^ 1 ^ 3 = 2가 됩니다."
+     },
+     "views": {
+      "range": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         "000"
+        ],
+        [
+         1,
+         "001"
+        ],
+        [
+         2,
+         "010"
+        ],
+        [
+         3,
+         "011"
+        ],
+        [
+         4,
+         "100"
+        ],
+        [
+         5,
+         "101"
+        ]
+       ],
+       "marks": {
+        "dim": [
+         5
+        ],
+        "lit": [
+         1
+        ],
+        "path": []
+       }
+      },
+      "lockers": {
+       "values": [
+        5,
+        3,
+        1,
+        0,
+        2
+       ],
+       "tags": [
+        [
+         0,
+         "101"
+        ],
+        [
+         1,
+         "011"
+        ],
+        [
+         2,
+         "001"
+        ],
+        [
+         3,
+         "000"
+        ],
+        [
+         4,
+         "010"
+        ]
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "missing": {
+       "values": [
+        "2 (010)"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "range",
+        "at": 1
+       },
+       "to": {
+        "view": "missing",
+        "at": 0
+       },
+       "value": "^ 1",
+       "mark": "good"
+      },
+      {
+       "from": {
+        "view": "lockers",
+        "at": 1
+       },
+       "to": {
+        "view": "missing",
+        "at": 0
+       },
+       "value": "^ 3",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "i = 2: missing ^= 2 ^ 1, so 2 ^ 2 ^ 1 = 1. 1 has now come in from both arrays and cancelled.",
+      "ko": "i = 2: missing ^= 2 ^ 1, 즉 2 ^ 2 ^ 1 = 1이 됩니다. 1번은 이제 두 배열에서 모두 들어와 지워졌습니다."
+     },
+     "views": {
+      "range": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         "000"
+        ],
+        [
+         1,
+         "001"
+        ],
+        [
+         2,
+         "010"
+        ],
+        [
+         3,
+         "011"
+        ],
+        [
+         4,
+         "100"
+        ],
+        [
+         5,
+         "101"
+        ]
+       ],
+       "marks": {
+        "dim": [
+         1,
+         5
+        ],
+        "lit": [
+         2
+        ],
+        "path": []
+       }
+      },
+      "lockers": {
+       "values": [
+        5,
+        3,
+        1,
+        0,
+        2
+       ],
+       "tags": [
+        [
+         0,
+         "101"
+        ],
+        [
+         1,
+         "011"
+        ],
+        [
+         2,
+         "001"
+        ],
+        [
+         3,
+         "000"
+        ],
+        [
+         4,
+         "010"
+        ]
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "marks": {
+        "dim": [
+         0,
+         2
+        ],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "missing": {
+       "values": [
+        "1 (001)"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "range",
+        "at": 2
+       },
+       "to": {
+        "view": "missing",
+        "at": 0
+       },
+       "value": "^ 2",
+       "mark": "good"
+      },
+      {
+       "from": {
+        "view": "lockers",
+        "at": 2
+       },
+       "to": {
+        "view": "missing",
+        "at": 0
+       },
+       "value": "^ 1",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "i = 3: missing ^= 3 ^ 0, so 1 ^ 3 ^ 0 = 2. 0 and 3 have now come in from both arrays and cancelled.",
+      "ko": "i = 3: missing ^= 3 ^ 0, 즉 1 ^ 3 ^ 0 = 2가 됩니다. 0, 3번은 이제 두 배열에서 모두 들어와 지워졌습니다."
+     },
+     "views": {
+      "range": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         "000"
+        ],
+        [
+         1,
+         "001"
+        ],
+        [
+         2,
+         "010"
+        ],
+        [
+         3,
+         "011"
+        ],
+        [
+         4,
+         "100"
+        ],
+        [
+         5,
+         "101"
+        ]
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         3,
+         5
+        ],
+        "lit": [
+         3
+        ],
+        "path": []
+       }
+      },
+      "lockers": {
+       "values": [
+        5,
+        3,
+        1,
+        0,
+        2
+       ],
+       "tags": [
+        [
+         0,
+         "101"
+        ],
+        [
+         1,
+         "011"
+        ],
+        [
+         2,
+         "001"
+        ],
+        [
+         3,
+         "000"
+        ],
+        [
+         4,
+         "010"
+        ]
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3
+        ],
+        "lit": [
+         3
+        ]
+       }
+      },
+      "missing": {
+       "values": [
+        "2 (010)"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "range",
+        "at": 3
+       },
+       "to": {
+        "view": "missing",
+        "at": 0
+       },
+       "value": "^ 3",
+       "mark": "good"
+      },
+      {
+       "from": {
+        "view": "lockers",
+        "at": 3
+       },
+       "to": {
+        "view": "missing",
+        "at": 0
+       },
+       "value": "^ 0",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "i = 4: missing ^= 4 ^ 2, so 2 ^ 4 ^ 2 = 4. 2 has now come in from both arrays and cancelled.",
+      "ko": "i = 4: missing ^= 4 ^ 2, 즉 2 ^ 4 ^ 2 = 4가 됩니다. 2번은 이제 두 배열에서 모두 들어와 지워졌습니다."
+     },
+     "views": {
+      "range": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         "000"
+        ],
+        [
+         1,
+         "001"
+        ],
+        [
+         2,
+         "010"
+        ],
+        [
+         3,
+         "011"
+        ],
+        [
+         4,
+         "100"
+        ],
+        [
+         5,
+         "101"
+        ]
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         5
+        ],
+        "lit": [
+         4
+        ],
+        "path": []
+       }
+      },
+      "lockers": {
+       "values": [
+        5,
+        3,
+        1,
+        0,
+        2
+       ],
+       "tags": [
+        [
+         0,
+         "101"
+        ],
+        [
+         1,
+         "011"
+        ],
+        [
+         2,
+         "001"
+        ],
+        [
+         3,
+         "000"
+        ],
+        [
+         4,
+         "010"
+        ]
+       ],
+       "pointers": {
+        "i": 4
+       },
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ],
+        "lit": [
+         4
+        ]
+       }
+      },
+      "missing": {
+       "values": [
+        "4 (100)"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "range",
+        "at": 4
+       },
+       "to": {
+        "view": "missing",
+        "at": 0
+       },
+       "value": "^ 4",
+       "mark": "good"
+      },
+      {
+       "from": {
+        "view": "lockers",
+        "at": 4
+       },
+       "to": {
+        "view": "missing",
+        "at": 0
+       },
+       "value": "^ 2",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every claimed number cancelled with its copy in the range; only 4 came in once, so it is the empty locker: answer 4.",
+      "ko": "배정된 번호는 모두 범위의 같은 수와 지워졌고 4만 한 번 들어왔으므로, 그 번호가 빈 사물함입니다. 답은 4입니다."
+     },
+     "views": {
+      "range": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         "000"
+        ],
+        [
+         1,
+         "001"
+        ],
+        [
+         2,
+         "010"
+        ],
+        [
+         3,
+         "011"
+        ],
+        [
+         4,
+         "100"
+        ],
+        [
+         5,
+         "101"
+        ]
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         5
+        ],
+        "lit": [],
+        "path": [
+         4
+        ]
+       }
+      },
+      "lockers": {
+       "values": [
+        5,
+        3,
+        1,
+        0,
+        2
+       ],
+       "tags": [
+        [
+         0,
+         "101"
+        ],
+        [
+         1,
+         "011"
+        ],
+        [
+         2,
+         "001"
+        ],
+        [
+         3,
+         "000"
+        ],
+        [
+         4,
+         "010"
+        ]
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ],
+        "lit": []
+       }
+      },
+      "missing": {
+       "values": [
+        "4 (100)"
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      }
+     },
+     "answer": "4"
+    }
+   ],
+   "sampleInput": "[5,3,1,0,2]"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "lockers = [9,6,4,2,3,5,7,0,1]",
+   "expected": "8",
+   "frames": [
+    {
+     "caption": {
+      "en": "9 lockers claimed, so the full range is 0..9. Start missing at 0 and XOR in every number of the range and every claimed locker.",
+      "ko": "배정된 사물함이 9개이니 전체 범위는 0..9입니다. missing = 0에서 시작해 범위의 모든 수와 배정된 번호를 하나씩 XOR합니다."
+     },
+     "views": {
+      "range": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+       ],
+       "tags": [
+        [
+         0,
+         "0000"
+        ],
+        [
+         1,
+         "0001"
+        ],
+        [
+         2,
+         "0010"
+        ],
+        [
+         3,
+         "0011"
+        ],
+        [
+         4,
+         "0100"
+        ],
+        [
+         5,
+         "0101"
+        ],
+        [
+         6,
+         "0110"
+        ],
+        [
+         7,
+         "0111"
+        ],
+        [
+         8,
+         "1000"
+        ],
+        [
+         9,
+         "1001"
+        ]
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [],
+        "path": []
+       }
+      },
+      "lockers": {
+       "values": [
+        9,
+        6,
+        4,
+        2,
+        3,
+        5,
+        7,
+        0,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         "1001"
+        ],
+        [
+         1,
+         "0110"
+        ],
+        [
+         2,
+         "0100"
+        ],
+        [
+         3,
+         "0010"
+        ],
+        [
+         4,
+         "0011"
+        ],
+        [
+         5,
+         "0101"
+        ],
+        [
+         6,
+         "0111"
+        ],
+        [
+         7,
+         "0000"
+        ],
+        [
+         8,
+         "0001"
+        ]
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "dim": [],
+        "lit": []
+       }
+      },
+      "missing": {
+       "values": [
+        "0 (0000)"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "First n itself: missing = 0 ^ 9 = 9.",
+      "ko": "먼저 n부터: missing = 0 ^ 9 = 9가 됩니다."
+     },
+     "views": {
+      "range": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+       ],
+       "tags": [
+        [
+         0,
+         "0000"
+        ],
+        [
+         1,
+         "0001"
+        ],
+        [
+         2,
+         "0010"
+        ],
+        [
+         3,
+         "0011"
+        ],
+        [
+         4,
+         "0100"
+        ],
+        [
+         5,
+         "0101"
+        ],
+        [
+         6,
+         "0110"
+        ],
+        [
+         7,
+         "0111"
+        ],
+        [
+         8,
+         "1000"
+        ],
+        [
+         9,
+         "1001"
+        ]
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         9
+        ],
+        "path": []
+       }
+      },
+      "lockers": {
+       "values": [
+        9,
+        6,
+        4,
+        2,
+        3,
+        5,
+        7,
+        0,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         "1001"
+        ],
+        [
+         1,
+         "0110"
+        ],
+        [
+         2,
+         "0100"
+        ],
+        [
+         3,
+         "0010"
+        ],
+        [
+         4,
+         "0011"
+        ],
+        [
+         5,
+         "0101"
+        ],
+        [
+         6,
+         "0111"
+        ],
+        [
+         7,
+         "0000"
+        ],
+        [
+         8,
+         "0001"
+        ]
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "dim": [],
+        "lit": []
+       }
+      },
+      "missing": {
+       "values": [
+        "9 (1001)"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "range",
+        "at": 9
+       },
+       "to": {
+        "view": "missing",
+        "at": 0
+       },
+       "value": "^ 9",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "i = 0: missing ^= 0 ^ 9, so 9 ^ 0 ^ 9 = 0. 9 has now come in from both arrays and cancelled.",
+      "ko": "i = 0: missing ^= 0 ^ 9, 즉 9 ^ 0 ^ 9 = 0이 됩니다. 9번은 이제 두 배열에서 모두 들어와 지워졌습니다."
+     },
+     "views": {
+      "range": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+       ],
+       "tags": [
+        [
+         0,
+         "0000"
+        ],
+        [
+         1,
+         "0001"
+        ],
+        [
+         2,
+         "0010"
+        ],
+        [
+         3,
+         "0011"
+        ],
+        [
+         4,
+         "0100"
+        ],
+        [
+         5,
+         "0101"
+        ],
+        [
+         6,
+         "0110"
+        ],
+        [
+         7,
+         "0111"
+        ],
+        [
+         8,
+         "1000"
+        ],
+        [
+         9,
+         "1001"
+        ]
+       ],
+       "marks": {
+        "dim": [
+         9
+        ],
+        "lit": [
+         0
+        ],
+        "path": []
+       }
+      },
+      "lockers": {
+       "values": [
+        9,
+        6,
+        4,
+        2,
+        3,
+        5,
+        7,
+        0,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         "1001"
+        ],
+        [
+         1,
+         "0110"
+        ],
+        [
+         2,
+         "0100"
+        ],
+        [
+         3,
+         "0010"
+        ],
+        [
+         4,
+         "0011"
+        ],
+        [
+         5,
+         "0101"
+        ],
+        [
+         6,
+         "0111"
+        ],
+        [
+         7,
+         "0000"
+        ],
+        [
+         8,
+         "0001"
+        ]
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "missing": {
+       "values": [
+        "0 (0000)"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "range",
+        "at": 0
+       },
+       "to": {
+        "view": "missing",
+        "at": 0
+       },
+       "value": "^ 0",
+       "mark": "good"
+      },
+      {
+       "from": {
+        "view": "lockers",
+        "at": 0
+       },
+       "to": {
+        "view": "missing",
+        "at": 0
+       },
+       "value": "^ 9",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "i = 1: missing ^= 1 ^ 6, so 0 ^ 1 ^ 6 = 7.",
+      "ko": "i = 1: missing ^= 1 ^ 6, 즉 0 ^ 1 ^ 6 = 7이 됩니다."
+     },
+     "views": {
+      "range": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+       ],
+       "tags": [
+        [
+         0,
+         "0000"
+        ],
+        [
+         1,
+         "0001"
+        ],
+        [
+         2,
+         "0010"
+        ],
+        [
+         3,
+         "0011"
+        ],
+        [
+         4,
+         "0100"
+        ],
+        [
+         5,
+         "0101"
+        ],
+        [
+         6,
+         "0110"
+        ],
+        [
+         7,
+         "0111"
+        ],
+        [
+         8,
+         "1000"
+        ],
+        [
+         9,
+         "1001"
+        ]
+       ],
+       "marks": {
+        "dim": [
+         9
+        ],
+        "lit": [
+         1
+        ],
+        "path": []
+       }
+      },
+      "lockers": {
+       "values": [
+        9,
+        6,
+        4,
+        2,
+        3,
+        5,
+        7,
+        0,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         "1001"
+        ],
+        [
+         1,
+         "0110"
+        ],
+        [
+         2,
+         "0100"
+        ],
+        [
+         3,
+         "0010"
+        ],
+        [
+         4,
+         "0011"
+        ],
+        [
+         5,
+         "0101"
+        ],
+        [
+         6,
+         "0111"
+        ],
+        [
+         7,
+         "0000"
+        ],
+        [
+         8,
+         "0001"
+        ]
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "missing": {
+       "values": [
+        "7 (0111)"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "range",
+        "at": 1
+       },
+       "to": {
+        "view": "missing",
+        "at": 0
+       },
+       "value": "^ 1",
+       "mark": "good"
+      },
+      {
+       "from": {
+        "view": "lockers",
+        "at": 1
+       },
+       "to": {
+        "view": "missing",
+        "at": 0
+       },
+       "value": "^ 6",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "i = 2: missing ^= 2 ^ 4, so 7 ^ 2 ^ 4 = 1.",
+      "ko": "i = 2: missing ^= 2 ^ 4, 즉 7 ^ 2 ^ 4 = 1이 됩니다."
+     },
+     "views": {
+      "range": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+       ],
+       "tags": [
+        [
+         0,
+         "0000"
+        ],
+        [
+         1,
+         "0001"
+        ],
+        [
+         2,
+         "0010"
+        ],
+        [
+         3,
+         "0011"
+        ],
+        [
+         4,
+         "0100"
+        ],
+        [
+         5,
+         "0101"
+        ],
+        [
+         6,
+         "0110"
+        ],
+        [
+         7,
+         "0111"
+        ],
+        [
+         8,
+         "1000"
+        ],
+        [
+         9,
+         "1001"
+        ]
+       ],
+       "marks": {
+        "dim": [
+         9
+        ],
+        "lit": [
+         2
+        ],
+        "path": []
+       }
+      },
+      "lockers": {
+       "values": [
+        9,
+        6,
+        4,
+        2,
+        3,
+        5,
+        7,
+        0,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         "1001"
+        ],
+        [
+         1,
+         "0110"
+        ],
+        [
+         2,
+         "0100"
+        ],
+        [
+         3,
+         "0010"
+        ],
+        [
+         4,
+         "0011"
+        ],
+        [
+         5,
+         "0101"
+        ],
+        [
+         6,
+         "0111"
+        ],
+        [
+         7,
+         "0000"
+        ],
+        [
+         8,
+         "0001"
+        ]
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "missing": {
+       "values": [
+        "1 (0001)"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "range",
+        "at": 2
+       },
+       "to": {
+        "view": "missing",
+        "at": 0
+       },
+       "value": "^ 2",
+       "mark": "good"
+      },
+      {
+       "from": {
+        "view": "lockers",
+        "at": 2
+       },
+       "to": {
+        "view": "missing",
+        "at": 0
+       },
+       "value": "^ 4",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "i = 3: missing ^= 3 ^ 2, so 1 ^ 3 ^ 2 = 0. 2 has now come in from both arrays and cancelled.",
+      "ko": "i = 3: missing ^= 3 ^ 2, 즉 1 ^ 3 ^ 2 = 0이 됩니다. 2번은 이제 두 배열에서 모두 들어와 지워졌습니다."
+     },
+     "views": {
+      "range": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+       ],
+       "tags": [
+        [
+         0,
+         "0000"
+        ],
+        [
+         1,
+         "0001"
+        ],
+        [
+         2,
+         "0010"
+        ],
+        [
+         3,
+         "0011"
+        ],
+        [
+         4,
+         "0100"
+        ],
+        [
+         5,
+         "0101"
+        ],
+        [
+         6,
+         "0110"
+        ],
+        [
+         7,
+         "0111"
+        ],
+        [
+         8,
+         "1000"
+        ],
+        [
+         9,
+         "1001"
+        ]
+       ],
+       "marks": {
+        "dim": [
+         2,
+         9
+        ],
+        "lit": [
+         3
+        ],
+        "path": []
+       }
+      },
+      "lockers": {
+       "values": [
+        9,
+        6,
+        4,
+        2,
+        3,
+        5,
+        7,
+        0,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         "1001"
+        ],
+        [
+         1,
+         "0110"
+        ],
+        [
+         2,
+         "0100"
+        ],
+        [
+         3,
+         "0010"
+        ],
+        [
+         4,
+         "0011"
+        ],
+        [
+         5,
+         "0101"
+        ],
+        [
+         6,
+         "0111"
+        ],
+        [
+         7,
+         "0000"
+        ],
+        [
+         8,
+         "0001"
+        ]
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "marks": {
+        "dim": [
+         0,
+         3
+        ],
+        "lit": [
+         3
+        ]
+       }
+      },
+      "missing": {
+       "values": [
+        "0 (0000)"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "range",
+        "at": 3
+       },
+       "to": {
+        "view": "missing",
+        "at": 0
+       },
+       "value": "^ 3",
+       "mark": "good"
+      },
+      {
+       "from": {
+        "view": "lockers",
+        "at": 3
+       },
+       "to": {
+        "view": "missing",
+        "at": 0
+       },
+       "value": "^ 2",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "i = 4: missing ^= 4 ^ 3, so 0 ^ 4 ^ 3 = 7. 3 and 4 have now come in from both arrays and cancelled.",
+      "ko": "i = 4: missing ^= 4 ^ 3, 즉 0 ^ 4 ^ 3 = 7이 됩니다. 3, 4번은 이제 두 배열에서 모두 들어와 지워졌습니다."
+     },
+     "views": {
+      "range": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+       ],
+       "tags": [
+        [
+         0,
+         "0000"
+        ],
+        [
+         1,
+         "0001"
+        ],
+        [
+         2,
+         "0010"
+        ],
+        [
+         3,
+         "0011"
+        ],
+        [
+         4,
+         "0100"
+        ],
+        [
+         5,
+         "0101"
+        ],
+        [
+         6,
+         "0110"
+        ],
+        [
+         7,
+         "0111"
+        ],
+        [
+         8,
+         "1000"
+        ],
+        [
+         9,
+         "1001"
+        ]
+       ],
+       "marks": {
+        "dim": [
+         2,
+         3,
+         4,
+         9
+        ],
+        "lit": [
+         4
+        ],
+        "path": []
+       }
+      },
+      "lockers": {
+       "values": [
+        9,
+        6,
+        4,
+        2,
+        3,
+        5,
+        7,
+        0,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         "1001"
+        ],
+        [
+         1,
+         "0110"
+        ],
+        [
+         2,
+         "0100"
+        ],
+        [
+         3,
+         "0010"
+        ],
+        [
+         4,
+         "0011"
+        ],
+        [
+         5,
+         "0101"
+        ],
+        [
+         6,
+         "0111"
+        ],
+        [
+         7,
+         "0000"
+        ],
+        [
+         8,
+         "0001"
+        ]
+       ],
+       "pointers": {
+        "i": 4
+       },
+       "marks": {
+        "dim": [
+         0,
+         2,
+         3,
+         4
+        ],
+        "lit": [
+         4
+        ]
+       }
+      },
+      "missing": {
+       "values": [
+        "7 (0111)"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "range",
+        "at": 4
+       },
+       "to": {
+        "view": "missing",
+        "at": 0
+       },
+       "value": "^ 4",
+       "mark": "good"
+      },
+      {
+       "from": {
+        "view": "lockers",
+        "at": 4
+       },
+       "to": {
+        "view": "missing",
+        "at": 0
+       },
+       "value": "^ 3",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "i = 5: missing ^= 5 ^ 5, so 7 ^ 5 ^ 5 = 7. 5 has now come in from both arrays and cancelled.",
+      "ko": "i = 5: missing ^= 5 ^ 5, 즉 7 ^ 5 ^ 5 = 7이 됩니다. 5번은 이제 두 배열에서 모두 들어와 지워졌습니다."
+     },
+     "views": {
+      "range": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+       ],
+       "tags": [
+        [
+         0,
+         "0000"
+        ],
+        [
+         1,
+         "0001"
+        ],
+        [
+         2,
+         "0010"
+        ],
+        [
+         3,
+         "0011"
+        ],
+        [
+         4,
+         "0100"
+        ],
+        [
+         5,
+         "0101"
+        ],
+        [
+         6,
+         "0110"
+        ],
+        [
+         7,
+         "0111"
+        ],
+        [
+         8,
+         "1000"
+        ],
+        [
+         9,
+         "1001"
+        ]
+       ],
+       "marks": {
+        "dim": [
+         2,
+         3,
+         4,
+         5,
+         9
+        ],
+        "lit": [
+         5
+        ],
+        "path": []
+       }
+      },
+      "lockers": {
+       "values": [
+        9,
+        6,
+        4,
+        2,
+        3,
+        5,
+        7,
+        0,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         "1001"
+        ],
+        [
+         1,
+         "0110"
+        ],
+        [
+         2,
+         "0100"
+        ],
+        [
+         3,
+         "0010"
+        ],
+        [
+         4,
+         "0011"
+        ],
+        [
+         5,
+         "0101"
+        ],
+        [
+         6,
+         "0111"
+        ],
+        [
+         7,
+         "0000"
+        ],
+        [
+         8,
+         "0001"
+        ]
+       ],
+       "pointers": {
+        "i": 5
+       },
+       "marks": {
+        "dim": [
+         0,
+         2,
+         3,
+         4,
+         5
+        ],
+        "lit": [
+         5
+        ]
+       }
+      },
+      "missing": {
+       "values": [
+        "7 (0111)"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "range",
+        "at": 5
+       },
+       "to": {
+        "view": "missing",
+        "at": 0
+       },
+       "value": "^ 5",
+       "mark": "good"
+      },
+      {
+       "from": {
+        "view": "lockers",
+        "at": 5
+       },
+       "to": {
+        "view": "missing",
+        "at": 0
+       },
+       "value": "^ 5",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "i = 6: missing ^= 6 ^ 7, so 7 ^ 6 ^ 7 = 6. 6 has now come in from both arrays and cancelled.",
+      "ko": "i = 6: missing ^= 6 ^ 7, 즉 7 ^ 6 ^ 7 = 6이 됩니다. 6번은 이제 두 배열에서 모두 들어와 지워졌습니다."
+     },
+     "views": {
+      "range": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+       ],
+       "tags": [
+        [
+         0,
+         "0000"
+        ],
+        [
+         1,
+         "0001"
+        ],
+        [
+         2,
+         "0010"
+        ],
+        [
+         3,
+         "0011"
+        ],
+        [
+         4,
+         "0100"
+        ],
+        [
+         5,
+         "0101"
+        ],
+        [
+         6,
+         "0110"
+        ],
+        [
+         7,
+         "0111"
+        ],
+        [
+         8,
+         "1000"
+        ],
+        [
+         9,
+         "1001"
+        ]
+       ],
+       "marks": {
+        "dim": [
+         2,
+         3,
+         4,
+         5,
+         6,
+         9
+        ],
+        "lit": [
+         6
+        ],
+        "path": []
+       }
+      },
+      "lockers": {
+       "values": [
+        9,
+        6,
+        4,
+        2,
+        3,
+        5,
+        7,
+        0,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         "1001"
+        ],
+        [
+         1,
+         "0110"
+        ],
+        [
+         2,
+         "0100"
+        ],
+        [
+         3,
+         "0010"
+        ],
+        [
+         4,
+         "0011"
+        ],
+        [
+         5,
+         "0101"
+        ],
+        [
+         6,
+         "0111"
+        ],
+        [
+         7,
+         "0000"
+        ],
+        [
+         8,
+         "0001"
+        ]
+       ],
+       "pointers": {
+        "i": 6
+       },
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ],
+        "lit": [
+         6
+        ]
+       }
+      },
+      "missing": {
+       "values": [
+        "6 (0110)"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "range",
+        "at": 6
+       },
+       "to": {
+        "view": "missing",
+        "at": 0
+       },
+       "value": "^ 6",
+       "mark": "good"
+      },
+      {
+       "from": {
+        "view": "lockers",
+        "at": 6
+       },
+       "to": {
+        "view": "missing",
+        "at": 0
+       },
+       "value": "^ 7",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "i = 7: missing ^= 7 ^ 0, so 6 ^ 7 ^ 0 = 1. 0 and 7 have now come in from both arrays and cancelled.",
+      "ko": "i = 7: missing ^= 7 ^ 0, 즉 6 ^ 7 ^ 0 = 1이 됩니다. 0, 7번은 이제 두 배열에서 모두 들어와 지워졌습니다."
+     },
+     "views": {
+      "range": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+       ],
+       "tags": [
+        [
+         0,
+         "0000"
+        ],
+        [
+         1,
+         "0001"
+        ],
+        [
+         2,
+         "0010"
+        ],
+        [
+         3,
+         "0011"
+        ],
+        [
+         4,
+         "0100"
+        ],
+        [
+         5,
+         "0101"
+        ],
+        [
+         6,
+         "0110"
+        ],
+        [
+         7,
+         "0111"
+        ],
+        [
+         8,
+         "1000"
+        ],
+        [
+         9,
+         "1001"
+        ]
+       ],
+       "marks": {
+        "dim": [
+         0,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7,
+         9
+        ],
+        "lit": [
+         7
+        ],
+        "path": []
+       }
+      },
+      "lockers": {
+       "values": [
+        9,
+        6,
+        4,
+        2,
+        3,
+        5,
+        7,
+        0,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         "1001"
+        ],
+        [
+         1,
+         "0110"
+        ],
+        [
+         2,
+         "0100"
+        ],
+        [
+         3,
+         "0010"
+        ],
+        [
+         4,
+         "0011"
+        ],
+        [
+         5,
+         "0101"
+        ],
+        [
+         6,
+         "0111"
+        ],
+        [
+         7,
+         "0000"
+        ],
+        [
+         8,
+         "0001"
+        ]
+       ],
+       "pointers": {
+        "i": 7
+       },
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7
+        ],
+        "lit": [
+         7
+        ]
+       }
+      },
+      "missing": {
+       "values": [
+        "1 (0001)"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "range",
+        "at": 7
+       },
+       "to": {
+        "view": "missing",
+        "at": 0
+       },
+       "value": "^ 7",
+       "mark": "good"
+      },
+      {
+       "from": {
+        "view": "lockers",
+        "at": 7
+       },
+       "to": {
+        "view": "missing",
+        "at": 0
+       },
+       "value": "^ 0",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "i = 8: missing ^= 8 ^ 1, so 1 ^ 8 ^ 1 = 8. 1 has now come in from both arrays and cancelled.",
+      "ko": "i = 8: missing ^= 8 ^ 1, 즉 1 ^ 8 ^ 1 = 8이 됩니다. 1번은 이제 두 배열에서 모두 들어와 지워졌습니다."
+     },
+     "views": {
+      "range": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+       ],
+       "tags": [
+        [
+         0,
+         "0000"
+        ],
+        [
+         1,
+         "0001"
+        ],
+        [
+         2,
+         "0010"
+        ],
+        [
+         3,
+         "0011"
+        ],
+        [
+         4,
+         "0100"
+        ],
+        [
+         5,
+         "0101"
+        ],
+        [
+         6,
+         "0110"
+        ],
+        [
+         7,
+         "0111"
+        ],
+        [
+         8,
+         "1000"
+        ],
+        [
+         9,
+         "1001"
+        ]
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7,
+         9
+        ],
+        "lit": [
+         8
+        ],
+        "path": []
+       }
+      },
+      "lockers": {
+       "values": [
+        9,
+        6,
+        4,
+        2,
+        3,
+        5,
+        7,
+        0,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         "1001"
+        ],
+        [
+         1,
+         "0110"
+        ],
+        [
+         2,
+         "0100"
+        ],
+        [
+         3,
+         "0010"
+        ],
+        [
+         4,
+         "0011"
+        ],
+        [
+         5,
+         "0101"
+        ],
+        [
+         6,
+         "0111"
+        ],
+        [
+         7,
+         "0000"
+        ],
+        [
+         8,
+         "0001"
+        ]
+       ],
+       "pointers": {
+        "i": 8
+       },
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7,
+         8
+        ],
+        "lit": [
+         8
+        ]
+       }
+      },
+      "missing": {
+       "values": [
+        "8 (1000)"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "range",
+        "at": 8
+       },
+       "to": {
+        "view": "missing",
+        "at": 0
+       },
+       "value": "^ 8",
+       "mark": "good"
+      },
+      {
+       "from": {
+        "view": "lockers",
+        "at": 8
+       },
+       "to": {
+        "view": "missing",
+        "at": 0
+       },
+       "value": "^ 1",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every claimed number cancelled with its copy in the range; only 8 came in once, so it is the empty locker: answer 8.",
+      "ko": "배정된 번호는 모두 범위의 같은 수와 지워졌고 8만 한 번 들어왔으므로, 그 번호가 빈 사물함입니다. 답은 8입니다."
+     },
+     "views": {
+      "range": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+       ],
+       "tags": [
+        [
+         0,
+         "0000"
+        ],
+        [
+         1,
+         "0001"
+        ],
+        [
+         2,
+         "0010"
+        ],
+        [
+         3,
+         "0011"
+        ],
+        [
+         4,
+         "0100"
+        ],
+        [
+         5,
+         "0101"
+        ],
+        [
+         6,
+         "0110"
+        ],
+        [
+         7,
+         "0111"
+        ],
+        [
+         8,
+         "1000"
+        ],
+        [
+         9,
+         "1001"
+        ]
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7,
+         9
+        ],
+        "lit": [],
+        "path": [
+         8
+        ]
+       }
+      },
+      "lockers": {
+       "values": [
+        9,
+        6,
+        4,
+        2,
+        3,
+        5,
+        7,
+        0,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         "1001"
+        ],
+        [
+         1,
+         "0110"
+        ],
+        [
+         2,
+         "0100"
+        ],
+        [
+         3,
+         "0010"
+        ],
+        [
+         4,
+         "0011"
+        ],
+        [
+         5,
+         "0101"
+        ],
+        [
+         6,
+         "0111"
+        ],
+        [
+         7,
+         "0000"
+        ],
+        [
+         8,
+         "0001"
+        ]
+       ],
+       "pointers": {
+        "i": null
+       },
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7,
+         8
+        ],
+        "lit": []
+       }
+      },
+      "missing": {
+       "values": [
+        "8 (1000)"
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      }
+     },
+     "answer": "8"
+    }
+   ],
+   "sampleInput": "[9,6,4,2,3,5,7,0,1]"
+  }
+ ]
+}

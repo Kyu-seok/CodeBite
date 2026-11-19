@@ -1,6 +1,6 @@
 class Solution:
-    def spotRedundantLink(self, edges: list[list[int]]) -> list[int]:
-        parent = list(range(len(edges) + 1))
+    def spotRedundantLink(self, links: list[list[int]]) -> list[int]:
+        parent = list(range(len(links) + 1))
 
         def find(x: int) -> int:
             while parent[x] != x:
@@ -8,7 +8,7 @@ class Solution:
                 x = parent[x]
             return x
 
-        for a, b in edges:
+        for a, b in links:
             root_a, root_b = find(a), find(b)
             if root_a == root_b:
                 return [a, b]

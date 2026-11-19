@@ -11,8 +11,8 @@ using namespace std;
 int main() {
     string line;
     getline(cin, line);
-    // Parse [["MUC","LHR"],["JFK","MUC"]]
-    vector<vector<string>> tickets;
+    // Parse [["HUB","BIR"],["BIR","ELM"]]
+    vector<vector<string>> routes;
     int i = 1; // skip outer [
     while (i < (int)line.size() - 1) {
         if (line[i] == '[') {
@@ -29,13 +29,13 @@ int main() {
                     pos++;
                 }
             }
-            tickets.push_back(pair);
+            routes.push_back(pair);
             i = j + 1;
         } else {
             i++;
         }
     }
-    vector<string> result = Solution().traceStreetSweep(tickets);
+    vector<string> result = Solution().planWalk(routes);
     cout << JsonOutput::stringVector(result) << endl;
     return 0;
 }

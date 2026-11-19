@@ -6,7 +6,7 @@ class TreeNode:
 
 
 class Solution:
-    def captureDockSilhouette(self, root: TreeNode | None) -> list[int]:
+    def rightSideView(self, root: TreeNode | None) -> list[int]:
         view: list[int] = []
         level = [root] if root else []
         while level:

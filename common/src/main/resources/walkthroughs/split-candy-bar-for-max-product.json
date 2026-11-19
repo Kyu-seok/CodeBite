@@ -1,0 +1,2245 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Split Candy Bar for Max Product",
+  "ko": "곱이 최대가 되게 사탕 막대 쪼개기"
+ },
+ "approach": {
+  "en": "Fill best[k], the largest product from a bar of k, kept whole or split. A bar of total breaks off a first piece, and the rest is either kept whole or split at its own best, whichever is larger.",
+  "ko": "best[k] 값은 길이 k 막대를 그대로 두거나 쪼개서 얻는 가장 큰 곱입니다. 길이 total 막대는 첫 조각을 떼어 내고, 나머지는 그대로 두거나 나머지의 best로 쪼개는 것 중 큰 쪽을 씁니다."
+ },
+ "views": [
+  {
+   "id": "best",
+   "type": "array",
+   "title": {
+    "en": "best product per length",
+    "ko": "best (길이별 최대 곱)"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "length = 5",
+   "expected": "6",
+   "frames": [
+    {
+     "caption": {
+      "en": "A bar of 5. best[0] = 0 is never used, and best[1] = 1: a bar of 1 can't be split, so it only counts kept whole.",
+      "ko": "길이 5 막대입니다. best[0] = 0은 쓰이지 않고, 길이 1은 쪼갤 수 없으니 best[1] 값은 그대로 둔 1입니다."
+     },
+     "views": {
+      "best": {
+       "values": [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+       ],
+       "pointers": {
+        "total": null
+       },
+       "marks": {
+        "good": [
+         1
+        ],
+        "dim": [
+         0
+        ]
+       },
+       "under": [],
+       "tags": [],
+       "unread": [
+        2,
+        3,
+        4,
+        5
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Bar 2: each first piece times its rest is under the rest's cell. The largest is 1 × 1 = 1, the rest 1 kept whole.",
+      "ko": "길이 2: 첫 조각마다 첫 조각 × 나머지가 나머지 칸 아래에 있습니다. 가장 큰 것은 나머지 길이 1을 그대로 둔 1 × 1 = 1입니다."
+     },
+     "views": {
+      "best": {
+       "values": [
+        0,
+        1,
+        1,
+        0,
+        0,
+        0
+       ],
+       "pointers": {
+        "total": 2
+       },
+       "marks": {
+        "lit": [
+         1
+        ],
+        "good": [
+         2
+        ],
+        "dim": [
+         0
+        ]
+       },
+       "under": [
+        [
+         1,
+         "1×1"
+        ]
+       ],
+       "tags": [],
+       "unread": [
+        3,
+        4,
+        5
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 1
+       },
+       "to": {
+        "view": "best",
+        "at": 2
+       },
+       "value": "1×1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Bar 3: each first piece times its rest is under the rest's cell. The largest is 1 × 2 = 2, the rest 2 kept whole.",
+      "ko": "길이 3: 첫 조각마다 첫 조각 × 나머지가 나머지 칸 아래에 있습니다. 가장 큰 것은 나머지 길이 2를 그대로 둔 1 × 2 = 2입니다."
+     },
+     "views": {
+      "best": {
+       "values": [
+        0,
+        1,
+        1,
+        2,
+        0,
+        0
+       ],
+       "pointers": {
+        "total": 3
+       },
+       "marks": {
+        "lit": [
+         1,
+         2
+        ],
+        "good": [
+         3
+        ],
+        "dim": [
+         0
+        ]
+       },
+       "under": [
+        [
+         2,
+         "1×2"
+        ],
+        [
+         1,
+         "2×1"
+        ]
+       ],
+       "tags": [],
+       "unread": [
+        4,
+        5
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 2
+       },
+       "to": {
+        "view": "best",
+        "at": 3
+       },
+       "value": "1×2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Bar 4: each first piece times its rest is under the rest's cell. The largest is 2 × 2 = 4, the rest 2 kept whole.",
+      "ko": "길이 4: 첫 조각마다 첫 조각 × 나머지가 나머지 칸 아래에 있습니다. 가장 큰 것은 나머지 길이 2를 그대로 둔 2 × 2 = 4입니다."
+     },
+     "views": {
+      "best": {
+       "values": [
+        0,
+        1,
+        1,
+        2,
+        4,
+        0
+       ],
+       "pointers": {
+        "total": 4
+       },
+       "marks": {
+        "lit": [
+         1,
+         2,
+         3
+        ],
+        "good": [
+         4
+        ],
+        "dim": [
+         0
+        ]
+       },
+       "under": [
+        [
+         3,
+         "1×3"
+        ],
+        [
+         2,
+         "2×2"
+        ],
+        [
+         1,
+         "3×1"
+        ]
+       ],
+       "tags": [],
+       "unread": [
+        5
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 2
+       },
+       "to": {
+        "view": "best",
+        "at": 4
+       },
+       "value": "2×2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Bar 5: each first piece times its rest is under the rest's cell. The largest is 2 × 3 = 6, the rest 3 kept whole.",
+      "ko": "길이 5: 첫 조각마다 첫 조각 × 나머지가 나머지 칸 아래에 있습니다. 가장 큰 것은 나머지 길이 3을 그대로 둔 2 × 3 = 6입니다."
+     },
+     "views": {
+      "best": {
+       "values": [
+        0,
+        1,
+        1,
+        2,
+        4,
+        6
+       ],
+       "pointers": {
+        "total": 5
+       },
+       "marks": {
+        "lit": [
+         1,
+         2,
+         3,
+         4
+        ],
+        "good": [
+         5
+        ],
+        "dim": [
+         0
+        ]
+       },
+       "under": [
+        [
+         4,
+         "1×4"
+        ],
+        [
+         3,
+         "2×3"
+        ],
+        [
+         2,
+         "3×2"
+        ],
+        [
+         1,
+         "4×1"
+        ]
+       ],
+       "tags": [],
+       "unread": []
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 3
+       },
+       "to": {
+        "view": "best",
+        "at": 5
+       },
+       "value": "2×3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "best[5] = 6. Following each cell to its rest: 5 = 3 + 2, and 3 × 2 = 6.",
+      "ko": "best[5] = 6입니다. 각 칸을 나머지로 따라가면 5 = 3 + 2이고, 3 × 2 = 6입니다."
+     },
+     "views": {
+      "best": {
+       "values": [
+        0,
+        1,
+        1,
+        2,
+        4,
+        6
+       ],
+       "pointers": {
+        "total": null
+       },
+       "marks": {
+        "path": [
+         5,
+         3
+        ],
+        "dim": [
+         0
+        ]
+       },
+       "under": [],
+       "tags": [
+        [
+         5,
+         {
+          "en": "piece 2",
+          "ko": "조각 2"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "kept whole",
+          "ko": "그대로"
+         }
+        ]
+       ],
+       "unread": []
+      }
+     },
+     "answer": "6"
+    }
+   ],
+   "sampleInput": "5"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "length = 11",
+   "expected": "54",
+   "frames": [
+    {
+     "caption": {
+      "en": "A bar of 11. best[0] = 0 is never used, and best[1] = 1: a bar of 1 can't be split, so it only counts kept whole.",
+      "ko": "길이 11 막대입니다. best[0] = 0은 쓰이지 않고, 길이 1은 쪼갤 수 없으니 best[1] 값은 그대로 둔 1입니다."
+     },
+     "views": {
+      "best": {
+       "values": [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+       ],
+       "pointers": {
+        "total": null
+       },
+       "marks": {
+        "good": [
+         1
+        ],
+        "dim": [
+         0
+        ]
+       },
+       "under": [],
+       "tags": [],
+       "unread": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Bar 2: each first piece times its rest is under the rest's cell. The largest is 1 × 1 = 1, the rest 1 kept whole.",
+      "ko": "길이 2: 첫 조각마다 첫 조각 × 나머지가 나머지 칸 아래에 있습니다. 가장 큰 것은 나머지 길이 1을 그대로 둔 1 × 1 = 1입니다."
+     },
+     "views": {
+      "best": {
+       "values": [
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+       ],
+       "pointers": {
+        "total": 2
+       },
+       "marks": {
+        "lit": [
+         1
+        ],
+        "good": [
+         2
+        ],
+        "dim": [
+         0
+        ]
+       },
+       "under": [
+        [
+         1,
+         "1×1"
+        ]
+       ],
+       "tags": [],
+       "unread": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 1
+       },
+       "to": {
+        "view": "best",
+        "at": 2
+       },
+       "value": "1×1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Bar 3: each first piece times its rest is under the rest's cell. The largest is 1 × 2 = 2, the rest 2 kept whole.",
+      "ko": "길이 3: 첫 조각마다 첫 조각 × 나머지가 나머지 칸 아래에 있습니다. 가장 큰 것은 나머지 길이 2를 그대로 둔 1 × 2 = 2입니다."
+     },
+     "views": {
+      "best": {
+       "values": [
+        0,
+        1,
+        1,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+       ],
+       "pointers": {
+        "total": 3
+       },
+       "marks": {
+        "lit": [
+         1,
+         2
+        ],
+        "good": [
+         3
+        ],
+        "dim": [
+         0
+        ]
+       },
+       "under": [
+        [
+         2,
+         "1×2"
+        ],
+        [
+         1,
+         "2×1"
+        ]
+       ],
+       "tags": [],
+       "unread": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 2
+       },
+       "to": {
+        "view": "best",
+        "at": 3
+       },
+       "value": "1×2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Bar 4: each first piece times its rest is under the rest's cell. The largest is 2 × 2 = 4, the rest 2 kept whole.",
+      "ko": "길이 4: 첫 조각마다 첫 조각 × 나머지가 나머지 칸 아래에 있습니다. 가장 큰 것은 나머지 길이 2를 그대로 둔 2 × 2 = 4입니다."
+     },
+     "views": {
+      "best": {
+       "values": [
+        0,
+        1,
+        1,
+        2,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+       ],
+       "pointers": {
+        "total": 4
+       },
+       "marks": {
+        "lit": [
+         1,
+         2,
+         3
+        ],
+        "good": [
+         4
+        ],
+        "dim": [
+         0
+        ]
+       },
+       "under": [
+        [
+         3,
+         "1×3"
+        ],
+        [
+         2,
+         "2×2"
+        ],
+        [
+         1,
+         "3×1"
+        ]
+       ],
+       "tags": [],
+       "unread": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 2
+       },
+       "to": {
+        "view": "best",
+        "at": 4
+       },
+       "value": "2×2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Bar 5: each first piece times its rest is under the rest's cell. The largest is 2 × 3 = 6, the rest 3 kept whole.",
+      "ko": "길이 5: 첫 조각마다 첫 조각 × 나머지가 나머지 칸 아래에 있습니다. 가장 큰 것은 나머지 길이 3을 그대로 둔 2 × 3 = 6입니다."
+     },
+     "views": {
+      "best": {
+       "values": [
+        0,
+        1,
+        1,
+        2,
+        4,
+        6,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+       ],
+       "pointers": {
+        "total": 5
+       },
+       "marks": {
+        "lit": [
+         1,
+         2,
+         3,
+         4
+        ],
+        "good": [
+         5
+        ],
+        "dim": [
+         0
+        ]
+       },
+       "under": [
+        [
+         4,
+         "1×4"
+        ],
+        [
+         3,
+         "2×3"
+        ],
+        [
+         2,
+         "3×2"
+        ],
+        [
+         1,
+         "4×1"
+        ]
+       ],
+       "tags": [],
+       "unread": [
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 3
+       },
+       "to": {
+        "view": "best",
+        "at": 5
+       },
+       "value": "2×3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Bar 6: each first piece times its rest is under the rest's cell. The largest is 3 × 3 = 9, the rest 3 kept whole.",
+      "ko": "길이 6: 첫 조각마다 첫 조각 × 나머지가 나머지 칸 아래에 있습니다. 가장 큰 것은 나머지 길이 3을 그대로 둔 3 × 3 = 9입니다."
+     },
+     "views": {
+      "best": {
+       "values": [
+        0,
+        1,
+        1,
+        2,
+        4,
+        6,
+        9,
+        0,
+        0,
+        0,
+        0,
+        0
+       ],
+       "pointers": {
+        "total": 6
+       },
+       "marks": {
+        "lit": [
+         1,
+         2,
+         3,
+         4,
+         5
+        ],
+        "good": [
+         6
+        ],
+        "dim": [
+         0
+        ]
+       },
+       "under": [
+        [
+         5,
+         "1×6"
+        ],
+        [
+         4,
+         "2×4"
+        ],
+        [
+         3,
+         "3×3"
+        ],
+        [
+         2,
+         "4×2"
+        ],
+        [
+         1,
+         "5×1"
+        ]
+       ],
+       "tags": [],
+       "unread": [
+        7,
+        8,
+        9,
+        10,
+        11
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 3
+       },
+       "to": {
+        "view": "best",
+        "at": 6
+       },
+       "value": "3×3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Bar 7: each first piece times its rest is under the rest's cell. The largest is 2 × 6 = 12, the rest 5 split for best[5] = 6.",
+      "ko": "길이 7: 첫 조각마다 첫 조각 × 나머지가 나머지 칸 아래에 있습니다. 가장 큰 것은 나머지 길이 5를 best[5] = 6으로 쪼갠 2 × 6 = 12입니다."
+     },
+     "views": {
+      "best": {
+       "values": [
+        0,
+        1,
+        1,
+        2,
+        4,
+        6,
+        9,
+        12,
+        0,
+        0,
+        0,
+        0
+       ],
+       "pointers": {
+        "total": 7
+       },
+       "marks": {
+        "lit": [
+         1,
+         2,
+         3,
+         4,
+         5,
+         6
+        ],
+        "good": [
+         7
+        ],
+        "dim": [
+         0
+        ]
+       },
+       "under": [
+        [
+         6,
+         "1×9"
+        ],
+        [
+         5,
+         "2×6"
+        ],
+        [
+         4,
+         "3×4"
+        ],
+        [
+         3,
+         "4×3"
+        ],
+        [
+         2,
+         "5×2"
+        ],
+        [
+         1,
+         "6×1"
+        ]
+       ],
+       "tags": [],
+       "unread": [
+        8,
+        9,
+        10,
+        11
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 5
+       },
+       "to": {
+        "view": "best",
+        "at": 7
+       },
+       "value": "2×6"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Bar 8: each first piece times its rest is under the rest's cell. The largest is 2 × 9 = 18, the rest 6 split for best[6] = 9.",
+      "ko": "길이 8: 첫 조각마다 첫 조각 × 나머지가 나머지 칸 아래에 있습니다. 가장 큰 것은 나머지 길이 6을 best[6] = 9로 쪼갠 2 × 9 = 18입니다."
+     },
+     "views": {
+      "best": {
+       "values": [
+        0,
+        1,
+        1,
+        2,
+        4,
+        6,
+        9,
+        12,
+        18,
+        0,
+        0,
+        0
+       ],
+       "pointers": {
+        "total": 8
+       },
+       "marks": {
+        "lit": [
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7
+        ],
+        "good": [
+         8
+        ],
+        "dim": [
+         0
+        ]
+       },
+       "under": [
+        [
+         7,
+         "1×12"
+        ],
+        [
+         6,
+         "2×9"
+        ],
+        [
+         5,
+         "3×6"
+        ],
+        [
+         4,
+         "4×4"
+        ],
+        [
+         3,
+         "5×3"
+        ],
+        [
+         2,
+         "6×2"
+        ],
+        [
+         1,
+         "7×1"
+        ]
+       ],
+       "tags": [],
+       "unread": [
+        9,
+        10,
+        11
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 6
+       },
+       "to": {
+        "view": "best",
+        "at": 8
+       },
+       "value": "2×9"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Bar 9: each first piece times its rest is under the rest's cell. The largest is 3 × 9 = 27, the rest 6 split for best[6] = 9.",
+      "ko": "길이 9: 첫 조각마다 첫 조각 × 나머지가 나머지 칸 아래에 있습니다. 가장 큰 것은 나머지 길이 6을 best[6] = 9로 쪼갠 3 × 9 = 27입니다."
+     },
+     "views": {
+      "best": {
+       "values": [
+        0,
+        1,
+        1,
+        2,
+        4,
+        6,
+        9,
+        12,
+        18,
+        27,
+        0,
+        0
+       ],
+       "pointers": {
+        "total": 9
+       },
+       "marks": {
+        "lit": [
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7,
+         8
+        ],
+        "good": [
+         9
+        ],
+        "dim": [
+         0
+        ]
+       },
+       "under": [
+        [
+         8,
+         "1×18"
+        ],
+        [
+         7,
+         "2×12"
+        ],
+        [
+         6,
+         "3×9"
+        ],
+        [
+         5,
+         "4×6"
+        ],
+        [
+         4,
+         "5×4"
+        ],
+        [
+         3,
+         "6×3"
+        ],
+        [
+         2,
+         "7×2"
+        ],
+        [
+         1,
+         "8×1"
+        ]
+       ],
+       "tags": [],
+       "unread": [
+        10,
+        11
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 6
+       },
+       "to": {
+        "view": "best",
+        "at": 9
+       },
+       "value": "3×9"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Bar 10: each first piece times its rest is under the rest's cell. The largest is 2 × 18 = 36, the rest 8 split for best[8] = 18.",
+      "ko": "길이 10: 첫 조각마다 첫 조각 × 나머지가 나머지 칸 아래에 있습니다. 가장 큰 것은 나머지 길이 8을 best[8] = 18로 쪼갠 2 × 18 = 36입니다."
+     },
+     "views": {
+      "best": {
+       "values": [
+        0,
+        1,
+        1,
+        2,
+        4,
+        6,
+        9,
+        12,
+        18,
+        27,
+        36,
+        0
+       ],
+       "pointers": {
+        "total": 10
+       },
+       "marks": {
+        "lit": [
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7,
+         8,
+         9
+        ],
+        "good": [
+         10
+        ],
+        "dim": [
+         0
+        ]
+       },
+       "under": [
+        [
+         9,
+         "1×27"
+        ],
+        [
+         8,
+         "2×18"
+        ],
+        [
+         7,
+         "3×12"
+        ],
+        [
+         6,
+         "4×9"
+        ],
+        [
+         5,
+         "5×6"
+        ],
+        [
+         4,
+         "6×4"
+        ],
+        [
+         3,
+         "7×3"
+        ],
+        [
+         2,
+         "8×2"
+        ],
+        [
+         1,
+         "9×1"
+        ]
+       ],
+       "tags": [],
+       "unread": [
+        11
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 8
+       },
+       "to": {
+        "view": "best",
+        "at": 10
+       },
+       "value": "2×18"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Bar 11: each first piece times its rest is under the rest's cell. The largest is 2 × 27 = 54, the rest 9 split for best[9] = 27.",
+      "ko": "길이 11: 첫 조각마다 첫 조각 × 나머지가 나머지 칸 아래에 있습니다. 가장 큰 것은 나머지 길이 9를 best[9] = 27로 쪼갠 2 × 27 = 54입니다."
+     },
+     "views": {
+      "best": {
+       "values": [
+        0,
+        1,
+        1,
+        2,
+        4,
+        6,
+        9,
+        12,
+        18,
+        27,
+        36,
+        54
+       ],
+       "pointers": {
+        "total": 11
+       },
+       "marks": {
+        "lit": [
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7,
+         8,
+         9,
+         10
+        ],
+        "good": [
+         11
+        ],
+        "dim": [
+         0
+        ]
+       },
+       "under": [
+        [
+         10,
+         "1×36"
+        ],
+        [
+         9,
+         "2×27"
+        ],
+        [
+         8,
+         "3×18"
+        ],
+        [
+         7,
+         "4×12"
+        ],
+        [
+         6,
+         "5×9"
+        ],
+        [
+         5,
+         "6×6"
+        ],
+        [
+         4,
+         "7×4"
+        ],
+        [
+         3,
+         "8×3"
+        ],
+        [
+         2,
+         "9×2"
+        ],
+        [
+         1,
+         "10×1"
+        ]
+       ],
+       "tags": [],
+       "unread": []
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 9
+       },
+       "to": {
+        "view": "best",
+        "at": 11
+       },
+       "value": "2×27"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "best[11] = 54. Following each cell to its rest: 11 = 3 + 3 + 3 + 2, and 3 × 3 × 3 × 2 = 54.",
+      "ko": "best[11] = 54입니다. 각 칸을 나머지로 따라가면 11 = 3 + 3 + 3 + 2이고, 3 × 3 × 3 × 2 = 54입니다."
+     },
+     "views": {
+      "best": {
+       "values": [
+        0,
+        1,
+        1,
+        2,
+        4,
+        6,
+        9,
+        12,
+        18,
+        27,
+        36,
+        54
+       ],
+       "pointers": {
+        "total": null
+       },
+       "marks": {
+        "path": [
+         11,
+         9,
+         6,
+         3
+        ],
+        "dim": [
+         0
+        ]
+       },
+       "under": [],
+       "tags": [
+        [
+         11,
+         {
+          "en": "piece 2",
+          "ko": "조각 2"
+         }
+        ],
+        [
+         9,
+         {
+          "en": "piece 3",
+          "ko": "조각 3"
+         }
+        ],
+        [
+         6,
+         {
+          "en": "piece 3",
+          "ko": "조각 3"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "kept whole",
+          "ko": "그대로"
+         }
+        ]
+       ],
+       "unread": []
+      }
+     },
+     "answer": "54"
+    }
+   ],
+   "sampleInput": "11"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "length = 10",
+   "expected": "36",
+   "frames": [
+    {
+     "caption": {
+      "en": "A bar of 10. best[0] = 0 is never used, and best[1] = 1: a bar of 1 can't be split, so it only counts kept whole.",
+      "ko": "길이 10 막대입니다. best[0] = 0은 쓰이지 않고, 길이 1은 쪼갤 수 없으니 best[1] 값은 그대로 둔 1입니다."
+     },
+     "views": {
+      "best": {
+       "values": [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+       ],
+       "pointers": {
+        "total": null
+       },
+       "marks": {
+        "good": [
+         1
+        ],
+        "dim": [
+         0
+        ]
+       },
+       "under": [],
+       "tags": [],
+       "unread": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Bar 2: each first piece times its rest is under the rest's cell. The largest is 1 × 1 = 1, the rest 1 kept whole.",
+      "ko": "길이 2: 첫 조각마다 첫 조각 × 나머지가 나머지 칸 아래에 있습니다. 가장 큰 것은 나머지 길이 1을 그대로 둔 1 × 1 = 1입니다."
+     },
+     "views": {
+      "best": {
+       "values": [
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+       ],
+       "pointers": {
+        "total": 2
+       },
+       "marks": {
+        "lit": [
+         1
+        ],
+        "good": [
+         2
+        ],
+        "dim": [
+         0
+        ]
+       },
+       "under": [
+        [
+         1,
+         "1×1"
+        ]
+       ],
+       "tags": [],
+       "unread": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 1
+       },
+       "to": {
+        "view": "best",
+        "at": 2
+       },
+       "value": "1×1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Bar 3: each first piece times its rest is under the rest's cell. The largest is 1 × 2 = 2, the rest 2 kept whole.",
+      "ko": "길이 3: 첫 조각마다 첫 조각 × 나머지가 나머지 칸 아래에 있습니다. 가장 큰 것은 나머지 길이 2를 그대로 둔 1 × 2 = 2입니다."
+     },
+     "views": {
+      "best": {
+       "values": [
+        0,
+        1,
+        1,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+       ],
+       "pointers": {
+        "total": 3
+       },
+       "marks": {
+        "lit": [
+         1,
+         2
+        ],
+        "good": [
+         3
+        ],
+        "dim": [
+         0
+        ]
+       },
+       "under": [
+        [
+         2,
+         "1×2"
+        ],
+        [
+         1,
+         "2×1"
+        ]
+       ],
+       "tags": [],
+       "unread": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 2
+       },
+       "to": {
+        "view": "best",
+        "at": 3
+       },
+       "value": "1×2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Bar 4: each first piece times its rest is under the rest's cell. The largest is 2 × 2 = 4, the rest 2 kept whole.",
+      "ko": "길이 4: 첫 조각마다 첫 조각 × 나머지가 나머지 칸 아래에 있습니다. 가장 큰 것은 나머지 길이 2를 그대로 둔 2 × 2 = 4입니다."
+     },
+     "views": {
+      "best": {
+       "values": [
+        0,
+        1,
+        1,
+        2,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+       ],
+       "pointers": {
+        "total": 4
+       },
+       "marks": {
+        "lit": [
+         1,
+         2,
+         3
+        ],
+        "good": [
+         4
+        ],
+        "dim": [
+         0
+        ]
+       },
+       "under": [
+        [
+         3,
+         "1×3"
+        ],
+        [
+         2,
+         "2×2"
+        ],
+        [
+         1,
+         "3×1"
+        ]
+       ],
+       "tags": [],
+       "unread": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 2
+       },
+       "to": {
+        "view": "best",
+        "at": 4
+       },
+       "value": "2×2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Bar 5: each first piece times its rest is under the rest's cell. The largest is 2 × 3 = 6, the rest 3 kept whole.",
+      "ko": "길이 5: 첫 조각마다 첫 조각 × 나머지가 나머지 칸 아래에 있습니다. 가장 큰 것은 나머지 길이 3을 그대로 둔 2 × 3 = 6입니다."
+     },
+     "views": {
+      "best": {
+       "values": [
+        0,
+        1,
+        1,
+        2,
+        4,
+        6,
+        0,
+        0,
+        0,
+        0,
+        0
+       ],
+       "pointers": {
+        "total": 5
+       },
+       "marks": {
+        "lit": [
+         1,
+         2,
+         3,
+         4
+        ],
+        "good": [
+         5
+        ],
+        "dim": [
+         0
+        ]
+       },
+       "under": [
+        [
+         4,
+         "1×4"
+        ],
+        [
+         3,
+         "2×3"
+        ],
+        [
+         2,
+         "3×2"
+        ],
+        [
+         1,
+         "4×1"
+        ]
+       ],
+       "tags": [],
+       "unread": [
+        6,
+        7,
+        8,
+        9,
+        10
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 3
+       },
+       "to": {
+        "view": "best",
+        "at": 5
+       },
+       "value": "2×3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Bar 6: each first piece times its rest is under the rest's cell. The largest is 3 × 3 = 9, the rest 3 kept whole.",
+      "ko": "길이 6: 첫 조각마다 첫 조각 × 나머지가 나머지 칸 아래에 있습니다. 가장 큰 것은 나머지 길이 3을 그대로 둔 3 × 3 = 9입니다."
+     },
+     "views": {
+      "best": {
+       "values": [
+        0,
+        1,
+        1,
+        2,
+        4,
+        6,
+        9,
+        0,
+        0,
+        0,
+        0
+       ],
+       "pointers": {
+        "total": 6
+       },
+       "marks": {
+        "lit": [
+         1,
+         2,
+         3,
+         4,
+         5
+        ],
+        "good": [
+         6
+        ],
+        "dim": [
+         0
+        ]
+       },
+       "under": [
+        [
+         5,
+         "1×6"
+        ],
+        [
+         4,
+         "2×4"
+        ],
+        [
+         3,
+         "3×3"
+        ],
+        [
+         2,
+         "4×2"
+        ],
+        [
+         1,
+         "5×1"
+        ]
+       ],
+       "tags": [],
+       "unread": [
+        7,
+        8,
+        9,
+        10
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 3
+       },
+       "to": {
+        "view": "best",
+        "at": 6
+       },
+       "value": "3×3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Bar 7: each first piece times its rest is under the rest's cell. The largest is 2 × 6 = 12, the rest 5 split for best[5] = 6.",
+      "ko": "길이 7: 첫 조각마다 첫 조각 × 나머지가 나머지 칸 아래에 있습니다. 가장 큰 것은 나머지 길이 5를 best[5] = 6으로 쪼갠 2 × 6 = 12입니다."
+     },
+     "views": {
+      "best": {
+       "values": [
+        0,
+        1,
+        1,
+        2,
+        4,
+        6,
+        9,
+        12,
+        0,
+        0,
+        0
+       ],
+       "pointers": {
+        "total": 7
+       },
+       "marks": {
+        "lit": [
+         1,
+         2,
+         3,
+         4,
+         5,
+         6
+        ],
+        "good": [
+         7
+        ],
+        "dim": [
+         0
+        ]
+       },
+       "under": [
+        [
+         6,
+         "1×9"
+        ],
+        [
+         5,
+         "2×6"
+        ],
+        [
+         4,
+         "3×4"
+        ],
+        [
+         3,
+         "4×3"
+        ],
+        [
+         2,
+         "5×2"
+        ],
+        [
+         1,
+         "6×1"
+        ]
+       ],
+       "tags": [],
+       "unread": [
+        8,
+        9,
+        10
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 5
+       },
+       "to": {
+        "view": "best",
+        "at": 7
+       },
+       "value": "2×6"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Bar 8: each first piece times its rest is under the rest's cell. The largest is 2 × 9 = 18, the rest 6 split for best[6] = 9.",
+      "ko": "길이 8: 첫 조각마다 첫 조각 × 나머지가 나머지 칸 아래에 있습니다. 가장 큰 것은 나머지 길이 6을 best[6] = 9로 쪼갠 2 × 9 = 18입니다."
+     },
+     "views": {
+      "best": {
+       "values": [
+        0,
+        1,
+        1,
+        2,
+        4,
+        6,
+        9,
+        12,
+        18,
+        0,
+        0
+       ],
+       "pointers": {
+        "total": 8
+       },
+       "marks": {
+        "lit": [
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7
+        ],
+        "good": [
+         8
+        ],
+        "dim": [
+         0
+        ]
+       },
+       "under": [
+        [
+         7,
+         "1×12"
+        ],
+        [
+         6,
+         "2×9"
+        ],
+        [
+         5,
+         "3×6"
+        ],
+        [
+         4,
+         "4×4"
+        ],
+        [
+         3,
+         "5×3"
+        ],
+        [
+         2,
+         "6×2"
+        ],
+        [
+         1,
+         "7×1"
+        ]
+       ],
+       "tags": [],
+       "unread": [
+        9,
+        10
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 6
+       },
+       "to": {
+        "view": "best",
+        "at": 8
+       },
+       "value": "2×9"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Bar 9: each first piece times its rest is under the rest's cell. The largest is 3 × 9 = 27, the rest 6 split for best[6] = 9.",
+      "ko": "길이 9: 첫 조각마다 첫 조각 × 나머지가 나머지 칸 아래에 있습니다. 가장 큰 것은 나머지 길이 6을 best[6] = 9로 쪼갠 3 × 9 = 27입니다."
+     },
+     "views": {
+      "best": {
+       "values": [
+        0,
+        1,
+        1,
+        2,
+        4,
+        6,
+        9,
+        12,
+        18,
+        27,
+        0
+       ],
+       "pointers": {
+        "total": 9
+       },
+       "marks": {
+        "lit": [
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7,
+         8
+        ],
+        "good": [
+         9
+        ],
+        "dim": [
+         0
+        ]
+       },
+       "under": [
+        [
+         8,
+         "1×18"
+        ],
+        [
+         7,
+         "2×12"
+        ],
+        [
+         6,
+         "3×9"
+        ],
+        [
+         5,
+         "4×6"
+        ],
+        [
+         4,
+         "5×4"
+        ],
+        [
+         3,
+         "6×3"
+        ],
+        [
+         2,
+         "7×2"
+        ],
+        [
+         1,
+         "8×1"
+        ]
+       ],
+       "tags": [],
+       "unread": [
+        10
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 6
+       },
+       "to": {
+        "view": "best",
+        "at": 9
+       },
+       "value": "3×9"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Bar 10: each first piece times its rest is under the rest's cell. The largest is 2 × 18 = 36, the rest 8 split for best[8] = 18.",
+      "ko": "길이 10: 첫 조각마다 첫 조각 × 나머지가 나머지 칸 아래에 있습니다. 가장 큰 것은 나머지 길이 8을 best[8] = 18로 쪼갠 2 × 18 = 36입니다."
+     },
+     "views": {
+      "best": {
+       "values": [
+        0,
+        1,
+        1,
+        2,
+        4,
+        6,
+        9,
+        12,
+        18,
+        27,
+        36
+       ],
+       "pointers": {
+        "total": 10
+       },
+       "marks": {
+        "lit": [
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7,
+         8,
+         9
+        ],
+        "good": [
+         10
+        ],
+        "dim": [
+         0
+        ]
+       },
+       "under": [
+        [
+         9,
+         "1×27"
+        ],
+        [
+         8,
+         "2×18"
+        ],
+        [
+         7,
+         "3×12"
+        ],
+        [
+         6,
+         "4×9"
+        ],
+        [
+         5,
+         "5×6"
+        ],
+        [
+         4,
+         "6×4"
+        ],
+        [
+         3,
+         "7×3"
+        ],
+        [
+         2,
+         "8×2"
+        ],
+        [
+         1,
+         "9×1"
+        ]
+       ],
+       "tags": [],
+       "unread": []
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "best",
+        "at": 8
+       },
+       "to": {
+        "view": "best",
+        "at": 10
+       },
+       "value": "2×18"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "best[10] = 36. Following each cell to its rest: 10 = 3 + 3 + 2 + 2, and 3 × 3 × 2 × 2 = 36.",
+      "ko": "best[10] = 36입니다. 각 칸을 나머지로 따라가면 10 = 3 + 3 + 2 + 2이고, 3 × 3 × 2 × 2 = 36입니다."
+     },
+     "views": {
+      "best": {
+       "values": [
+        0,
+        1,
+        1,
+        2,
+        4,
+        6,
+        9,
+        12,
+        18,
+        27,
+        36
+       ],
+       "pointers": {
+        "total": null
+       },
+       "marks": {
+        "path": [
+         10,
+         8,
+         6,
+         3
+        ],
+        "dim": [
+         0
+        ]
+       },
+       "under": [],
+       "tags": [
+        [
+         10,
+         {
+          "en": "piece 2",
+          "ko": "조각 2"
+         }
+        ],
+        [
+         8,
+         {
+          "en": "piece 2",
+          "ko": "조각 2"
+         }
+        ],
+        [
+         6,
+         {
+          "en": "piece 3",
+          "ko": "조각 3"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "kept whole",
+          "ko": "그대로"
+         }
+        ]
+       ],
+       "unread": []
+      }
+     },
+     "answer": "36"
+    }
+   ],
+   "sampleInput": "10"
+  }
+ ]
+}

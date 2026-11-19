@@ -15,7 +15,7 @@ class Solution {
      * @param {number} k
      * @return {number}
      */
-    pickNthTarget(root, k) {
+    nthLowestScore(root, k) {
         // Write your solution here
     }
 }

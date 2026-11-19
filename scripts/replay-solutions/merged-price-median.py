@@ -1,6 +1,6 @@
 class Solution:
-    def mergedZoneMedian(self, zonesA: list[int], zonesB: list[int]) -> float:
-        a, b = zonesA, zonesB
+    def mergedPriceMedian(self, pricesA: list[int], pricesB: list[int]) -> float:
+        a, b = pricesA, pricesB
         if len(a) > len(b):
             a, b = b, a
         m, n = len(a), len(b)

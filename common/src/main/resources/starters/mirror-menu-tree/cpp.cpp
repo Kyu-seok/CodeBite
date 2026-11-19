@@ -11,7 +11,7 @@
  */
 class Solution {
 public:
-    TreeNode* reflectBlend(TreeNode* root) {
+    TreeNode* mirrorTree(TreeNode* root) {
         // Write your solution here
     }
 };

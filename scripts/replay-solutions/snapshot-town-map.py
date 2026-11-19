@@ -8,7 +8,7 @@ class Node:
 
 
 class Solution:
-    def snapshotMeshLayout(self, node: Optional['Node']) -> Optional['Node']:
+    def cloneMap(self, node: Optional['Node']) -> Optional['Node']:
         if node is None:
             return None
         copies = {node: Node(node.val)}

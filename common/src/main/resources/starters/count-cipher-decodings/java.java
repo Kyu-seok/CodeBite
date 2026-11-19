@@ -1,5 +1,5 @@
 class Solution {
-    public int countScanDecodings(String scan) {
+    public int countDecodings(String digits) {
         // Write your solution here
     }
 }

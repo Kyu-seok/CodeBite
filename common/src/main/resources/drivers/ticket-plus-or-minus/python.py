@@ -1,7 +1,7 @@
 {USER_CODE}
 
 import json
-nums = json.loads(input())
+tickets = json.loads(input())
 target = int(input())
-result = Solution().partitionTankDoses(nums, target)
+result = Solution().countSignAssignments(tickets, target)
 print(result)

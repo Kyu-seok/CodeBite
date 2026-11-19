@@ -1,0 +1,3809 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Count Longest Increasing Subsequences",
+  "ko": "가장 긴 증가 부분수열의 개수"
+ },
+ "approach": {
+  "en": "For each index keep the longest increasing subsequence ending there and how many reach that length. Every smaller value before it can come just before it: a longer run replaces the count, an equal one adds to it.",
+  "ko": "인덱스마다 그곳에서 끝나는 가장 긴 증가 부분수열의 길이와, 그 길이인 부분수열의 개수를 둡니다. 앞에 있는 더 작은 값은 모두 바로 앞에 올 수 있습니다. 더 길면 개수를 바꾸고, 같으면 개수를 더합니다."
+ },
+ "views": [
+  {
+   "id": "nums",
+   "type": "array",
+   "title": "nums"
+  },
+  {
+   "id": "length",
+   "type": "array",
+   "title": {
+    "en": "length: longest ending here",
+    "ko": "length (여기서 끝나는 최장 길이)"
+   }
+  },
+  {
+   "id": "count",
+   "type": "array",
+   "title": {
+    "en": "count: how many reach it",
+    "ko": "count (그 길이인 부분수열 수)"
+   }
+  },
+  {
+   "id": "result",
+   "type": "output",
+   "title": {
+    "en": "answer",
+    "ko": "답"
+   },
+   "empty": {
+    "en": "none yet",
+    "ko": "아직 없음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "nums = [2,6,4,5,8]",
+   "expected": "1",
+   "frames": [
+    {
+     "caption": {
+      "en": "5 numbers. On its own, each index is an increasing subsequence of length 1, and there is 1 of it, so every length and count starts at 1.",
+      "ko": "수가 5개입니다. 각 인덱스 하나만으로 길이 1인 증가 부분수열이 1개 있으므로, length와 count는 모두 1에서 시작합니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        2,
+        6,
+        4,
+        5,
+        8
+       ],
+       "pointers": {
+        "j": null,
+        "i": null
+       },
+       "marks": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ]
+      },
+      "length": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ]
+      },
+      "count": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Index 0 (2) has nothing before it: length 1, count 1.",
+      "ko": "인덱스 0(2) 앞에는 아무것도 없습니다: 길이 1, 개수 1."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        2,
+        6,
+        4,
+        5,
+        8
+       ],
+       "pointers": {
+        "j": null,
+        "i": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ],
+        "dim": []
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4
+       ]
+      },
+      "length": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4
+       ]
+      },
+      "count": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "nums[0] = 2 < nums[1] = 6, so 6 can follow runs ending at index 0: length 1 + 1 = 2, longer than 1. Length becomes 2, and its 1 way replaces the count.",
+      "ko": "nums[0] = 2 < nums[1] = 6: 인덱스 0에서 끝나는 부분수열 뒤에 nums[1] 값을 붙일 수 있습니다. 길이 1 + 1 = 2는 1보다 길어 length는 2, count는 그 개수 1로 바뀝니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        2,
+        6,
+        4,
+        5,
+        8
+       ],
+       "pointers": {
+        "j": 0,
+        "i": 1
+       },
+       "marks": {
+        "lit": [
+         0,
+         1
+        ],
+        "dim": []
+       },
+       "unread": [
+        2,
+        3,
+        4
+       ]
+      },
+      "length": {
+       "values": [
+        1,
+        2,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [
+         1
+        ]
+       },
+       "unread": [
+        2,
+        3,
+        4
+       ]
+      },
+      "count": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [
+         1
+        ]
+       },
+       "unread": [
+        2,
+        3,
+        4
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "length",
+        "at": 0
+       },
+       "to": {
+        "view": "length",
+        "at": 1
+       },
+       "value": "1+1"
+      },
+      {
+       "from": {
+        "view": "count",
+        "at": 0
+       },
+       "to": {
+        "view": "count",
+        "at": 1
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "nums[0] = 2 < nums[2] = 4, so 4 can follow runs ending at index 0: length 1 + 1 = 2, longer than 1. Length becomes 2, and its 1 way replaces the count.",
+      "ko": "nums[0] = 2 < nums[2] = 4: 인덱스 0에서 끝나는 부분수열 뒤에 nums[2] 값을 붙일 수 있습니다. 길이 1 + 1 = 2는 1보다 길어 length는 2, count는 그 개수 1로 바뀝니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        2,
+        6,
+        4,
+        5,
+        8
+       ],
+       "pointers": {
+        "j": 0,
+        "i": 2
+       },
+       "marks": {
+        "lit": [
+         0,
+         2
+        ],
+        "dim": [
+         1
+        ]
+       },
+       "unread": [
+        3,
+        4
+       ]
+      },
+      "length": {
+       "values": [
+        1,
+        2,
+        2,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [
+         2
+        ]
+       },
+       "unread": [
+        3,
+        4
+       ]
+      },
+      "count": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [
+         2
+        ]
+       },
+       "unread": [
+        3,
+        4
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "length",
+        "at": 0
+       },
+       "to": {
+        "view": "length",
+        "at": 2
+       },
+       "value": "1+1"
+      },
+      {
+       "from": {
+        "view": "count",
+        "at": 0
+       },
+       "to": {
+        "view": "count",
+        "at": 2
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "nums[0] = 2 < nums[3] = 5, so 5 can follow runs ending at index 0: length 1 + 1 = 2, longer than 1. Length becomes 2, and its 1 way replaces the count.",
+      "ko": "nums[0] = 2 < nums[3] = 5: 인덱스 0에서 끝나는 부분수열 뒤에 nums[3] 값을 붙일 수 있습니다. 길이 1 + 1 = 2는 1보다 길어 length는 2, count는 그 개수 1로 바뀝니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        2,
+        6,
+        4,
+        5,
+        8
+       ],
+       "pointers": {
+        "j": 0,
+        "i": 3
+       },
+       "marks": {
+        "lit": [
+         0,
+         3
+        ],
+        "dim": [
+         1
+        ]
+       },
+       "unread": [
+        4
+       ]
+      },
+      "length": {
+       "values": [
+        1,
+        2,
+        2,
+        2,
+        1
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [
+         3
+        ]
+       },
+       "unread": [
+        4
+       ]
+      },
+      "count": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [
+         3
+        ]
+       },
+       "unread": [
+        4
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "length",
+        "at": 0
+       },
+       "to": {
+        "view": "length",
+        "at": 3
+       },
+       "value": "1+1"
+      },
+      {
+       "from": {
+        "view": "count",
+        "at": 0
+       },
+       "to": {
+        "view": "count",
+        "at": 3
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "nums[2] = 4 < nums[3] = 5, so 5 can follow runs ending at index 2: length 2 + 1 = 3, longer than 2. Length becomes 3, and its 1 way replaces the count.",
+      "ko": "nums[2] = 4 < nums[3] = 5: 인덱스 2에서 끝나는 부분수열 뒤에 nums[3] 값을 붙일 수 있습니다. 길이 2 + 1 = 3은 2보다 길어 length는 3, count는 그 개수 1로 바뀝니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        2,
+        6,
+        4,
+        5,
+        8
+       ],
+       "pointers": {
+        "j": 2,
+        "i": 3
+       },
+       "marks": {
+        "lit": [
+         2,
+         3
+        ],
+        "dim": [
+         1
+        ]
+       },
+       "unread": [
+        4
+       ]
+      },
+      "length": {
+       "values": [
+        1,
+        2,
+        2,
+        3,
+        1
+       ],
+       "marks": {
+        "lit": [
+         2
+        ],
+        "good": [
+         3
+        ]
+       },
+       "unread": [
+        4
+       ]
+      },
+      "count": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         2
+        ],
+        "good": [
+         3
+        ]
+       },
+       "unread": [
+        4
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "length",
+        "at": 2
+       },
+       "to": {
+        "view": "length",
+        "at": 3
+       },
+       "value": "2+1"
+      },
+      {
+       "from": {
+        "view": "count",
+        "at": 2
+       },
+       "to": {
+        "view": "count",
+        "at": 3
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "nums[0] = 2 < nums[4] = 8, so 8 can follow runs ending at index 0: length 1 + 1 = 2, longer than 1. Length becomes 2, and its 1 way replaces the count.",
+      "ko": "nums[0] = 2 < nums[4] = 8: 인덱스 0에서 끝나는 부분수열 뒤에 nums[4] 값을 붙일 수 있습니다. 길이 1 + 1 = 2는 1보다 길어 length는 2, count는 그 개수 1로 바뀝니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        2,
+        6,
+        4,
+        5,
+        8
+       ],
+       "pointers": {
+        "j": 0,
+        "i": 4
+       },
+       "marks": {
+        "lit": [
+         0,
+         4
+        ],
+        "dim": []
+       },
+       "unread": []
+      },
+      "length": {
+       "values": [
+        1,
+        2,
+        2,
+        3,
+        2
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [
+         4
+        ]
+       },
+       "unread": []
+      },
+      "count": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [
+         4
+        ]
+       },
+       "unread": []
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "length",
+        "at": 0
+       },
+       "to": {
+        "view": "length",
+        "at": 4
+       },
+       "value": "1+1"
+      },
+      {
+       "from": {
+        "view": "count",
+        "at": 0
+       },
+       "to": {
+        "view": "count",
+        "at": 4
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "nums[1] = 6 < nums[4] = 8, so 8 can follow runs ending at index 1: length 2 + 1 = 3, longer than 2. Length becomes 3, and its 1 way replaces the count.",
+      "ko": "nums[1] = 6 < nums[4] = 8: 인덱스 1에서 끝나는 부분수열 뒤에 nums[4] 값을 붙일 수 있습니다. 길이 2 + 1 = 3은 2보다 길어 length는 3, count는 그 개수 1로 바뀝니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        2,
+        6,
+        4,
+        5,
+        8
+       ],
+       "pointers": {
+        "j": 1,
+        "i": 4
+       },
+       "marks": {
+        "lit": [
+         1,
+         4
+        ],
+        "dim": []
+       },
+       "unread": []
+      },
+      "length": {
+       "values": [
+        1,
+        2,
+        2,
+        3,
+        3
+       ],
+       "marks": {
+        "lit": [
+         1
+        ],
+        "good": [
+         4
+        ]
+       },
+       "unread": []
+      },
+      "count": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         1
+        ],
+        "good": [
+         4
+        ]
+       },
+       "unread": []
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "length",
+        "at": 1
+       },
+       "to": {
+        "view": "length",
+        "at": 4
+       },
+       "value": "2+1"
+      },
+      {
+       "from": {
+        "view": "count",
+        "at": 1
+       },
+       "to": {
+        "view": "count",
+        "at": 4
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "nums[2] = 4 < nums[4] = 8, so 8 can follow runs ending at index 2: length 2 + 1 = 3, the same as now, so these runs are more ways to reach it. Count becomes 1 + 1 = 2.",
+      "ko": "nums[2] = 4 < nums[4] = 8: 인덱스 2에서 끝나는 부분수열 뒤에 nums[4] 값을 붙일 수 있습니다. 길이 2 + 1 = 3으로 지금과 같아 그 길이를 만드는 방법이 늘어나므로 count는 1 + 1 = 2가 됩니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        2,
+        6,
+        4,
+        5,
+        8
+       ],
+       "pointers": {
+        "j": 2,
+        "i": 4
+       },
+       "marks": {
+        "lit": [
+         2,
+         4
+        ],
+        "dim": []
+       },
+       "unread": []
+      },
+      "length": {
+       "values": [
+        1,
+        2,
+        2,
+        3,
+        3
+       ],
+       "marks": {
+        "lit": [
+         2,
+         4
+        ]
+       },
+       "unread": []
+      },
+      "count": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        2
+       ],
+       "marks": {
+        "lit": [
+         2
+        ],
+        "good": [
+         4
+        ]
+       },
+       "unread": []
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "count",
+        "at": 2
+       },
+       "to": {
+        "view": "count",
+        "at": 4
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "nums[3] = 5 < nums[4] = 8, so 8 can follow runs ending at index 3: length 3 + 1 = 4, longer than 3. Length becomes 4, and its 1 way replaces the count.",
+      "ko": "nums[3] = 5 < nums[4] = 8: 인덱스 3에서 끝나는 부분수열 뒤에 nums[4] 값을 붙일 수 있습니다. 길이 3 + 1 = 4는 3보다 길어 length는 4, count는 그 개수 1로 바뀝니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        2,
+        6,
+        4,
+        5,
+        8
+       ],
+       "pointers": {
+        "j": 3,
+        "i": 4
+       },
+       "marks": {
+        "lit": [
+         3,
+         4
+        ],
+        "dim": []
+       },
+       "unread": []
+      },
+      "length": {
+       "values": [
+        1,
+        2,
+        2,
+        3,
+        4
+       ],
+       "marks": {
+        "lit": [
+         3
+        ],
+        "good": [
+         4
+        ]
+       },
+       "unread": []
+      },
+      "count": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         3
+        ],
+        "good": [
+         4
+        ]
+       },
+       "unread": []
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "length",
+        "at": 3
+       },
+       "to": {
+        "view": "length",
+        "at": 4
+       },
+       "value": "3+1"
+      },
+      {
+       "from": {
+        "view": "count",
+        "at": 3
+       },
+       "to": {
+        "view": "count",
+        "at": 4
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The longest length is 4, ending at index 4. Its count, 1, is the answer.",
+      "ko": "가장 긴 길이는 4이고 인덱스 4에서 끝납니다. 그 개수 1이 답입니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        2,
+        6,
+        4,
+        5,
+        8
+       ],
+       "pointers": {
+        "j": null,
+        "i": null
+       },
+       "marks": {
+        "path": [
+         4
+        ]
+       },
+       "unread": []
+      },
+      "length": {
+       "values": [
+        1,
+        2,
+        2,
+        3,
+        4
+       ],
+       "marks": {
+        "path": [
+         4
+        ]
+       },
+       "unread": []
+      },
+      "count": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "path": [
+         4
+        ]
+       },
+       "unread": []
+      },
+      "result": {
+       "values": [
+        1
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "count",
+        "at": 4
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "+1"
+      }
+     ],
+     "answer": "1"
+    }
+   ],
+   "sampleInput": "[2,6,4,5,8]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "nums = [3,3,3]",
+   "expected": "3",
+   "frames": [
+    {
+     "caption": {
+      "en": "3 numbers. On its own, each index is an increasing subsequence of length 1, and there is 1 of it, so every length and count starts at 1.",
+      "ko": "수가 3개입니다. 각 인덱스 하나만으로 길이 1인 증가 부분수열이 1개 있으므로, length와 count는 모두 1에서 시작합니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        3,
+        3,
+        3
+       ],
+       "pointers": {
+        "j": null,
+        "i": null
+       },
+       "marks": {},
+       "unread": [
+        0,
+        1,
+        2
+       ]
+      },
+      "length": {
+       "values": [
+        1,
+        1,
+        1
+       ],
+       "marks": {},
+       "unread": [
+        0,
+        1,
+        2
+       ]
+      },
+      "count": {
+       "values": [
+        1,
+        1,
+        1
+       ],
+       "marks": {},
+       "unread": [
+        0,
+        1,
+        2
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Index 0 (3) has nothing before it: length 1, count 1.",
+      "ko": "인덱스 0(3) 앞에는 아무것도 없습니다: 길이 1, 개수 1."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        3,
+        3,
+        3
+       ],
+       "pointers": {
+        "j": null,
+        "i": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ],
+        "dim": []
+       },
+       "unread": [
+        1,
+        2
+       ]
+      },
+      "length": {
+       "values": [
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       },
+       "unread": [
+        1,
+        2
+       ]
+      },
+      "count": {
+       "values": [
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       },
+       "unread": [
+        1,
+        2
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "No value before index 1 is smaller than 3, so nothing can come before it: it stays length 1, count 1.",
+      "ko": "인덱스 1 앞에 3보다 작은 값이 없어 앞에 올 수 있는 것이 없습니다: 길이 1, 개수 1 그대로입니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        3,
+        3,
+        3
+       ],
+       "pointers": {
+        "j": null,
+        "i": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ],
+        "dim": [
+         0
+        ]
+       },
+       "unread": [
+        2
+       ]
+      },
+      "length": {
+       "values": [
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       },
+       "unread": [
+        2
+       ]
+      },
+      "count": {
+       "values": [
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       },
+       "unread": [
+        2
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "No value before index 2 is smaller than 3, so nothing can come before it: it stays length 1, count 1.",
+      "ko": "인덱스 2 앞에 3보다 작은 값이 없어 앞에 올 수 있는 것이 없습니다: 길이 1, 개수 1 그대로입니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        3,
+        3,
+        3
+       ],
+       "pointers": {
+        "j": null,
+        "i": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ],
+        "dim": [
+         0,
+         1
+        ]
+       },
+       "unread": []
+      },
+      "length": {
+       "values": [
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         2
+        ]
+       },
+       "unread": []
+      },
+      "count": {
+       "values": [
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         2
+        ]
+       },
+       "unread": []
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The longest length is 1, ending at indexes 0, 1, 2. Their counts add up to 1 + 1 + 1 = 3.",
+      "ko": "가장 긴 길이는 1이고 인덱스 0, 1, 2에서 끝납니다. 그 개수를 더하면 1 + 1 + 1 = 3입니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        3,
+        3,
+        3
+       ],
+       "pointers": {
+        "j": null,
+        "i": null
+       },
+       "marks": {
+        "path": [
+         0,
+         1,
+         2
+        ]
+       },
+       "unread": []
+      },
+      "length": {
+       "values": [
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2
+        ]
+       },
+       "unread": []
+      },
+      "count": {
+       "values": [
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2
+        ]
+       },
+       "unread": []
+      },
+      "result": {
+       "values": [
+        3
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "count",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "+1"
+      },
+      {
+       "from": {
+        "view": "count",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "+1"
+      },
+      {
+       "from": {
+        "view": "count",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "+1"
+      }
+     ],
+     "answer": "3"
+    }
+   ],
+   "sampleInput": "[3,3,3]"
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "nums = [1,2,4,3,5,4,7,2]",
+   "expected": "3",
+   "frames": [
+    {
+     "caption": {
+      "en": "8 numbers. On its own, each index is an increasing subsequence of length 1, and there is 1 of it, so every length and count starts at 1.",
+      "ko": "수가 8개입니다. 각 인덱스 하나만으로 길이 1인 증가 부분수열이 1개 있으므로, length와 count는 모두 1에서 시작합니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        4,
+        3,
+        5,
+        4,
+        7,
+        2
+       ],
+       "pointers": {
+        "j": null,
+        "i": null
+       },
+       "marks": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+       ]
+      },
+      "length": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+       ]
+      },
+      "count": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {},
+       "unread": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Index 0 (1) has nothing before it: length 1, count 1.",
+      "ko": "인덱스 0(1) 앞에는 아무것도 없습니다: 길이 1, 개수 1."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        4,
+        3,
+        5,
+        4,
+        7,
+        2
+       ],
+       "pointers": {
+        "j": null,
+        "i": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ],
+        "dim": []
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+       ]
+      },
+      "length": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+       ]
+      },
+      "count": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "nums[0] = 1 < nums[1] = 2, so 2 can follow runs ending at index 0: length 1 + 1 = 2, longer than 1. Length becomes 2, and its 1 way replaces the count.",
+      "ko": "nums[0] = 1 < nums[1] = 2: 인덱스 0에서 끝나는 부분수열 뒤에 nums[1] 값을 붙일 수 있습니다. 길이 1 + 1 = 2는 1보다 길어 length는 2, count는 그 개수 1로 바뀝니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        4,
+        3,
+        5,
+        4,
+        7,
+        2
+       ],
+       "pointers": {
+        "j": 0,
+        "i": 1
+       },
+       "marks": {
+        "lit": [
+         0,
+         1
+        ],
+        "dim": []
+       },
+       "unread": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+       ]
+      },
+      "length": {
+       "values": [
+        1,
+        2,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [
+         1
+        ]
+       },
+       "unread": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+       ]
+      },
+      "count": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [
+         1
+        ]
+       },
+       "unread": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "length",
+        "at": 0
+       },
+       "to": {
+        "view": "length",
+        "at": 1
+       },
+       "value": "1+1"
+      },
+      {
+       "from": {
+        "view": "count",
+        "at": 0
+       },
+       "to": {
+        "view": "count",
+        "at": 1
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "nums[0] = 1 < nums[2] = 4, so 4 can follow runs ending at index 0: length 1 + 1 = 2, longer than 1. Length becomes 2, and its 1 way replaces the count.",
+      "ko": "nums[0] = 1 < nums[2] = 4: 인덱스 0에서 끝나는 부분수열 뒤에 nums[2] 값을 붙일 수 있습니다. 길이 1 + 1 = 2는 1보다 길어 length는 2, count는 그 개수 1로 바뀝니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        4,
+        3,
+        5,
+        4,
+        7,
+        2
+       ],
+       "pointers": {
+        "j": 0,
+        "i": 2
+       },
+       "marks": {
+        "lit": [
+         0,
+         2
+        ],
+        "dim": []
+       },
+       "unread": [
+        3,
+        4,
+        5,
+        6,
+        7
+       ]
+      },
+      "length": {
+       "values": [
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [
+         2
+        ]
+       },
+       "unread": [
+        3,
+        4,
+        5,
+        6,
+        7
+       ]
+      },
+      "count": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [
+         2
+        ]
+       },
+       "unread": [
+        3,
+        4,
+        5,
+        6,
+        7
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "length",
+        "at": 0
+       },
+       "to": {
+        "view": "length",
+        "at": 2
+       },
+       "value": "1+1"
+      },
+      {
+       "from": {
+        "view": "count",
+        "at": 0
+       },
+       "to": {
+        "view": "count",
+        "at": 2
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "nums[1] = 2 < nums[2] = 4, so 4 can follow runs ending at index 1: length 2 + 1 = 3, longer than 2. Length becomes 3, and its 1 way replaces the count.",
+      "ko": "nums[1] = 2 < nums[2] = 4: 인덱스 1에서 끝나는 부분수열 뒤에 nums[2] 값을 붙일 수 있습니다. 길이 2 + 1 = 3은 2보다 길어 length는 3, count는 그 개수 1로 바뀝니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        4,
+        3,
+        5,
+        4,
+        7,
+        2
+       ],
+       "pointers": {
+        "j": 1,
+        "i": 2
+       },
+       "marks": {
+        "lit": [
+         1,
+         2
+        ],
+        "dim": []
+       },
+       "unread": [
+        3,
+        4,
+        5,
+        6,
+        7
+       ]
+      },
+      "length": {
+       "values": [
+        1,
+        2,
+        3,
+        1,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         1
+        ],
+        "good": [
+         2
+        ]
+       },
+       "unread": [
+        3,
+        4,
+        5,
+        6,
+        7
+       ]
+      },
+      "count": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         1
+        ],
+        "good": [
+         2
+        ]
+       },
+       "unread": [
+        3,
+        4,
+        5,
+        6,
+        7
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "length",
+        "at": 1
+       },
+       "to": {
+        "view": "length",
+        "at": 2
+       },
+       "value": "2+1"
+      },
+      {
+       "from": {
+        "view": "count",
+        "at": 1
+       },
+       "to": {
+        "view": "count",
+        "at": 2
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "nums[0] = 1 < nums[3] = 3, so 3 can follow runs ending at index 0: length 1 + 1 = 2, longer than 1. Length becomes 2, and its 1 way replaces the count.",
+      "ko": "nums[0] = 1 < nums[3] = 3: 인덱스 0에서 끝나는 부분수열 뒤에 nums[3] 값을 붙일 수 있습니다. 길이 1 + 1 = 2는 1보다 길어 length는 2, count는 그 개수 1로 바뀝니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        4,
+        3,
+        5,
+        4,
+        7,
+        2
+       ],
+       "pointers": {
+        "j": 0,
+        "i": 3
+       },
+       "marks": {
+        "lit": [
+         0,
+         3
+        ],
+        "dim": [
+         2
+        ]
+       },
+       "unread": [
+        4,
+        5,
+        6,
+        7
+       ]
+      },
+      "length": {
+       "values": [
+        1,
+        2,
+        3,
+        2,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [
+         3
+        ]
+       },
+       "unread": [
+        4,
+        5,
+        6,
+        7
+       ]
+      },
+      "count": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [
+         3
+        ]
+       },
+       "unread": [
+        4,
+        5,
+        6,
+        7
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "length",
+        "at": 0
+       },
+       "to": {
+        "view": "length",
+        "at": 3
+       },
+       "value": "1+1"
+      },
+      {
+       "from": {
+        "view": "count",
+        "at": 0
+       },
+       "to": {
+        "view": "count",
+        "at": 3
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "nums[1] = 2 < nums[3] = 3, so 3 can follow runs ending at index 1: length 2 + 1 = 3, longer than 2. Length becomes 3, and its 1 way replaces the count.",
+      "ko": "nums[1] = 2 < nums[3] = 3: 인덱스 1에서 끝나는 부분수열 뒤에 nums[3] 값을 붙일 수 있습니다. 길이 2 + 1 = 3은 2보다 길어 length는 3, count는 그 개수 1로 바뀝니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        4,
+        3,
+        5,
+        4,
+        7,
+        2
+       ],
+       "pointers": {
+        "j": 1,
+        "i": 3
+       },
+       "marks": {
+        "lit": [
+         1,
+         3
+        ],
+        "dim": [
+         2
+        ]
+       },
+       "unread": [
+        4,
+        5,
+        6,
+        7
+       ]
+      },
+      "length": {
+       "values": [
+        1,
+        2,
+        3,
+        3,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         1
+        ],
+        "good": [
+         3
+        ]
+       },
+       "unread": [
+        4,
+        5,
+        6,
+        7
+       ]
+      },
+      "count": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         1
+        ],
+        "good": [
+         3
+        ]
+       },
+       "unread": [
+        4,
+        5,
+        6,
+        7
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "length",
+        "at": 1
+       },
+       "to": {
+        "view": "length",
+        "at": 3
+       },
+       "value": "2+1"
+      },
+      {
+       "from": {
+        "view": "count",
+        "at": 1
+       },
+       "to": {
+        "view": "count",
+        "at": 3
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "nums[0] = 1 < nums[4] = 5, so 5 can follow runs ending at index 0: length 1 + 1 = 2, longer than 1. Length becomes 2, and its 1 way replaces the count.",
+      "ko": "nums[0] = 1 < nums[4] = 5: 인덱스 0에서 끝나는 부분수열 뒤에 nums[4] 값을 붙일 수 있습니다. 길이 1 + 1 = 2는 1보다 길어 length는 2, count는 그 개수 1로 바뀝니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        4,
+        3,
+        5,
+        4,
+        7,
+        2
+       ],
+       "pointers": {
+        "j": 0,
+        "i": 4
+       },
+       "marks": {
+        "lit": [
+         0,
+         4
+        ],
+        "dim": []
+       },
+       "unread": [
+        5,
+        6,
+        7
+       ]
+      },
+      "length": {
+       "values": [
+        1,
+        2,
+        3,
+        3,
+        2,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [
+         4
+        ]
+       },
+       "unread": [
+        5,
+        6,
+        7
+       ]
+      },
+      "count": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [
+         4
+        ]
+       },
+       "unread": [
+        5,
+        6,
+        7
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "length",
+        "at": 0
+       },
+       "to": {
+        "view": "length",
+        "at": 4
+       },
+       "value": "1+1"
+      },
+      {
+       "from": {
+        "view": "count",
+        "at": 0
+       },
+       "to": {
+        "view": "count",
+        "at": 4
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "nums[1] = 2 < nums[4] = 5, so 5 can follow runs ending at index 1: length 2 + 1 = 3, longer than 2. Length becomes 3, and its 1 way replaces the count.",
+      "ko": "nums[1] = 2 < nums[4] = 5: 인덱스 1에서 끝나는 부분수열 뒤에 nums[4] 값을 붙일 수 있습니다. 길이 2 + 1 = 3은 2보다 길어 length는 3, count는 그 개수 1로 바뀝니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        4,
+        3,
+        5,
+        4,
+        7,
+        2
+       ],
+       "pointers": {
+        "j": 1,
+        "i": 4
+       },
+       "marks": {
+        "lit": [
+         1,
+         4
+        ],
+        "dim": []
+       },
+       "unread": [
+        5,
+        6,
+        7
+       ]
+      },
+      "length": {
+       "values": [
+        1,
+        2,
+        3,
+        3,
+        3,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         1
+        ],
+        "good": [
+         4
+        ]
+       },
+       "unread": [
+        5,
+        6,
+        7
+       ]
+      },
+      "count": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         1
+        ],
+        "good": [
+         4
+        ]
+       },
+       "unread": [
+        5,
+        6,
+        7
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "length",
+        "at": 1
+       },
+       "to": {
+        "view": "length",
+        "at": 4
+       },
+       "value": "2+1"
+      },
+      {
+       "from": {
+        "view": "count",
+        "at": 1
+       },
+       "to": {
+        "view": "count",
+        "at": 4
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "nums[2] = 4 < nums[4] = 5, so 5 can follow runs ending at index 2: length 3 + 1 = 4, longer than 3. Length becomes 4, and its 1 way replaces the count.",
+      "ko": "nums[2] = 4 < nums[4] = 5: 인덱스 2에서 끝나는 부분수열 뒤에 nums[4] 값을 붙일 수 있습니다. 길이 3 + 1 = 4는 3보다 길어 length는 4, count는 그 개수 1로 바뀝니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        4,
+        3,
+        5,
+        4,
+        7,
+        2
+       ],
+       "pointers": {
+        "j": 2,
+        "i": 4
+       },
+       "marks": {
+        "lit": [
+         2,
+         4
+        ],
+        "dim": []
+       },
+       "unread": [
+        5,
+        6,
+        7
+       ]
+      },
+      "length": {
+       "values": [
+        1,
+        2,
+        3,
+        3,
+        4,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         2
+        ],
+        "good": [
+         4
+        ]
+       },
+       "unread": [
+        5,
+        6,
+        7
+       ]
+      },
+      "count": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         2
+        ],
+        "good": [
+         4
+        ]
+       },
+       "unread": [
+        5,
+        6,
+        7
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "length",
+        "at": 2
+       },
+       "to": {
+        "view": "length",
+        "at": 4
+       },
+       "value": "3+1"
+      },
+      {
+       "from": {
+        "view": "count",
+        "at": 2
+       },
+       "to": {
+        "view": "count",
+        "at": 4
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "nums[3] = 3 < nums[4] = 5, so 5 can follow runs ending at index 3: length 3 + 1 = 4, the same as now, so these runs are more ways to reach it. Count becomes 1 + 1 = 2.",
+      "ko": "nums[3] = 3 < nums[4] = 5: 인덱스 3에서 끝나는 부분수열 뒤에 nums[4] 값을 붙일 수 있습니다. 길이 3 + 1 = 4로 지금과 같아 그 길이를 만드는 방법이 늘어나므로 count는 1 + 1 = 2가 됩니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        4,
+        3,
+        5,
+        4,
+        7,
+        2
+       ],
+       "pointers": {
+        "j": 3,
+        "i": 4
+       },
+       "marks": {
+        "lit": [
+         3,
+         4
+        ],
+        "dim": []
+       },
+       "unread": [
+        5,
+        6,
+        7
+       ]
+      },
+      "length": {
+       "values": [
+        1,
+        2,
+        3,
+        3,
+        4,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         3,
+         4
+        ]
+       },
+       "unread": [
+        5,
+        6,
+        7
+       ]
+      },
+      "count": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        2,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         3
+        ],
+        "good": [
+         4
+        ]
+       },
+       "unread": [
+        5,
+        6,
+        7
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "count",
+        "at": 3
+       },
+       "to": {
+        "view": "count",
+        "at": 4
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "nums[0] = 1 < nums[5] = 4, so 4 can follow runs ending at index 0: length 1 + 1 = 2, longer than 1. Length becomes 2, and its 1 way replaces the count.",
+      "ko": "nums[0] = 1 < nums[5] = 4: 인덱스 0에서 끝나는 부분수열 뒤에 nums[5] 값을 붙일 수 있습니다. 길이 1 + 1 = 2는 1보다 길어 length는 2, count는 그 개수 1로 바뀝니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        4,
+        3,
+        5,
+        4,
+        7,
+        2
+       ],
+       "pointers": {
+        "j": 0,
+        "i": 5
+       },
+       "marks": {
+        "lit": [
+         0,
+         5
+        ],
+        "dim": [
+         2,
+         4
+        ]
+       },
+       "unread": [
+        6,
+        7
+       ]
+      },
+      "length": {
+       "values": [
+        1,
+        2,
+        3,
+        3,
+        4,
+        2,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [
+         5
+        ]
+       },
+       "unread": [
+        6,
+        7
+       ]
+      },
+      "count": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        2,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [
+         5
+        ]
+       },
+       "unread": [
+        6,
+        7
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "length",
+        "at": 0
+       },
+       "to": {
+        "view": "length",
+        "at": 5
+       },
+       "value": "1+1"
+      },
+      {
+       "from": {
+        "view": "count",
+        "at": 0
+       },
+       "to": {
+        "view": "count",
+        "at": 5
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "nums[1] = 2 < nums[5] = 4, so 4 can follow runs ending at index 1: length 2 + 1 = 3, longer than 2. Length becomes 3, and its 1 way replaces the count.",
+      "ko": "nums[1] = 2 < nums[5] = 4: 인덱스 1에서 끝나는 부분수열 뒤에 nums[5] 값을 붙일 수 있습니다. 길이 2 + 1 = 3은 2보다 길어 length는 3, count는 그 개수 1로 바뀝니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        4,
+        3,
+        5,
+        4,
+        7,
+        2
+       ],
+       "pointers": {
+        "j": 1,
+        "i": 5
+       },
+       "marks": {
+        "lit": [
+         1,
+         5
+        ],
+        "dim": [
+         2,
+         4
+        ]
+       },
+       "unread": [
+        6,
+        7
+       ]
+      },
+      "length": {
+       "values": [
+        1,
+        2,
+        3,
+        3,
+        4,
+        3,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         1
+        ],
+        "good": [
+         5
+        ]
+       },
+       "unread": [
+        6,
+        7
+       ]
+      },
+      "count": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        2,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         1
+        ],
+        "good": [
+         5
+        ]
+       },
+       "unread": [
+        6,
+        7
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "length",
+        "at": 1
+       },
+       "to": {
+        "view": "length",
+        "at": 5
+       },
+       "value": "2+1"
+      },
+      {
+       "from": {
+        "view": "count",
+        "at": 1
+       },
+       "to": {
+        "view": "count",
+        "at": 5
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "nums[3] = 3 < nums[5] = 4, so 4 can follow runs ending at index 3: length 3 + 1 = 4, longer than 3. Length becomes 4, and its 1 way replaces the count.",
+      "ko": "nums[3] = 3 < nums[5] = 4: 인덱스 3에서 끝나는 부분수열 뒤에 nums[5] 값을 붙일 수 있습니다. 길이 3 + 1 = 4는 3보다 길어 length는 4, count는 그 개수 1로 바뀝니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        4,
+        3,
+        5,
+        4,
+        7,
+        2
+       ],
+       "pointers": {
+        "j": 3,
+        "i": 5
+       },
+       "marks": {
+        "lit": [
+         3,
+         5
+        ],
+        "dim": [
+         2,
+         4
+        ]
+       },
+       "unread": [
+        6,
+        7
+       ]
+      },
+      "length": {
+       "values": [
+        1,
+        2,
+        3,
+        3,
+        4,
+        4,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         3
+        ],
+        "good": [
+         5
+        ]
+       },
+       "unread": [
+        6,
+        7
+       ]
+      },
+      "count": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        2,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         3
+        ],
+        "good": [
+         5
+        ]
+       },
+       "unread": [
+        6,
+        7
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "length",
+        "at": 3
+       },
+       "to": {
+        "view": "length",
+        "at": 5
+       },
+       "value": "3+1"
+      },
+      {
+       "from": {
+        "view": "count",
+        "at": 3
+       },
+       "to": {
+        "view": "count",
+        "at": 5
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "nums[0] = 1 < nums[6] = 7, so 7 can follow runs ending at index 0: length 1 + 1 = 2, longer than 1. Length becomes 2, and its 1 way replaces the count.",
+      "ko": "nums[0] = 1 < nums[6] = 7: 인덱스 0에서 끝나는 부분수열 뒤에 nums[6] 값을 붙일 수 있습니다. 길이 1 + 1 = 2는 1보다 길어 length는 2, count는 그 개수 1로 바뀝니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        4,
+        3,
+        5,
+        4,
+        7,
+        2
+       ],
+       "pointers": {
+        "j": 0,
+        "i": 6
+       },
+       "marks": {
+        "lit": [
+         0,
+         6
+        ],
+        "dim": []
+       },
+       "unread": [
+        7
+       ]
+      },
+      "length": {
+       "values": [
+        1,
+        2,
+        3,
+        3,
+        4,
+        4,
+        2,
+        1
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [
+         6
+        ]
+       },
+       "unread": [
+        7
+       ]
+      },
+      "count": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        2,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [
+         6
+        ]
+       },
+       "unread": [
+        7
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "length",
+        "at": 0
+       },
+       "to": {
+        "view": "length",
+        "at": 6
+       },
+       "value": "1+1"
+      },
+      {
+       "from": {
+        "view": "count",
+        "at": 0
+       },
+       "to": {
+        "view": "count",
+        "at": 6
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "nums[1] = 2 < nums[6] = 7, so 7 can follow runs ending at index 1: length 2 + 1 = 3, longer than 2. Length becomes 3, and its 1 way replaces the count.",
+      "ko": "nums[1] = 2 < nums[6] = 7: 인덱스 1에서 끝나는 부분수열 뒤에 nums[6] 값을 붙일 수 있습니다. 길이 2 + 1 = 3은 2보다 길어 length는 3, count는 그 개수 1로 바뀝니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        4,
+        3,
+        5,
+        4,
+        7,
+        2
+       ],
+       "pointers": {
+        "j": 1,
+        "i": 6
+       },
+       "marks": {
+        "lit": [
+         1,
+         6
+        ],
+        "dim": []
+       },
+       "unread": [
+        7
+       ]
+      },
+      "length": {
+       "values": [
+        1,
+        2,
+        3,
+        3,
+        4,
+        4,
+        3,
+        1
+       ],
+       "marks": {
+        "lit": [
+         1
+        ],
+        "good": [
+         6
+        ]
+       },
+       "unread": [
+        7
+       ]
+      },
+      "count": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        2,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         1
+        ],
+        "good": [
+         6
+        ]
+       },
+       "unread": [
+        7
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "length",
+        "at": 1
+       },
+       "to": {
+        "view": "length",
+        "at": 6
+       },
+       "value": "2+1"
+      },
+      {
+       "from": {
+        "view": "count",
+        "at": 1
+       },
+       "to": {
+        "view": "count",
+        "at": 6
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "nums[2] = 4 < nums[6] = 7, so 7 can follow runs ending at index 2: length 3 + 1 = 4, longer than 3. Length becomes 4, and its 1 way replaces the count.",
+      "ko": "nums[2] = 4 < nums[6] = 7: 인덱스 2에서 끝나는 부분수열 뒤에 nums[6] 값을 붙일 수 있습니다. 길이 3 + 1 = 4는 3보다 길어 length는 4, count는 그 개수 1로 바뀝니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        4,
+        3,
+        5,
+        4,
+        7,
+        2
+       ],
+       "pointers": {
+        "j": 2,
+        "i": 6
+       },
+       "marks": {
+        "lit": [
+         2,
+         6
+        ],
+        "dim": []
+       },
+       "unread": [
+        7
+       ]
+      },
+      "length": {
+       "values": [
+        1,
+        2,
+        3,
+        3,
+        4,
+        4,
+        4,
+        1
+       ],
+       "marks": {
+        "lit": [
+         2
+        ],
+        "good": [
+         6
+        ]
+       },
+       "unread": [
+        7
+       ]
+      },
+      "count": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        2,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         2
+        ],
+        "good": [
+         6
+        ]
+       },
+       "unread": [
+        7
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "length",
+        "at": 2
+       },
+       "to": {
+        "view": "length",
+        "at": 6
+       },
+       "value": "3+1"
+      },
+      {
+       "from": {
+        "view": "count",
+        "at": 2
+       },
+       "to": {
+        "view": "count",
+        "at": 6
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "nums[3] = 3 < nums[6] = 7, so 7 can follow runs ending at index 3: length 3 + 1 = 4, the same as now, so these runs are more ways to reach it. Count becomes 1 + 1 = 2.",
+      "ko": "nums[3] = 3 < nums[6] = 7: 인덱스 3에서 끝나는 부분수열 뒤에 nums[6] 값을 붙일 수 있습니다. 길이 3 + 1 = 4로 지금과 같아 그 길이를 만드는 방법이 늘어나므로 count는 1 + 1 = 2가 됩니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        4,
+        3,
+        5,
+        4,
+        7,
+        2
+       ],
+       "pointers": {
+        "j": 3,
+        "i": 6
+       },
+       "marks": {
+        "lit": [
+         3,
+         6
+        ],
+        "dim": []
+       },
+       "unread": [
+        7
+       ]
+      },
+      "length": {
+       "values": [
+        1,
+        2,
+        3,
+        3,
+        4,
+        4,
+        4,
+        1
+       ],
+       "marks": {
+        "lit": [
+         3,
+         6
+        ]
+       },
+       "unread": [
+        7
+       ]
+      },
+      "count": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        2,
+        1,
+        2,
+        1
+       ],
+       "marks": {
+        "lit": [
+         3
+        ],
+        "good": [
+         6
+        ]
+       },
+       "unread": [
+        7
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "count",
+        "at": 3
+       },
+       "to": {
+        "view": "count",
+        "at": 6
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "nums[4] = 5 < nums[6] = 7, so 7 can follow runs ending at index 4: length 4 + 1 = 5, longer than 4. Length becomes 5, and its 2 ways replace the count.",
+      "ko": "nums[4] = 5 < nums[6] = 7: 인덱스 4에서 끝나는 부분수열 뒤에 nums[6] 값을 붙일 수 있습니다. 길이 4 + 1 = 5는 4보다 길어 length는 5, count는 그 개수 2로 바뀝니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        4,
+        3,
+        5,
+        4,
+        7,
+        2
+       ],
+       "pointers": {
+        "j": 4,
+        "i": 6
+       },
+       "marks": {
+        "lit": [
+         4,
+         6
+        ],
+        "dim": []
+       },
+       "unread": [
+        7
+       ]
+      },
+      "length": {
+       "values": [
+        1,
+        2,
+        3,
+        3,
+        4,
+        4,
+        5,
+        1
+       ],
+       "marks": {
+        "lit": [
+         4
+        ],
+        "good": [
+         6
+        ]
+       },
+       "unread": [
+        7
+       ]
+      },
+      "count": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        2,
+        1,
+        2,
+        1
+       ],
+       "marks": {
+        "lit": [
+         4
+        ],
+        "good": [
+         6
+        ]
+       },
+       "unread": [
+        7
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "length",
+        "at": 4
+       },
+       "to": {
+        "view": "length",
+        "at": 6
+       },
+       "value": "4+1"
+      },
+      {
+       "from": {
+        "view": "count",
+        "at": 4
+       },
+       "to": {
+        "view": "count",
+        "at": 6
+       },
+       "value": "2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "nums[5] = 4 < nums[6] = 7, so 7 can follow runs ending at index 5: length 4 + 1 = 5, the same as now, so these runs are more ways to reach it. Count becomes 2 + 1 = 3.",
+      "ko": "nums[5] = 4 < nums[6] = 7: 인덱스 5에서 끝나는 부분수열 뒤에 nums[6] 값을 붙일 수 있습니다. 길이 4 + 1 = 5로 지금과 같아 그 길이를 만드는 방법이 늘어나므로 count는 2 + 1 = 3이 됩니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        4,
+        3,
+        5,
+        4,
+        7,
+        2
+       ],
+       "pointers": {
+        "j": 5,
+        "i": 6
+       },
+       "marks": {
+        "lit": [
+         5,
+         6
+        ],
+        "dim": []
+       },
+       "unread": [
+        7
+       ]
+      },
+      "length": {
+       "values": [
+        1,
+        2,
+        3,
+        3,
+        4,
+        4,
+        5,
+        1
+       ],
+       "marks": {
+        "lit": [
+         5,
+         6
+        ]
+       },
+       "unread": [
+        7
+       ]
+      },
+      "count": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        2,
+        1,
+        3,
+        1
+       ],
+       "marks": {
+        "lit": [
+         5
+        ],
+        "good": [
+         6
+        ]
+       },
+       "unread": [
+        7
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "count",
+        "at": 5
+       },
+       "to": {
+        "view": "count",
+        "at": 6
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "nums[0] = 1 < nums[7] = 2, so 2 can follow runs ending at index 0: length 1 + 1 = 2, longer than 1. Length becomes 2, and its 1 way replaces the count.",
+      "ko": "nums[0] = 1 < nums[7] = 2: 인덱스 0에서 끝나는 부분수열 뒤에 nums[7] 값을 붙일 수 있습니다. 길이 1 + 1 = 2는 1보다 길어 length는 2, count는 그 개수 1로 바뀝니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        4,
+        3,
+        5,
+        4,
+        7,
+        2
+       ],
+       "pointers": {
+        "j": 0,
+        "i": 7
+       },
+       "marks": {
+        "lit": [
+         0,
+         7
+        ],
+        "dim": [
+         1,
+         2,
+         3,
+         4,
+         5,
+         6
+        ]
+       },
+       "unread": []
+      },
+      "length": {
+       "values": [
+        1,
+        2,
+        3,
+        3,
+        4,
+        4,
+        5,
+        2
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [
+         7
+        ]
+       },
+       "unread": []
+      },
+      "count": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        2,
+        1,
+        3,
+        1
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [
+         7
+        ]
+       },
+       "unread": []
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "length",
+        "at": 0
+       },
+       "to": {
+        "view": "length",
+        "at": 7
+       },
+       "value": "1+1"
+      },
+      {
+       "from": {
+        "view": "count",
+        "at": 0
+       },
+       "to": {
+        "view": "count",
+        "at": 7
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The longest length is 5, ending at index 6. Its count, 3, is the answer.",
+      "ko": "가장 긴 길이는 5이고 인덱스 6에서 끝납니다. 그 개수 3이 답입니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        1,
+        2,
+        4,
+        3,
+        5,
+        4,
+        7,
+        2
+       ],
+       "pointers": {
+        "j": null,
+        "i": null
+       },
+       "marks": {
+        "path": [
+         6
+        ]
+       },
+       "unread": []
+      },
+      "length": {
+       "values": [
+        1,
+        2,
+        3,
+        3,
+        4,
+        4,
+        5,
+        2
+       ],
+       "marks": {
+        "path": [
+         6
+        ]
+       },
+       "unread": []
+      },
+      "count": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        2,
+        1,
+        3,
+        1
+       ],
+       "marks": {
+        "path": [
+         6
+        ]
+       },
+       "unread": []
+      },
+      "result": {
+       "values": [
+        3
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "count",
+        "at": 6
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "+3"
+      }
+     ],
+     "answer": "3"
+    }
+   ],
+   "sampleInput": "[1,2,4,3,5,4,7,2]"
+  }
+ ]
+}

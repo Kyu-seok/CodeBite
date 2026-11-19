@@ -22,8 +22,20 @@ Changing a problem's Test Cases so they agree with its statement, where a case b
 _Avoid_: Regenerating test cases, test case fix
 
 **Guarantee**:
-What a problem's statement promises about every Test Case: that its input keeps the constraints and other promises ("sorted", "exactly one pair"), and that its expected output is the only answer the statement accepts. It is worked out from the statement alone, never from a solution, since a solution finds only one of several right answers.
+What a problem's statement promises about every Test Case: that its input keeps the constraints and other promises ("sorted", "exactly one pair"), and that its expected output is the only answer the statement accepts. Answers that differ only in an order the statement leaves free (an Any-Order Result) count as one answer. It is worked out from the statement alone, never from a solution, since a solution finds only one of several right answers.
 _Avoid_: Checker, validator, invariant
+
+**Level-Order Array**:
+A binary tree written as a list, row by row from the root and left to right within a row, with `null` for a missing child and the trailing `null`s left out. Every problem that takes or returns a tree as a list writes it this way, and its statement says so.
+_Avoid_: Serialized tree, tree array, BFS array
+
+**Any-Order Result**:
+A result whose order the statement leaves free, at the outer level or also within each item. It is judged after sorting, so every order of the same items passes, and the statement says both that the order is free and that it is sorted before comparing.
+_Avoid_: Unordered output, set result
+
+**In-Place Method**:
+A method that returns nothing and is judged on the input it was given, as it stands after the call. Its statement names the input that is read after the call.
+_Avoid_: Void method, mutating function
 
 **Problem Report**:
 A user's report that something in a problem is wrong (a Test Case, the description, the Starter Code), made from the problem page or from a Failing Case. CodeBite doesn't receive it: the user posts it publicly themselves, so it never carries a hidden case's input or expected output.
@@ -32,6 +44,10 @@ _Avoid_: Bug report, feedback, ticket
 **Diagram**:
 A picture of an example's input (and, when the problem transforms it, the output), or of its output alone when the output is the structure and the input only describes it (a size, a tree's traversals), drawn from a short text block in the problem's description and the same in every language. A Restatement keeps it.
 _Avoid_: Visual aid, image, illustration
+
+**Roadmap Category**:
+One of the ordered stages of the Roadmap (Arrays & Hashing, Two Pointers, ... Design), each holding the problems that practise one technique or data structure, in order. A problem belongs to at most one. Unlike a Tag, which labels what a problem touches and can be one of several on it, a Roadmap Category is where the problem is taught.
+_Avoid_: Category, topic, section
 
 **Walkthrough**:
 A stepped picture of one approach to a problem running on each of its sample Test Cases (and on any extra input the samples leave out, labelled as such), frame by frame from the input to the answer, each frame drawing the data in the shape it is held in (an array, a map, a set, a queue, a heap, ...) as the approach actually computed it, with what the step read, where its values moved and what changed. Unlike a Diagram, which shows an example, a Walkthrough shows how the answer is reached.

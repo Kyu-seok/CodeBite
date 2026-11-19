@@ -13,7 +13,7 @@ class Solution {
      * @param {ListNode[]} queues
      * @return {ListNode}
      */
-    mergeFlightRosters(queues) {
+    mergeCafeQueues(queues) {
         // Write your solution here
     }
 }

@@ -1,4 +1,4 @@
 {USER_CODE}
 
-nums = eval(input())
-print(Solution().findUnpairedFrame(nums))
+candies = eval(input())
+print(Solution().findLonelyCandy(candies))

@@ -5,9 +5,9 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        int m = Integer.parseInt(sc.nextLine().trim());
-        int n = Integer.parseInt(sc.nextLine().trim());
-        int result = new Solution().countGateRoutes(m, n);
+        int rows = Integer.parseInt(sc.nextLine().trim());
+        int cols = Integer.parseInt(sc.nextLine().trim());
+        int result = new Solution().countPaths(rows, cols);
         System.out.println(result);
     }
 }

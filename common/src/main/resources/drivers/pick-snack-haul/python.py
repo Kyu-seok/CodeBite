@@ -1,6 +1,6 @@
 {USER_CODE}
 
 import json
-nums = json.loads(input())
-result = Solution().pickPlotHaul(nums)
+snacks = json.loads(input())
+result = Solution().maxSnackHaul(snacks)
 print(result)

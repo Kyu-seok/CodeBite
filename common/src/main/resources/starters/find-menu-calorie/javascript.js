@@ -4,7 +4,7 @@ class Solution {
      * @param {number} target
      * @return {boolean}
      */
-    probeSugarReading(menu, target) {
+    findCalorie(menu, target) {
         // Write your solution here
     }
 }

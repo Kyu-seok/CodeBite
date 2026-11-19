@@ -1,4 +1,4 @@
 class Solution:
-    def verifyMirrorCode(self, phrase: str) -> bool:
+    def isPalindrome(self, phrase: str) -> bool:
         # Write your solution here
         pass

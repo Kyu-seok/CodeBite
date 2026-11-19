@@ -24,7 +24,7 @@ public class Main {
                 i++;
             }
         }
-        int[][] grid = rows.toArray(new int[0][]);
-        System.out.println(new Solution().chartBlockRoute(grid));
+        int[][] board = rows.toArray(new int[0][]);
+        System.out.println(new Solution().shortestPathLength(board));
     }
 }

@@ -23,7 +23,7 @@ def _build_tree(arr):
 
 arr = json.loads(input())
 root = _build_tree(arr)
-Solution().unrollSchedule(root)
+Solution().flattenAgenda(root)
 result = []
 curr = root
 while curr:

@@ -1,5 +1,5 @@
 class Solution {
-    public boolean canFinishLine(int[] slack) {
+    public boolean canFinishLevel(int[] jumps) {
         // Write your solution here
     }
 }

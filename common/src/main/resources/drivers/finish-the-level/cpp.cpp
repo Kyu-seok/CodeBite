@@ -10,13 +10,13 @@ int main() {
     string line;
     getline(cin, line);
     string inner = line.substr(1, line.size() - 2);
-    vector<int> nums;
+    vector<int> jumps;
     stringstream ss(inner);
     string token;
     while (getline(ss, token, ',')) {
-        nums.push_back(stoi(token));
+        jumps.push_back(stoi(token));
     }
-    bool result = Solution().canFinishLine(nums);
+    bool result = Solution().canFinishLevel(jumps);
     cout << (result ? "true" : "false") << endl;
     return 0;
 }

@@ -2,5 +2,5 @@
 
 const input = require('fs').readFileSync('/dev/stdin', 'utf8').trim();
 const n = parseInt(input);
-const result = new Solution().countReservoirPaths(n);
+const result = new Solution().countHopSequences(n);
 console.log(result);

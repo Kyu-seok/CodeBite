@@ -1,5 +1,5 @@
 class Solution {
-    public int pickLeastEffort(int[] effort) {
+    public int minStaminaToFinish(int[] cost) {
         // Write your solution here
     }
 }

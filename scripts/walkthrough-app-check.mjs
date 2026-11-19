@@ -6,13 +6,17 @@
 // signed out 1440 dark en, signed in 1440 light ko, signed out 390 light en, signed in 390 dark ko. Each
 // checks the tab, the reveal, the player's theme, language and labels, no sideways scroll, keys stepping
 // it only while it has focus (not from the Monaco editor), the place kept across a tab switch and, at
-// 1440, a theme toggle; then that a problem without a Walkthrough shows no tab. Prints a line per check
+// 1440, a theme toggle. A problem whose description draws Diagrams then gets one shot of them beside the
+// Walkthrough's first frame at 1440 (walkthrough-diagram-beside.mjs decides and names it). Last, that a
+// problem without a Walkthrough shows no tab. Prints a line per check
 // and each screenshot's path; exits 1 on a failed check or a console error, 2 on bad arguments.
-// Node 22+, no npm dependencies; set CHROME_PATH if Chrome isn't found.
+// Node 22+, no npm dependencies; set CHROME_PATH if Chrome isn't found. A Chrome command unanswered for
+// WALKTHROUGH_CDP_TIMEOUT_MS (default 60000) fails the check, naming it; Chrome never outlives the script.
 import { spawn, execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { diagramBeside } from './walkthrough-diagram-beside.mjs';
 
 const [VITE, API, OUT, SLUG] = process.argv.slice(2);
 if (!VITE || !API || !OUT || !SLUG) {
@@ -27,13 +31,19 @@ function chromePath() {
   return execFileSync('which', ['google-chrome']).toString().trim();
 }
 
+// How long one DevTools command may take.
+const CDP_TIMEOUT = +process.env.WALKTHROUGH_CDP_TIMEOUT_MS || 60000;
+
 async function openChrome() {
   const profile = mkdtempSync(join(tmpdir(), 'app-chrome-'));
   const proc = spawn(chromePath(), ['--headless=new', '--remote-debugging-port=0', `--user-data-dir=${profile}`, '--no-first-run',
     '--no-default-browser-check', '--hide-scrollbars', 'about:blank'], { stdio: ['ignore', 'ignore', 'pipe'] });
+  // However this process ends (an error, a timeout, a kill from a caller), take Chrome with it.
+  process.on('exit', () => proc.kill());
+  for (const sig of ['SIGTERM', 'SIGINT', 'SIGHUP']) process.on(sig, () => process.exit(1));
   const port = await new Promise((done, fail) => {
     let text = '';
-    const t = setTimeout(() => fail(new Error('Chrome did not start')), 20000);
+    const t = setTimeout(() => { proc.kill(); fail(new Error('Chrome did not start')); }, 20000);
     proc.stderr.on('data', d => { text += d; const m = text.match(/DevTools listening on ws:\/\/[^:]+:(\d+)\//); if (m) { clearTimeout(t); done(+m[1]); } });
   });
   const targets = await (await fetch(`http://127.0.0.1:${port}/json/list`)).json();
@@ -46,7 +56,13 @@ async function openChrome() {
     if (msg.id && waiting.has(msg.id)) { const { ok, fail } = waiting.get(msg.id); waiting.delete(msg.id); msg.error ? fail(new Error(msg.error.message)) : ok(msg.result); }
     else listeners.forEach(l => l(msg));
   };
-  const send = (method, params = {}) => new Promise((ok, fail) => { const id = ++seq; waiting.set(id, { ok, fail }); ws.send(JSON.stringify({ id, method, params })); });
+  // A Chrome under load can drop a reply; fail naming the command rather than wait forever.
+  const send = (method, params = {}) => new Promise((ok, fail) => {
+    const id = ++seq;
+    const t = setTimeout(() => { waiting.delete(id); fail(new Error(`Chrome did not answer ${method} within ${CDP_TIMEOUT} ms`)); }, CDP_TIMEOUT);
+    waiting.set(id, { ok: v => { clearTimeout(t); ok(v); }, fail: e => { clearTimeout(t); fail(e); } });
+    ws.send(JSON.stringify({ id, method, params }));
+  });
   const errors = [];
   listeners.push(m => {
     if (m.method === 'Runtime.exceptionThrown') errors.push(m.params.exceptionDetails.exception?.description || m.params.exceptionDetails.text);
@@ -95,6 +111,17 @@ async function open({ width, theme, lang, jwt }) {
   return waitFor(`!!document.querySelector('[role=tab]')`);
 }
 
+// Opens the Walkthrough tab and reveals the player, in language strings `s`: waits for the tab, clicks it, waits for
+// the intro's reveal button, clicks it, and waits for the player. `atTab(shown)` runs once the tab shows (or doesn't),
+// `atIntro(shown)` once the reveal button does, so a caller checks and shoots each stage. Whether the player mounted.
+async function openPlayer(s, { atTab = async () => {}, atIntro = async () => {} } = {}) {
+  await atTab(await waitFor(`[...document.querySelectorAll('[role=tab]')].some(e => e.textContent.includes(${JSON.stringify(s.tab)}))`));
+  await clickText('[role=tab]', s.tab);
+  await atIntro(await waitFor(`[...document.querySelectorAll('button')].some(b => b.textContent.includes(${JSON.stringify(s.reveal)}))`));
+  await clickText('button', s.reveal);
+  return waitFor(`!!document.querySelector('.wt-count')`);
+}
+
 const L = { en: { tab: 'Walkthrough', reveal: "Show how it's solved", desc: 'Description', next: 'Next step' },
             ko: { tab: '풀이 과정', reveal: '풀이 과정 보기', desc: '설명', next: '다음 단계' } };
 
@@ -109,21 +136,27 @@ for (const r of runs) {
   const s = L[r.lang];
   const jwt = r.user ? await token(`${r.user}${Date.now() % 100000}`) : null; // a fresh user: no stored theme or language
   check(await open({ ...r, jwt }), `${r.name}: page loads`);
-  const desc = await js(`[...document.querySelectorAll('[role=tab]')].find(e => e.textContent.includes(${JSON.stringify(s.desc)}))?.textContent.trim() ?? null`);
+  const descTab = `[...document.querySelectorAll('[role=tab]')].find(e => e.textContent.includes(${JSON.stringify(s.desc)}))`;
+  await waitFor(`!!${descTab}`); // the first tab can show before the language does on a slow render
+  const desc = await js(`${descTab}?.textContent.trim() ?? null`);
   check(!!desc, `${r.name}: tabs in ${r.lang} (${desc})`);
-  check(await waitFor(`[...document.querySelectorAll('[role=tab]')].some(e => e.textContent.includes(${JSON.stringify(s.tab)}))`), `${r.name}: Walkthrough tab shows`);
-  const fit = await js(`(() => { const t = [...document.querySelectorAll('[role=tab]')].find(e => e.textContent.includes(${JSON.stringify(s.tab)}));
-    const list = t.parentElement, l = list.getBoundingClientRect(), b = t.getBoundingClientRect();
-    return { right: Math.round(b.right), listRight: Math.round(l.right), scroll: list.scrollWidth, client: list.clientWidth, row: Math.round(list.parentElement.getBoundingClientRect().width) }; })()`);
-  check(fit.right <= fit.listRight + 1, `${r.name}: Walkthrough tab fully visible ${JSON.stringify(fit)}`);
-  if (r.jwt === undefined) check(await waitFor(`!!localStorage.getItem('token')`), `${r.name}: signed in`);
-  await shot(`${r.name}-1-tabs`);
-  await clickText('[role=tab]', s.tab);
-  check(await waitFor(`[...document.querySelectorAll('button')].some(b => b.textContent.includes(${JSON.stringify(s.reveal)}))`), `${r.name}: intro with the reveal button`);
-  check(!(await js(`!!document.querySelector('.wt')`)), `${r.name}: no player before the reveal`);
-  await shot(`${r.name}-2-intro`);
-  await clickText('button', s.reveal);
-  check(await waitFor(`!!document.querySelector('.wt-count')`), `${r.name}: player mounts after the reveal`);
+  const mounted = await openPlayer(s, {
+    async atTab(shown) {
+      check(shown, `${r.name}: Walkthrough tab shows`);
+      const fit = await js(`(() => { const t = [...document.querySelectorAll('[role=tab]')].find(e => e.textContent.includes(${JSON.stringify(s.tab)}));
+        const list = t.parentElement, l = list.getBoundingClientRect(), b = t.getBoundingClientRect();
+        return { right: Math.round(b.right), listRight: Math.round(l.right), scroll: list.scrollWidth, client: list.clientWidth, row: Math.round(list.parentElement.getBoundingClientRect().width) }; })()`);
+      check(fit.right <= fit.listRight + 1, `${r.name}: Walkthrough tab fully visible ${JSON.stringify(fit)}`);
+      if (r.jwt === undefined) check(await waitFor(`!!localStorage.getItem('token')`), `${r.name}: signed in`);
+      await shot(`${r.name}-1-tabs`);
+    },
+    async atIntro(shown) {
+      check(shown, `${r.name}: intro with the reveal button`);
+      check(!(await js(`!!document.querySelector('.wt')`)), `${r.name}: no player before the reveal`);
+      await shot(`${r.name}-2-intro`);
+    },
+  });
+  check(mounted, `${r.name}: player mounts after the reveal`);
   const theme = await js(`document.querySelector('.wt').dataset.theme`);
   const pageTheme = await js(`document.documentElement.classList.contains('dark') ? 'dark' : 'light'`);
   check(theme === pageTheme && theme === r.theme, `${r.name}: player theme ${theme}, page ${pageTheme}`);
@@ -181,6 +214,48 @@ for (const r of runs) {
     await js(`document.querySelector('.wt').scrollIntoView({ block: 'start' })`);
     await shot(`${r.name}-5-toggled-${want}`);
   }
+}
+
+// The description's Diagrams beside the first frame, so a view drawing the same structure can be held to
+// its layout (docs/adr/0012). Each Diagram and the player are shot from the page, then laid side by side
+// on a blank page and shot again as one picture.
+const beside = diagramBeside(SLUG, (await (await fetch(`${API}/problems/${SLUG}`)).json()).description);
+if (!beside) console.log(`info no Diagram in the description: no side-by-side shot`);
+else {
+  const clip = async sel => {
+    await js(`${sel}.scrollIntoView({ block: 'start' })`);
+    await sleep(300);
+    const r = await js(`(() => { const b = ${sel}.getBoundingClientRect(); return { x: b.x, y: b.y, width: b.width, height: Math.min(b.height, innerHeight - b.y) }; })()`);
+    // Within the viewport: capturing beyond it re-lays the page out and resets the panel's scroll.
+    const { data } = await c.send('Page.captureScreenshot', { format: 'png', clip: { ...r, scale: 1 } });
+    return { data, width: Math.round(r.width) };
+  };
+  await open({ width: 1440, theme: 'dark', lang: 'en', jwt: null });
+  // Tall, so a whole Diagram or the whole player fits the viewport once scrolled to.
+  await c.send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 1800, deviceScaleFactor: 1, mobile: false });
+  // A drawn Diagram replaces its code block inside the <pre>; one left as code didn't parse.
+  const drawn = `[...document.querySelectorAll('[data-tour=description] pre')].filter(p => !p.querySelector(':scope > code'))`;
+  await waitFor(`${drawn}.length >= ${beside.kinds.length}`);
+  const n = await js(`${drawn}.length`);
+  check(n === beside.kinds.length, `description draws its ${beside.kinds.length} Diagram(s) (${beside.kinds.join(', ')}): ${n} drawn`);
+  const diagrams = [];
+  for (let i = 0; i < n; i++) diagrams.push(await clip(`${drawn}[${i}]`));
+  await openPlayer(L.en);
+  const opened = await waitFor(`document.querySelector('.wt-count')?.textContent.startsWith('1 /')`);
+  check(opened, `the Walkthrough opens on its first frame (${await count()})`);
+  const frame = await clip(`document.querySelector('.wt')`);
+  const img = (s, w) => `<img src="data:image/png;base64,${s.data}" width="${w}">`;
+  const html = `<!doctype html><body style="margin:0;padding:24px;background:#0b0b0f;color:#ddd;font:14px system-ui;display:flex;gap:32px;align-items:flex-start;width:max-content">
+    <div style="display:flex;flex-direction:column;gap:12px"><b>Description: ${beside.kinds.join(', ')}</b>${diagrams.map(d => img(d, d.width)).join('')}</div>
+    <div style="display:flex;flex-direction:column;gap:12px"><b>Walkthrough: first frame</b>${img(frame, frame.width)}</div></body>`;
+  await c.send('Page.navigate', { url: 'about:blank' });
+  await waitFor(`document.readyState === 'complete'`);
+  await js(`(() => { document.open(); document.write(${JSON.stringify(html)}); document.close(); return true; })()`);
+  await waitFor(`[...document.images].every(i => i.complete)`);
+  const size = await js(`(() => { const b = document.body.getBoundingClientRect(); return { width: Math.ceil(b.width), height: Math.ceil(b.height) }; })()`);
+  const { data } = await c.send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: true, clip: { x: 0, y: 0, ...size, scale: 1 } });
+  writeFileSync(join(OUT, beside.name + '.png'), Buffer.from(data, 'base64'));
+  console.log(`     ${join(OUT, beside.name + '.png')} (the description's Diagrams beside the first frame: same layout?)`);
 }
 
 // The folded left panel's strip lists the Walkthrough too, and opens it.

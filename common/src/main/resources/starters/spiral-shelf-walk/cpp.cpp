@@ -3,7 +3,7 @@ using namespace std;
 
 class Solution {
 public:
-    vector<int> traceOutwardWalk(vector<vector<int>>& board) {
+    vector<int> spiralOrder(vector<vector<int>>& shelf) {
         // Write your solution here
     }
 };

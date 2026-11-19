@@ -1,5 +1,5 @@
 class Solution {
-    public int countReservoirPaths(int n) {
+    public int countHopSequences(int n) {
         // Write your solution here
     }
 }

@@ -6,7 +6,7 @@ using namespace std;
 int main() {
     int n;
     cin >> n;
-    int result = Solution().countReservoirPaths(n);
+    int result = Solution().countHopSequences(n);
     cout << result << endl;
     return 0;
 }

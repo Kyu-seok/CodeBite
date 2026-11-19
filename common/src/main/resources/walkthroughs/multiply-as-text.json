@@ -1,0 +1,2866 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Multiply As Text",
+  "ko": "문자열로 곱하기"
+ },
+ "approach": {
+  "en": "The digits at places i and j (counted from the right) multiply into place i + j; after every pair is added, one carry pass from the lowest place leaves one digit per place.",
+  "ko": "오른쪽에서 i번째와 j번째 자리 숫자의 곱은 i + j번 자리에 더해지고, 모든 쌍을 더한 뒤 가장 낮은 자리부터 올림을 한 번 넘기면 자리마다 숫자 하나가 남습니다."
+ },
+ "views": [
+  {
+   "id": "left",
+   "type": "array",
+   "title": {
+    "en": "left (tag: place)",
+    "ko": "left (태그: 자리)"
+   }
+  },
+  {
+   "id": "right",
+   "type": "array",
+   "title": {
+    "en": "right (tag: place)",
+    "ko": "right (태그: 자리)"
+   }
+  },
+  {
+   "id": "digits",
+   "type": "array",
+   "title": {
+    "en": "digits (tag: place)",
+    "ko": "digits (태그: 자리)"
+   }
+  },
+  {
+   "id": "carry",
+   "type": "array",
+   "title": {
+    "en": "carry",
+    "ko": "carry (올림)"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "left = \"12\", right = \"34\"",
+   "expected": "408",
+   "frames": [
+    {
+     "caption": {
+      "en": "\"12\" × \"34\": digits has 2 + 2 = 4 places, all 0. The pair at places i and j adds its product into place i + j.",
+      "ko": "\"12\" × \"34\": digits는 2 + 2 = 4자리이고 모두 0입니다. i번 자리와 j번 자리 숫자의 곱은 i + j번 자리에 더합니다."
+     },
+     "views": {
+      "left": {
+       "values": [
+        "1",
+        "2"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "right": {
+       "values": [
+        "3",
+        "4"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "digits": {
+       "values": [
+        0,
+        0,
+        0,
+        0
+       ],
+       "tags": [
+        [
+         3,
+         "10⁰"
+        ],
+        [
+         2,
+         "10¹"
+        ],
+        [
+         1,
+         "10²"
+        ],
+        [
+         0,
+         "10³"
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [],
+        "bad": []
+       }
+      },
+      "carry": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "2 (left, place 0) × 4 (right, place 0) = 8 goes into place 0 + 0 = 0, which holds 8 now.",
+      "ko": "2(left의 0번 자리) × 4(right의 0번 자리) = 8을 0 + 0 = 0번 자리에 더해 8이 됩니다."
+     },
+     "views": {
+      "left": {
+       "values": [
+        "1",
+        "2"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "right": {
+       "values": [
+        "3",
+        "4"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "digits": {
+       "values": [
+        0,
+        0,
+        0,
+        8
+       ],
+       "tags": [
+        [
+         3,
+         "10⁰"
+        ],
+        [
+         2,
+         "10¹"
+        ],
+        [
+         1,
+         "10²"
+        ],
+        [
+         0,
+         "10³"
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         3
+        ],
+        "bad": []
+       }
+      },
+      "carry": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "right",
+        "at": 1
+       },
+       "to": {
+        "view": "digits",
+        "at": 3
+       },
+       "value": "+2×4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "2 (left, place 0) × 3 (right, place 1) = 6 goes into place 0 + 1 = 1, which holds 6 now.",
+      "ko": "2(left의 0번 자리) × 3(right의 1번 자리) = 6을 0 + 1 = 1번 자리에 더해 6이 됩니다."
+     },
+     "views": {
+      "left": {
+       "values": [
+        "1",
+        "2"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "right": {
+       "values": [
+        "3",
+        "4"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "digits": {
+       "values": [
+        0,
+        0,
+        6,
+        8
+       ],
+       "tags": [
+        [
+         3,
+         "10⁰"
+        ],
+        [
+         2,
+         "10¹"
+        ],
+        [
+         1,
+         "10²"
+        ],
+        [
+         0,
+         "10³"
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         2
+        ],
+        "bad": []
+       }
+      },
+      "carry": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "right",
+        "at": 0
+       },
+       "to": {
+        "view": "digits",
+        "at": 2
+       },
+       "value": "+2×3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "1 (left, place 1) × 4 (right, place 0) = 4 goes into place 1 + 0 = 1, which holds 10 now.",
+      "ko": "1(left의 1번 자리) × 4(right의 0번 자리) = 4를 1 + 0 = 1번 자리에 더해 10이 됩니다."
+     },
+     "views": {
+      "left": {
+       "values": [
+        "1",
+        "2"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "right": {
+       "values": [
+        "3",
+        "4"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "digits": {
+       "values": [
+        0,
+        0,
+        10,
+        8
+       ],
+       "tags": [
+        [
+         3,
+         "10⁰"
+        ],
+        [
+         2,
+         "10¹"
+        ],
+        [
+         1,
+         "10²"
+        ],
+        [
+         0,
+         "10³"
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         2
+        ],
+        "bad": []
+       }
+      },
+      "carry": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "right",
+        "at": 1
+       },
+       "to": {
+        "view": "digits",
+        "at": 2
+       },
+       "value": "+1×4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "1 (left, place 1) × 3 (right, place 1) = 3 goes into place 1 + 1 = 2, which holds 3 now.",
+      "ko": "1(left의 1번 자리) × 3(right의 1번 자리) = 3을 1 + 1 = 2번 자리에 더해 3이 됩니다."
+     },
+     "views": {
+      "left": {
+       "values": [
+        "1",
+        "2"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "right": {
+       "values": [
+        "3",
+        "4"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "digits": {
+       "values": [
+        0,
+        3,
+        10,
+        8
+       ],
+       "tags": [
+        [
+         3,
+         "10⁰"
+        ],
+        [
+         2,
+         "10¹"
+        ],
+        [
+         1,
+         "10²"
+        ],
+        [
+         0,
+         "10³"
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         1
+        ],
+        "bad": []
+       }
+      },
+      "carry": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "right",
+        "at": 0
+       },
+       "to": {
+        "view": "digits",
+        "at": 1
+       },
+       "value": "+1×3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Place 0: 8 + carry 0 = 8, one digit, so nothing carries.",
+      "ko": "0번 자리: 8 + carry 0 = 8, 한 자리 수라 올림이 없습니다."
+     },
+     "views": {
+      "left": {
+       "values": [
+        "1",
+        "2"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "right": {
+       "values": [
+        "3",
+        "4"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "digits": {
+       "values": [
+        0,
+        3,
+        10,
+        8
+       ],
+       "tags": [
+        [
+         3,
+         "10⁰"
+        ],
+        [
+         2,
+         "10¹"
+        ],
+        [
+         1,
+         "10²"
+        ],
+        [
+         0,
+         "10³"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         3
+        ],
+        "good": [],
+        "bad": []
+       }
+      },
+      "carry": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Place 1: 10 + carry 0 = 10, so 0 stays and 1 carries to place 2.",
+      "ko": "1번 자리: 10 + carry 0 = 10이므로 0을 남기고 1을 2번 자리로 올립니다."
+     },
+     "views": {
+      "left": {
+       "values": [
+        "1",
+        "2"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "right": {
+       "values": [
+        "3",
+        "4"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "digits": {
+       "values": [
+        0,
+        3,
+        0,
+        8
+       ],
+       "tags": [
+        [
+         3,
+         "10⁰"
+        ],
+        [
+         2,
+         "10¹"
+        ],
+        [
+         1,
+         "10²"
+        ],
+        [
+         0,
+         "10³"
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         2
+        ],
+        "bad": []
+       }
+      },
+      "carry": {
+       "values": [
+        1
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "carry",
+        "at": 0
+       },
+       "to": {
+        "view": "digits",
+        "at": 2
+       },
+       "value": "+0"
+      },
+      {
+       "from": {
+        "view": "digits",
+        "at": 2
+       },
+       "to": {
+        "view": "carry",
+        "at": 0
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Place 2: 3 + carry 1 = 4, one digit, so nothing carries.",
+      "ko": "2번 자리: 3 + carry 1 = 4, 한 자리 수라 올림이 없습니다."
+     },
+     "views": {
+      "left": {
+       "values": [
+        "1",
+        "2"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "right": {
+       "values": [
+        "3",
+        "4"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "digits": {
+       "values": [
+        0,
+        4,
+        0,
+        8
+       ],
+       "tags": [
+        [
+         3,
+         "10⁰"
+        ],
+        [
+         2,
+         "10¹"
+        ],
+        [
+         1,
+         "10²"
+        ],
+        [
+         0,
+         "10³"
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         1
+        ],
+        "bad": []
+       }
+      },
+      "carry": {
+       "values": [
+        0
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "carry",
+        "at": 0
+       },
+       "to": {
+        "view": "digits",
+        "at": 1
+       },
+       "value": "+1"
+      },
+      {
+       "from": {
+        "view": "digits",
+        "at": 1
+       },
+       "to": {
+        "view": "carry",
+        "at": 0
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Place 3: 0 + carry 0 = 0, one digit, so nothing carries.",
+      "ko": "3번 자리: 0 + carry 0 = 0, 한 자리 수라 올림이 없습니다."
+     },
+     "views": {
+      "left": {
+       "values": [
+        "1",
+        "2"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "right": {
+       "values": [
+        "3",
+        "4"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "digits": {
+       "values": [
+        0,
+        4,
+        0,
+        8
+       ],
+       "tags": [
+        [
+         3,
+         "10⁰"
+        ],
+        [
+         2,
+         "10¹"
+        ],
+        [
+         1,
+         "10²"
+        ],
+        [
+         0,
+         "10³"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [],
+        "bad": []
+       }
+      },
+      "carry": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Place 3 is a leading zero, so it is dropped.",
+      "ko": "3번 자리는 맨 앞의 0이라 버립니다."
+     },
+     "views": {
+      "left": {
+       "values": [
+        "1",
+        "2"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "right": {
+       "values": [
+        "3",
+        "4"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "digits": {
+       "values": [
+        0,
+        4,
+        0,
+        8
+       ],
+       "tags": [
+        [
+         3,
+         "10⁰"
+        ],
+        [
+         2,
+         "10¹"
+        ],
+        [
+         1,
+         "10²"
+        ],
+        [
+         0,
+         "10³"
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [],
+        "bad": [
+         0
+        ]
+       }
+      },
+      "carry": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 0
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Read from the highest place down, the digits spell the product: answer \"408\".",
+      "ko": "가장 높은 자리부터 읽은 숫자가 곱입니다. 답은 \"408\"입니다."
+     },
+     "views": {
+      "left": {
+       "values": [
+        "1",
+        "2"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "right": {
+       "values": [
+        "3",
+        "4"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "digits": {
+       "values": [
+        4,
+        0,
+        8
+       ],
+       "tags": [
+        [
+         2,
+         "10⁰"
+        ],
+        [
+         1,
+         "10¹"
+        ],
+        [
+         0,
+         "10²"
+        ]
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "carry": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     },
+     "answer": "408"
+    }
+   ],
+   "sampleInput": "12\n34"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "left = \"25\", right = \"13\"",
+   "expected": "325",
+   "frames": [
+    {
+     "caption": {
+      "en": "\"25\" × \"13\": digits has 2 + 2 = 4 places, all 0. The pair at places i and j adds its product into place i + j.",
+      "ko": "\"25\" × \"13\": digits는 2 + 2 = 4자리이고 모두 0입니다. i번 자리와 j번 자리 숫자의 곱은 i + j번 자리에 더합니다."
+     },
+     "views": {
+      "left": {
+       "values": [
+        "2",
+        "5"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "right": {
+       "values": [
+        "1",
+        "3"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "digits": {
+       "values": [
+        0,
+        0,
+        0,
+        0
+       ],
+       "tags": [
+        [
+         3,
+         "10⁰"
+        ],
+        [
+         2,
+         "10¹"
+        ],
+        [
+         1,
+         "10²"
+        ],
+        [
+         0,
+         "10³"
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [],
+        "bad": []
+       }
+      },
+      "carry": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "5 (left, place 0) × 3 (right, place 0) = 15 goes into place 0 + 0 = 0, which holds 15 now.",
+      "ko": "5(left의 0번 자리) × 3(right의 0번 자리) = 15를 0 + 0 = 0번 자리에 더해 15가 됩니다."
+     },
+     "views": {
+      "left": {
+       "values": [
+        "2",
+        "5"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "right": {
+       "values": [
+        "1",
+        "3"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "digits": {
+       "values": [
+        0,
+        0,
+        0,
+        15
+       ],
+       "tags": [
+        [
+         3,
+         "10⁰"
+        ],
+        [
+         2,
+         "10¹"
+        ],
+        [
+         1,
+         "10²"
+        ],
+        [
+         0,
+         "10³"
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         3
+        ],
+        "bad": []
+       }
+      },
+      "carry": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "right",
+        "at": 1
+       },
+       "to": {
+        "view": "digits",
+        "at": 3
+       },
+       "value": "+5×3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "5 (left, place 0) × 1 (right, place 1) = 5 goes into place 0 + 1 = 1, which holds 5 now.",
+      "ko": "5(left의 0번 자리) × 1(right의 1번 자리) = 5를 0 + 1 = 1번 자리에 더해 5가 됩니다."
+     },
+     "views": {
+      "left": {
+       "values": [
+        "2",
+        "5"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "right": {
+       "values": [
+        "1",
+        "3"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "digits": {
+       "values": [
+        0,
+        0,
+        5,
+        15
+       ],
+       "tags": [
+        [
+         3,
+         "10⁰"
+        ],
+        [
+         2,
+         "10¹"
+        ],
+        [
+         1,
+         "10²"
+        ],
+        [
+         0,
+         "10³"
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         2
+        ],
+        "bad": []
+       }
+      },
+      "carry": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "right",
+        "at": 0
+       },
+       "to": {
+        "view": "digits",
+        "at": 2
+       },
+       "value": "+5×1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "2 (left, place 1) × 3 (right, place 0) = 6 goes into place 1 + 0 = 1, which holds 11 now.",
+      "ko": "2(left의 1번 자리) × 3(right의 0번 자리) = 6을 1 + 0 = 1번 자리에 더해 11이 됩니다."
+     },
+     "views": {
+      "left": {
+       "values": [
+        "2",
+        "5"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "right": {
+       "values": [
+        "1",
+        "3"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "digits": {
+       "values": [
+        0,
+        0,
+        11,
+        15
+       ],
+       "tags": [
+        [
+         3,
+         "10⁰"
+        ],
+        [
+         2,
+         "10¹"
+        ],
+        [
+         1,
+         "10²"
+        ],
+        [
+         0,
+         "10³"
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         2
+        ],
+        "bad": []
+       }
+      },
+      "carry": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "right",
+        "at": 1
+       },
+       "to": {
+        "view": "digits",
+        "at": 2
+       },
+       "value": "+2×3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "2 (left, place 1) × 1 (right, place 1) = 2 goes into place 1 + 1 = 2, which holds 2 now.",
+      "ko": "2(left의 1번 자리) × 1(right의 1번 자리) = 2를 1 + 1 = 2번 자리에 더해 2가 됩니다."
+     },
+     "views": {
+      "left": {
+       "values": [
+        "2",
+        "5"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "right": {
+       "values": [
+        "1",
+        "3"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "digits": {
+       "values": [
+        0,
+        2,
+        11,
+        15
+       ],
+       "tags": [
+        [
+         3,
+         "10⁰"
+        ],
+        [
+         2,
+         "10¹"
+        ],
+        [
+         1,
+         "10²"
+        ],
+        [
+         0,
+         "10³"
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         1
+        ],
+        "bad": []
+       }
+      },
+      "carry": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "right",
+        "at": 0
+       },
+       "to": {
+        "view": "digits",
+        "at": 1
+       },
+       "value": "+2×1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Place 0: 15 + carry 0 = 15, so 5 stays and 1 carries to place 1.",
+      "ko": "0번 자리: 15 + carry 0 = 15이므로 5를 남기고 1을 1번 자리로 올립니다."
+     },
+     "views": {
+      "left": {
+       "values": [
+        "2",
+        "5"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "right": {
+       "values": [
+        "1",
+        "3"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "digits": {
+       "values": [
+        0,
+        2,
+        11,
+        5
+       ],
+       "tags": [
+        [
+         3,
+         "10⁰"
+        ],
+        [
+         2,
+         "10¹"
+        ],
+        [
+         1,
+         "10²"
+        ],
+        [
+         0,
+         "10³"
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         3
+        ],
+        "bad": []
+       }
+      },
+      "carry": {
+       "values": [
+        1
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "carry",
+        "at": 0
+       },
+       "to": {
+        "view": "digits",
+        "at": 3
+       },
+       "value": "+0"
+      },
+      {
+       "from": {
+        "view": "digits",
+        "at": 3
+       },
+       "to": {
+        "view": "carry",
+        "at": 0
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Place 1: 11 + carry 1 = 12, so 2 stays and 1 carries to place 2.",
+      "ko": "1번 자리: 11 + carry 1 = 12이므로 2를 남기고 1을 2번 자리로 올립니다."
+     },
+     "views": {
+      "left": {
+       "values": [
+        "2",
+        "5"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "right": {
+       "values": [
+        "1",
+        "3"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "digits": {
+       "values": [
+        0,
+        2,
+        2,
+        5
+       ],
+       "tags": [
+        [
+         3,
+         "10⁰"
+        ],
+        [
+         2,
+         "10¹"
+        ],
+        [
+         1,
+         "10²"
+        ],
+        [
+         0,
+         "10³"
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         2
+        ],
+        "bad": []
+       }
+      },
+      "carry": {
+       "values": [
+        1
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "carry",
+        "at": 0
+       },
+       "to": {
+        "view": "digits",
+        "at": 2
+       },
+       "value": "+1"
+      },
+      {
+       "from": {
+        "view": "digits",
+        "at": 2
+       },
+       "to": {
+        "view": "carry",
+        "at": 0
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Place 2: 2 + carry 1 = 3, one digit, so nothing carries.",
+      "ko": "2번 자리: 2 + carry 1 = 3, 한 자리 수라 올림이 없습니다."
+     },
+     "views": {
+      "left": {
+       "values": [
+        "2",
+        "5"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "right": {
+       "values": [
+        "1",
+        "3"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "digits": {
+       "values": [
+        0,
+        3,
+        2,
+        5
+       ],
+       "tags": [
+        [
+         3,
+         "10⁰"
+        ],
+        [
+         2,
+         "10¹"
+        ],
+        [
+         1,
+         "10²"
+        ],
+        [
+         0,
+         "10³"
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         1
+        ],
+        "bad": []
+       }
+      },
+      "carry": {
+       "values": [
+        0
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "carry",
+        "at": 0
+       },
+       "to": {
+        "view": "digits",
+        "at": 1
+       },
+       "value": "+1"
+      },
+      {
+       "from": {
+        "view": "digits",
+        "at": 1
+       },
+       "to": {
+        "view": "carry",
+        "at": 0
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Place 3: 0 + carry 0 = 0, one digit, so nothing carries.",
+      "ko": "3번 자리: 0 + carry 0 = 0, 한 자리 수라 올림이 없습니다."
+     },
+     "views": {
+      "left": {
+       "values": [
+        "2",
+        "5"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "right": {
+       "values": [
+        "1",
+        "3"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "digits": {
+       "values": [
+        0,
+        3,
+        2,
+        5
+       ],
+       "tags": [
+        [
+         3,
+         "10⁰"
+        ],
+        [
+         2,
+         "10¹"
+        ],
+        [
+         1,
+         "10²"
+        ],
+        [
+         0,
+         "10³"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [],
+        "bad": []
+       }
+      },
+      "carry": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Place 3 is a leading zero, so it is dropped.",
+      "ko": "3번 자리는 맨 앞의 0이라 버립니다."
+     },
+     "views": {
+      "left": {
+       "values": [
+        "2",
+        "5"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "right": {
+       "values": [
+        "1",
+        "3"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "digits": {
+       "values": [
+        0,
+        3,
+        2,
+        5
+       ],
+       "tags": [
+        [
+         3,
+         "10⁰"
+        ],
+        [
+         2,
+         "10¹"
+        ],
+        [
+         1,
+         "10²"
+        ],
+        [
+         0,
+         "10³"
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [],
+        "bad": [
+         0
+        ]
+       }
+      },
+      "carry": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 0
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Read from the highest place down, the digits spell the product: answer \"325\".",
+      "ko": "가장 높은 자리부터 읽은 숫자가 곱입니다. 답은 \"325\"입니다."
+     },
+     "views": {
+      "left": {
+       "values": [
+        "2",
+        "5"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "right": {
+       "values": [
+        "1",
+        "3"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "digits": {
+       "values": [
+        3,
+        2,
+        5
+       ],
+       "tags": [
+        [
+         2,
+         "10⁰"
+        ],
+        [
+         1,
+         "10¹"
+        ],
+        [
+         0,
+         "10²"
+        ]
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "carry": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     },
+     "answer": "325"
+    }
+   ],
+   "sampleInput": "25\n13"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "left = \"99\", right = \"0\"",
+   "expected": "0",
+   "frames": [
+    {
+     "caption": {
+      "en": "\"99\" × \"0\": digits has 2 + 1 = 3 places, all 0. The pair at places i and j adds its product into place i + j.",
+      "ko": "\"99\" × \"0\": digits는 2 + 1 = 3자리이고 모두 0입니다. i번 자리와 j번 자리 숫자의 곱은 i + j번 자리에 더합니다."
+     },
+     "views": {
+      "left": {
+       "values": [
+        "9",
+        "9"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "right": {
+       "values": [
+        "0"
+       ],
+       "tags": [
+        [
+         0,
+         "10⁰"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "digits": {
+       "values": [
+        0,
+        0,
+        0
+       ],
+       "tags": [
+        [
+         2,
+         "10⁰"
+        ],
+        [
+         1,
+         "10¹"
+        ],
+        [
+         0,
+         "10²"
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [],
+        "bad": []
+       }
+      },
+      "carry": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "9 (left, place 0) × 0 (right, place 0) = 0 goes into place 0 + 0 = 0, which holds 0 now.",
+      "ko": "9(left의 0번 자리) × 0(right의 0번 자리) = 0을 0 + 0 = 0번 자리에 더해 0이 됩니다."
+     },
+     "views": {
+      "left": {
+       "values": [
+        "9",
+        "9"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "right": {
+       "values": [
+        "0"
+       ],
+       "tags": [
+        [
+         0,
+         "10⁰"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "digits": {
+       "values": [
+        0,
+        0,
+        0
+       ],
+       "tags": [
+        [
+         2,
+         "10⁰"
+        ],
+        [
+         1,
+         "10¹"
+        ],
+        [
+         0,
+         "10²"
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         2
+        ],
+        "bad": []
+       }
+      },
+      "carry": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "right",
+        "at": 0
+       },
+       "to": {
+        "view": "digits",
+        "at": 2
+       },
+       "value": "+9×0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "9 (left, place 1) × 0 (right, place 0) = 0 goes into place 1 + 0 = 1, which holds 0 now.",
+      "ko": "9(left의 1번 자리) × 0(right의 0번 자리) = 0을 1 + 0 = 1번 자리에 더해 0이 됩니다."
+     },
+     "views": {
+      "left": {
+       "values": [
+        "9",
+        "9"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "right": {
+       "values": [
+        "0"
+       ],
+       "tags": [
+        [
+         0,
+         "10⁰"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "digits": {
+       "values": [
+        0,
+        0,
+        0
+       ],
+       "tags": [
+        [
+         2,
+         "10⁰"
+        ],
+        [
+         1,
+         "10¹"
+        ],
+        [
+         0,
+         "10²"
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         1
+        ],
+        "bad": []
+       }
+      },
+      "carry": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "right",
+        "at": 0
+       },
+       "to": {
+        "view": "digits",
+        "at": 1
+       },
+       "value": "+9×0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Place 0: 0 + carry 0 = 0, one digit, so nothing carries.",
+      "ko": "0번 자리: 0 + carry 0 = 0, 한 자리 수라 올림이 없습니다."
+     },
+     "views": {
+      "left": {
+       "values": [
+        "9",
+        "9"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "right": {
+       "values": [
+        "0"
+       ],
+       "tags": [
+        [
+         0,
+         "10⁰"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "digits": {
+       "values": [
+        0,
+        0,
+        0
+       ],
+       "tags": [
+        [
+         2,
+         "10⁰"
+        ],
+        [
+         1,
+         "10¹"
+        ],
+        [
+         0,
+         "10²"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         2
+        ],
+        "good": [],
+        "bad": []
+       }
+      },
+      "carry": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Place 1: 0 + carry 0 = 0, one digit, so nothing carries.",
+      "ko": "1번 자리: 0 + carry 0 = 0, 한 자리 수라 올림이 없습니다."
+     },
+     "views": {
+      "left": {
+       "values": [
+        "9",
+        "9"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "right": {
+       "values": [
+        "0"
+       ],
+       "tags": [
+        [
+         0,
+         "10⁰"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "digits": {
+       "values": [
+        0,
+        0,
+        0
+       ],
+       "tags": [
+        [
+         2,
+         "10⁰"
+        ],
+        [
+         1,
+         "10¹"
+        ],
+        [
+         0,
+         "10²"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         1
+        ],
+        "good": [],
+        "bad": []
+       }
+      },
+      "carry": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Place 2: 0 + carry 0 = 0, one digit, so nothing carries.",
+      "ko": "2번 자리: 0 + carry 0 = 0, 한 자리 수라 올림이 없습니다."
+     },
+     "views": {
+      "left": {
+       "values": [
+        "9",
+        "9"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "right": {
+       "values": [
+        "0"
+       ],
+       "tags": [
+        [
+         0,
+         "10⁰"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "digits": {
+       "values": [
+        0,
+        0,
+        0
+       ],
+       "tags": [
+        [
+         2,
+         "10⁰"
+        ],
+        [
+         1,
+         "10¹"
+        ],
+        [
+         0,
+         "10²"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [],
+        "bad": []
+       }
+      },
+      "carry": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Places 1, 2 are leading zeros, so they are dropped.",
+      "ko": "1, 2번 자리는 맨 앞의 0이라 버립니다."
+     },
+     "views": {
+      "left": {
+       "values": [
+        "9",
+        "9"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "right": {
+       "values": [
+        "0"
+       ],
+       "tags": [
+        [
+         0,
+         "10⁰"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "digits": {
+       "values": [
+        0,
+        0,
+        0
+       ],
+       "tags": [
+        [
+         2,
+         "10⁰"
+        ],
+        [
+         1,
+         "10¹"
+        ],
+        [
+         0,
+         "10²"
+        ]
+       ],
+       "marks": {
+        "lit": [],
+        "good": [],
+        "bad": [
+         0,
+         1
+        ]
+       }
+      },
+      "carry": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "digits",
+        "at": 0
+       },
+       "mark": "bad"
+      },
+      {
+       "from": {
+        "view": "digits",
+        "at": 1
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Read from the highest place down, the digits spell the product: answer \"0\".",
+      "ko": "가장 높은 자리부터 읽은 숫자가 곱입니다. 답은 \"0\"입니다."
+     },
+     "views": {
+      "left": {
+       "values": [
+        "9",
+        "9"
+       ],
+       "tags": [
+        [
+         1,
+         "10⁰"
+        ],
+        [
+         0,
+         "10¹"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "right": {
+       "values": [
+        "0"
+       ],
+       "tags": [
+        [
+         0,
+         "10⁰"
+        ]
+       ],
+       "marks": {
+        "lit": []
+       }
+      },
+      "digits": {
+       "values": [
+        0
+       ],
+       "tags": [
+        [
+         0,
+         "10⁰"
+        ]
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      },
+      "carry": {
+       "values": [
+        0
+       ],
+       "marks": {}
+      }
+     },
+     "answer": "0"
+    }
+   ],
+   "sampleInput": "99\n0"
+  }
+ ]
+}

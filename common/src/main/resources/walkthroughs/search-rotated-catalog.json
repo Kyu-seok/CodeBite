@@ -1,0 +1,696 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Search Rotated Catalog",
+  "ko": "회전된 카탈로그 검색"
+ },
+ "approach": {
+  "en": "Binary search over indices: of the two halves around mid, at least one is sorted, and comparing its ends with target says whether target can be in it, so each probe throws away half the range.",
+  "ko": "인덱스 위의 이분 탐색입니다. mid를 기준으로 나눈 두 절반 중 적어도 하나는 정렬되어 있고, 그 양 끝을 target과 비교하면 target이 그 안에 있을 수 있는지 알 수 있어, 한 번 볼 때마다 범위가 절반으로 줄어듭니다."
+ },
+ "views": [
+  {
+   "id": "catalog",
+   "type": "array",
+   "title": {
+    "en": "catalog",
+    "ko": "catalog (카탈로그)"
+   }
+  },
+  {
+   "id": "state",
+   "type": "vars"
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "catalog = [12,18,24,31,3,7,9], target = 3",
+   "expected": "4",
+   "frames": [
+    {
+     "caption": {
+      "en": "Look for target = 3 in 7 entries: the range starts as the whole catalog, low = 0 and high = 6.",
+      "ko": "항목 7개에서 target = 3을 찾습니다. 범위는 카탈로그 전체로, low = 0, high = 6에서 시작합니다."
+     },
+     "views": {
+      "catalog": {
+       "values": [
+        12,
+        18,
+        24,
+        31,
+        3,
+        7,
+        9
+       ],
+       "pointers": {
+        "low": 0,
+        "mid": null,
+        "high": 6
+       },
+       "spans": {
+        "range": {
+         "from": 0,
+         "to": 6,
+         "label": {
+          "en": "range 7",
+          "ko": "범위 7"
+         },
+         "fade": true
+        }
+       },
+       "marks": {
+        "path": [],
+        "lit": [],
+        "dim": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
+         "value": 3
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "mid = 3: 31 ≠ 3. catalog[0..3] runs 12..31 sorted (12 ≤ 31); 3 is outside [12, 31), so it can only be in the other half: search the right, low = 4.",
+      "ko": "mid = 3: 31 ≠ 3, catalog[0..3] 구간은 12부터 31까지 정렬되어 있고(12 ≤ 31), target이 [12, 31) 밖이라 다른 절반에만 있을 수 있습니다. 오른쪽을 찾습니다: low = 4."
+     },
+     "views": {
+      "catalog": {
+       "values": [
+        12,
+        18,
+        24,
+        31,
+        3,
+        7,
+        9
+       ],
+       "pointers": {
+        "low": 0,
+        "mid": 3,
+        "high": 6
+       },
+       "spans": {
+        "range": {
+         "from": 0,
+         "to": 6,
+         "label": {
+          "en": "range 7",
+          "ko": "범위 7"
+         },
+         "fade": true
+        },
+        "sorted": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "sorted",
+          "ko": "정렬됨"
+         },
+         "below": true
+        }
+       },
+       "marks": {
+        "path": [],
+        "lit": [
+         3
+        ],
+        "dim": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
+         "value": 3
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "mid = 5: 7 ≠ 3. catalog[4..5] runs 3..7 sorted (3 ≤ 7); 3 is in [3, 7), so keep that half: search the left, high = 4.",
+      "ko": "mid = 5: 7 ≠ 3, catalog[4..5] 구간은 3부터 7까지 정렬되어 있고(3 ≤ 7), target이 [3, 7) 안에 있어 그 절반을 남깁니다. 왼쪽을 찾습니다: high = 4."
+     },
+     "views": {
+      "catalog": {
+       "values": [
+        12,
+        18,
+        24,
+        31,
+        3,
+        7,
+        9
+       ],
+       "pointers": {
+        "low": 4,
+        "mid": 5,
+        "high": 6
+       },
+       "spans": {
+        "range": {
+         "from": 4,
+         "to": 6,
+         "label": {
+          "en": "range 3",
+          "ko": "범위 3"
+         },
+         "fade": true
+        },
+        "sorted": {
+         "from": 4,
+         "to": 5,
+         "label": {
+          "en": "sorted",
+          "ko": "정렬됨"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "marks": {
+        "path": [],
+        "lit": [
+         5
+        ],
+        "dim": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
+         "value": 3
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "mid = (4 + 4) // 2 = 4, and catalog[4] = 3 is target: the answer is index 4.",
+      "ko": "mid = (4 + 4) // 2 = 4이고 catalog[4] = 3: target입니다. 답은 인덱스 4입니다."
+     },
+     "views": {
+      "catalog": {
+       "values": [
+        12,
+        18,
+        24,
+        31,
+        3,
+        7,
+        9
+       ],
+       "pointers": {},
+       "spans": {},
+       "marks": {
+        "path": [
+         4
+        ],
+        "lit": [],
+        "dim": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
+         "value": 3
+        }
+       ]
+      }
+     },
+     "answer": "4"
+    }
+   ],
+   "sampleInput": "[12,18,24,31,3,7,9]\n3"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "catalog = [12,18,24,31,3,7,9], target = 15",
+   "expected": "-1",
+   "frames": [
+    {
+     "caption": {
+      "en": "Look for target = 15 in 7 entries: the range starts as the whole catalog, low = 0 and high = 6.",
+      "ko": "항목 7개에서 target = 15를 찾습니다. 범위는 카탈로그 전체로, low = 0, high = 6에서 시작합니다."
+     },
+     "views": {
+      "catalog": {
+       "values": [
+        12,
+        18,
+        24,
+        31,
+        3,
+        7,
+        9
+       ],
+       "pointers": {
+        "low": 0,
+        "mid": null,
+        "high": 6
+       },
+       "spans": {
+        "range": {
+         "from": 0,
+         "to": 6,
+         "label": {
+          "en": "range 7",
+          "ko": "범위 7"
+         },
+         "fade": true
+        }
+       },
+       "marks": {
+        "path": [],
+        "lit": [],
+        "dim": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
+         "value": 15
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "mid = 3: 31 ≠ 15. catalog[0..3] runs 12..31 sorted (12 ≤ 31); 15 is in [12, 31), so keep that half: search the left, high = 2.",
+      "ko": "mid = 3: 31 ≠ 15, catalog[0..3] 구간은 12부터 31까지 정렬되어 있고(12 ≤ 31), target이 [12, 31) 안에 있어 그 절반을 남깁니다. 왼쪽을 찾습니다: high = 2."
+     },
+     "views": {
+      "catalog": {
+       "values": [
+        12,
+        18,
+        24,
+        31,
+        3,
+        7,
+        9
+       ],
+       "pointers": {
+        "low": 0,
+        "mid": 3,
+        "high": 6
+       },
+       "spans": {
+        "range": {
+         "from": 0,
+         "to": 6,
+         "label": {
+          "en": "range 7",
+          "ko": "범위 7"
+         },
+         "fade": true
+        },
+        "sorted": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "sorted",
+          "ko": "정렬됨"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "marks": {
+        "path": [],
+        "lit": [
+         3
+        ],
+        "dim": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
+         "value": 15
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "mid = 1: 18 ≠ 15. catalog[0..1] runs 12..18 sorted (12 ≤ 18); 15 is in [12, 18), so keep that half: search the left, high = 0.",
+      "ko": "mid = 1: 18 ≠ 15, catalog[0..1] 구간은 12부터 18까지 정렬되어 있고(12 ≤ 18), target이 [12, 18) 안에 있어 그 절반을 남깁니다. 왼쪽을 찾습니다: high = 0."
+     },
+     "views": {
+      "catalog": {
+       "values": [
+        12,
+        18,
+        24,
+        31,
+        3,
+        7,
+        9
+       ],
+       "pointers": {
+        "low": 0,
+        "mid": 1,
+        "high": 2
+       },
+       "spans": {
+        "range": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "range 3",
+          "ko": "범위 3"
+         },
+         "fade": true
+        },
+        "sorted": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "sorted",
+          "ko": "정렬됨"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "marks": {
+        "path": [],
+        "lit": [
+         1
+        ],
+        "dim": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
+         "value": 15
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "mid = 0: 12 ≠ 15. catalog[0..0] runs 12..12 sorted (12 ≤ 12); 15 is outside [12, 12), so it can only be in the other half: search the right, low = 1.",
+      "ko": "mid = 0: 12 ≠ 15, catalog[0..0] 구간은 12부터 12까지 정렬되어 있고(12 ≤ 12), target이 [12, 12) 밖이라 다른 절반에만 있을 수 있습니다. 오른쪽을 찾습니다: low = 1."
+     },
+     "views": {
+      "catalog": {
+       "values": [
+        12,
+        18,
+        24,
+        31,
+        3,
+        7,
+        9
+       ],
+       "pointers": {
+        "low": null,
+        "mid": 0,
+        "high": 0
+       },
+       "spans": {
+        "range": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "range 1",
+          "ko": "범위 1"
+         },
+         "fade": true
+        },
+        "sorted": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "sorted",
+          "ko": "정렬됨"
+         },
+         "below": true
+        }
+       },
+       "marks": {
+        "path": [],
+        "lit": [
+         0
+        ],
+        "dim": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
+         "value": 15
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "low = 1 passed high = 0: the range is empty, so 15 isn't in the catalog: -1.",
+      "ko": "low = 1, high = 0: low가 high를 지나쳐 범위가 비었습니다. target이 카탈로그에 없으니 답은 -1입니다."
+     },
+     "views": {
+      "catalog": {
+       "values": [
+        12,
+        18,
+        24,
+        31,
+        3,
+        7,
+        9
+       ],
+       "pointers": {},
+       "spans": {},
+       "marks": {
+        "path": [],
+        "lit": [],
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
+         "value": 15
+        }
+       ]
+      }
+     },
+     "answer": "-1"
+    }
+   ],
+   "sampleInput": "[12,18,24,31,3,7,9]\n15"
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "catalog = [8], target = 3",
+   "expected": "-1",
+   "frames": [
+    {
+     "caption": {
+      "en": "Look for target = 3 in 1 entry: the range starts as the whole catalog, low = 0 and high = 0.",
+      "ko": "항목 1개에서 target = 3을 찾습니다. 범위는 카탈로그 전체로, low = 0, high = 0에서 시작합니다."
+     },
+     "views": {
+      "catalog": {
+       "values": [
+        8
+       ],
+       "pointers": {
+        "low": 0,
+        "mid": null,
+        "high": 0
+       },
+       "spans": {
+        "range": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "range 1",
+          "ko": "범위 1"
+         },
+         "fade": true
+        }
+       },
+       "marks": {
+        "path": [],
+        "lit": [],
+        "dim": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
+         "value": 3
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "mid = 0: 8 ≠ 3. catalog[0..0] runs 8..8 sorted (8 ≤ 8); 3 is outside [8, 8), so it can only be in the other half: search the right, low = 1.",
+      "ko": "mid = 0: 8 ≠ 3, catalog[0..0] 구간은 8부터 8까지 정렬되어 있고(8 ≤ 8), target이 [8, 8) 밖이라 다른 절반에만 있을 수 있습니다. 오른쪽을 찾습니다: low = 1."
+     },
+     "views": {
+      "catalog": {
+       "values": [
+        8
+       ],
+       "pointers": {
+        "low": null,
+        "mid": 0,
+        "high": 0
+       },
+       "spans": {
+        "range": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "range 1",
+          "ko": "범위 1"
+         },
+         "fade": true
+        },
+        "sorted": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "sorted",
+          "ko": "정렬됨"
+         },
+         "below": true
+        }
+       },
+       "marks": {
+        "path": [],
+        "lit": [
+         0
+        ],
+        "dim": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
+         "value": 3
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "low = 1 passed high = 0: the range is empty, so 3 isn't in the catalog: -1.",
+      "ko": "low = 1, high = 0: low가 high를 지나쳐 범위가 비었습니다. target이 카탈로그에 없으니 답은 -1입니다."
+     },
+     "views": {
+      "catalog": {
+       "values": [
+        8
+       ],
+       "pointers": {},
+       "spans": {},
+       "marks": {
+        "path": [],
+        "lit": [],
+        "dim": [
+         0
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
+         "value": 3
+        }
+       ]
+      }
+     },
+     "answer": "-1"
+    }
+   ],
+   "sampleInput": "[8]\n3"
+  }
+ ]
+}
