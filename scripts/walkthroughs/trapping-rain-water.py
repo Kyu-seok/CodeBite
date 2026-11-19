@@ -28,7 +28,7 @@ wt = Walkthrough(
            "낮은 쪽의 지금까지 최댓값이 그 막대 위의 물 높이입니다."},
     views=[
         {"id": "bars", "type": "array", "display": "bars",
-         "title": {"en": "height (bars) and water", "ko": "height (막대)와 물"}},
+         "title": {"en": "height (bars) and water", "ko": "막대 높이(height)와 물"}},
         {"id": "water", "type": "output", "title": {"en": "water trapped", "ko": "갇힌 물"}},
     ],
 )

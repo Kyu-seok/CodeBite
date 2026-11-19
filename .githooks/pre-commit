@@ -2,7 +2,9 @@
 # Runs the CI checks that cover what this commit touches, so a broken module,
 # lint error or script is caught before it reaches a PR.
 # Enable once per clone: git config core.hooksPath .githooks
-# Skip in an emergency: git commit --no-verify
+# Skip in an emergency: git commit --no-verify (which skips commit-msg too).
+# A parallel implementer whose merge gate runs the tests skips only them: CODEBITE_SKIP_TESTS=1 git commit
+# keeps every other check here and the commit-msg subject limit.
 set -euo pipefail
 
 # master only moves through merged PRs. A commit here usually means the checkout was switched
@@ -28,7 +30,9 @@ echo "pre-commit: walkthrough kit copy"
 python3 -I scripts/copy-walkthrough-kit.py --check
 
 # A module's sources and build file, not its Dockerfile, which no Gradle test reads.
-if touches '^(common|backend|worker)/(src/|build\.gradle)|^(build|settings)\.gradle'; then
+if [ "${CODEBITE_SKIP_TESTS:-}" = 1 ]; then
+  echo "pre-commit: CODEBITE_SKIP_TESTS=1, skipping the Gradle tests (the merge gate runs them)"
+elif touches '^(common|backend|worker)/(src/|build\.gradle)|^(build|settings)\.gradle'; then
   modules=()
   touches '^common/(src/|build\.gradle)|^(build|settings)\.gradle' && modules+=(:common:test :backend:test :worker:test)
   touches '^backend/(src/|build\.gradle)' && modules+=(:backend:test)
