@@ -17,7 +17,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import driver_list, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import driver_list, driver_value, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, move  # noqa: E402
 
 SLUG = "rebuild-tournament-line"
@@ -41,10 +41,6 @@ wt = Walkthrough(
 
 def cells(people):
     return [f"{h},{k}" for h, k in people]
-
-
-def text(p):
-    return json.dumps(p, separators=(",", ":"))
 
 
 def solve(players, run):
@@ -72,7 +68,7 @@ def solve(players, run):
         i = next(x for x in range(n) if not taken[x] and players[x] == p)
         taken[i] = True
         moves.append(move(at("players", i), at("order", j)))
-    listed = ", ".join(text(p) for p in order)
+    listed = ", ".join(driver_value(p) for p in order)
     frame({"en": f"Sort tallest first, and among equal heights the smaller k first: {listed}.",
            "ko": f"키가 큰 순으로, 키가 같으면 k가 작은 순으로 정렬합니다: {listed}."},
           order_marks={"good": list(range(n))}, moves=moves)
@@ -83,17 +79,17 @@ def solve(players, run):
         moves += [move(at("line", m - 1), at("line", m), value=cells([line[m]])[0]) for m in range(k + 1, len(line))]
         seated = len(line) - 1
         if seated == 0:
-            en = f"{text(p)} goes first into the empty line, at index {k}."
-            ko = f"{text(p)} 참가자가 빈 줄의 인덱스 {k}에 섭니다."
+            en = f"{driver_value(p)} goes first into the empty line, at index {k}."
+            ko = f"{driver_value(p)} 참가자가 빈 줄의 인덱스 {k}에 섭니다."
         else:
             behind = len(line) - 1 - k
             back_en = ("" if not behind else "; the player behind steps back" if behind == 1 else
                        f"; the {behind} behind step back")
             back_ko = (f"고, 뒤의 {behind}명은 한 칸씩 물러납니다" if behind else "습니다")
             who = "the one player already in line is" if seated == 1 else f"all {seated} already in line are"
-            en = (f"{text(p)}: {who} at least {h} tall, so {k} of them must be ahead. Insert "
+            en = (f"{driver_value(p)}: {who} at least {h} tall, so {k} of them must be ahead. Insert "
                   f"at index {k}{back_en}.")
-            ko = (f"{text(p)} 참가자: 줄에 선 {seated}명은 {'' if seated == 1 else '모두 '}키가 {h} 이상이므로 그중 {k}명이 앞에 있어야 합니다. "
+            ko = (f"{driver_value(p)} 참가자: 줄에 선 {seated}명은 {'' if seated == 1 else '모두 '}키가 {h} 이상이므로 그중 {k}명이 앞에 있어야 합니다. "
                   f"인덱스 {k}에 끼워 넣{back_ko}.")
         frame({"en": en, "ko": ko}, j=j, done=j, order_marks={"lit": [j]}, line_marks={"good": [k]}, moves=moves)
     answer = driver_list(line)

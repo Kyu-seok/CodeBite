@@ -18,7 +18,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import driver_list, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import driver_list, node_order, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, move, stack  # noqa: E402
 
 SLUG = "dog-street-walk"
@@ -44,11 +44,6 @@ wt = Walkthrough(
          "empty": {"en": "not yet", "ko": "아직 없음"}},
     ],
 )
-
-
-def node_order(routes):
-    """The zones as the description's graph Diagram places them: in the order the routes name them."""
-    return list(dict.fromkeys(z for r in routes for z in r))
 
 
 def solve(routes, run):

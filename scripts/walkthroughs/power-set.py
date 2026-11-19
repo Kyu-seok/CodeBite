@@ -14,7 +14,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import driver_list, josa, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import driver_list, josa, listed, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Tree, Walkthrough, at, move  # noqa: E402
 
 SLUG = "power-set"
@@ -31,10 +31,6 @@ wt = Walkthrough(
         {"id": "result", "type": "output", "title": {"en": "answer", "ko": "답"}},
     ],
 )
-
-
-def listed(values):
-    return ", ".join(map(str, values))
 
 
 def solve(nums, run):

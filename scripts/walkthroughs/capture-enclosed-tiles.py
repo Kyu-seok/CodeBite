@@ -14,7 +14,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import driver_list, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import cell_name, driver_list, listed_cells, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, move  # noqa: E402
 
 SLUG = "capture-enclosed-tiles"
@@ -37,14 +37,6 @@ wt = Walkthrough(
 )
 
 
-def name(p):
-    return f"{p[0]},{p[1]}"
-
-
-def listed(cells):
-    return ", ".join(f"({name(p)})" for p in cells)
-
-
 def solve(board, run):
     """Solution.captureEnclosedTiles with a frame per step. Returns the board as the Driver prints it."""
     rows, cols = len(board), len(board[0])
@@ -56,7 +48,7 @@ def solve(board, run):
                   board={"cells": board,
                          "marks": {"path": [list(p) for p in path], "bad": [list(p) for p in bad],
                                    "good": [list(p) for p in good], "lit": [list(p) for p in lit]}},
-                  stack={"values": [name(p) for p in todo + leaving[::-1]], "marks": stack_marks or {}},
+                  stack={"values": [cell_name(p) for p in todo + leaving[::-1]], "marks": stack_marks or {}},
                   moves=moves, **answer)
 
     enemy = sum(row.count("O") for row in board)
@@ -74,13 +66,13 @@ def solve(board, run):
     todo[:] = border
     b = len(border)
     if b:
-        frame({"en": f"{b} border {plural(b, 'tile is', 'tiles are')} 'O': {listed(border)}. Mark "
+        frame({"en": f"{b} border {plural(b, 'tile is', 'tiles are')} 'O': {listed_cells(border)}. Mark "
                      f"{plural(b, 'it', 'each')} safe ('S') and push {plural(b, 'it', 'them')} onto the stack.",
-               "ko": f"테두리의 'O' 타일 {b}개, {listed(border)} 칸을 안전('S')으로 표시하고 스택에 넣습니다."},
+               "ko": f"테두리의 'O' 타일 {b}개, {listed_cells(border)} 칸을 안전('S')으로 표시하고 스택에 넣습니다."},
               good=border, stack_marks={"good": list(range(b))},
               moves=[m for i, p in enumerate(border)
                      for m in (move(None, at("board", list(p)), value="S"),
-                               move(at("board", list(p)), at("stack", i), value=name(p)))])
+                               move(at("board", list(p)), at("stack", i), value=cell_name(p)))])
     else:
         frame({"en": "No border tile is 'O', so nothing is safe and the stack stays empty.",
                "ko": "테두리에 'O' 타일이 없으므로 안전한 타일이 없고 스택은 비어 있습니다."})
@@ -92,9 +84,9 @@ def solve(board, run):
         k = len(leaving)
         base = len(todo)
         end = {"en": " The stack is empty.", "ko": " 스택이 비었습니다."} if not todo else {"en": "", "ko": ""}
-        frame({"en": f"Pop {listed(leaving)}: no neighbour is an 'O' still unmarked, so "
+        frame({"en": f"Pop {listed_cells(leaving)}: no neighbour is an 'O' still unmarked, so "
                      f"{plural(k, 'it saves', 'they save')} nothing." + end["en"],
-               "ko": f"{listed(leaving)} 칸을 꺼내지만, 아직 표시하지 않은 'O' 이웃이 없어 살릴 타일이 없습니다."
+               "ko": f"{listed_cells(leaving)} 칸을 꺼내지만, 아직 표시하지 않은 'O' 이웃이 없어 살릴 타일이 없습니다."
                      + end["ko"]},
               lit=list(leaving), stack_marks={"lit": list(range(base, base + k))},
               moves=[move(at("stack", base + i)) for i in range(k)])
@@ -117,27 +109,27 @@ def solve(board, run):
         leaving.append((r, c))
         top = len(todo)
         n = len(added)
-        frame({"en": f"Pop ({name((r, c))}): {listed(added)} {plural(n, 'is an', 'are')} 'O' next to a safe tile, "
+        frame({"en": f"Pop ({cell_name((r, c))}): {listed_cells(added)} {plural(n, 'is an', 'are')} 'O' next to a safe tile, "
                      f"so {plural(n, 'it is', 'they are')} safe too.",
-               "ko": f"({name((r, c))}) 칸을 꺼냅니다. 맞닿은 'O' 타일 {listed(added)} 칸도 안전한 타일과 이어져 "
+               "ko": f"({cell_name((r, c))}) 칸을 꺼냅니다. 맞닿은 'O' 타일 {listed_cells(added)} 칸도 안전한 타일과 이어져 "
                      f"있으므로 'S' 표시를 합니다."},
               lit=[(r, c)], good=added, stack_marks={"lit": [top]},
               moves=[move(at("stack", top), at("board", list(p)), value="S") for p in added])
         leaving.clear()
         todo.extend(added)
-        frame({"en": f"Push {listed(added)}, to spread on from {plural(n, 'it', 'them')}.",
-               "ko": f"{listed(added)} 칸을 스택에 넣어, 거기서 계속 퍼져 나갑니다."},
+        frame({"en": f"Push {listed_cells(added)}, to spread on from {plural(n, 'it', 'them')}.",
+               "ko": f"{listed_cells(added)} 칸을 스택에 넣어, 거기서 계속 퍼져 나갑니다."},
               good=added, stack_marks={"good": list(range(top, len(todo)))},
-              moves=[move(at("board", list(p)), at("stack", top + i), value=name(p)) for i, p in enumerate(added)])
+              moves=[move(at("board", list(p)), at("stack", top + i), value=cell_name(p)) for i, p in enumerate(added)])
 
     captured = [(r, c) for r in range(rows) for c in range(cols) if board[r][c] == "O"]
     if captured:
         for r, c in captured:
             board[r][c] = "X"
         k = len(captured)
-        frame({"en": f"Now sweep the board. {plural(k, 'The one', 'The')} 'O' still unmarked, {listed(captured)}, "
+        frame({"en": f"Now sweep the board. {plural(k, 'The one', 'The')} 'O' still unmarked, {listed_cells(captured)}, "
                      f"cannot reach the border: {plural(k, 'it is', 'they are')} captured and become 'X'.",
-               "ko": f"이제 보드를 훑습니다. 표시되지 않은 'O' 타일 {listed(captured)} 칸은 테두리에 닿을 수 없어 "
+               "ko": f"이제 보드를 훑습니다. 표시되지 않은 'O' 타일 {listed_cells(captured)} 칸은 테두리에 닿을 수 없어 "
                      f"점령되어 'X' 타일이 됩니다."},
               bad=captured, moves=[move(None, at("board", list(p)), value="X", mark="bad") for p in captured])
     safe = [(r, c) for r in range(rows) for c in range(cols) if board[r][c] == "S"]

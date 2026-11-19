@@ -15,7 +15,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import driver_list, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import cell_name, driver_list, listed_cells, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, move  # noqa: E402
 
 SLUG = "dual-waterbowl-flow"
@@ -39,14 +39,6 @@ wt = Walkthrough(
 )
 
 
-def name(p):
-    return f"{p[0]},{p[1]}"
-
-
-def listed(cells):
-    return ", ".join(f"({name(p)})" for p in cells)
-
-
 def solve(field, run):
     """Solution.traceDualDrainage with a frame per step. Returns the answer as the Driver prints it."""
     rows, cols = len(field), len(field[0])
@@ -66,7 +58,7 @@ def solve(field, run):
                   field={"cells": field, "tags": tags,
                          "marks": {"path": [list(p) for p in path], "good": [list(p) for p in good],
                                    "lit": [list(p) for p in lit]}},
-                  stack={"values": [name(p) for p in todo + leaving[::-1]], "marks": stack_marks or {}},
+                  stack={"values": [cell_name(p) for p in todo + leaving[::-1]], "marks": stack_marks or {}},
                   both={"values": list(both), "marks": both_marks or {}},
                   moves=moves, **answer)
 
@@ -84,11 +76,11 @@ def solve(field, run):
         s = len(starts)
         twice = [p for i, p in enumerate(starts) if p in starts[:i]]
         frame({"en": f"The {bowl['en']} bowl: its {len(seen)} border cells drain into it, so all {s} starts go on "
-                     f"the stack" + (f", corner {listed(twice)} twice, as the code lists it." if twice else "."),
+                     f"the stack" + (f", corner {listed_cells(twice)} twice, as the code lists it." if twice else "."),
                "ko": f"{bowl['ko']} 물그릇: 가장자리 칸 {len(seen)}개는 바로 흘러 들어가므로 시작 칸 {s}개를 모두 "
-                     f"스택에 넣습니다" + (f". 코드대로 모서리 {listed(twice)} 칸은 두 번 들어갑니다." if twice else ".")},
+                     f"스택에 넣습니다" + (f". 코드대로 모서리 {listed_cells(twice)} 칸은 두 번 들어갑니다." if twice else ".")},
               good=list(seen), stack_marks={"good": list(range(s))},
-              moves=[move(at("field", list(p)), at("stack", i), value=name(p)) for i, p in enumerate(starts)])
+              moves=[move(at("field", list(p)), at("stack", i), value=cell_name(p)) for i, p in enumerate(starts)])
 
         def flush():
             """One frame for the pops in a row that reached nothing new."""
@@ -98,9 +90,9 @@ def solve(field, run):
             base = len(todo)
             end = "" if todo else {"en": f" The stack is empty: {len(seen)} cells reach the {bowl['en']} bowl.",
                                    "ko": f" 스택이 비었으므로 {len(seen)}칸이 {bowl['ko']} 물그릇에 닿습니다."}
-            frame({"en": f"Pop {listed(leaving)}: no neighbor not reached yet is as high or higher, so "
+            frame({"en": f"Pop {listed_cells(leaving)}: no neighbor not reached yet is as high or higher, so "
                          f"{plural(k, 'it adds', 'they add')} nothing." + (end["en"] if end else ""),
-                   "ko": f"{listed(leaving)} 칸을 꺼내지만 아직 닿지 않은 이웃 중 같거나 높은 칸이 없어 더할 것이 "
+                   "ko": f"{listed_cells(leaving)} 칸을 꺼내지만 아직 닿지 않은 이웃 중 같거나 높은 칸이 없어 더할 것이 "
                          f"없습니다." + (end["ko"] if end else "")},
                   lit=list(leaving), stack_marks={"lit": list(range(base, base + k))},
                   moves=[move(at("stack", base + i)) for i in range(k)])
@@ -130,19 +122,19 @@ def solve(field, run):
             top = len(todo)
             n = len(added)
             heights = ", ".join(str(field[y][x]) for y, x in added)
-            frame({"en": f"Pop ({name((r, c))}), height {field[r][c]}: {listed(added)}, height {heights}, "
+            frame({"en": f"Pop ({cell_name((r, c))}), height {field[r][c]}: {listed_cells(added)}, height {heights}, "
                          f"{plural(n, 'is', 'are')} at least as high, so water there flows down to the "
                          f"{bowl['en']} bowl.",
-                   "ko": f"높이 {field[r][c]}인 ({name((r, c))}) 칸을 꺼냅니다. {listed(added)} 칸의 높이 {heights}: "
+                   "ko": f"높이 {field[r][c]}인 ({cell_name((r, c))}) 칸을 꺼냅니다. {listed_cells(added)} 칸의 높이 {heights}: "
                          f"같거나 높아서 그 물이 {bowl['ko']} 물그릇으로 흘러내립니다."},
                   lit=[(r, c)], good=added, stack_marks={"lit": [top]},
                   moves=[move(at("stack", top), at("field", list(p))) for p in added])
             leaving.clear()
             todo.extend(added)
-            frame({"en": f"Push {listed(added)}, to climb on from {plural(n, 'it', 'them')}.",
-                   "ko": f"{listed(added)} 칸을 스택에 넣어, 거기서 계속 올라갑니다."},
+            frame({"en": f"Push {listed_cells(added)}, to climb on from {plural(n, 'it', 'them')}.",
+                   "ko": f"{listed_cells(added)} 칸을 스택에 넣어, 거기서 계속 올라갑니다."},
                   good=added, stack_marks={"good": list(range(top, len(todo)))},
-                  moves=[move(at("field", list(p)), at("stack", top + i), value=name(p))
+                  moves=[move(at("field", list(p)), at("stack", top + i), value=cell_name(p))
                          for i, p in enumerate(added)])
         return set(seen)
 
@@ -150,13 +142,13 @@ def solve(field, run):
     bottom_right = reachable(1, [(rows - 1, c) for c in range(cols)] + [(r, cols - 1) for r in range(rows)])
     result = [[r, c] for r, c in sorted(top_left & bottom_right)]
     for r, c in result:
-        both.append(name((r, c)))
+        both.append(cell_name((r, c)))
     k = len(result)
     frame({"en": f"{k} {plural(k, 'cell carries', 'cells carry')} both arrows, so {plural(k, 'its', 'their')} water "
                  f"reaches both bowls.",
            "ko": f"화살표 두 개를 모두 가진 칸 {k}개는 물이 두 물그릇에 모두 닿습니다."},
           lit=[tuple(p) for p in result], both_marks={"good": list(range(k))},
-          moves=[move(at("field", p), at("both", i), value=name(p)) for i, p in enumerate(result)])
+          moves=[move(at("field", p), at("both", i), value=cell_name(p)) for i, p in enumerate(result)])
     frame({"en": f"Answer: {driver_list(result)}.", "ko": f"답은 {driver_list(result)}입니다."},
           path=[tuple(p) for p in result], answer=driver_list(result))
 

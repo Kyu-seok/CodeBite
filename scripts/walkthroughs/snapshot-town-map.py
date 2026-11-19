@@ -15,7 +15,7 @@ from collections import deque
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import driver_list, josa, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import driver_list, josa, node_order, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, move  # noqa: E402
 
 SLUG = "snapshot-town-map"
@@ -75,15 +75,6 @@ def undirected_edges(adj):
             if i + 1 < nbr:
                 edges.append((i + 1, nbr))
     return edges
-
-
-def node_order(adj, edges):
-    order = []
-    for a, b in edges:
-        for v in (a, b):
-            if v not in order:
-                order.append(v)
-    return order + [v for v in range(1, len(adj) + 1) if v not in order]
 
 
 def solve(adj, run):
@@ -174,7 +165,7 @@ for number, sample in enumerate(sample_cases(SLUG), start=1):
                   stack={"values": []}, answer="[]")
         continue
     edges = undirected_edges(adj)
-    nodes = [{"id": v} for v in node_order(adj, edges)]
+    nodes = [{"id": v} for v in node_order(edges, range(1, len(adj) + 1))]
     run = sample_run(wt, number, sample, input=f"adjList = {sample['input']}",
                      setup={"town": {"nodes": nodes, "edges": [{"from": a, "to": b} for a, b in edges]},
                             "copy": {"nodes": nodes}})

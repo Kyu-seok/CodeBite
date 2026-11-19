@@ -17,7 +17,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import driver_list, josa, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import driver_list, josa, listed, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Tree, Walkthrough, at, move  # noqa: E402
 
 SLUG = "snack-combo-picks"
@@ -35,10 +35,6 @@ wt = Walkthrough(
         {"id": "result", "type": "output", "title": {"en": "combos", "ko": "조합"}},
     ],
 )
-
-
-def listed(values):
-    return ", ".join(map(str, values))
 
 
 def solve(snacks, run):

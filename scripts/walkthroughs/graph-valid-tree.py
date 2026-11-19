@@ -15,7 +15,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import driver_list, josa, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import driver_list, josa, node_order, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, move  # noqa: E402
 
 SLUG = "graph-valid-tree"
@@ -32,16 +32,6 @@ wt = Walkthrough(
         {"id": "parent", "type": "array", "title": {"en": "parent (index: node)", "ko": "parent (인덱스: 노드)"}},
     ],
 )
-
-
-def node_order(n, edges):
-    """The nodes as the description's graph Diagram places them: in the order the edges name them, then the rest."""
-    order = []
-    for a, b in edges:
-        for v in (a, b):
-            if v not in order:
-                order.append(v)
-    return order + [v for v in range(n) if v not in order]
 
 
 def solve(n, edges, run):
@@ -76,7 +66,7 @@ def solve(n, edges, run):
             nm = {"lit": list(edges[edge])}
         run.frame(caption,
                   graph={"nodes": [{"id": v, "tag": {"en": f"root {root_of(v)}", "ko": f"루트 {root_of(v)}"}}
-                                   for v in node_order(n, edges)],
+                                   for v in node_order(edges, range(n))],
                          "edgeMarks": em, "nodeMarks": nm},
                   parent={"values": list(parent), "pointers": pointers or {},
                           "marks": {"lit": list(lit_cells), "good": list(good_cells)}},

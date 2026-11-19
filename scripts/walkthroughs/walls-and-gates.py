@@ -15,7 +15,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import driver_list, josa, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import cell_name, driver_list, josa, listed_cells, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, move  # noqa: E402
 
 SLUG = "walls-and-gates"
@@ -39,14 +39,6 @@ wt = Walkthrough(
 )
 
 
-def name(p):
-    return f"{p[0]},{p[1]}"
-
-
-def listed(cells):
-    return ", ".join(f"({name(p)})" for p in cells)
-
-
 def solve(rooms, run):
     """Solution.wallsAndGates with a frame per step. Returns the rooms as the Driver prints them."""
     rows, cols = len(rooms), len(rooms[0])
@@ -58,7 +50,7 @@ def solve(rooms, run):
                   rooms={"cells": rooms,
                          "marks": {"lit": [list(p) for p in lit], "good": [list(p) for p in good],
                                    "path": [list(p) for p in path]}},
-                  queue={"values": [name(p) for p in queue],
+                  queue={"values": [cell_name(p) for p in queue],
                          "tags": [[i, str(rooms[p[0]][p[1]])] for i, p in enumerate(queue)],
                          "marks": queue_marks or {}},
                   moves=moves, **answer)
@@ -73,11 +65,11 @@ def solve(rooms, run):
                "ko": f"{rows}×{cols} 격자에 빈 방이 {empty}개 있지만 문이 없어서 큐가 빈 채로 시작합니다."})
     else:
         frame({"en": f"A {rows}×{cols} grid with {empty} empty {plural(empty, 'room', 'rooms')}. Every gate, "
-                     f"{listed(gates)}, joins the queue at distance 0.",
-               "ko": f"{rows}×{cols} 격자에 빈 방이 {empty}개 있습니다. 문 {g}개, {listed(gates)} 칸이 모두 거리 0으로 "
+                     f"{listed_cells(gates)}, joins the queue at distance 0.",
+               "ko": f"{rows}×{cols} 격자에 빈 방이 {empty}개 있습니다. 문 {g}개, {listed_cells(gates)} 칸이 모두 거리 0으로 "
                      f"큐에 들어갑니다."},
               lit=gates, queue_marks={"good": list(range(g))},
-              moves=[move(at("rooms", list(p)), at("queue", i), value=name(p)) for i, p in enumerate(gates)])
+              moves=[move(at("rooms", list(p)), at("queue", i), value=cell_name(p)) for i, p in enumerate(gates)])
 
     def flush():
         """One frame for the rooms in a row at the front that filled nothing."""
@@ -87,9 +79,9 @@ def solve(rooms, run):
         k = leaving
         gone = queue[:k]
         end = {"en": " The queue is empty.", "ko": " 큐가 비었습니다."} if k == len(queue) else {"en": "", "ko": ""}
-        frame({"en": f"{listed(gone)} {plural(k, 'leaves', 'leave')} the front: every neighbour is a wall, "
+        frame({"en": f"{listed_cells(gone)} {plural(k, 'leaves', 'leave')} the front: every neighbour is a wall, "
                      f"a gate or already filled." + end["en"],
-               "ko": f"{listed(gone)} 칸이 큐 앞에서 나오지만, 이웃이 모두 벽이거나 문이거나 이미 채워졌습니다."
+               "ko": f"{listed_cells(gone)} 칸이 큐 앞에서 나오지만, 이웃이 모두 벽이거나 문이거나 이미 채워졌습니다."
                      + end["ko"]},
               lit=gone, queue_marks={"lit": list(range(k))}, moves=[move(at("queue", i)) for i in range(k)])
         del queue[:k]
@@ -111,10 +103,10 @@ def solve(rooms, run):
         for nr, nc in added:
             rooms[nr][nc] = d
         n = len(added)
-        frame({"en": f"({name((r, c))}) leaves the front at distance {rooms[r][c]}: {listed(added)} "
+        frame({"en": f"({cell_name((r, c))}) leaves the front at distance {rooms[r][c]}: {listed_cells(added)} "
                      f"{plural(n, 'is an empty room', 'are empty rooms')}, so {plural(n, 'it gets', 'they get')} "
                      f"{rooms[r][c]} + 1 = {d}.",
-               "ko": f"거리 {rooms[r][c]}인 ({name((r, c))}) 칸이 큐 앞에서 나옵니다. 빈 방 {listed(added)} 칸은 "
+               "ko": f"거리 {rooms[r][c]}인 ({cell_name((r, c))}) 칸이 큐 앞에서 나옵니다. 빈 방 {listed_cells(added)} 칸은 "
                      f"거리 {rooms[r][c]} + 1 = {josa(d, '을를')} 받습니다."},
               lit=[(r, c)], good=added, queue_marks={"lit": [0]},
               moves=[move(at("queue", 0), at("rooms", list(p)), value=str(d)) for p in added])
@@ -125,7 +117,7 @@ def solve(rooms, run):
                      f"{d - 1}.",
                "ko": f"새로 채운 방 {n}개가 거리 {d - 1}의 칸들 뒤로 큐에 들어갑니다."},
               good=added, queue_marks={"good": list(range(back, len(queue)))},
-              moves=[move(at("rooms", list(p)), at("queue", back + j), value=name(p)) for j, p in enumerate(added)])
+              moves=[move(at("rooms", list(p)), at("queue", back + j), value=cell_name(p)) for j, p in enumerate(added)])
         i = 0
     flush()
     result = driver_list(rooms)
@@ -136,7 +128,7 @@ def solve(rooms, run):
                "ko": f"문이 없으니 어떤 방에도 닿지 않아 {empty}개 모두 INF(2147483647)로 남습니다. 답은 {result}입니다."},
               lit=left, answer=result)
     else:
-        unreached = ({"en": f", and {listed(left)} stayed INF", "ko": f"고 {listed(left)} 칸은 INF로 남았습니다"}
+        unreached = ({"en": f", and {listed_cells(left)} stayed INF", "ko": f"고 {listed_cells(left)} 칸은 INF로 남았습니다"}
                      if left else {"en": "", "ko": ""})
         frame({"en": f"Every room reachable now holds its distance to the nearest gate"
                      f"{unreached['en']}. Answer: {result}.",

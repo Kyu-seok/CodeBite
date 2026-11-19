@@ -15,7 +15,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import josa, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import josa, listed, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, move  # noqa: E402
 
 SLUG = "two-shift-baristas"
@@ -51,10 +51,6 @@ def graph(conflicts):
     order += [v for v in range(len(conflicts)) if v not in order]
     return edges, {"baristas": {"nodes": [{"id": v} for v in order],
                                 "edges": [{"from": a, "to": b} for a, b in edges]}}
-
-
-def listed(nums):
-    return ", ".join(str(v) for v in nums)
 
 
 def listed_josa(nums, particle):
