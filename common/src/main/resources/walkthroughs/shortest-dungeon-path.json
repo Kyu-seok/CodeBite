@@ -1,0 +1,2053 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Shortest Dungeon Path",
+  "ko": "최단 던전 경로"
+ },
+ "approach": {
+  "en": "BFS from (0, 0), stepping to all 8 neighbours: tiles leave the queue in order of how many tiles their path has, so the first time the far corner leaves the front, its count is the shortest path.",
+  "ko": "(0, 0)에서 8방향 이웃으로 BFS를 합니다. 칸은 경로의 칸 수 순서대로 큐에서 나오므로, 반대편 모서리가 처음 큐 앞에서 나올 때의 칸 수가 가장 짧은 경로입니다."
+ },
+ "views": [
+  {
+   "id": "board",
+   "type": "grid",
+   "title": {
+    "en": "board (tag: tiles on the path so far)",
+    "ko": "board (태그: 지금까지 경로의 칸 수)"
+   },
+   "values": {
+    "0": {
+     "label": {
+      "en": "walkable",
+      "ko": "통과 가능"
+     },
+     "tone": "plain"
+    },
+    "1": {
+     "label": {
+      "en": "blocked",
+      "ko": "막힘"
+     },
+     "tone": "wall"
+    }
+   }
+  },
+  {
+   "id": "queue",
+   "type": "queue",
+   "title": {
+    "en": "queue (tag: tiles)",
+    "ko": "큐 (태그: 칸 수)"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "board = [[0,0],[0,0]]",
+   "expected": "2",
+   "frames": [
+    {
+     "caption": {
+      "en": "A 2×2 board. Walk from (0,0) to (1,1), stepping to any of the 8 tiles around, and count the tiles on the shortest path.",
+      "ko": "2×2 보드입니다. 주변 8칸 중 어디로든 걸어 (0,0)에서 (1,1)까지 가며, 가장 짧은 경로의 칸 수를 셉니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         0,
+         0
+        ],
+        [
+         0,
+         0
+        ]
+       ],
+       "tags": [],
+       "marks": {
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": []
+       }
+      },
+      "queue": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Both corners are walkable. (0,0) starts a path of 1 tile and joins the queue.",
+      "ko": "두 모서리 모두 통과할 수 있습니다. (0,0) 칸이 칸 수 1인 경로로 시작해 큐에 들어갑니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         0,
+         0
+        ],
+        [
+         0,
+         0
+        ]
+       ],
+       "tags": [
+        [
+         0,
+         0,
+         "1"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         [
+          0,
+          0
+         ]
+        ],
+        "lit": []
+       }
+      },
+      "queue": {
+       "values": [
+        "0,0"
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "board",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "board",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "queue",
+        "at": 0
+       },
+       "value": "0,0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "(0,0) leaves the front with 1 tile: (0,1), (1,0), (1,1) are walkable and not reached yet, so they get 1 + 1 = 2.",
+      "ko": "칸 수 1인 (0,0) 칸이 큐 앞에서 나옵니다. 통과 가능하고 아직 닿지 않은 (0,1), (1,0), (1,1) 칸은 1 + 1 = 2를 받습니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         0,
+         0
+        ],
+        [
+         0,
+         0
+        ]
+       ],
+       "tags": [
+        [
+         0,
+         0,
+         "1"
+        ],
+        [
+         0,
+         1,
+         "2"
+        ],
+        [
+         1,
+         0,
+         "2"
+        ],
+        [
+         1,
+         1,
+         "2"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          0,
+          0
+         ]
+        ]
+       }
+      },
+      "queue": {
+       "values": [
+        "0,0"
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "queue",
+        "at": 0
+       },
+       "to": {
+        "view": "board",
+        "at": [
+         0,
+         1
+        ]
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "queue",
+        "at": 0
+       },
+       "to": {
+        "view": "board",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "queue",
+        "at": 0
+       },
+       "to": {
+        "view": "board",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "value": "2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "They join the back of the queue, after every tile with 1 tile.",
+      "ko": "새로 닿은 칸 3개가 칸 수 1인 칸들 뒤로 큐에 들어갑니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         0,
+         0
+        ],
+        [
+         0,
+         0
+        ]
+       ],
+       "tags": [
+        [
+         0,
+         0,
+         "1"
+        ],
+        [
+         0,
+         1,
+         "2"
+        ],
+        [
+         1,
+         0,
+         "2"
+        ],
+        [
+         1,
+         1,
+         "2"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": []
+       }
+      },
+      "queue": {
+       "values": [
+        "0,1",
+        "1,0",
+        "1,1"
+       ],
+       "tags": [
+        [
+         0,
+         "2"
+        ],
+        [
+         1,
+         "2"
+        ],
+        [
+         2,
+         "2"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0,
+         1,
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "board",
+        "at": [
+         0,
+         1
+        ]
+       },
+       "to": {
+        "view": "queue",
+        "at": 0
+       },
+       "value": "0,1"
+      },
+      {
+       "from": {
+        "view": "board",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "queue",
+        "at": 1
+       },
+       "value": "1,0"
+      },
+      {
+       "from": {
+        "view": "board",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "queue",
+        "at": 2
+       },
+       "value": "1,1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "(0,1), (1,0) leave the front: no tile around them is walkable and not reached yet.",
+      "ko": "(0,1), (1,0) 칸이 큐 앞에서 나오지만, 주변에 통과 가능하면서 아직 닿지 않은 칸이 없습니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         0,
+         0
+        ],
+        [
+         0,
+         0
+        ]
+       ],
+       "tags": [
+        [
+         0,
+         0,
+         "1"
+        ],
+        [
+         0,
+         1,
+         "2"
+        ],
+        [
+         1,
+         0,
+         "2"
+        ],
+        [
+         1,
+         1,
+         "2"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": [
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ]
+        ]
+       }
+      },
+      "queue": {
+       "values": [
+        "0,1",
+        "1,0",
+        "1,1"
+       ],
+       "tags": [
+        [
+         0,
+         "2"
+        ],
+        [
+         1,
+         "2"
+        ],
+        [
+         2,
+         "2"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "queue",
+        "at": 0
+       }
+      },
+      {
+       "from": {
+        "view": "queue",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "(1,1) leaves the front: it is the far corner, reached on a path of 2 tiles, (0,0) → (1,1). Answer: 2.",
+      "ko": "(1,1) 칸이 큐 앞에서 나옵니다. 반대편 모서리이고 (0,0) → (1,1) 경로의 칸 2개로 닿았으므로 답은 2입니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         0,
+         0
+        ],
+        [
+         0,
+         0
+        ]
+       ],
+       "tags": [
+        [
+         0,
+         0,
+         "1"
+        ],
+        [
+         0,
+         1,
+         "2"
+        ],
+        [
+         1,
+         0,
+         "2"
+        ],
+        [
+         1,
+         1,
+         "2"
+        ]
+       ],
+       "marks": {
+        "path": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "bad": [],
+        "good": [],
+        "lit": []
+       }
+      },
+      "queue": {
+       "values": [
+        "1,1"
+       ],
+       "tags": [
+        [
+         0,
+         "2"
+        ]
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      }
+     },
+     "answer": "2"
+    }
+   ],
+   "sampleInput": "[[0,0],[0,0]]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "board = [[0,1,0],[0,0,0],[1,0,0]]",
+   "expected": "3",
+   "frames": [
+    {
+     "caption": {
+      "en": "A 3×3 board. Walk from (0,0) to (2,2), stepping to any of the 8 tiles around, and count the tiles on the shortest path.",
+      "ko": "3×3 보드입니다. 주변 8칸 중 어디로든 걸어 (0,0)에서 (2,2)까지 가며, 가장 짧은 경로의 칸 수를 셉니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         0,
+         1,
+         0
+        ],
+        [
+         0,
+         0,
+         0
+        ],
+        [
+         1,
+         0,
+         0
+        ]
+       ],
+       "tags": [],
+       "marks": {
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": []
+       }
+      },
+      "queue": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Both corners are walkable. (0,0) starts a path of 1 tile and joins the queue.",
+      "ko": "두 모서리 모두 통과할 수 있습니다. (0,0) 칸이 칸 수 1인 경로로 시작해 큐에 들어갑니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         0,
+         1,
+         0
+        ],
+        [
+         0,
+         0,
+         0
+        ],
+        [
+         1,
+         0,
+         0
+        ]
+       ],
+       "tags": [
+        [
+         0,
+         0,
+         "1"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         [
+          0,
+          0
+         ]
+        ],
+        "lit": []
+       }
+      },
+      "queue": {
+       "values": [
+        "0,0"
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "board",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "board",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "queue",
+        "at": 0
+       },
+       "value": "0,0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "(0,0) leaves the front with 1 tile: (1,0), (1,1) are walkable and not reached yet, so they get 1 + 1 = 2.",
+      "ko": "칸 수 1인 (0,0) 칸이 큐 앞에서 나옵니다. 통과 가능하고 아직 닿지 않은 (1,0), (1,1) 칸은 1 + 1 = 2를 받습니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         0,
+         1,
+         0
+        ],
+        [
+         0,
+         0,
+         0
+        ],
+        [
+         1,
+         0,
+         0
+        ]
+       ],
+       "tags": [
+        [
+         0,
+         0,
+         "1"
+        ],
+        [
+         1,
+         0,
+         "2"
+        ],
+        [
+         1,
+         1,
+         "2"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          0,
+          0
+         ]
+        ]
+       }
+      },
+      "queue": {
+       "values": [
+        "0,0"
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "queue",
+        "at": 0
+       },
+       "to": {
+        "view": "board",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "queue",
+        "at": 0
+       },
+       "to": {
+        "view": "board",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "value": "2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "They join the back of the queue, after every tile with 1 tile.",
+      "ko": "새로 닿은 칸 2개가 칸 수 1인 칸들 뒤로 큐에 들어갑니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         0,
+         1,
+         0
+        ],
+        [
+         0,
+         0,
+         0
+        ],
+        [
+         1,
+         0,
+         0
+        ]
+       ],
+       "tags": [
+        [
+         0,
+         0,
+         "1"
+        ],
+        [
+         1,
+         0,
+         "2"
+        ],
+        [
+         1,
+         1,
+         "2"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": []
+       }
+      },
+      "queue": {
+       "values": [
+        "1,0",
+        "1,1"
+       ],
+       "tags": [
+        [
+         0,
+         "2"
+        ],
+        [
+         1,
+         "2"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "board",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "queue",
+        "at": 0
+       },
+       "value": "1,0"
+      },
+      {
+       "from": {
+        "view": "board",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "queue",
+        "at": 1
+       },
+       "value": "1,1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "(1,0) leaves the front with 2 tiles: (2,1) is walkable and not reached yet, so it gets 2 + 1 = 3.",
+      "ko": "칸 수 2인 (1,0) 칸이 큐 앞에서 나옵니다. 통과 가능하고 아직 닿지 않은 (2,1) 칸은 2 + 1 = 3을 받습니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         0,
+         1,
+         0
+        ],
+        [
+         0,
+         0,
+         0
+        ],
+        [
+         1,
+         0,
+         0
+        ]
+       ],
+       "tags": [
+        [
+         0,
+         0,
+         "1"
+        ],
+        [
+         1,
+         0,
+         "2"
+        ],
+        [
+         1,
+         1,
+         "2"
+        ],
+        [
+         2,
+         1,
+         "3"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ]
+        ]
+       }
+      },
+      "queue": {
+       "values": [
+        "1,0",
+        "1,1"
+       ],
+       "tags": [
+        [
+         0,
+         "2"
+        ],
+        [
+         1,
+         "2"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "queue",
+        "at": 0
+       },
+       "to": {
+        "view": "board",
+        "at": [
+         2,
+         1
+        ]
+       },
+       "value": "3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "It joins the back of the queue, after every tile with 2 tiles.",
+      "ko": "새로 닿은 칸 1개가 칸 수 2인 칸들 뒤로 큐에 들어갑니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         0,
+         1,
+         0
+        ],
+        [
+         0,
+         0,
+         0
+        ],
+        [
+         1,
+         0,
+         0
+        ]
+       ],
+       "tags": [
+        [
+         0,
+         0,
+         "1"
+        ],
+        [
+         1,
+         0,
+         "2"
+        ],
+        [
+         1,
+         1,
+         "2"
+        ],
+        [
+         2,
+         1,
+         "3"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": []
+       }
+      },
+      "queue": {
+       "values": [
+        "1,1",
+        "2,1"
+       ],
+       "tags": [
+        [
+         0,
+         "2"
+        ],
+        [
+         1,
+         "3"
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "board",
+        "at": [
+         2,
+         1
+        ]
+       },
+       "to": {
+        "view": "queue",
+        "at": 1
+       },
+       "value": "2,1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "(1,1) leaves the front with 2 tiles: (0,2), (1,2), (2,2) are walkable and not reached yet, so they get 2 + 1 = 3.",
+      "ko": "칸 수 2인 (1,1) 칸이 큐 앞에서 나옵니다. 통과 가능하고 아직 닿지 않은 (0,2), (1,2), (2,2) 칸은 2 + 1 = 3을 받습니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         0,
+         1,
+         0
+        ],
+        [
+         0,
+         0,
+         0
+        ],
+        [
+         1,
+         0,
+         0
+        ]
+       ],
+       "tags": [
+        [
+         0,
+         0,
+         "1"
+        ],
+        [
+         1,
+         0,
+         "2"
+        ],
+        [
+         1,
+         1,
+         "2"
+        ],
+        [
+         2,
+         1,
+         "3"
+        ],
+        [
+         0,
+         2,
+         "3"
+        ],
+        [
+         1,
+         2,
+         "3"
+        ],
+        [
+         2,
+         2,
+         "3"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         [
+          0,
+          2
+         ],
+         [
+          1,
+          2
+         ],
+         [
+          2,
+          2
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "queue": {
+       "values": [
+        "1,1",
+        "2,1"
+       ],
+       "tags": [
+        [
+         0,
+         "2"
+        ],
+        [
+         1,
+         "3"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "queue",
+        "at": 0
+       },
+       "to": {
+        "view": "board",
+        "at": [
+         0,
+         2
+        ]
+       },
+       "value": "3"
+      },
+      {
+       "from": {
+        "view": "queue",
+        "at": 0
+       },
+       "to": {
+        "view": "board",
+        "at": [
+         1,
+         2
+        ]
+       },
+       "value": "3"
+      },
+      {
+       "from": {
+        "view": "queue",
+        "at": 0
+       },
+       "to": {
+        "view": "board",
+        "at": [
+         2,
+         2
+        ]
+       },
+       "value": "3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "They join the back of the queue, after every tile with 2 tiles.",
+      "ko": "새로 닿은 칸 3개가 칸 수 2인 칸들 뒤로 큐에 들어갑니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         0,
+         1,
+         0
+        ],
+        [
+         0,
+         0,
+         0
+        ],
+        [
+         1,
+         0,
+         0
+        ]
+       ],
+       "tags": [
+        [
+         0,
+         0,
+         "1"
+        ],
+        [
+         1,
+         0,
+         "2"
+        ],
+        [
+         1,
+         1,
+         "2"
+        ],
+        [
+         2,
+         1,
+         "3"
+        ],
+        [
+         0,
+         2,
+         "3"
+        ],
+        [
+         1,
+         2,
+         "3"
+        ],
+        [
+         2,
+         2,
+         "3"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         [
+          0,
+          2
+         ],
+         [
+          1,
+          2
+         ],
+         [
+          2,
+          2
+         ]
+        ],
+        "lit": []
+       }
+      },
+      "queue": {
+       "values": [
+        "2,1",
+        "0,2",
+        "1,2",
+        "2,2"
+       ],
+       "tags": [
+        [
+         0,
+         "3"
+        ],
+        [
+         1,
+         "3"
+        ],
+        [
+         2,
+         "3"
+        ],
+        [
+         3,
+         "3"
+        ]
+       ],
+       "marks": {
+        "good": [
+         1,
+         2,
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "board",
+        "at": [
+         0,
+         2
+        ]
+       },
+       "to": {
+        "view": "queue",
+        "at": 1
+       },
+       "value": "0,2"
+      },
+      {
+       "from": {
+        "view": "board",
+        "at": [
+         1,
+         2
+        ]
+       },
+       "to": {
+        "view": "queue",
+        "at": 2
+       },
+       "value": "1,2"
+      },
+      {
+       "from": {
+        "view": "board",
+        "at": [
+         2,
+         2
+        ]
+       },
+       "to": {
+        "view": "queue",
+        "at": 3
+       },
+       "value": "2,2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "(2,1), (0,2), (1,2) leave the front: no tile around them is walkable and not reached yet.",
+      "ko": "(2,1), (0,2), (1,2) 칸이 큐 앞에서 나오지만, 주변에 통과 가능하면서 아직 닿지 않은 칸이 없습니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         0,
+         1,
+         0
+        ],
+        [
+         0,
+         0,
+         0
+        ],
+        [
+         1,
+         0,
+         0
+        ]
+       ],
+       "tags": [
+        [
+         0,
+         0,
+         "1"
+        ],
+        [
+         1,
+         0,
+         "2"
+        ],
+        [
+         1,
+         1,
+         "2"
+        ],
+        [
+         2,
+         1,
+         "3"
+        ],
+        [
+         0,
+         2,
+         "3"
+        ],
+        [
+         1,
+         2,
+         "3"
+        ],
+        [
+         2,
+         2,
+         "3"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": [
+         [
+          2,
+          1
+         ],
+         [
+          0,
+          2
+         ],
+         [
+          1,
+          2
+         ]
+        ]
+       }
+      },
+      "queue": {
+       "values": [
+        "2,1",
+        "0,2",
+        "1,2",
+        "2,2"
+       ],
+       "tags": [
+        [
+         0,
+         "3"
+        ],
+        [
+         1,
+         "3"
+        ],
+        [
+         2,
+         "3"
+        ],
+        [
+         3,
+         "3"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "queue",
+        "at": 0
+       }
+      },
+      {
+       "from": {
+        "view": "queue",
+        "at": 1
+       }
+      },
+      {
+       "from": {
+        "view": "queue",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "(2,2) leaves the front: it is the far corner, reached on a path of 3 tiles, (0,0) → (1,1) → (2,2). Answer: 3.",
+      "ko": "(2,2) 칸이 큐 앞에서 나옵니다. 반대편 모서리이고 (0,0) → (1,1) → (2,2) 경로의 칸 3개로 닿았으므로 답은 3입니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         0,
+         1,
+         0
+        ],
+        [
+         0,
+         0,
+         0
+        ],
+        [
+         1,
+         0,
+         0
+        ]
+       ],
+       "tags": [
+        [
+         0,
+         0,
+         "1"
+        ],
+        [
+         1,
+         0,
+         "2"
+        ],
+        [
+         1,
+         1,
+         "2"
+        ],
+        [
+         2,
+         1,
+         "3"
+        ],
+        [
+         0,
+         2,
+         "3"
+        ],
+        [
+         1,
+         2,
+         "3"
+        ],
+        [
+         2,
+         2,
+         "3"
+        ]
+       ],
+       "marks": {
+        "path": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          2
+         ]
+        ],
+        "bad": [],
+        "good": [],
+        "lit": []
+       }
+      },
+      "queue": {
+       "values": [
+        "2,2"
+       ],
+       "tags": [
+        [
+         0,
+         "3"
+        ]
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      }
+     },
+     "answer": "3"
+    }
+   ],
+   "sampleInput": "[[0,1,0],[0,0,0],[1,0,0]]"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "board = [[0,1],[1,0]]",
+   "expected": "2",
+   "frames": [
+    {
+     "caption": {
+      "en": "A 2×2 board. Walk from (0,0) to (1,1), stepping to any of the 8 tiles around, and count the tiles on the shortest path.",
+      "ko": "2×2 보드입니다. 주변 8칸 중 어디로든 걸어 (0,0)에서 (1,1)까지 가며, 가장 짧은 경로의 칸 수를 셉니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         0,
+         1
+        ],
+        [
+         1,
+         0
+        ]
+       ],
+       "tags": [],
+       "marks": {
+        "path": [],
+        "bad": [],
+        "good": [],
+        "lit": []
+       }
+      },
+      "queue": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Both corners are walkable. (0,0) starts a path of 1 tile and joins the queue.",
+      "ko": "두 모서리 모두 통과할 수 있습니다. (0,0) 칸이 칸 수 1인 경로로 시작해 큐에 들어갑니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         0,
+         1
+        ],
+        [
+         1,
+         0
+        ]
+       ],
+       "tags": [
+        [
+         0,
+         0,
+         "1"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         [
+          0,
+          0
+         ]
+        ],
+        "lit": []
+       }
+      },
+      "queue": {
+       "values": [
+        "0,0"
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "board",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "board",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "queue",
+        "at": 0
+       },
+       "value": "0,0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "(0,0) leaves the front with 1 tile: (1,1) is walkable and not reached yet, so it gets 1 + 1 = 2.",
+      "ko": "칸 수 1인 (0,0) 칸이 큐 앞에서 나옵니다. 통과 가능하고 아직 닿지 않은 (1,1) 칸은 1 + 1 = 2를 받습니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         0,
+         1
+        ],
+        [
+         1,
+         0
+        ]
+       ],
+       "tags": [
+        [
+         0,
+         0,
+         "1"
+        ],
+        [
+         1,
+         1,
+         "2"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          0,
+          0
+         ]
+        ]
+       }
+      },
+      "queue": {
+       "values": [
+        "0,0"
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "queue",
+        "at": 0
+       },
+       "to": {
+        "view": "board",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "value": "2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "It joins the back of the queue, after every tile with 1 tile.",
+      "ko": "새로 닿은 칸 1개가 칸 수 1인 칸들 뒤로 큐에 들어갑니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         0,
+         1
+        ],
+        [
+         1,
+         0
+        ]
+       ],
+       "tags": [
+        [
+         0,
+         0,
+         "1"
+        ],
+        [
+         1,
+         1,
+         "2"
+        ]
+       ],
+       "marks": {
+        "path": [],
+        "bad": [],
+        "good": [
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": []
+       }
+      },
+      "queue": {
+       "values": [
+        "1,1"
+       ],
+       "tags": [
+        [
+         0,
+         "2"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "board",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "queue",
+        "at": 0
+       },
+       "value": "1,1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "(1,1) leaves the front: it is the far corner, reached on a path of 2 tiles, (0,0) → (1,1). Answer: 2.",
+      "ko": "(1,1) 칸이 큐 앞에서 나옵니다. 반대편 모서리이고 (0,0) → (1,1) 경로의 칸 2개로 닿았으므로 답은 2입니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         0,
+         1
+        ],
+        [
+         1,
+         0
+        ]
+       ],
+       "tags": [
+        [
+         0,
+         0,
+         "1"
+        ],
+        [
+         1,
+         1,
+         "2"
+        ]
+       ],
+       "marks": {
+        "path": [
+         [
+          0,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "bad": [],
+        "good": [],
+        "lit": []
+       }
+      },
+      "queue": {
+       "values": [
+        "1,1"
+       ],
+       "tags": [
+        [
+         0,
+         "2"
+        ]
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      }
+     },
+     "answer": "2"
+    }
+   ],
+   "sampleInput": "[[0,1],[1,0]]"
+  }
+ ]
+}
