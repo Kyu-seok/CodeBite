@@ -142,7 +142,7 @@ for number, sample in enumerate(sample_cases(SLUG), start=1):
     solve(n, prereqs, run)
 # No sample has a cycle: an extra run where tasks 2 and 3 wait on each other, so the order stops at 2 of 4.
 n, prereqs = 4, [[1, 0], [2, 1], [3, 2], [2, 3]]
-run = wt.run({"en": "With a cycle", "ko": "사이클이 있을 때"}, input=f"numTasks = {n}, prereqs = {driver_list(prereqs)}",
+run = wt.run({"en": "Extra: with a cycle", "ko": "추가: 사이클이 있을 때"}, input=f"numTasks = {n}, prereqs = {driver_list(prereqs)}",
              expected="VALID", extra=True, setup={"tasks": {"edges": [{"from": a, "to": b} for a, b in prereqs]}})
 solve(n, prereqs, run)
 wt.write(walkthrough_path(SLUG))

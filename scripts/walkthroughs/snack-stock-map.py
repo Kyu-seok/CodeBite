@@ -171,7 +171,7 @@ for number, sample in enumerate(sample_cases(SLUG), start=1):
 # No sample puts two keys in one bucket: this run chains 2070 behind 1 (2070 % 2069 = 1), so its lookups walk past 1.
 ops = ["ChainedMap", "set", "set", "lookup", "erase", "lookup"]
 args = [[], [1, 10], [2070, 5], [2070], [2070], [2070]]
-run = wt.run({"en": "Two keys, one bucket", "ko": "한 버킷에 키 두 개"}, input=f"{driver_list(ops)}\n{driver_list(args)}",
+run = wt.run({"en": "Extra: two keys, one bucket", "ko": "추가: 한 버킷에 키 두 개"}, input=f"{driver_list(ops)}\n{driver_list(args)}",
              expected="[null,null,null,5,null,-1]", extra=True)
 solve(ops, args, run)
 wt.write(walkthrough_path(SLUG))

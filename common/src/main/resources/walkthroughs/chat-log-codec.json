@@ -2489,8 +2489,8 @@
   },
   {
    "label": {
-    "en": "Markers inside",
-    "ko": "메시지 안의 구분자"
+    "en": "Extra: markers inside",
+    "ko": "추가: 메시지 안의 구분자"
    },
    "input": "messages = [\"7#x\",\"#\"]",
    "expected": "[\"7#x\",\"#\"]",

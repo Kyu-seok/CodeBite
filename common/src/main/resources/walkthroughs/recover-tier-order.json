@@ -2899,8 +2899,8 @@
   },
   {
    "label": {
-    "en": "Rules in a cycle",
-    "ko": "순환하는 규칙"
+    "en": "Extra: rules in a cycle",
+    "ko": "추가: 순환하는 규칙"
    },
    "input": "tags = [\"a\",\"b\",\"cc\",\"cb\"]",
    "expected": "",

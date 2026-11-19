@@ -3104,8 +3104,8 @@
   },
   {
    "label": {
-    "en": "With a cycle",
-    "ko": "사이클이 있을 때"
+    "en": "Extra: with a cycle",
+    "ko": "추가: 사이클이 있을 때"
    },
    "input": "numTasks = 4, prereqs = [[1,0],[2,1],[3,2],[2,3]]",
    "expected": "VALID",

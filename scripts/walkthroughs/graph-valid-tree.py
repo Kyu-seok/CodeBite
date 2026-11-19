@@ -137,7 +137,7 @@ for number, sample in enumerate(sample_cases(SLUG), start=1):
     run = sample_run(wt, number, sample, input=f"n = {n}, edges = {lines[1].strip()}", setup=setup)
     solve(n, edges, run)
 n, edges = 4, [[0, 1], [1, 2], [2, 0]]
-run = wt.run({"en": "n - 1 edges, with a cycle", "ko": "간선 n - 1개, 사이클 있음"},
+run = wt.run({"en": "Extra: n - 1 edges, with a cycle", "ko": "추가: 간선 n - 1개, 사이클 있음"},
              input=f"n = {n}, edges = {driver_list(edges)}", expected="false", extra=True,
              setup={"graph": {"edges": [{"from": x, "to": y} for x, y in edges]}})
 solve(n, edges, run)
