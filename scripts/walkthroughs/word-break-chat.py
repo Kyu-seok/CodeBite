@@ -111,7 +111,7 @@ def solve(message, words, run):
               moves=moves)
     if not splittable[n]:
         frame({"en": f"Cell {n} is F: no split of {q(message)} uses only known words. Answer: false.",
-               "ko": f"{n}번 칸이 F입니다. {q(message)} 메시지는 아는 단어로만 나눌 수 없습니다. 답은 false입니다."},
+               "ko": f"{n}번 칸이 F이므로 {q(message)} 메시지는 아는 단어로만 나눌 수 없습니다. 답은 false입니다."},
               done=True, split_marks={"bad": [n]}, answer="false")
         return
     chain, parts, end = [n], [], n
@@ -122,9 +122,9 @@ def solve(message, words, run):
     parts.reverse()
     split_words = [message[a:b] for a, b in parts]
     joined = " + ".join(q(w) for w in split_words)
-    frame({"en": f"Cell {n} is T. Following each T back to the cell its word started from splits the message "
+    frame({"en": f"Cell {n} is T, and following each T back to the cell its word started from splits the message "
                  f"into {joined}. Answer: true.",
-           "ko": f"{n}번 칸이 T입니다. 각 T 칸을 그 단어가 시작한 칸으로 거슬러 가면 메시지가 이렇게 나뉩니다: {joined}. "
+           "ko": f"{n}번 칸이 T이고, 각 T 칸을 그 단어가 시작한 칸으로 거슬러 가면 메시지가 이렇게 나뉩니다: {joined}. "
                  "답은 true입니다."},
           done=True, spans={f"p{k}": span(a, b - 1, w, mark="path", below=True)
                             for k, ((a, b), w) in enumerate(zip(parts, split_words))},

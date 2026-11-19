@@ -76,9 +76,9 @@ def solve(digits, run):
                "ko": "첫 숫자가 0인데 어떤 조각도 0으로 시작할 수 없으므로 가능한 분할이 없습니다. 답은 0입니다."},
               1, i=0, digit_marks={"bad": [0]}, way_marks={"bad": [1]}, done=True, answer="0")
         return
-    frame({"en": f"{n} digits. The empty prefix has 1 way, splitting nothing. The first digit {digits[0]} is not 0, "
+    frame({"en": f"{n} digits. The empty prefix has 1 way, splitting nothing, and the first digit {digits[0]} is not 0, "
                  "so it is a part on its own: 1 way.",
-           "ko": f"숫자가 {n}개입니다. 빈 앞부분은 아무것도 나누지 않는 1가지입니다. 첫 숫자 "
+           "ko": f"숫자가 {n}개입니다. 빈 앞부분은 아무것도 나누지 않는 1가지이고, 첫 숫자 "
                  f"{josa(int(digits[0]), '은는')} 0이 아니라 혼자 한 조각이 되므로 1가지입니다."},
           1, i=0, digit_marks={"lit": [0]}, way_marks={"good": [0, 1]})
     before, current = 1, 1
@@ -121,7 +121,7 @@ def solve(digits, run):
               moves=moves)
     frame({"en": f"Every digit read: the whole string of {n} digits splits {current} "
                  f"{'way' if current == 1 else 'ways'}. Answer: {current}.",
-           "ko": f"모든 숫자를 읽었습니다. {n}자리 전체를 나누는 방법은 {current}가지입니다. 답은 {current}입니다."},
+           "ko": f"모든 숫자를 읽었고, {n}자리 전체를 나누는 방법은 {current}가지입니다. 답은 {current}입니다."},
           n, done=True, way_marks={("path" if current else "bad"): [n]}, answer=str(current))
 
 

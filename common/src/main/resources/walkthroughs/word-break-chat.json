@@ -840,8 +840,8 @@
     },
     {
      "caption": {
-      "en": "Cell 11 is T. Following each T back to the cell its word started from splits the message into 'morning' + 'wire'. Answer: true.",
-      "ko": "11번 칸이 T입니다. 각 T 칸을 그 단어가 시작한 칸으로 거슬러 가면 메시지가 이렇게 나뉩니다: 'morning' + 'wire'. 답은 true입니다."
+      "en": "Cell 11 is T, and following each T back to the cell its word started from splits the message into 'morning' + 'wire'. Answer: true.",
+      "ko": "11번 칸이 T이고, 각 T 칸을 그 단어가 시작한 칸으로 거슬러 가면 메시지가 이렇게 나뉩니다: 'morning' + 'wire'. 답은 true입니다."
      },
      "views": {
       "message": {
@@ -1965,8 +1965,8 @@
     },
     {
      "caption": {
-      "en": "Cell 13 is T. Following each T back to the cell its word started from splits the message into 'top' + 'story' + 'alert'. Answer: true.",
-      "ko": "13번 칸이 T입니다. 각 T 칸을 그 단어가 시작한 칸으로 거슬러 가면 메시지가 이렇게 나뉩니다: 'top' + 'story' + 'alert'. 답은 true입니다."
+      "en": "Cell 13 is T, and following each T back to the cell its word started from splits the message into 'top' + 'story' + 'alert'. Answer: true.",
+      "ko": "13번 칸이 T이고, 각 T 칸을 그 단어가 시작한 칸으로 거슬러 가면 메시지가 이렇게 나뉩니다: 'top' + 'story' + 'alert'. 답은 true입니다."
      },
      "views": {
       "message": {
@@ -3006,7 +3006,7 @@
     {
      "caption": {
       "en": "Cell 12 is F: no split of 'breakingnews' uses only known words. Answer: false.",
-      "ko": "12번 칸이 F입니다. 'breakingnews' 메시지는 아는 단어로만 나눌 수 없습니다. 답은 false입니다."
+      "ko": "12번 칸이 F이므로 'breakingnews' 메시지는 아는 단어로만 나눌 수 없습니다. 답은 false입니다."
      },
      "views": {
       "message": {
@@ -3468,7 +3468,7 @@
     {
      "caption": {
       "en": "Cell 6 is F: no split of 'yolomg' uses only known words. Answer: false.",
-      "ko": "6번 칸이 F입니다. 'yolomg' 메시지는 아는 단어로만 나눌 수 없습니다. 답은 false입니다."
+      "ko": "6번 칸이 F이므로 'yolomg' 메시지는 아는 단어로만 나눌 수 없습니다. 답은 false입니다."
      },
      "views": {
       "message": {

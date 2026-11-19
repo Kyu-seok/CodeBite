@@ -106,10 +106,10 @@ def solve(scores, run):
     chain.reverse()
     picked = json.dumps([scores[j] for j in chain], separators=(",", ":"))
     frame({"en": f"Every score read: tails holds {best} {'end' if best == 1 else 'ends'}, so the longest rising "
-                 f"run has length {best}. Following each score back to the one it extended gives {picked}. "
+                 f"run has length {best}; following each score back to the one it extended gives {picked}. "
                  f"Answer: {best}.",
            "ko": f"모든 점수를 읽었고 tails에 끝이 {best}개 있으므로 가장 긴 증가 부분수열의 길이는 "
-                 f"{best}입니다. 각 점수가 늘린 점수를 거슬러 가면 {picked}입니다. 답은 {best}입니다."},
+                 f"{best}이고, 각 점수가 늘린 점수를 거슬러 가면 {picked}입니다. 답은 {best}입니다."},
           done=True, score_marks={"path": chain, "dim": [j for j in range(n) if j not in chain]},
           tail_marks={"path": list(range(best))}, answer=str(best))
 

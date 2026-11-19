@@ -80,7 +80,7 @@ def solve(tastiness, run):
             frame({"en": f"{n} donuts in a circle, so donuts 0 and {n - 1} are neighbors. First leave out donut 0 "
                          f"and solve donuts 1 to {n - 1} as a line; skip and take start at 0.",
                    "ko": f"도넛 {n}개가 원형으로 놓여 0번과 {n - 1}번 도넛이 이웃입니다. 먼저 0번 도넛을 빼고 "
-                         f"1번부터 {n - 1}번까지를 한 줄로 풉니다. 건너뜀과 고름은 0에서 시작합니다."},
+                         f"1번부터 {n - 1}번까지를 한 줄로 풀고, 건너뜀과 고름은 0에서 시작합니다."},
                   tray_marks={"bad": [out]})
         else:
             skipped = taken = 0

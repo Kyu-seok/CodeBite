@@ -485,7 +485,7 @@
     {
      "caption": {
       "en": "Every centre is done: the box holds 4 palindromes. Answer: 4.",
-      "ko": "모든 가운데를 마쳤습니다. 상자에 회문이 4개 있습니다. 답은 4입니다."
+      "ko": "모든 가운데를 마쳤고, 상자에 회문이 4개 있습니다. 답은 4입니다."
      },
      "views": {
       "doodle": {
@@ -1206,7 +1206,7 @@
     {
      "caption": {
       "en": "Every centre is done: the box holds 10 palindromes. Answer: 10.",
-      "ko": "모든 가운데를 마쳤습니다. 상자에 회문이 10개 있습니다. 답은 10입니다."
+      "ko": "모든 가운데를 마쳤고, 상자에 회문이 10개 있습니다. 답은 10입니다."
      },
      "views": {
       "doodle": {

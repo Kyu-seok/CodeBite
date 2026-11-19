@@ -29,8 +29,8 @@
    "frames": [
     {
      "caption": {
-      "en": "Level 0 is the start: 1 way, no jumps. Level 1 is reached only by one jump of 1, so 1 way. The goal is level 4.",
-      "ko": "레벨 0은 출발점이라 점프 없이 1가지입니다. 레벨 1은 1레벨 점프 한 번으로만 가므로 1가지입니다. 목표는 레벨 4입니다."
+      "en": "Level 0 is the start: 1 way, no jumps. Level 1 is reached only by one jump of 1, so 1 way, and the goal is level 4.",
+      "ko": "레벨 0은 출발점이라 점프 없이 1가지입니다. 레벨 1은 1레벨 점프 한 번으로만 가므로 1가지이고, 목표는 레벨 4입니다."
      },
      "views": {
       "ways": {
@@ -293,7 +293,7 @@
     {
      "caption": {
       "en": "Level 4 is reached: 5 jump sequences land exactly on it. Answer: 5.",
-      "ko": "레벨 4에 닿았습니다. 정확히 레벨 4에 도착하는 점프 순서는 5가지입니다. 답은 5입니다."
+      "ko": "레벨 4에 닿았고, 정확히 레벨 4에 도착하는 점프 순서는 5가지입니다. 답은 5입니다."
      },
      "views": {
       "ways": {
@@ -348,8 +348,8 @@
    "frames": [
     {
      "caption": {
-      "en": "Level 0 is the start: 1 way, no jumps. Level 1 is reached only by one jump of 1, so 1 way. The goal is level 5.",
-      "ko": "레벨 0은 출발점이라 점프 없이 1가지입니다. 레벨 1은 1레벨 점프 한 번으로만 가므로 1가지입니다. 목표는 레벨 5입니다."
+      "en": "Level 0 is the start: 1 way, no jumps. Level 1 is reached only by one jump of 1, so 1 way, and the goal is level 5.",
+      "ko": "레벨 0은 출발점이라 점프 없이 1가지입니다. 레벨 1은 1레벨 점프 한 번으로만 가므로 1가지이고, 목표는 레벨 5입니다."
      },
      "views": {
       "ways": {
@@ -695,7 +695,7 @@
     {
      "caption": {
       "en": "Level 5 is reached: 8 jump sequences land exactly on it. Answer: 8.",
-      "ko": "레벨 5에 닿았습니다. 정확히 레벨 5에 도착하는 점프 순서는 8가지입니다. 답은 8입니다."
+      "ko": "레벨 5에 닿았고, 정확히 레벨 5에 도착하는 점프 순서는 8가지입니다. 답은 8입니다."
      },
      "views": {
       "ways": {

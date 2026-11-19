@@ -101,7 +101,7 @@ def solve(doodle, run):
                          f"서로 다르므로 {done_ko}."},
                   left=left, right=right, marks={"bad": [left, right]})
     frame({"en": f"Every centre is done: the box holds {count} palindromes. Answer: {count}.",
-           "ko": f"모든 가운데를 마쳤습니다. 상자에 회문이 {count}개 있습니다. 답은 {count}입니다."},
+           "ko": f"모든 가운데를 마쳤고, 상자에 회문이 {count}개 있습니다. 답은 {count}입니다."},
           out_marks={"path": list(range(count))}, answer=str(count))
 
 

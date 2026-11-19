@@ -719,8 +719,8 @@
     },
     {
      "caption": {
-      "en": "Every score read: tails holds 5 ends, so the longest rising run has length 5. Following each score back to the one it extended gives [2,3,5,8,11]. Answer: 5.",
-      "ko": "모든 점수를 읽었고 tails에 끝이 5개 있으므로 가장 긴 증가 부분수열의 길이는 5입니다. 각 점수가 늘린 점수를 거슬러 가면 [2,3,5,8,11]입니다. 답은 5입니다."
+      "en": "Every score read: tails holds 5 ends, so the longest rising run has length 5; following each score back to the one it extended gives [2,3,5,8,11]. Answer: 5.",
+      "ko": "모든 점수를 읽었고 tails에 끝이 5개 있으므로 가장 긴 증가 부분수열의 길이는 5이고, 각 점수가 늘린 점수를 거슬러 가면 [2,3,5,8,11]입니다. 답은 5입니다."
      },
      "views": {
       "scores": {
@@ -1297,8 +1297,8 @@
     },
     {
      "caption": {
-      "en": "Every score read: tails holds 4 ends, so the longest rising run has length 4. Following each score back to the one it extended gives [2,4,6,8]. Answer: 4.",
-      "ko": "모든 점수를 읽었고 tails에 끝이 4개 있으므로 가장 긴 증가 부분수열의 길이는 4입니다. 각 점수가 늘린 점수를 거슬러 가면 [2,4,6,8]입니다. 답은 4입니다."
+      "en": "Every score read: tails holds 4 ends, so the longest rising run has length 4; following each score back to the one it extended gives [2,4,6,8]. Answer: 4.",
+      "ko": "모든 점수를 읽었고 tails에 끝이 4개 있으므로 가장 긴 증가 부분수열의 길이는 4이고, 각 점수가 늘린 점수를 거슬러 가면 [2,4,6,8]입니다. 답은 4입니다."
      },
      "views": {
       "scores": {
@@ -1657,8 +1657,8 @@
     },
     {
      "caption": {
-      "en": "Every score read: tails holds 1 end, so the longest rising run has length 1. Following each score back to the one it extended gives [5]. Answer: 1.",
-      "ko": "모든 점수를 읽었고 tails에 끝이 1개 있으므로 가장 긴 증가 부분수열의 길이는 1입니다. 각 점수가 늘린 점수를 거슬러 가면 [5]입니다. 답은 1입니다."
+      "en": "Every score read: tails holds 1 end, so the longest rising run has length 1; following each score back to the one it extended gives [5]. Answer: 1.",
+      "ko": "모든 점수를 읽었고 tails에 끝이 1개 있으므로 가장 긴 증가 부분수열의 길이는 1이고, 각 점수가 늘린 점수를 거슬러 가면 [5]입니다. 답은 1입니다."
      },
      "views": {
       "scores": {

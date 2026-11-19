@@ -48,9 +48,9 @@ def solve(n, run):
                         "unread": list(range(level + 1, n + 1))},
                   moves=moves, **answer)
 
-    frame({"en": f"Level 0 is the start: 1 way, no jumps. Level 1 is reached only by one jump of 1, so 1 way. "
-                 f"The goal is level {n}.",
-           "ko": f"레벨 0은 출발점이라 점프 없이 1가지입니다. 레벨 1은 1레벨 점프 한 번으로만 가므로 1가지입니다. "
+    frame({"en": f"Level 0 is the start: 1 way, no jumps. Level 1 is reached only by one jump of 1, so 1 way, "
+                 f"and the goal is level {n}.",
+           "ko": f"레벨 0은 출발점이라 점프 없이 1가지입니다. 레벨 1은 1레벨 점프 한 번으로만 가므로 1가지이고, "
                  f"목표는 레벨 {n}입니다."},
           1, marks={"good": [0, 1]})
     previous, current = 1, 1
@@ -67,7 +67,7 @@ def solve(n, run):
               moves=[move(at("ways", level - 1), at("ways", level), value=str(before_one)),
                      move(at("ways", level - 2), at("ways", level), value=str(before_two))])
     frame({"en": f"Level {n} is reached: {current} jump sequences land exactly on it. Answer: {current}.",
-           "ko": f"레벨 {n}에 닿았습니다. 정확히 레벨 {n}에 도착하는 점프 순서는 {current}가지입니다. "
+           "ko": f"레벨 {n}에 닿았고, 정확히 레벨 {n}에 도착하는 점프 순서는 {current}가지입니다. "
                  f"답은 {current}입니다."},
           n, marks={"path": [n]}, answer=str(current))
 

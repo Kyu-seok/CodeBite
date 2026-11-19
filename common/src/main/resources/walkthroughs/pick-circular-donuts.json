@@ -38,7 +38,7 @@
     {
      "caption": {
       "en": "5 donuts in a circle, so donuts 0 and 4 are neighbors. First leave out donut 0 and solve donuts 1 to 4 as a line; skip and take start at 0.",
-      "ko": "도넛 5개가 원형으로 놓여 0번과 4번 도넛이 이웃입니다. 먼저 0번 도넛을 빼고 1번부터 4번까지를 한 줄로 풉니다. 건너뜀과 고름은 0에서 시작합니다."
+      "ko": "도넛 5개가 원형으로 놓여 0번과 4번 도넛이 이웃입니다. 먼저 0번 도넛을 빼고 1번부터 4번까지를 한 줄로 풀고, 건너뜀과 고름은 0에서 시작합니다."
      },
      "views": {
       "tray": {
@@ -1153,7 +1153,7 @@
     {
      "caption": {
       "en": "6 donuts in a circle, so donuts 0 and 5 are neighbors. First leave out donut 0 and solve donuts 1 to 5 as a line; skip and take start at 0.",
-      "ko": "도넛 6개가 원형으로 놓여 0번과 5번 도넛이 이웃입니다. 먼저 0번 도넛을 빼고 1번부터 5번까지를 한 줄로 풉니다. 건너뜀과 고름은 0에서 시작합니다."
+      "ko": "도넛 6개가 원형으로 놓여 0번과 5번 도넛이 이웃입니다. 먼저 0번 도넛을 빼고 1번부터 5번까지를 한 줄로 풀고, 건너뜀과 고름은 0에서 시작합니다."
      },
      "views": {
       "tray": {
@@ -2475,7 +2475,7 @@
     {
      "caption": {
       "en": "4 donuts in a circle, so donuts 0 and 3 are neighbors. First leave out donut 0 and solve donuts 1 to 3 as a line; skip and take start at 0.",
-      "ko": "도넛 4개가 원형으로 놓여 0번과 3번 도넛이 이웃입니다. 먼저 0번 도넛을 빼고 1번부터 3번까지를 한 줄로 풉니다. 건너뜀과 고름은 0에서 시작합니다."
+      "ko": "도넛 4개가 원형으로 놓여 0번과 3번 도넛이 이웃입니다. 먼저 0번 도넛을 빼고 1번부터 3번까지를 한 줄로 풀고, 건너뜀과 고름은 0에서 시작합니다."
      },
      "views": {
       "tray": {
