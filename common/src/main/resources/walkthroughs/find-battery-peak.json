@@ -1,0 +1,457 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Find Battery Peak",
+  "ko": "정점 값 찾기"
+ },
+ "approach": {
+  "en": "Binary search over indices: compare readings[mid] with its right neighbour. If the neighbour is higher, climbing right must reach a peak before the −∞ past the end, so keep the right; if not, mid itself or something left of it is a peak.",
+  "ko": "인덱스 위의 이분 탐색입니다. readings[mid]를 오른쪽 이웃과 비교합니다. 이웃이 더 높으면 오른쪽으로 오르다 배열 끝의 −∞에 닿기 전에 반드시 정점을 만나므로 오른쪽을 남기고, 아니면 mid 자신이나 그 왼쪽에 정점이 있습니다."
+ },
+ "views": [
+  {
+   "id": "readings",
+   "type": "array",
+   "display": "bars",
+   "title": {
+    "en": "readings",
+    "ko": "readings (배터리 잔량)"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "readings = [11,18,22,19,15]",
+   "expected": "2",
+   "frames": [
+    {
+     "caption": {
+      "en": "Look for a peak among 5 readings, treating the places past either end as −∞: the range starts as the whole log, low = 0 and high = 4.",
+      "ko": "배터리 잔량 5개에서 정점을 찾습니다(양 끝 바깥은 −∞). 범위는 처음에 로그 전체입니다: low = 0, high = 4."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        11,
+        18,
+        22,
+        19,
+        15
+       ],
+       "pointers": {
+        "low": 0,
+        "high": 4
+       },
+       "spans": {
+        "range": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "range 5",
+          "ko": "범위 5"
+         },
+         "fade": true
+        }
+       },
+       "marks": {
+        "lit": [],
+        "path": [],
+        "dim": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "mid = (0 + 4) // 2 = 2: readings[2] = 22 > readings[3] = 19, so the log falls after mid: mid or something left of it is a peak, high = 2.",
+      "ko": "mid = (0 + 4) // 2 = 2: readings[2] = 22 > readings[3] = 19, 그러니 mid 다음에 내려가므로 mid이거나 그 왼쪽에 정점이 있습니다. high = 2."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        11,
+        18,
+        22,
+        19,
+        15
+       ],
+       "pointers": {
+        "low": 0,
+        "high": 4,
+        "mid": 2
+       },
+       "spans": {
+        "range": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "range 5",
+          "ko": "범위 5"
+         },
+         "fade": true
+        },
+        "kept": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "kept",
+          "ko": "남김"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "marks": {
+        "lit": [
+         2,
+         3
+        ],
+        "path": [],
+        "dim": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "mid = (0 + 2) // 2 = 1: readings[1] = 18 < readings[2] = 22, so the log climbs to the right and a peak lies there: low = 2.",
+      "ko": "mid = (0 + 2) // 2 = 1: readings[1] = 18 < readings[2] = 22, 그러니 오른쪽으로 오르는 중이고 정점은 그쪽에 있습니다. low = 2."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        11,
+        18,
+        22,
+        19,
+        15
+       ],
+       "pointers": {
+        "low": 0,
+        "high": 2,
+        "mid": 1
+       },
+       "spans": {
+        "range": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "range 3",
+          "ko": "범위 3"
+         },
+         "fade": true
+        },
+        "kept": {
+         "from": 2,
+         "to": 2,
+         "label": {
+          "en": "kept",
+          "ko": "남김"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "marks": {
+        "lit": [
+         1,
+         2
+        ],
+        "path": [],
+        "dim": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "low = high = 2: the range is one reading, and readings[2] = 22 beats both neighbours, readings[1] = 18 and readings[3] = 19. The answer is index 2.",
+      "ko": "low = high = 2: 범위가 한 칸이고, readings[2] = 22의 양 이웃 readings[1] = 18, readings[3] = 19보다 큽니다. 답은 인덱스 2입니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        11,
+        18,
+        22,
+        19,
+        15
+       ],
+       "pointers": {
+        "low": 2,
+        "high": 2
+       },
+       "spans": {},
+       "marks": {
+        "lit": [],
+        "path": [
+         2
+        ],
+        "dim": [
+         0,
+         1,
+         3,
+         4
+        ]
+       }
+      }
+     },
+     "answer": "2"
+    }
+   ],
+   "sampleInput": "[11,18,22,19,15]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "readings = [3,7,12,25,20,14,9]",
+   "expected": "3",
+   "frames": [
+    {
+     "caption": {
+      "en": "Look for a peak among 7 readings, treating the places past either end as −∞: the range starts as the whole log, low = 0 and high = 6.",
+      "ko": "배터리 잔량 7개에서 정점을 찾습니다(양 끝 바깥은 −∞). 범위는 처음에 로그 전체입니다: low = 0, high = 6."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        3,
+        7,
+        12,
+        25,
+        20,
+        14,
+        9
+       ],
+       "pointers": {
+        "low": 0,
+        "high": 6
+       },
+       "spans": {
+        "range": {
+         "from": 0,
+         "to": 6,
+         "label": {
+          "en": "range 7",
+          "ko": "범위 7"
+         },
+         "fade": true
+        }
+       },
+       "marks": {
+        "lit": [],
+        "path": [],
+        "dim": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "mid = (0 + 6) // 2 = 3: readings[3] = 25 > readings[4] = 20, so the log falls after mid: mid or something left of it is a peak, high = 3.",
+      "ko": "mid = (0 + 6) // 2 = 3: readings[3] = 25 > readings[4] = 20, 그러니 mid 다음에 내려가므로 mid이거나 그 왼쪽에 정점이 있습니다. high = 3."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        3,
+        7,
+        12,
+        25,
+        20,
+        14,
+        9
+       ],
+       "pointers": {
+        "low": 0,
+        "high": 6,
+        "mid": 3
+       },
+       "spans": {
+        "range": {
+         "from": 0,
+         "to": 6,
+         "label": {
+          "en": "range 7",
+          "ko": "범위 7"
+         },
+         "fade": true
+        },
+        "kept": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "kept",
+          "ko": "남김"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "marks": {
+        "lit": [
+         3,
+         4
+        ],
+        "path": [],
+        "dim": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "mid = (0 + 3) // 2 = 1: readings[1] = 7 < readings[2] = 12, so the log climbs to the right and a peak lies there: low = 2.",
+      "ko": "mid = (0 + 3) // 2 = 1: readings[1] = 7 < readings[2] = 12, 그러니 오른쪽으로 오르는 중이고 정점은 그쪽에 있습니다. low = 2."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        3,
+        7,
+        12,
+        25,
+        20,
+        14,
+        9
+       ],
+       "pointers": {
+        "low": 0,
+        "high": 3,
+        "mid": 1
+       },
+       "spans": {
+        "range": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "range 4",
+          "ko": "범위 4"
+         },
+         "fade": true
+        },
+        "kept": {
+         "from": 2,
+         "to": 3,
+         "label": {
+          "en": "kept",
+          "ko": "남김"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "marks": {
+        "lit": [
+         1,
+         2
+        ],
+        "path": [],
+        "dim": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "mid = (2 + 3) // 2 = 2: readings[2] = 12 < readings[3] = 25, so the log climbs to the right and a peak lies there: low = 3.",
+      "ko": "mid = (2 + 3) // 2 = 2: readings[2] = 12 < readings[3] = 25, 그러니 오른쪽으로 오르는 중이고 정점은 그쪽에 있습니다. low = 3."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        3,
+        7,
+        12,
+        25,
+        20,
+        14,
+        9
+       ],
+       "pointers": {
+        "low": 2,
+        "high": 3,
+        "mid": 2
+       },
+       "spans": {
+        "range": {
+         "from": 2,
+         "to": 3,
+         "label": {
+          "en": "range 2",
+          "ko": "범위 2"
+         },
+         "fade": true
+        },
+        "kept": {
+         "from": 3,
+         "to": 3,
+         "label": {
+          "en": "kept",
+          "ko": "남김"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "marks": {
+        "lit": [
+         2,
+         3
+        ],
+        "path": [],
+        "dim": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "low = high = 3: the range is one reading, and readings[3] = 25 beats both neighbours, readings[2] = 12 and readings[4] = 20. The answer is index 3.",
+      "ko": "low = high = 3: 범위가 한 칸이고, readings[3] = 25의 양 이웃 readings[2] = 12, readings[4] = 20보다 큽니다. 답은 인덱스 3입니다."
+     },
+     "views": {
+      "readings": {
+       "values": [
+        3,
+        7,
+        12,
+        25,
+        20,
+        14,
+        9
+       ],
+       "pointers": {
+        "low": 3,
+        "high": 3
+       },
+       "spans": {},
+       "marks": {
+        "lit": [],
+        "path": [
+         3
+        ],
+        "dim": [
+         0,
+         1,
+         2,
+         4,
+         5,
+         6
+        ]
+       }
+      }
+     },
+     "answer": "3"
+    }
+   ],
+   "sampleInput": "[3,7,12,25,20,14,9]"
+  }
+ ]
+}
