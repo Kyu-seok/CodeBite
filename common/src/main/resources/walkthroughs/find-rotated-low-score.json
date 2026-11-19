@@ -1,0 +1,636 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Find the Rotated Low Score",
+  "ko": "회전된 리더보드 최저 점수"
+ },
+ "approach": {
+  "en": "Binary search over indices: compare scores[mid] with the range's last value, scores[high]. If mid's is bigger, the drop to the smallest value lies right of mid; if not, mid..high is sorted and the smallest is at mid or left of it.",
+  "ko": "인덱스 위의 이분 탐색입니다. scores[mid]를 범위의 마지막 값 scores[high]와 비교합니다. mid 쪽이 크면 가장 작은 값으로 떨어지는 곳이 mid 오른쪽에 있고, 아니면 mid..high가 정렬되어 있어 가장 작은 값은 mid이거나 그 왼쪽입니다."
+ },
+ "views": [
+  {
+   "id": "scores",
+   "type": "array",
+   "title": {
+    "en": "scores",
+    "ko": "scores (점수)"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "scores = [7,9,12,2,5]",
+   "expected": "2",
+   "frames": [
+    {
+     "caption": {
+      "en": "The smallest of 5 scores is somewhere in the whole array: low = 0, high = 4.",
+      "ko": "점수 5개 중 가장 작은 값은 배열 어딘가에 있습니다. 범위는 처음에 전체입니다: low = 0, high = 4."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        7,
+        9,
+        12,
+        2,
+        5
+       ],
+       "pointers": {
+        "low": 0,
+        "high": 4
+       },
+       "spans": {
+        "range": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "range 5",
+          "ko": "범위 5"
+         },
+         "fade": true
+        }
+       },
+       "marks": {
+        "lit": [],
+        "path": [],
+        "dim": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "mid = (0 + 4) // 2 = 2: scores[2] = 12 > scores[4] = 5, so the values drop somewhere right of mid, and the smallest is there: low = 3.",
+      "ko": "mid = (0 + 4) // 2 = 2: scores[2] = 12 > scores[4] = 5, 그러니 mid 오른쪽 어딘가에서 값이 떨어지고 가장 작은 값은 그쪽에 있습니다. low = 3."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        7,
+        9,
+        12,
+        2,
+        5
+       ],
+       "pointers": {
+        "low": 0,
+        "high": 4,
+        "mid": 2
+       },
+       "spans": {
+        "range": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "range 5",
+          "ko": "범위 5"
+         },
+         "fade": true
+        },
+        "kept": {
+         "from": 3,
+         "to": 4,
+         "label": {
+          "en": "kept",
+          "ko": "남김"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "marks": {
+        "lit": [
+         2,
+         4
+        ],
+        "path": [],
+        "dim": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "mid = (3 + 4) // 2 = 3: scores[3] = 2 < scores[4] = 5, so scores[3..4] is sorted and nothing right of mid is smaller: high = 3.",
+      "ko": "mid = (3 + 4) // 2 = 3: scores[3] = 2 < scores[4] = 5, 그러니 scores[3..4] 구간은 정렬되어 있어 mid 오른쪽에 더 작은 값이 없습니다. high = 3."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        7,
+        9,
+        12,
+        2,
+        5
+       ],
+       "pointers": {
+        "low": 3,
+        "high": 4,
+        "mid": 3
+       },
+       "spans": {
+        "range": {
+         "from": 3,
+         "to": 4,
+         "label": {
+          "en": "range 2",
+          "ko": "범위 2"
+         },
+         "fade": true
+        },
+        "kept": {
+         "from": 3,
+         "to": 3,
+         "label": {
+          "en": "kept",
+          "ko": "남김"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "marks": {
+        "lit": [
+         3,
+         4
+        ],
+        "path": [],
+        "dim": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "low = high = 3: the range is one cell, so scores[3] = 2 is the smallest score.",
+      "ko": "low = high = 3: 범위가 한 칸이므로 가장 작은 점수는 scores[3] = 2입니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        7,
+        9,
+        12,
+        2,
+        5
+       ],
+       "pointers": {
+        "low": 3,
+        "high": 3
+       },
+       "spans": {},
+       "marks": {
+        "lit": [],
+        "path": [
+         3
+        ],
+        "dim": [
+         0,
+         1,
+         2,
+         4
+        ]
+       }
+      }
+     },
+     "answer": "2"
+    }
+   ],
+   "sampleInput": "[7,9,12,2,5]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "scores = [15,20,24,31,3,8,12]",
+   "expected": "3",
+   "frames": [
+    {
+     "caption": {
+      "en": "The smallest of 7 scores is somewhere in the whole array: low = 0, high = 6.",
+      "ko": "점수 7개 중 가장 작은 값은 배열 어딘가에 있습니다. 범위는 처음에 전체입니다: low = 0, high = 6."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        15,
+        20,
+        24,
+        31,
+        3,
+        8,
+        12
+       ],
+       "pointers": {
+        "low": 0,
+        "high": 6
+       },
+       "spans": {
+        "range": {
+         "from": 0,
+         "to": 6,
+         "label": {
+          "en": "range 7",
+          "ko": "범위 7"
+         },
+         "fade": true
+        }
+       },
+       "marks": {
+        "lit": [],
+        "path": [],
+        "dim": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "mid = (0 + 6) // 2 = 3: scores[3] = 31 > scores[6] = 12, so the values drop somewhere right of mid, and the smallest is there: low = 4.",
+      "ko": "mid = (0 + 6) // 2 = 3: scores[3] = 31 > scores[6] = 12, 그러니 mid 오른쪽 어딘가에서 값이 떨어지고 가장 작은 값은 그쪽에 있습니다. low = 4."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        15,
+        20,
+        24,
+        31,
+        3,
+        8,
+        12
+       ],
+       "pointers": {
+        "low": 0,
+        "high": 6,
+        "mid": 3
+       },
+       "spans": {
+        "range": {
+         "from": 0,
+         "to": 6,
+         "label": {
+          "en": "range 7",
+          "ko": "범위 7"
+         },
+         "fade": true
+        },
+        "kept": {
+         "from": 4,
+         "to": 6,
+         "label": {
+          "en": "kept",
+          "ko": "남김"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "marks": {
+        "lit": [
+         3,
+         6
+        ],
+        "path": [],
+        "dim": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "mid = (4 + 6) // 2 = 5: scores[5] = 8 < scores[6] = 12, so scores[5..6] is sorted and nothing right of mid is smaller: high = 5.",
+      "ko": "mid = (4 + 6) // 2 = 5: scores[5] = 8 < scores[6] = 12, 그러니 scores[5..6] 구간은 정렬되어 있어 mid 오른쪽에 더 작은 값이 없습니다. high = 5."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        15,
+        20,
+        24,
+        31,
+        3,
+        8,
+        12
+       ],
+       "pointers": {
+        "low": 4,
+        "high": 6,
+        "mid": 5
+       },
+       "spans": {
+        "range": {
+         "from": 4,
+         "to": 6,
+         "label": {
+          "en": "range 3",
+          "ko": "범위 3"
+         },
+         "fade": true
+        },
+        "kept": {
+         "from": 4,
+         "to": 5,
+         "label": {
+          "en": "kept",
+          "ko": "남김"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "marks": {
+        "lit": [
+         5,
+         6
+        ],
+        "path": [],
+        "dim": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "mid = (4 + 5) // 2 = 4: scores[4] = 3 < scores[5] = 8, so scores[4..5] is sorted and nothing right of mid is smaller: high = 4.",
+      "ko": "mid = (4 + 5) // 2 = 4: scores[4] = 3 < scores[5] = 8, 그러니 scores[4..5] 구간은 정렬되어 있어 mid 오른쪽에 더 작은 값이 없습니다. high = 4."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        15,
+        20,
+        24,
+        31,
+        3,
+        8,
+        12
+       ],
+       "pointers": {
+        "low": 4,
+        "high": 5,
+        "mid": 4
+       },
+       "spans": {
+        "range": {
+         "from": 4,
+         "to": 5,
+         "label": {
+          "en": "range 2",
+          "ko": "범위 2"
+         },
+         "fade": true
+        },
+        "kept": {
+         "from": 4,
+         "to": 4,
+         "label": {
+          "en": "kept",
+          "ko": "남김"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "marks": {
+        "lit": [
+         4,
+         5
+        ],
+        "path": [],
+        "dim": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "low = high = 4: the range is one cell, so scores[4] = 3 is the smallest score.",
+      "ko": "low = high = 4: 범위가 한 칸이므로 가장 작은 점수는 scores[4] = 3입니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        15,
+        20,
+        24,
+        31,
+        3,
+        8,
+        12
+       ],
+       "pointers": {
+        "low": 4,
+        "high": 4
+       },
+       "spans": {},
+       "marks": {
+        "lit": [],
+        "path": [
+         4
+        ],
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         5,
+         6
+        ]
+       }
+      }
+     },
+     "answer": "3"
+    }
+   ],
+   "sampleInput": "[15,20,24,31,3,8,12]"
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "scores = [21,33,45,58]",
+   "expected": "21",
+   "frames": [
+    {
+     "caption": {
+      "en": "The smallest of 4 scores is somewhere in the whole array: low = 0, high = 3.",
+      "ko": "점수 4개 중 가장 작은 값은 배열 어딘가에 있습니다. 범위는 처음에 전체입니다: low = 0, high = 3."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        21,
+        33,
+        45,
+        58
+       ],
+       "pointers": {
+        "low": 0,
+        "high": 3
+       },
+       "spans": {
+        "range": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "range 4",
+          "ko": "범위 4"
+         },
+         "fade": true
+        }
+       },
+       "marks": {
+        "lit": [],
+        "path": [],
+        "dim": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "mid = (0 + 3) // 2 = 1: scores[1] = 33 < scores[3] = 58, so scores[1..3] is sorted and nothing right of mid is smaller: high = 1.",
+      "ko": "mid = (0 + 3) // 2 = 1: scores[1] = 33 < scores[3] = 58, 그러니 scores[1..3] 구간은 정렬되어 있어 mid 오른쪽에 더 작은 값이 없습니다. high = 1."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        21,
+        33,
+        45,
+        58
+       ],
+       "pointers": {
+        "low": 0,
+        "high": 3,
+        "mid": 1
+       },
+       "spans": {
+        "range": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "range 4",
+          "ko": "범위 4"
+         },
+         "fade": true
+        },
+        "kept": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "kept",
+          "ko": "남김"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "marks": {
+        "lit": [
+         1,
+         3
+        ],
+        "path": [],
+        "dim": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "mid = (0 + 1) // 2 = 0: scores[0] = 21 < scores[1] = 33, so scores[0..1] is sorted and nothing right of mid is smaller: high = 0.",
+      "ko": "mid = (0 + 1) // 2 = 0: scores[0] = 21 < scores[1] = 33, 그러니 scores[0..1] 구간은 정렬되어 있어 mid 오른쪽에 더 작은 값이 없습니다. high = 0."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        21,
+        33,
+        45,
+        58
+       ],
+       "pointers": {
+        "low": 0,
+        "high": 1,
+        "mid": 0
+       },
+       "spans": {
+        "range": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "range 2",
+          "ko": "범위 2"
+         },
+         "fade": true
+        },
+        "kept": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "kept",
+          "ko": "남김"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "marks": {
+        "lit": [
+         0,
+         1
+        ],
+        "path": [],
+        "dim": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "low = high = 0: the range is one cell, so scores[0] = 21 is the smallest score.",
+      "ko": "low = high = 0: 범위가 한 칸이므로 가장 작은 점수는 scores[0] = 21입니다."
+     },
+     "views": {
+      "scores": {
+       "values": [
+        21,
+        33,
+        45,
+        58
+       ],
+       "pointers": {
+        "low": 0,
+        "high": 0
+       },
+       "spans": {},
+       "marks": {
+        "lit": [],
+        "path": [
+         0
+        ],
+        "dim": [
+         1,
+         2,
+         3
+        ]
+       }
+      }
+     },
+     "answer": "21"
+    }
+   ],
+   "sampleInput": "[21,33,45,58]"
+  }
+ ]
+}

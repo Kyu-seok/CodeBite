@@ -1,0 +1,3092 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Flip Chunks of K",
+  "ko": "k개씩 묶어 뒤집기"
+ },
+ "approach": {
+  "en": "Walk k nodes from before to find the chunk's end; if the list runs out first, the rest stays. Otherwise reverse the chunk's arrows, starting prev at the node after the chunk so the chunk's old first node points out of it, then point before at the chunk's old last node and move before to the old first.",
+  "ko": "before에서 노드 k개를 걸어 묶음의 끝을 찾습니다. 그 전에 리스트가 끝나면 나머지는 그대로 둡니다. 그렇지 않으면 prev를 묶음 다음 노드에서 시작해 묶음의 화살표를 뒤집으므로 원래 첫 노드가 묶음 밖을 가리키게 되고, before가 원래 마지막 노드를 가리키게 한 뒤 before를 원래 첫 노드로 옮깁니다."
+ },
+ "views": [
+  {
+   "id": "list",
+   "type": "linkedlist",
+   "title": {
+    "en": "list from dummy",
+    "ko": "dummy부터의 리스트"
+   },
+   "empty": {
+    "en": "empty list",
+    "ko": "빈 리스트"
+   }
+  },
+  {
+   "id": "result",
+   "type": "output",
+   "title": {
+    "en": "answer",
+    "ko": "답"
+   },
+   "empty": {
+    "en": "not read yet",
+    "ko": "아직 없음"
+   }
+  },
+  {
+   "id": "state",
+   "type": "vars"
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "head = [10,20,30,40,50,60,70], k = 3",
+   "expected": "[30,20,10,60,50,40,70]",
+   "frames": [
+    {
+     "caption": {
+      "en": "7 nodes from 10 to 70, and k = 3. dummy goes before the head, and before starts there.",
+      "ko": "노드 7개가 10부터 70까지 있고 k = 3입니다. head 앞에 dummy를 두고, before는 거기서 시작합니다."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 10
+        },
+        {
+         "id": 2,
+         "value": 20
+        },
+        {
+         "id": 3,
+         "value": 30
+        },
+        {
+         "id": 4,
+         "value": 40
+        },
+        {
+         "id": 5,
+         "value": 50
+        },
+        {
+         "id": 6,
+         "value": 60
+        },
+        {
+         "id": 7,
+         "value": 70
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": 4,
+        "4": 5,
+        "5": 6,
+        "6": 7,
+        "7": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 3
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "end walks 3 nodes from dummy to 30: chunk 1 is (10, 20, 30). first = 10, after = 40; prev starts at after and node at first.",
+      "ko": "end가 dummy에서 노드 3개를 걸어 30에 닿으므로 1번째 묶음은 (10, 20, 30)입니다. first = 10, after = 40이고, prev는 after에서, node는 first에서 시작합니다."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 10
+        },
+        {
+         "id": 2,
+         "value": 20
+        },
+        {
+         "id": 3,
+         "value": 30
+        },
+        {
+         "id": 4,
+         "value": 40
+        },
+        {
+         "id": 5,
+         "value": 50
+        },
+        {
+         "id": 6,
+         "value": 60
+        },
+        {
+         "id": 7,
+         "value": 70
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": 4,
+        "4": 5,
+        "5": 6,
+        "6": 7,
+        "7": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 0,
+        "end": 3,
+        "first": 1,
+        "after": 4,
+        "prev": 4,
+        "node": 1
+       },
+       "marks": {
+        "lit": [
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 3
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "node.next = prev: 10's arrow turns to 40; prev = 10, node = 20.",
+      "ko": "node.next = prev: 10의 화살표가 40 쪽으로 돌아갑니다. prev = 10, node = 20."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 10
+        },
+        {
+         "id": 2,
+         "value": 20
+        },
+        {
+         "id": 3,
+         "value": 30
+        },
+        {
+         "id": 4,
+         "value": 40
+        },
+        {
+         "id": 5,
+         "value": 50
+        },
+        {
+         "id": 6,
+         "value": 60
+        },
+        {
+         "id": 7,
+         "value": 70
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 4,
+        "2": 3,
+        "3": 4,
+        "4": 5,
+        "5": 6,
+        "6": 7,
+        "7": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 0,
+        "end": 3,
+        "first": 1,
+        "after": 4,
+        "prev": 1,
+        "node": 2
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         1
+        ]
+       },
+       "cut": {
+        "1": 2
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 3
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "node.next = prev: 20's arrow turns to 10; prev = 20, node = 30.",
+      "ko": "node.next = prev: 20의 화살표가 10 쪽으로 돌아갑니다. prev = 20, node = 30."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 10
+        },
+        {
+         "id": 2,
+         "value": 20
+        },
+        {
+         "id": 3,
+         "value": 30
+        },
+        {
+         "id": 4,
+         "value": 40
+        },
+        {
+         "id": 5,
+         "value": 50
+        },
+        {
+         "id": 6,
+         "value": 60
+        },
+        {
+         "id": 7,
+         "value": 70
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 4,
+        "2": 1,
+        "3": 4,
+        "4": 5,
+        "5": 6,
+        "6": 7,
+        "7": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 0,
+        "end": 3,
+        "first": 1,
+        "after": 4,
+        "prev": 2,
+        "node": 3
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         2
+        ]
+       },
+       "cut": {
+        "2": 3
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 3
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "node.next = prev: 30's arrow turns to 20; node reaches after, so the chunk is reversed.",
+      "ko": "node.next = prev: 30의 화살표가 20 쪽으로 돌아갑니다. node가 after에 닿았으니 묶음이 뒤집혔습니다."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 10
+        },
+        {
+         "id": 2,
+         "value": 20
+        },
+        {
+         "id": 3,
+         "value": 30
+        },
+        {
+         "id": 4,
+         "value": 40
+        },
+        {
+         "id": 5,
+         "value": 50
+        },
+        {
+         "id": 6,
+         "value": 60
+        },
+        {
+         "id": 7,
+         "value": 70
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 4,
+        "2": 1,
+        "3": 2,
+        "4": 5,
+        "5": 6,
+        "6": 7,
+        "7": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 0,
+        "end": 3,
+        "first": 1,
+        "after": 4,
+        "prev": 3,
+        "node": 4
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         3
+        ]
+       },
+       "cut": {
+        "3": 4
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 3
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "before.next = end: dummy now points to 30, the chunk's new first. before = first: before moves to 10, the chunk's new last.",
+      "ko": "before.next = end: 이제 dummy의 화살표가 묶음의 새 첫 노드 30을 가리킵니다. before = first: before가 묶음의 새 마지막 노드 10으로 옮깁니다."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 10
+        },
+        {
+         "id": 2,
+         "value": 20
+        },
+        {
+         "id": 3,
+         "value": 30
+        },
+        {
+         "id": 4,
+         "value": 40
+        },
+        {
+         "id": 5,
+         "value": 50
+        },
+        {
+         "id": 6,
+         "value": 60
+        },
+        {
+         "id": 7,
+         "value": 70
+        }
+       ],
+       "next": {
+        "0": 3,
+        "1": 4,
+        "2": 1,
+        "3": 2,
+        "4": 5,
+        "5": 6,
+        "6": 7,
+        "7": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 1
+       },
+       "marks": {
+        "lit": [
+         0,
+         3
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         0
+        ]
+       },
+       "cut": {
+        "0": 1
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 3
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "end walks 3 nodes from 10 to 60: chunk 2 is (40, 50, 60). first = 40, after = 70; prev starts at after and node at first.",
+      "ko": "end가 10에서 노드 3개를 걸어 60에 닿으므로 2번째 묶음은 (40, 50, 60)입니다. first = 40, after = 70이고, prev는 after에서, node는 first에서 시작합니다."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 10
+        },
+        {
+         "id": 2,
+         "value": 20
+        },
+        {
+         "id": 3,
+         "value": 30
+        },
+        {
+         "id": 4,
+         "value": 40
+        },
+        {
+         "id": 5,
+         "value": 50
+        },
+        {
+         "id": 6,
+         "value": 60
+        },
+        {
+         "id": 7,
+         "value": 70
+        }
+       ],
+       "next": {
+        "0": 3,
+        "1": 4,
+        "2": 1,
+        "3": 2,
+        "4": 5,
+        "5": 6,
+        "6": 7,
+        "7": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 1,
+        "end": 6,
+        "first": 4,
+        "after": 7,
+        "prev": 7,
+        "node": 4
+       },
+       "marks": {
+        "lit": [
+         4,
+         5,
+         6
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 3
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "node.next = prev: 40's arrow turns to 70; prev = 40, node = 50.",
+      "ko": "node.next = prev: 40의 화살표가 70 쪽으로 돌아갑니다. prev = 40, node = 50."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 10
+        },
+        {
+         "id": 2,
+         "value": 20
+        },
+        {
+         "id": 3,
+         "value": 30
+        },
+        {
+         "id": 4,
+         "value": 40
+        },
+        {
+         "id": 5,
+         "value": 50
+        },
+        {
+         "id": 6,
+         "value": 60
+        },
+        {
+         "id": 7,
+         "value": 70
+        }
+       ],
+       "next": {
+        "0": 3,
+        "1": 4,
+        "2": 1,
+        "3": 2,
+        "4": 7,
+        "5": 6,
+        "6": 7,
+        "7": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 1,
+        "end": 6,
+        "first": 4,
+        "after": 7,
+        "prev": 4,
+        "node": 5
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         4
+        ]
+       },
+       "cut": {
+        "4": 5
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 3
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "node.next = prev: 50's arrow turns to 40; prev = 50, node = 60.",
+      "ko": "node.next = prev: 50의 화살표가 40 쪽으로 돌아갑니다. prev = 50, node = 60."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 10
+        },
+        {
+         "id": 2,
+         "value": 20
+        },
+        {
+         "id": 3,
+         "value": 30
+        },
+        {
+         "id": 4,
+         "value": 40
+        },
+        {
+         "id": 5,
+         "value": 50
+        },
+        {
+         "id": 6,
+         "value": 60
+        },
+        {
+         "id": 7,
+         "value": 70
+        }
+       ],
+       "next": {
+        "0": 3,
+        "1": 4,
+        "2": 1,
+        "3": 2,
+        "4": 7,
+        "5": 4,
+        "6": 7,
+        "7": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 1,
+        "end": 6,
+        "first": 4,
+        "after": 7,
+        "prev": 5,
+        "node": 6
+       },
+       "marks": {
+        "lit": [
+         5
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         5
+        ]
+       },
+       "cut": {
+        "5": 6
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 3
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "node.next = prev: 60's arrow turns to 50; node reaches after, so the chunk is reversed.",
+      "ko": "node.next = prev: 60의 화살표가 50 쪽으로 돌아갑니다. node가 after에 닿았으니 묶음이 뒤집혔습니다."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 10
+        },
+        {
+         "id": 2,
+         "value": 20
+        },
+        {
+         "id": 3,
+         "value": 30
+        },
+        {
+         "id": 4,
+         "value": 40
+        },
+        {
+         "id": 5,
+         "value": 50
+        },
+        {
+         "id": 6,
+         "value": 60
+        },
+        {
+         "id": 7,
+         "value": 70
+        }
+       ],
+       "next": {
+        "0": 3,
+        "1": 4,
+        "2": 1,
+        "3": 2,
+        "4": 7,
+        "5": 4,
+        "6": 5,
+        "7": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 1,
+        "end": 6,
+        "first": 4,
+        "after": 7,
+        "prev": 6,
+        "node": 7
+       },
+       "marks": {
+        "lit": [
+         6
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         6
+        ]
+       },
+       "cut": {
+        "6": 7
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 3
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "before.next = end: 10 now points to 60, the chunk's new first. before = first: before moves to 40, the chunk's new last.",
+      "ko": "before.next = end: 이제 10의 화살표가 묶음의 새 첫 노드 60을 가리킵니다. before = first: before가 묶음의 새 마지막 노드 40으로 옮깁니다."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 10
+        },
+        {
+         "id": 2,
+         "value": 20
+        },
+        {
+         "id": 3,
+         "value": 30
+        },
+        {
+         "id": 4,
+         "value": 40
+        },
+        {
+         "id": 5,
+         "value": 50
+        },
+        {
+         "id": 6,
+         "value": 60
+        },
+        {
+         "id": 7,
+         "value": 70
+        }
+       ],
+       "next": {
+        "0": 3,
+        "1": 6,
+        "2": 1,
+        "3": 2,
+        "4": 7,
+        "5": 4,
+        "6": 5,
+        "7": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 4
+       },
+       "marks": {
+        "lit": [
+         1,
+         6
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         1
+        ]
+       },
+       "cut": {
+        "1": 4
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 3
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "end walks only 1 node (70) before null: fewer than 3, so they stay. Reading from dummy.next gives [30,20,10,60,50,40,70].",
+      "ko": "end가 null에 닿기 전에 노드 1개(70)만 지나가므로 3개보다 적어 그대로 둡니다. dummy.next부터 읽으면 [30,20,10,60,50,40,70]입니다."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 10
+        },
+        {
+         "id": 2,
+         "value": 20
+        },
+        {
+         "id": 3,
+         "value": 30
+        },
+        {
+         "id": 4,
+         "value": 40
+        },
+        {
+         "id": 5,
+         "value": 50
+        },
+        {
+         "id": 6,
+         "value": 60
+        },
+        {
+         "id": 7,
+         "value": 70
+        }
+       ],
+       "next": {
+        "0": 3,
+        "1": 6,
+        "2": 1,
+        "3": 2,
+        "4": 7,
+        "5": 4,
+        "6": 5,
+        "7": null
+       },
+       "pointers": {
+        "dummy": 0
+       },
+       "marks": {
+        "path": [
+         3,
+         2,
+         1,
+         6,
+         5,
+         4,
+         7
+        ],
+        "dim": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        30,
+        20,
+        10,
+        60,
+        50,
+        40,
+        70
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 3
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "list",
+        "at": 3
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      },
+      {
+       "from": {
+        "view": "list",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       }
+      },
+      {
+       "from": {
+        "view": "list",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "list",
+        "at": 6
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       }
+      },
+      {
+       "from": {
+        "view": "list",
+        "at": 5
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       }
+      },
+      {
+       "from": {
+        "view": "list",
+        "at": 4
+       },
+       "to": {
+        "view": "result",
+        "at": 5
+       }
+      },
+      {
+       "from": {
+        "view": "list",
+        "at": 7
+       },
+       "to": {
+        "view": "result",
+        "at": 6
+       }
+      }
+     ],
+     "answer": "[30,20,10,60,50,40,70]"
+    }
+   ],
+   "sampleInput": "[10,20,30,40,50,60,70]\n3"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "head = [5,15,25,35], k = 4",
+   "expected": "[35,25,15,5]",
+   "frames": [
+    {
+     "caption": {
+      "en": "4 nodes from 5 to 35, and k = 4. dummy goes before the head, and before starts there.",
+      "ko": "노드 4개가 5부터 35까지 있고 k = 4입니다. head 앞에 dummy를 두고, before는 거기서 시작합니다."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 5
+        },
+        {
+         "id": 2,
+         "value": 15
+        },
+        {
+         "id": 3,
+         "value": 25
+        },
+        {
+         "id": 4,
+         "value": 35
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": 4,
+        "4": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 4
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "end walks 4 nodes from dummy to 35: chunk 1 is (5, 15, 25, 35). first = 5, after = null; prev starts at after and node at first.",
+      "ko": "end가 dummy에서 노드 4개를 걸어 35에 닿으므로 1번째 묶음은 (5, 15, 25, 35)입니다. first = 5, after = null이고, prev는 after에서, node는 first에서 시작합니다."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 5
+        },
+        {
+         "id": 2,
+         "value": 15
+        },
+        {
+         "id": 3,
+         "value": 25
+        },
+        {
+         "id": 4,
+         "value": 35
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": 4,
+        "4": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 0,
+        "end": 4,
+        "first": 1,
+        "after": null,
+        "prev": null,
+        "node": 1
+       },
+       "marks": {
+        "lit": [
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 4
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "node.next = prev: 5's arrow turns to null; prev = 5, node = 15.",
+      "ko": "node.next = prev: 5의 화살표가 null 쪽으로 돌아갑니다. prev = 5, node = 15."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 5
+        },
+        {
+         "id": 2,
+         "value": 15
+        },
+        {
+         "id": 3,
+         "value": 25
+        },
+        {
+         "id": 4,
+         "value": 35
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": null,
+        "2": 3,
+        "3": 4,
+        "4": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 0,
+        "end": 4,
+        "first": 1,
+        "after": null,
+        "prev": 1,
+        "node": 2
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         1
+        ]
+       },
+       "cut": {
+        "1": 2
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 4
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "node.next = prev: 15's arrow turns to 5; prev = 15, node = 25.",
+      "ko": "node.next = prev: 15의 화살표가 5 쪽으로 돌아갑니다. prev = 15, node = 25."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 5
+        },
+        {
+         "id": 2,
+         "value": 15
+        },
+        {
+         "id": 3,
+         "value": 25
+        },
+        {
+         "id": 4,
+         "value": 35
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": null,
+        "2": 1,
+        "3": 4,
+        "4": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 0,
+        "end": 4,
+        "first": 1,
+        "after": null,
+        "prev": 2,
+        "node": 3
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         2
+        ]
+       },
+       "cut": {
+        "2": 3
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 4
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "node.next = prev: 25's arrow turns to 15; prev = 25, node = 35.",
+      "ko": "node.next = prev: 25의 화살표가 15 쪽으로 돌아갑니다. prev = 25, node = 35."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 5
+        },
+        {
+         "id": 2,
+         "value": 15
+        },
+        {
+         "id": 3,
+         "value": 25
+        },
+        {
+         "id": 4,
+         "value": 35
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": null,
+        "2": 1,
+        "3": 2,
+        "4": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 0,
+        "end": 4,
+        "first": 1,
+        "after": null,
+        "prev": 3,
+        "node": 4
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         3
+        ]
+       },
+       "cut": {
+        "3": 4
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 4
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "node.next = prev: 35's arrow turns to 25; node reaches after, so the chunk is reversed.",
+      "ko": "node.next = prev: 35의 화살표가 25 쪽으로 돌아갑니다. node가 after에 닿았으니 묶음이 뒤집혔습니다."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 5
+        },
+        {
+         "id": 2,
+         "value": 15
+        },
+        {
+         "id": 3,
+         "value": 25
+        },
+        {
+         "id": 4,
+         "value": 35
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": null,
+        "2": 1,
+        "3": 2,
+        "4": 3
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 0,
+        "end": 4,
+        "first": 1,
+        "after": null,
+        "prev": 4,
+        "node": null
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 4
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "before.next = end: dummy now points to 35, the chunk's new first. before = first: before moves to 5, the chunk's new last.",
+      "ko": "before.next = end: 이제 dummy의 화살표가 묶음의 새 첫 노드 35를 가리킵니다. before = first: before가 묶음의 새 마지막 노드 5로 옮깁니다."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 5
+        },
+        {
+         "id": 2,
+         "value": 15
+        },
+        {
+         "id": 3,
+         "value": 25
+        },
+        {
+         "id": 4,
+         "value": 35
+        }
+       ],
+       "next": {
+        "0": 4,
+        "1": null,
+        "2": 1,
+        "3": 2,
+        "4": 3
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 1
+       },
+       "marks": {
+        "lit": [
+         0,
+         4
+        ]
+       },
+       "linkMarks": {
+        "good": [
+         0
+        ]
+       },
+       "cut": {
+        "0": 1
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 4
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "before.next is null: no nodes are left after 5. Reading from dummy.next gives [35,25,15,5].",
+      "ko": "before.next가 null이라 5 뒤에 남은 노드가 없습니다. dummy.next부터 읽으면 [35,25,15,5]입니다."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 5
+        },
+        {
+         "id": 2,
+         "value": 15
+        },
+        {
+         "id": 3,
+         "value": 25
+        },
+        {
+         "id": 4,
+         "value": 35
+        }
+       ],
+       "next": {
+        "0": 4,
+        "1": null,
+        "2": 1,
+        "3": 2,
+        "4": 3
+       },
+       "pointers": {
+        "dummy": 0
+       },
+       "marks": {
+        "path": [
+         4,
+         3,
+         2,
+         1
+        ],
+        "dim": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        35,
+        25,
+        15,
+        5
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 4
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "list",
+        "at": 4
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      },
+      {
+       "from": {
+        "view": "list",
+        "at": 3
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       }
+      },
+      {
+       "from": {
+        "view": "list",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "list",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       }
+      }
+     ],
+     "answer": "[35,25,15,5]"
+    }
+   ],
+   "sampleInput": "[5,15,25,35]\n4"
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "head = [2,4,6,8,10], k = 1",
+   "expected": "[2,4,6,8,10]",
+   "frames": [
+    {
+     "caption": {
+      "en": "5 nodes from 2 to 10, and k = 1. dummy goes before the head, and before starts there.",
+      "ko": "노드 5개가 2부터 10까지 있고 k = 1입니다. head 앞에 dummy를 두고, before는 거기서 시작합니다."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 6
+        },
+        {
+         "id": 4,
+         "value": 8
+        },
+        {
+         "id": 5,
+         "value": 10
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": 4,
+        "4": 5,
+        "5": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "end walks 1 node from dummy to 2: chunk 1 is (2). first = 2, after = 4; prev starts at after and node at first.",
+      "ko": "end가 dummy에서 노드 1개를 걸어 2에 닿으므로 1번째 묶음은 (2)입니다. first = 2, after = 4이고, prev는 after에서, node는 first에서 시작합니다."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 6
+        },
+        {
+         "id": 4,
+         "value": 8
+        },
+        {
+         "id": 5,
+         "value": 10
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": 4,
+        "4": 5,
+        "5": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 0,
+        "end": 1,
+        "first": 1,
+        "after": 2,
+        "prev": 2,
+        "node": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "node.next = prev: 2's next is already 4, so its arrow stays; node reaches after, so the chunk is reversed.",
+      "ko": "node.next = prev: 2의 화살표는 이미 4를 가리키므로 그대로입니다. node가 after에 닿았으니 묶음이 뒤집혔습니다."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 6
+        },
+        {
+         "id": 4,
+         "value": 8
+        },
+        {
+         "id": 5,
+         "value": 10
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": 4,
+        "4": 5,
+        "5": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 0,
+        "end": 1,
+        "first": 1,
+        "after": 2,
+        "prev": 1,
+        "node": 2
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "before.next = end: dummy already points to 2, the chunk's new first. before = first: before moves to 2, the chunk's new last.",
+      "ko": "before.next = end: dummy의 화살표는 이미 묶음의 새 첫 노드 2를 가리킵니다. before = first: before가 묶음의 새 마지막 노드 2로 옮깁니다."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 6
+        },
+        {
+         "id": 4,
+         "value": 8
+        },
+        {
+         "id": 5,
+         "value": 10
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": 4,
+        "4": 5,
+        "5": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 1
+       },
+       "marks": {
+        "lit": [
+         0,
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "end walks 1 node from 2 to 4: chunk 2 is (4). first = 4, after = 6; prev starts at after and node at first.",
+      "ko": "end가 2에서 노드 1개를 걸어 4에 닿으므로 2번째 묶음은 (4)입니다. first = 4, after = 6이고, prev는 after에서, node는 first에서 시작합니다."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 6
+        },
+        {
+         "id": 4,
+         "value": 8
+        },
+        {
+         "id": 5,
+         "value": 10
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": 4,
+        "4": 5,
+        "5": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 1,
+        "end": 2,
+        "first": 2,
+        "after": 3,
+        "prev": 3,
+        "node": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "node.next = prev: 4's next is already 6, so its arrow stays; node reaches after, so the chunk is reversed.",
+      "ko": "node.next = prev: 4의 화살표는 이미 6을 가리키므로 그대로입니다. node가 after에 닿았으니 묶음이 뒤집혔습니다."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 6
+        },
+        {
+         "id": 4,
+         "value": 8
+        },
+        {
+         "id": 5,
+         "value": 10
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": 4,
+        "4": 5,
+        "5": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 1,
+        "end": 2,
+        "first": 2,
+        "after": 3,
+        "prev": 2,
+        "node": 3
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "before.next = end: 2 already points to 4, the chunk's new first. before = first: before moves to 4, the chunk's new last.",
+      "ko": "before.next = end: 2의 화살표는 이미 묶음의 새 첫 노드 4를 가리킵니다. before = first: before가 묶음의 새 마지막 노드 4로 옮깁니다."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 6
+        },
+        {
+         "id": 4,
+         "value": 8
+        },
+        {
+         "id": 5,
+         "value": 10
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": 4,
+        "4": 5,
+        "5": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 2
+       },
+       "marks": {
+        "lit": [
+         1,
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "end walks 1 node from 4 to 6: chunk 3 is (6). first = 6, after = 8; prev starts at after and node at first.",
+      "ko": "end가 4에서 노드 1개를 걸어 6에 닿으므로 3번째 묶음은 (6)입니다. first = 6, after = 8이고, prev는 after에서, node는 first에서 시작합니다."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 6
+        },
+        {
+         "id": 4,
+         "value": 8
+        },
+        {
+         "id": 5,
+         "value": 10
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": 4,
+        "4": 5,
+        "5": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 2,
+        "end": 3,
+        "first": 3,
+        "after": 4,
+        "prev": 4,
+        "node": 3
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "node.next = prev: 6's next is already 8, so its arrow stays; node reaches after, so the chunk is reversed.",
+      "ko": "node.next = prev: 6의 화살표는 이미 8을 가리키므로 그대로입니다. node가 after에 닿았으니 묶음이 뒤집혔습니다."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 6
+        },
+        {
+         "id": 4,
+         "value": 8
+        },
+        {
+         "id": 5,
+         "value": 10
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": 4,
+        "4": 5,
+        "5": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 2,
+        "end": 3,
+        "first": 3,
+        "after": 4,
+        "prev": 3,
+        "node": 4
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "before.next = end: 4 already points to 6, the chunk's new first. before = first: before moves to 6, the chunk's new last.",
+      "ko": "before.next = end: 4의 화살표는 이미 묶음의 새 첫 노드 6을 가리킵니다. before = first: before가 묶음의 새 마지막 노드 6으로 옮깁니다."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 6
+        },
+        {
+         "id": 4,
+         "value": 8
+        },
+        {
+         "id": 5,
+         "value": 10
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": 4,
+        "4": 5,
+        "5": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 3
+       },
+       "marks": {
+        "lit": [
+         2,
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "end walks 1 node from 6 to 8: chunk 4 is (8). first = 8, after = 10; prev starts at after and node at first.",
+      "ko": "end가 6에서 노드 1개를 걸어 8에 닿으므로 4번째 묶음은 (8)입니다. first = 8, after = 10이고, prev는 after에서, node는 first에서 시작합니다."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 6
+        },
+        {
+         "id": 4,
+         "value": 8
+        },
+        {
+         "id": 5,
+         "value": 10
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": 4,
+        "4": 5,
+        "5": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 3,
+        "end": 4,
+        "first": 4,
+        "after": 5,
+        "prev": 5,
+        "node": 4
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "node.next = prev: 8's next is already 10, so its arrow stays; node reaches after, so the chunk is reversed.",
+      "ko": "node.next = prev: 8의 화살표는 이미 10을 가리키므로 그대로입니다. node가 after에 닿았으니 묶음이 뒤집혔습니다."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 6
+        },
+        {
+         "id": 4,
+         "value": 8
+        },
+        {
+         "id": 5,
+         "value": 10
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": 4,
+        "4": 5,
+        "5": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 3,
+        "end": 4,
+        "first": 4,
+        "after": 5,
+        "prev": 4,
+        "node": 5
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "before.next = end: 6 already points to 8, the chunk's new first. before = first: before moves to 8, the chunk's new last.",
+      "ko": "before.next = end: 6의 화살표는 이미 묶음의 새 첫 노드 8을 가리킵니다. before = first: before가 묶음의 새 마지막 노드 8로 옮깁니다."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 6
+        },
+        {
+         "id": 4,
+         "value": 8
+        },
+        {
+         "id": 5,
+         "value": 10
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": 4,
+        "4": 5,
+        "5": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 4
+       },
+       "marks": {
+        "lit": [
+         3,
+         4
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "end walks 1 node from 8 to 10: chunk 5 is (10). first = 10, after = null; prev starts at after and node at first.",
+      "ko": "end가 8에서 노드 1개를 걸어 10에 닿으므로 5번째 묶음은 (10)입니다. first = 10, after = null이고, prev는 after에서, node는 first에서 시작합니다."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 6
+        },
+        {
+         "id": 4,
+         "value": 8
+        },
+        {
+         "id": 5,
+         "value": 10
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": 4,
+        "4": 5,
+        "5": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 4,
+        "end": 5,
+        "first": 5,
+        "after": null,
+        "prev": null,
+        "node": 5
+       },
+       "marks": {
+        "lit": [
+         5
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "node.next = prev: 10's next is already null, so its arrow stays; node reaches after, so the chunk is reversed.",
+      "ko": "node.next = prev: 10의 화살표는 이미 null을 가리키므로 그대로입니다. node가 after에 닿았으니 묶음이 뒤집혔습니다."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 6
+        },
+        {
+         "id": 4,
+         "value": 8
+        },
+        {
+         "id": 5,
+         "value": 10
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": 4,
+        "4": 5,
+        "5": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 4,
+        "end": 5,
+        "first": 5,
+        "after": null,
+        "prev": 5,
+        "node": null
+       },
+       "marks": {
+        "lit": [
+         5
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "before.next = end: 8 already points to 10, the chunk's new first. before = first: before moves to 10, the chunk's new last.",
+      "ko": "before.next = end: 8의 화살표는 이미 묶음의 새 첫 노드 10을 가리킵니다. before = first: before가 묶음의 새 마지막 노드 10으로 옮깁니다."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 6
+        },
+        {
+         "id": 4,
+         "value": 8
+        },
+        {
+         "id": 5,
+         "value": 10
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": 4,
+        "4": 5,
+        "5": null
+       },
+       "pointers": {
+        "dummy": 0,
+        "before": 5
+       },
+       "marks": {
+        "lit": [
+         4,
+         5
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "before.next is null: no nodes are left after 10. Reading from dummy.next gives [2,4,6,8,10].",
+      "ko": "before.next가 null이라 10 뒤에 남은 노드가 없습니다. dummy.next부터 읽으면 [2,4,6,8,10]입니다."
+     },
+     "views": {
+      "list": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": ""
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 6
+        },
+        {
+         "id": 4,
+         "value": 8
+        },
+        {
+         "id": 5,
+         "value": 10
+        }
+       ],
+       "next": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": 4,
+        "4": 5,
+        "5": null
+       },
+       "pointers": {
+        "dummy": 0
+       },
+       "marks": {
+        "path": [
+         1,
+         2,
+         3,
+         4,
+         5
+        ],
+        "dim": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        2,
+        4,
+        6,
+        8,
+        10
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 1
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "list",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      },
+      {
+       "from": {
+        "view": "list",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       }
+      },
+      {
+       "from": {
+        "view": "list",
+        "at": 3
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "list",
+        "at": 4
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       }
+      },
+      {
+       "from": {
+        "view": "list",
+        "at": 5
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       }
+      }
+     ],
+     "answer": "[2,4,6,8,10]"
+    }
+   ],
+   "sampleInput": "[2,4,6,8,10]\n1"
+  }
+ ]
+}
