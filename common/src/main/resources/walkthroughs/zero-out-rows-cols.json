@@ -1,0 +1,1607 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Zero Out Rows and Cols",
+  "ko": "행과 열을 0으로 지우기"
+ },
+ "approach": {
+  "en": "First pass: note the row and column of every original 0 in two sets. Second pass: a cell whose row or column is in a set becomes 0. The new zeros never reach the sets, so only the original ones wipe.",
+  "ko": "첫 번째 순회에서 원래 0인 칸의 행과 열을 두 집합에 적어 두고, 두 번째 순회에서 행이나 열이 집합에 있는 칸을 0으로 바꿉니다. 새로 생긴 0은 집합에 들어가지 않으므로 원래 0만 지웁니다."
+ },
+ "views": [
+  {
+   "id": "board",
+   "type": "grid",
+   "title": {
+    "en": "board",
+    "ko": "board (보드)"
+   }
+  },
+  {
+   "id": "rows",
+   "type": "set",
+   "title": {
+    "en": "zero_rows",
+    "ko": "zero_rows (0이 있는 행)"
+   },
+   "empty": {
+    "en": "no row yet",
+    "ko": "아직 없음"
+   }
+  },
+  {
+   "id": "cols",
+   "type": "set",
+   "title": {
+    "en": "zero_cols",
+    "ko": "zero_cols (0이 있는 열)"
+   },
+   "empty": {
+    "en": "no column yet",
+    "ko": "아직 없음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "board = [[2,3],[4,5]]",
+   "expected": "[[2,3],[4,5]]",
+   "frames": [
+    {
+     "caption": {
+      "en": "A 2×2 board. First pass: find every 0 and note its row and column.",
+      "ko": "2×2 보드입니다. 첫 번째 순회에서 0을 모두 찾아 그 행과 열을 적어 둡니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         2,
+         3
+        ],
+        [
+         4,
+         5
+        ]
+       ],
+       "shade": [],
+       "marks": {
+        "lit": [],
+        "good": [],
+        "path": []
+       }
+      },
+      "rows": {
+       "members": [],
+       "probes": [],
+       "marks": {
+        "good": []
+       }
+      },
+      "cols": {
+       "members": [],
+       "probes": [],
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Row 0 has no 0.",
+      "ko": "0행에는 0이 없습니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         2,
+         3
+        ],
+        [
+         4,
+         5
+        ]
+       ],
+       "shade": [],
+       "marks": {
+        "lit": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "good": [],
+        "path": []
+       }
+      },
+      "rows": {
+       "members": [],
+       "probes": [],
+       "marks": {
+        "good": []
+       }
+      },
+      "cols": {
+       "members": [],
+       "probes": [],
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Row 1 has no 0.",
+      "ko": "1행에는 0이 없습니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         2,
+         3
+        ],
+        [
+         4,
+         5
+        ]
+       ],
+       "shade": [],
+       "marks": {
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "good": [],
+        "path": []
+       }
+      },
+      "rows": {
+       "members": [],
+       "probes": [],
+       "marks": {
+        "good": []
+       }
+      },
+      "cols": {
+       "members": [],
+       "probes": [],
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "No 0 was found, so both sets are empty: the second pass finds no cell to change.",
+      "ko": "0이 없어 두 집합이 모두 비었으므로, 두 번째 순회에서 바꿀 칸이 없습니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         2,
+         3
+        ],
+        [
+         4,
+         5
+        ]
+       ],
+       "shade": [],
+       "marks": {
+        "lit": [],
+        "good": [],
+        "path": []
+       }
+      },
+      "rows": {
+       "members": [],
+       "probes": [],
+       "marks": {
+        "good": []
+       }
+      },
+      "cols": {
+       "members": [],
+       "probes": [],
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The board is unchanged: answer [[2,3],[4,5]].",
+      "ko": "보드는 그대로입니다. 답은 [[2,3],[4,5]]입니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         2,
+         3
+        ],
+        [
+         4,
+         5
+        ]
+       ],
+       "shade": [],
+       "marks": {
+        "lit": [],
+        "good": [],
+        "path": []
+       }
+      },
+      "rows": {
+       "members": [],
+       "probes": [],
+       "marks": {
+        "good": []
+       }
+      },
+      "cols": {
+       "members": [],
+       "probes": [],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "answer": "[[2,3],[4,5]]"
+    }
+   ],
+   "sampleInput": "[[2,3],[4,5]]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "board = [[4,6,8],[2,0,5],[7,9,3]]",
+   "expected": "[[4,0,8],[0,0,0],[7,0,3]]",
+   "frames": [
+    {
+     "caption": {
+      "en": "A 3×3 board. First pass: find every 0 and note its row and column.",
+      "ko": "3×3 보드입니다. 첫 번째 순회에서 0을 모두 찾아 그 행과 열을 적어 둡니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         4,
+         6,
+         8
+        ],
+        [
+         2,
+         0,
+         5
+        ],
+        [
+         7,
+         9,
+         3
+        ]
+       ],
+       "shade": [],
+       "marks": {
+        "lit": [],
+        "good": [],
+        "path": []
+       }
+      },
+      "rows": {
+       "members": [],
+       "probes": [],
+       "marks": {
+        "good": []
+       }
+      },
+      "cols": {
+       "members": [],
+       "probes": [],
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Row 0 has no 0.",
+      "ko": "0행에는 0이 없습니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         4,
+         6,
+         8
+        ],
+        [
+         2,
+         0,
+         5
+        ],
+        [
+         7,
+         9,
+         3
+        ]
+       ],
+       "shade": [],
+       "marks": {
+        "lit": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          0,
+          2
+         ]
+        ],
+        "good": [],
+        "path": []
+       }
+      },
+      "rows": {
+       "members": [],
+       "probes": [],
+       "marks": {
+        "good": []
+       }
+      },
+      "cols": {
+       "members": [],
+       "probes": [],
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Row 1 has a 0 in column 1: row 1 goes into zero_rows and column 1 into zero_cols.",
+      "ko": "1행의 1열에 0이 있습니다. 1행을 zero_rows에, 1열을 zero_cols에 넣습니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         4,
+         6,
+         8
+        ],
+        [
+         2,
+         0,
+         5
+        ],
+        [
+         7,
+         9,
+         3
+        ]
+       ],
+       "shade": [],
+       "marks": {
+        "lit": [
+         [
+          1,
+          1
+         ]
+        ],
+        "good": [],
+        "path": []
+       }
+      },
+      "rows": {
+       "members": [
+        1
+       ],
+       "probes": [],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "cols": {
+       "members": [
+        1
+       ],
+       "probes": [],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "board",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "rows",
+        "at": 1
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "board",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "cols",
+        "at": 1
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Row 2 has no 0.",
+      "ko": "2행에는 0이 없습니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         4,
+         6,
+         8
+        ],
+        [
+         2,
+         0,
+         5
+        ],
+        [
+         7,
+         9,
+         3
+        ]
+       ],
+       "shade": [],
+       "marks": {
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          2,
+          2
+         ]
+        ],
+        "good": [],
+        "path": []
+       }
+      },
+      "rows": {
+       "members": [
+        1
+       ],
+       "probes": [],
+       "marks": {
+        "good": []
+       }
+      },
+      "cols": {
+       "members": [
+        1
+       ],
+       "probes": [],
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Second pass: each cell looks up its row in zero_rows, then its column in zero_cols.",
+      "ko": "두 번째 순회: 칸마다 행을 zero_rows에서, 이어서 열을 zero_cols에서 찾습니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         4,
+         6,
+         8
+        ],
+        [
+         2,
+         0,
+         5
+        ],
+        [
+         7,
+         9,
+         3
+        ]
+       ],
+       "shade": [],
+       "marks": {
+        "lit": [],
+        "good": [],
+        "path": []
+       }
+      },
+      "rows": {
+       "members": [
+        1
+       ],
+       "probes": [],
+       "marks": {
+        "good": []
+       }
+      },
+      "cols": {
+       "members": [
+        1
+       ],
+       "probes": [],
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Cell (0, 0): neither row 0 nor column 0 is in a set, so 4 stays.",
+      "ko": "(0, 0) 칸: 0행도 0열도 집합에 없으므로 4 그대로입니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         4,
+         6,
+         8
+        ],
+        [
+         2,
+         0,
+         5
+        ],
+        [
+         7,
+         9,
+         3
+        ]
+       ],
+       "shade": [],
+       "marks": {
+        "lit": [
+         [
+          0,
+          0
+         ]
+        ],
+        "good": [],
+        "path": []
+       }
+      },
+      "rows": {
+       "members": [
+        1
+       ],
+       "probes": [
+        {
+         "value": 0,
+         "label": {
+          "en": "row 0?",
+          "ko": "0행?"
+         }
+        }
+       ],
+       "marks": {
+        "good": []
+       }
+      },
+      "cols": {
+       "members": [
+        1
+       ],
+       "probes": [
+        {
+         "value": 0,
+         "label": {
+          "en": "col 0?",
+          "ko": "0열?"
+         }
+        }
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Cell (0, 1): column 1 is in zero_cols, so 6 becomes 0.",
+      "ko": "(0, 1) 칸: 1열이 zero_cols에 있으므로 6에서 0으로 바뀝니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         4,
+         0,
+         8
+        ],
+        [
+         2,
+         0,
+         5
+        ],
+        [
+         7,
+         9,
+         3
+        ]
+       ],
+       "shade": [],
+       "marks": {
+        "lit": [],
+        "good": [
+         [
+          0,
+          1
+         ]
+        ],
+        "path": []
+       }
+      },
+      "rows": {
+       "members": [
+        1
+       ],
+       "probes": [
+        {
+         "value": 0,
+         "label": {
+          "en": "row 0?",
+          "ko": "0행?"
+         }
+        }
+       ],
+       "marks": {
+        "good": []
+       }
+      },
+      "cols": {
+       "members": [
+        1
+       ],
+       "probes": [
+        {
+         "value": 1,
+         "label": {
+          "en": "col 1?",
+          "ko": "1열?"
+         }
+        }
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "cols",
+        "at": 1
+       },
+       "to": {
+        "view": "board",
+        "at": [
+         0,
+         1
+        ]
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Cell (0, 2): neither row 0 nor column 2 is in a set, so 8 stays.",
+      "ko": "(0, 2) 칸: 0행도 2열도 집합에 없으므로 8 그대로입니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         4,
+         0,
+         8
+        ],
+        [
+         2,
+         0,
+         5
+        ],
+        [
+         7,
+         9,
+         3
+        ]
+       ],
+       "shade": [],
+       "marks": {
+        "lit": [
+         [
+          0,
+          2
+         ]
+        ],
+        "good": [],
+        "path": []
+       }
+      },
+      "rows": {
+       "members": [
+        1
+       ],
+       "probes": [
+        {
+         "value": 0,
+         "label": {
+          "en": "row 0?",
+          "ko": "0행?"
+         }
+        }
+       ],
+       "marks": {
+        "good": []
+       }
+      },
+      "cols": {
+       "members": [
+        1
+       ],
+       "probes": [
+        {
+         "value": 2,
+         "label": {
+          "en": "col 2?",
+          "ko": "2열?"
+         }
+        }
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Cell (1, 0): row 1 is in zero_rows, so 2 becomes 0.",
+      "ko": "(1, 0) 칸: 1행이 zero_rows에 있으므로 2에서 0으로 바뀝니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         4,
+         0,
+         8
+        ],
+        [
+         0,
+         0,
+         5
+        ],
+        [
+         7,
+         9,
+         3
+        ]
+       ],
+       "shade": [],
+       "marks": {
+        "lit": [],
+        "good": [
+         [
+          1,
+          0
+         ]
+        ],
+        "path": []
+       }
+      },
+      "rows": {
+       "members": [
+        1
+       ],
+       "probes": [
+        {
+         "value": 1,
+         "label": {
+          "en": "row 1?",
+          "ko": "1행?"
+         }
+        }
+       ],
+       "marks": {
+        "good": []
+       }
+      },
+      "cols": {
+       "members": [
+        1
+       ],
+       "probes": [],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "rows",
+        "at": 1
+       },
+       "to": {
+        "view": "board",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Cell (1, 1): row 1 is in zero_rows; it is an original 0 and stays 0.",
+      "ko": "(1, 1) 칸: 1행이 zero_rows에 있으므로 0을 씁니다. 원래 0인 칸이라 그대로 0입니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         4,
+         0,
+         8
+        ],
+        [
+         0,
+         0,
+         5
+        ],
+        [
+         7,
+         9,
+         3
+        ]
+       ],
+       "shade": [],
+       "marks": {
+        "lit": [],
+        "good": [
+         [
+          1,
+          1
+         ]
+        ],
+        "path": []
+       }
+      },
+      "rows": {
+       "members": [
+        1
+       ],
+       "probes": [
+        {
+         "value": 1,
+         "label": {
+          "en": "row 1?",
+          "ko": "1행?"
+         }
+        }
+       ],
+       "marks": {
+        "good": []
+       }
+      },
+      "cols": {
+       "members": [
+        1
+       ],
+       "probes": [],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "rows",
+        "at": 1
+       },
+       "to": {
+        "view": "board",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Cell (1, 2): row 1 is in zero_rows, so 5 becomes 0.",
+      "ko": "(1, 2) 칸: 1행이 zero_rows에 있으므로 5에서 0으로 바뀝니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         4,
+         0,
+         8
+        ],
+        [
+         0,
+         0,
+         0
+        ],
+        [
+         7,
+         9,
+         3
+        ]
+       ],
+       "shade": [],
+       "marks": {
+        "lit": [],
+        "good": [
+         [
+          1,
+          2
+         ]
+        ],
+        "path": []
+       }
+      },
+      "rows": {
+       "members": [
+        1
+       ],
+       "probes": [
+        {
+         "value": 1,
+         "label": {
+          "en": "row 1?",
+          "ko": "1행?"
+         }
+        }
+       ],
+       "marks": {
+        "good": []
+       }
+      },
+      "cols": {
+       "members": [
+        1
+       ],
+       "probes": [],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "rows",
+        "at": 1
+       },
+       "to": {
+        "view": "board",
+        "at": [
+         1,
+         2
+        ]
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Cell (2, 0): neither row 2 nor column 0 is in a set, so 7 stays.",
+      "ko": "(2, 0) 칸: 2행도 0열도 집합에 없으므로 7 그대로입니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         4,
+         0,
+         8
+        ],
+        [
+         0,
+         0,
+         0
+        ],
+        [
+         7,
+         9,
+         3
+        ]
+       ],
+       "shade": [],
+       "marks": {
+        "lit": [
+         [
+          2,
+          0
+         ]
+        ],
+        "good": [],
+        "path": []
+       }
+      },
+      "rows": {
+       "members": [
+        1
+       ],
+       "probes": [
+        {
+         "value": 2,
+         "label": {
+          "en": "row 2?",
+          "ko": "2행?"
+         }
+        }
+       ],
+       "marks": {
+        "good": []
+       }
+      },
+      "cols": {
+       "members": [
+        1
+       ],
+       "probes": [
+        {
+         "value": 0,
+         "label": {
+          "en": "col 0?",
+          "ko": "0열?"
+         }
+        }
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Cell (2, 1): column 1 is in zero_cols, so 9 becomes 0.",
+      "ko": "(2, 1) 칸: 1열이 zero_cols에 있으므로 9에서 0으로 바뀝니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         4,
+         0,
+         8
+        ],
+        [
+         0,
+         0,
+         0
+        ],
+        [
+         7,
+         0,
+         3
+        ]
+       ],
+       "shade": [],
+       "marks": {
+        "lit": [],
+        "good": [
+         [
+          2,
+          1
+         ]
+        ],
+        "path": []
+       }
+      },
+      "rows": {
+       "members": [
+        1
+       ],
+       "probes": [
+        {
+         "value": 2,
+         "label": {
+          "en": "row 2?",
+          "ko": "2행?"
+         }
+        }
+       ],
+       "marks": {
+        "good": []
+       }
+      },
+      "cols": {
+       "members": [
+        1
+       ],
+       "probes": [
+        {
+         "value": 1,
+         "label": {
+          "en": "col 1?",
+          "ko": "1열?"
+         }
+        }
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "cols",
+        "at": 1
+       },
+       "to": {
+        "view": "board",
+        "at": [
+         2,
+         1
+        ]
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Cell (2, 2): neither row 2 nor column 2 is in a set, so 3 stays.",
+      "ko": "(2, 2) 칸: 2행도 2열도 집합에 없으므로 3 그대로입니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         4,
+         0,
+         8
+        ],
+        [
+         0,
+         0,
+         0
+        ],
+        [
+         7,
+         0,
+         3
+        ]
+       ],
+       "shade": [],
+       "marks": {
+        "lit": [
+         [
+          2,
+          2
+         ]
+        ],
+        "good": [],
+        "path": []
+       }
+      },
+      "rows": {
+       "members": [
+        1
+       ],
+       "probes": [
+        {
+         "value": 2,
+         "label": {
+          "en": "row 2?",
+          "ko": "2행?"
+         }
+        }
+       ],
+       "marks": {
+        "good": []
+       }
+      },
+      "cols": {
+       "members": [
+        1
+       ],
+       "probes": [
+        {
+         "value": 2,
+         "label": {
+          "en": "col 2?",
+          "ko": "2열?"
+         }
+        }
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Every cell in a row or column of an original 0 is 0 now: answer [[4,0,8],[0,0,0],[7,0,3]].",
+      "ko": "원래 0이 있던 행과 열의 칸이 모두 0이 되었습니다. 답은 [[4,0,8],[0,0,0],[7,0,3]]입니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         4,
+         0,
+         8
+        ],
+        [
+         0,
+         0,
+         0
+        ],
+        [
+         7,
+         0,
+         3
+        ]
+       ],
+       "shade": [],
+       "marks": {
+        "lit": [],
+        "good": [],
+        "path": [
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          1,
+          2
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "rows": {
+       "members": [
+        1
+       ],
+       "probes": [],
+       "marks": {
+        "good": []
+       }
+      },
+      "cols": {
+       "members": [
+        1
+       ],
+       "probes": [],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "answer": "[[4,0,8],[0,0,0],[7,0,3]]"
+    }
+   ],
+   "sampleInput": "[[4,6,8],[2,0,5],[7,9,3]]"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "board = [[1,2],[3,4]]",
+   "expected": "[[1,2],[3,4]]",
+   "frames": [
+    {
+     "caption": {
+      "en": "A 2×2 board. First pass: find every 0 and note its row and column.",
+      "ko": "2×2 보드입니다. 첫 번째 순회에서 0을 모두 찾아 그 행과 열을 적어 둡니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         1,
+         2
+        ],
+        [
+         3,
+         4
+        ]
+       ],
+       "shade": [],
+       "marks": {
+        "lit": [],
+        "good": [],
+        "path": []
+       }
+      },
+      "rows": {
+       "members": [],
+       "probes": [],
+       "marks": {
+        "good": []
+       }
+      },
+      "cols": {
+       "members": [],
+       "probes": [],
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Row 0 has no 0.",
+      "ko": "0행에는 0이 없습니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         1,
+         2
+        ],
+        [
+         3,
+         4
+        ]
+       ],
+       "shade": [],
+       "marks": {
+        "lit": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "good": [],
+        "path": []
+       }
+      },
+      "rows": {
+       "members": [],
+       "probes": [],
+       "marks": {
+        "good": []
+       }
+      },
+      "cols": {
+       "members": [],
+       "probes": [],
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Row 1 has no 0.",
+      "ko": "1행에는 0이 없습니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         1,
+         2
+        ],
+        [
+         3,
+         4
+        ]
+       ],
+       "shade": [],
+       "marks": {
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "good": [],
+        "path": []
+       }
+      },
+      "rows": {
+       "members": [],
+       "probes": [],
+       "marks": {
+        "good": []
+       }
+      },
+      "cols": {
+       "members": [],
+       "probes": [],
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "No 0 was found, so both sets are empty: the second pass finds no cell to change.",
+      "ko": "0이 없어 두 집합이 모두 비었으므로, 두 번째 순회에서 바꿀 칸이 없습니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         1,
+         2
+        ],
+        [
+         3,
+         4
+        ]
+       ],
+       "shade": [],
+       "marks": {
+        "lit": [],
+        "good": [],
+        "path": []
+       }
+      },
+      "rows": {
+       "members": [],
+       "probes": [],
+       "marks": {
+        "good": []
+       }
+      },
+      "cols": {
+       "members": [],
+       "probes": [],
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The board is unchanged: answer [[1,2],[3,4]].",
+      "ko": "보드는 그대로입니다. 답은 [[1,2],[3,4]]입니다."
+     },
+     "views": {
+      "board": {
+       "cells": [
+        [
+         1,
+         2
+        ],
+        [
+         3,
+         4
+        ]
+       ],
+       "shade": [],
+       "marks": {
+        "lit": [],
+        "good": [],
+        "path": []
+       }
+      },
+      "rows": {
+       "members": [],
+       "probes": [],
+       "marks": {
+        "good": []
+       }
+      },
+      "cols": {
+       "members": [],
+       "probes": [],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "answer": "[[1,2],[3,4]]"
+    }
+   ],
+   "sampleInput": "[[1,2],[3,4]]"
+  }
+ ]
+}

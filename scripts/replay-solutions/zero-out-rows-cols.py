@@ -1,7 +1,13 @@
 class Solution:
     def zeroOutRowsAndCols(self, board: list[list[int]]) -> None:
-        zero_rows = {r for r, row in enumerate(board) if 0 in row}
-        zero_cols = {c for row in board for c, value in enumerate(row) if value == 0}
+        # First note every row and column holding an original 0, then write: a 0 written in the second pass
+        # never adds a row or column, so only the original zeros wipe.
+        zero_rows, zero_cols = set(), set()
+        for r, row in enumerate(board):
+            for c, value in enumerate(row):
+                if value == 0:
+                    zero_rows.add(r)
+                    zero_cols.add(c)
         for r, row in enumerate(board):
             for c in range(len(row)):
                 if r in zero_rows or c in zero_cols:

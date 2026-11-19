@@ -1,0 +1,1813 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Fast Exponentiation",
+  "ko": "빠른 거듭제곱"
+ },
+ "approach": {
+  "en": "Write the exponent in binary: bit k stands for base^(2^k), which squaring the base k times gives. Multiply the result by the squares whose bit is 1, so the loop runs once per bit, not once per unit.",
+  "ko": "지수를 이진수로 쓰면 k번 비트는 base^(2^k)를 뜻하고, 이 값은 base를 k번 제곱하면 나옵니다. 비트가 1인 자리의 제곱만 result에 곱하므로, 반복은 지수의 크기만큼이 아니라 비트 수만큼 돕니다."
+ },
+ "views": [
+  {
+   "id": "bits",
+   "type": "array",
+   "title": {
+    "en": "|exponent|'s bits, lowest first (tag: place value)",
+    "ko": "|exponent|의 비트, 낮은 자리부터 (태그: 자릿값)"
+   }
+  },
+  {
+   "id": "squares",
+   "type": "array",
+   "title": {
+    "en": "base squared k times (tag: power of b)",
+    "ko": "k번 제곱한 base (태그: b의 거듭제곱)"
+   }
+  },
+  {
+   "id": "result",
+   "type": "output",
+   "title": "result"
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "base = 3.00000, exponent = 4",
+   "expected": "81.00000",
+   "frames": [
+    {
+     "caption": {
+      "en": "base = 3, exponent = 4 = 100 in binary; b below is base. result starts at 1.",
+      "ko": "base = 3, exponent = 4(이진수 100), 아래 b는 base입니다. result는 1에서 시작합니다."
+     },
+     "views": {
+      "bits": {
+       "values": [
+        0,
+        0,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "2"
+        ],
+        [
+         2,
+         "4"
+        ]
+       ],
+       "pointers": {
+        "k": null
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "squares": {
+       "values": [
+        "3",
+        "",
+        "",
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "b¹"
+        ],
+        [
+         1,
+         "b²"
+        ],
+        [
+         2,
+         "b⁴"
+        ],
+        [
+         3,
+         "b⁸"
+        ]
+       ],
+       "unread": [
+        1,
+        2,
+        3
+       ],
+       "marks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "result": {
+       "values": [
+        "1"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Bit 0 is 0, so b¹ is not part of the answer: result stays 1.",
+      "ko": "0번 비트가 0이므로 b¹ 항은 답에 들어가지 않습니다. result는 1 그대로입니다."
+     },
+     "views": {
+      "bits": {
+       "values": [
+        0,
+        0,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "2"
+        ],
+        [
+         2,
+         "4"
+        ]
+       ],
+       "pointers": {
+        "k": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "squares": {
+       "values": [
+        "3",
+        "",
+        "",
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "b¹"
+        ],
+        [
+         1,
+         "b²"
+        ],
+        [
+         2,
+         "b⁴"
+        ],
+        [
+         3,
+         "b⁸"
+        ]
+       ],
+       "unread": [
+        1,
+        2,
+        3
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": []
+       }
+      },
+      "result": {
+       "values": [
+        "1"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "base *= base: 3² = 9, which is b². exponent >>= 1 = 2: on to bit 1.",
+      "ko": "base *= base: 3² = 9, 곧 b²입니다. exponent >>= 1 = 2, 1번 비트로 넘어갑니다."
+     },
+     "views": {
+      "bits": {
+       "values": [
+        0,
+        0,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "2"
+        ],
+        [
+         2,
+         "4"
+        ]
+       ],
+       "pointers": {
+        "k": 0
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "squares": {
+       "values": [
+        "3",
+        "9",
+        "",
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "b¹"
+        ],
+        [
+         1,
+         "b²"
+        ],
+        [
+         2,
+         "b⁴"
+        ],
+        [
+         3,
+         "b⁸"
+        ]
+       ],
+       "unread": [
+        2,
+        3
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "squares",
+        "at": 0
+       },
+       "to": {
+        "view": "squares",
+        "at": 1
+       },
+       "value": "3²"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Bit 1 is 0, so b² is not part of the answer: result stays 1.",
+      "ko": "1번 비트가 0이므로 b² 항은 답에 들어가지 않습니다. result는 1 그대로입니다."
+     },
+     "views": {
+      "bits": {
+       "values": [
+        0,
+        0,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "2"
+        ],
+        [
+         2,
+         "4"
+        ]
+       ],
+       "pointers": {
+        "k": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "squares": {
+       "values": [
+        "3",
+        "9",
+        "",
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "b¹"
+        ],
+        [
+         1,
+         "b²"
+        ],
+        [
+         2,
+         "b⁴"
+        ],
+        [
+         3,
+         "b⁸"
+        ]
+       ],
+       "unread": [
+        2,
+        3
+       ],
+       "marks": {
+        "lit": [
+         1
+        ],
+        "good": []
+       }
+      },
+      "result": {
+       "values": [
+        "1"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "base *= base: 9² = 81, which is b⁴. exponent >>= 1 = 1: on to bit 2.",
+      "ko": "base *= base: 9² = 81, 곧 b⁴입니다. exponent >>= 1 = 1, 2번 비트로 넘어갑니다."
+     },
+     "views": {
+      "bits": {
+       "values": [
+        0,
+        0,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "2"
+        ],
+        [
+         2,
+         "4"
+        ]
+       ],
+       "pointers": {
+        "k": 1
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "squares": {
+       "values": [
+        "3",
+        "9",
+        "81",
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "b¹"
+        ],
+        [
+         1,
+         "b²"
+        ],
+        [
+         2,
+         "b⁴"
+        ],
+        [
+         3,
+         "b⁸"
+        ]
+       ],
+       "unread": [
+        3
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "squares",
+        "at": 1
+       },
+       "to": {
+        "view": "squares",
+        "at": 2
+       },
+       "value": "9²"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Bit 2 is 1, so result *= b⁴: 1 × 81 = 81.",
+      "ko": "2번 비트가 1이므로 result *= b⁴: 1 × 81 = 81."
+     },
+     "views": {
+      "bits": {
+       "values": [
+        0,
+        0,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "2"
+        ],
+        [
+         2,
+         "4"
+        ]
+       ],
+       "pointers": {
+        "k": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "squares": {
+       "values": [
+        "3",
+        "9",
+        "81",
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "b¹"
+        ],
+        [
+         1,
+         "b²"
+        ],
+        [
+         2,
+         "b⁴"
+        ],
+        [
+         3,
+         "b⁸"
+        ]
+       ],
+       "unread": [
+        3
+       ],
+       "marks": {
+        "lit": [
+         2
+        ],
+        "good": []
+       }
+      },
+      "result": {
+       "values": [
+        "81"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "squares",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "×81",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "base *= base: 81² = 6561, which is b⁸. exponent >>= 1 = 0: no bits left, so the loop stops.",
+      "ko": "base *= base: 81² = 6561, 곧 b⁸입니다. exponent >>= 1 = 0, 남은 비트가 없어 반복을 멈춥니다."
+     },
+     "views": {
+      "bits": {
+       "values": [
+        0,
+        0,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "2"
+        ],
+        [
+         2,
+         "4"
+        ]
+       ],
+       "pointers": {
+        "k": 2
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "squares": {
+       "values": [
+        "3",
+        "9",
+        "81",
+        "6561"
+       ],
+       "tags": [
+        [
+         0,
+         "b¹"
+        ],
+        [
+         1,
+         "b²"
+        ],
+        [
+         2,
+         "b⁴"
+        ],
+        [
+         3,
+         "b⁸"
+        ]
+       ],
+       "unread": [],
+       "marks": {
+        "lit": [],
+        "good": [
+         3
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "81"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "squares",
+        "at": 2
+       },
+       "to": {
+        "view": "squares",
+        "at": 3
+       },
+       "value": "81²"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The 1 bits picked b⁴ = 81: answer 81.00000.",
+      "ko": "1인 비트가 고른 b⁴ = 81, 답은 81.00000입니다."
+     },
+     "views": {
+      "bits": {
+       "values": [
+        0,
+        0,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "2"
+        ],
+        [
+         2,
+         "4"
+        ]
+       ],
+       "pointers": {
+        "k": null
+       },
+       "marks": {
+        "path": [
+         2
+        ],
+        "lit": []
+       }
+      },
+      "squares": {
+       "values": [
+        "3",
+        "9",
+        "81",
+        "6561"
+       ],
+       "tags": [
+        [
+         0,
+         "b¹"
+        ],
+        [
+         1,
+         "b²"
+        ],
+        [
+         2,
+         "b⁴"
+        ],
+        [
+         3,
+         "b⁸"
+        ]
+       ],
+       "unread": [],
+       "marks": {
+        "path": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "81"
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      }
+     },
+     "answer": "81.00000"
+    }
+   ],
+   "sampleInput": "3.00000\n4"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "base = 2.00000, exponent = -3",
+   "expected": "0.12500",
+   "frames": [
+    {
+     "caption": {
+      "en": "base = 2, exponent = -3; the bits drawn are those of |exponent| = 3 (11 in binary). result starts at 1.",
+      "ko": "base = 2, exponent = -3, 그린 비트는 |exponent| = 3의 비트(이진수 11)입니다. result는 1에서 시작합니다."
+     },
+     "views": {
+      "bits": {
+       "values": [
+        1,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "2"
+        ]
+       ],
+       "pointers": {
+        "k": null
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "squares": {
+       "values": [
+        "2",
+        "",
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "b¹"
+        ],
+        [
+         1,
+         "b²"
+        ],
+        [
+         2,
+         "b⁴"
+        ]
+       ],
+       "unread": [
+        1,
+        2
+       ],
+       "marks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "result": {
+       "values": [
+        "1"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The exponent is negative, so base^-3 = (1/base)^3: base = 1/2, exponent = 3. b below is this new base.",
+      "ko": "지수가 음수이므로 base^-3 = (1/base)^3, 곧 base = 1/2, exponent = 3으로 바꿉니다. 아래 b는 이 새 base입니다."
+     },
+     "views": {
+      "bits": {
+       "values": [
+        1,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "2"
+        ]
+       ],
+       "pointers": {
+        "k": null
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "squares": {
+       "values": [
+        "1/2",
+        "",
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "b¹"
+        ],
+        [
+         1,
+         "b²"
+        ],
+        [
+         2,
+         "b⁴"
+        ]
+       ],
+       "unread": [
+        1,
+        2
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "squares",
+        "at": 0
+       },
+       "value": "1/2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Bit 0 is 1, so result *= b¹: 1 × 1/2 = 1/2.",
+      "ko": "0번 비트가 1이므로 result *= b¹: 1 × 1/2 = 1/2."
+     },
+     "views": {
+      "bits": {
+       "values": [
+        1,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "2"
+        ]
+       ],
+       "pointers": {
+        "k": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "squares": {
+       "values": [
+        "1/2",
+        "",
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "b¹"
+        ],
+        [
+         1,
+         "b²"
+        ],
+        [
+         2,
+         "b⁴"
+        ]
+       ],
+       "unread": [
+        1,
+        2
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": []
+       }
+      },
+      "result": {
+       "values": [
+        "1/2"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "squares",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "×1/2",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "base *= base: (1/2)² = 1/4, which is b². exponent >>= 1 = 1: on to bit 1.",
+      "ko": "base *= base: (1/2)² = 1/4, 곧 b²입니다. exponent >>= 1 = 1, 1번 비트로 넘어갑니다."
+     },
+     "views": {
+      "bits": {
+       "values": [
+        1,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "2"
+        ]
+       ],
+       "pointers": {
+        "k": 0
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "squares": {
+       "values": [
+        "1/2",
+        "1/4",
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "b¹"
+        ],
+        [
+         1,
+         "b²"
+        ],
+        [
+         2,
+         "b⁴"
+        ]
+       ],
+       "unread": [
+        2
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1/2"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "squares",
+        "at": 0
+       },
+       "to": {
+        "view": "squares",
+        "at": 1
+       },
+       "value": "(1/2)²"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Bit 1 is 1, so result *= b²: 1/2 × 1/4 = 1/8.",
+      "ko": "1번 비트가 1이므로 result *= b²: 1/2 × 1/4 = 1/8."
+     },
+     "views": {
+      "bits": {
+       "values": [
+        1,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "2"
+        ]
+       ],
+       "pointers": {
+        "k": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "squares": {
+       "values": [
+        "1/2",
+        "1/4",
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "b¹"
+        ],
+        [
+         1,
+         "b²"
+        ],
+        [
+         2,
+         "b⁴"
+        ]
+       ],
+       "unread": [
+        2
+       ],
+       "marks": {
+        "lit": [
+         1
+        ],
+        "good": []
+       }
+      },
+      "result": {
+       "values": [
+        "1/8"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "squares",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "×1/4",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "base *= base: (1/4)² = 1/16, which is b⁴. exponent >>= 1 = 0: no bits left, so the loop stops.",
+      "ko": "base *= base: (1/4)² = 1/16, 곧 b⁴입니다. exponent >>= 1 = 0, 남은 비트가 없어 반복을 멈춥니다."
+     },
+     "views": {
+      "bits": {
+       "values": [
+        1,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "2"
+        ]
+       ],
+       "pointers": {
+        "k": 1
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "squares": {
+       "values": [
+        "1/2",
+        "1/4",
+        "1/16"
+       ],
+       "tags": [
+        [
+         0,
+         "b¹"
+        ],
+        [
+         1,
+         "b²"
+        ],
+        [
+         2,
+         "b⁴"
+        ]
+       ],
+       "unread": [],
+       "marks": {
+        "lit": [],
+        "good": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1/8"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "squares",
+        "at": 1
+       },
+       "to": {
+        "view": "squares",
+        "at": 2
+       },
+       "value": "(1/4)²"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The 1 bits picked b¹ × b² = 1/8: answer 0.12500.",
+      "ko": "1인 비트가 고른 b¹ × b² = 1/8, 답은 0.12500입니다."
+     },
+     "views": {
+      "bits": {
+       "values": [
+        1,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "2"
+        ]
+       ],
+       "pointers": {
+        "k": null
+       },
+       "marks": {
+        "path": [
+         0,
+         1
+        ],
+        "lit": []
+       }
+      },
+      "squares": {
+       "values": [
+        "1/2",
+        "1/4",
+        "1/16"
+       ],
+       "tags": [
+        [
+         0,
+         "b¹"
+        ],
+        [
+         1,
+         "b²"
+        ],
+        [
+         2,
+         "b⁴"
+        ]
+       ],
+       "unread": [],
+       "marks": {
+        "path": [
+         0,
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1/8"
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      }
+     },
+     "answer": "0.12500"
+    }
+   ],
+   "sampleInput": "2.00000\n-3"
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "base = 2.00000, exponent = -2",
+   "expected": "0.25000",
+   "frames": [
+    {
+     "caption": {
+      "en": "base = 2, exponent = -2; the bits drawn are those of |exponent| = 2 (10 in binary). result starts at 1.",
+      "ko": "base = 2, exponent = -2, 그린 비트는 |exponent| = 2의 비트(이진수 10)입니다. result는 1에서 시작합니다."
+     },
+     "views": {
+      "bits": {
+       "values": [
+        0,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "2"
+        ]
+       ],
+       "pointers": {
+        "k": null
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "squares": {
+       "values": [
+        "2",
+        "",
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "b¹"
+        ],
+        [
+         1,
+         "b²"
+        ],
+        [
+         2,
+         "b⁴"
+        ]
+       ],
+       "unread": [
+        1,
+        2
+       ],
+       "marks": {
+        "lit": [],
+        "good": []
+       }
+      },
+      "result": {
+       "values": [
+        "1"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The exponent is negative, so base^-2 = (1/base)^2: base = 1/2, exponent = 2. b below is this new base.",
+      "ko": "지수가 음수이므로 base^-2 = (1/base)^2, 곧 base = 1/2, exponent = 2로 바꿉니다. 아래 b는 이 새 base입니다."
+     },
+     "views": {
+      "bits": {
+       "values": [
+        0,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "2"
+        ]
+       ],
+       "pointers": {
+        "k": null
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "squares": {
+       "values": [
+        "1/2",
+        "",
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "b¹"
+        ],
+        [
+         1,
+         "b²"
+        ],
+        [
+         2,
+         "b⁴"
+        ]
+       ],
+       "unread": [
+        1,
+        2
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "squares",
+        "at": 0
+       },
+       "value": "1/2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Bit 0 is 0, so b¹ is not part of the answer: result stays 1.",
+      "ko": "0번 비트가 0이므로 b¹ 항은 답에 들어가지 않습니다. result는 1 그대로입니다."
+     },
+     "views": {
+      "bits": {
+       "values": [
+        0,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "2"
+        ]
+       ],
+       "pointers": {
+        "k": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "squares": {
+       "values": [
+        "1/2",
+        "",
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "b¹"
+        ],
+        [
+         1,
+         "b²"
+        ],
+        [
+         2,
+         "b⁴"
+        ]
+       ],
+       "unread": [
+        1,
+        2
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": []
+       }
+      },
+      "result": {
+       "values": [
+        "1"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "base *= base: (1/2)² = 1/4, which is b². exponent >>= 1 = 1: on to bit 1.",
+      "ko": "base *= base: (1/2)² = 1/4, 곧 b²입니다. exponent >>= 1 = 1, 1번 비트로 넘어갑니다."
+     },
+     "views": {
+      "bits": {
+       "values": [
+        0,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "2"
+        ]
+       ],
+       "pointers": {
+        "k": 0
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "squares": {
+       "values": [
+        "1/2",
+        "1/4",
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "b¹"
+        ],
+        [
+         1,
+         "b²"
+        ],
+        [
+         2,
+         "b⁴"
+        ]
+       ],
+       "unread": [
+        2
+       ],
+       "marks": {
+        "lit": [],
+        "good": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "squares",
+        "at": 0
+       },
+       "to": {
+        "view": "squares",
+        "at": 1
+       },
+       "value": "(1/2)²"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Bit 1 is 1, so result *= b²: 1 × 1/4 = 1/4.",
+      "ko": "1번 비트가 1이므로 result *= b²: 1 × 1/4 = 1/4."
+     },
+     "views": {
+      "bits": {
+       "values": [
+        0,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "2"
+        ]
+       ],
+       "pointers": {
+        "k": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "squares": {
+       "values": [
+        "1/2",
+        "1/4",
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "b¹"
+        ],
+        [
+         1,
+         "b²"
+        ],
+        [
+         2,
+         "b⁴"
+        ]
+       ],
+       "unread": [
+        2
+       ],
+       "marks": {
+        "lit": [
+         1
+        ],
+        "good": []
+       }
+      },
+      "result": {
+       "values": [
+        "1/4"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "squares",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       },
+       "value": "×1/4",
+       "mark": "good"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "base *= base: (1/4)² = 1/16, which is b⁴. exponent >>= 1 = 0: no bits left, so the loop stops.",
+      "ko": "base *= base: (1/4)² = 1/16, 곧 b⁴입니다. exponent >>= 1 = 0, 남은 비트가 없어 반복을 멈춥니다."
+     },
+     "views": {
+      "bits": {
+       "values": [
+        0,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "2"
+        ]
+       ],
+       "pointers": {
+        "k": 1
+       },
+       "marks": {
+        "lit": []
+       }
+      },
+      "squares": {
+       "values": [
+        "1/2",
+        "1/4",
+        "1/16"
+       ],
+       "tags": [
+        [
+         0,
+         "b¹"
+        ],
+        [
+         1,
+         "b²"
+        ],
+        [
+         2,
+         "b⁴"
+        ]
+       ],
+       "unread": [],
+       "marks": {
+        "lit": [],
+        "good": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1/4"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "squares",
+        "at": 1
+       },
+       "to": {
+        "view": "squares",
+        "at": 2
+       },
+       "value": "(1/4)²"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The 1 bits picked b² = 1/4: answer 0.25000.",
+      "ko": "1인 비트가 고른 b² = 1/4, 답은 0.25000입니다."
+     },
+     "views": {
+      "bits": {
+       "values": [
+        0,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         "1"
+        ],
+        [
+         1,
+         "2"
+        ]
+       ],
+       "pointers": {
+        "k": null
+       },
+       "marks": {
+        "path": [
+         1
+        ],
+        "lit": []
+       }
+      },
+      "squares": {
+       "values": [
+        "1/2",
+        "1/4",
+        "1/16"
+       ],
+       "tags": [
+        [
+         0,
+         "b¹"
+        ],
+        [
+         1,
+         "b²"
+        ],
+        [
+         2,
+         "b⁴"
+        ]
+       ],
+       "unread": [],
+       "marks": {
+        "path": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1/4"
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      }
+     },
+     "answer": "0.25000"
+    }
+   ],
+   "sampleInput": "2.00000\n-2"
+  }
+ ]
+}
