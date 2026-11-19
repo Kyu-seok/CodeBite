@@ -1,0 +1,3914 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Timestamped Value Store",
+  "ko": "타임스탬프 값 저장소"
+ },
+ "approach": {
+  "en": "Writes to a key arrive in time order, so its times form a sorted list: readAt binary-searches it for the first time after the one asked, and the write just before that is the latest at or before it.",
+  "ko": "한 키에 대한 기록은 시점 순서대로 들어오므로 시점 목록은 정렬되어 있습니다. readAt은 이 목록에서 물어본 시점보다 늦은 첫 시점을 이분 탐색으로 찾고, 그 바로 앞 기록이 그 시점 이하인 가장 최근 값입니다."
+ },
+ "views": [
+  {
+   "id": "calls",
+   "type": "table",
+   "title": {
+    "en": "calls",
+    "ko": "호출"
+   }
+  },
+  {
+   "id": "times",
+   "type": "array",
+   "title": {
+    "en": "the key's write times (value under each)",
+    "ko": "키의 기록 시점 (아래: 값)"
+   }
+  },
+  {
+   "id": "result",
+   "type": "output",
+   "title": {
+    "en": "returned",
+    "ko": "반환값"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "[\"TimestampedStore\",\"write\",\"readAt\",\"readAt\",\"write\",\"readAt\"]\n[[],[\"foo\",\"bar\",1],[\"foo\",1],[\"foo\",3],[\"foo\",\"bar2\",4],[\"foo\",4]]",
+   "expected": "[null,null,\"bar\",\"bar\",null,\"bar2\"]",
+   "frames": [
+    {
+     "caption": {
+      "en": "TimestampedStore() starts an empty store: no key has a write yet. It returns null.",
+      "ko": "TimestampedStore(): 빈 저장소를 만듭니다. 아직 기록된 키가 없고, null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "TimestampedStore",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "write",
+          "\"foo\", \"bar\", 1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "readAt",
+          "\"foo\", 1"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "readAt",
+          "\"foo\", 3"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "write",
+          "\"foo\", \"bar2\", 4"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "readAt",
+          "\"foo\", 4"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      },
+      "times": {
+       "values": [],
+       "under": [],
+       "spans": {},
+       "pointers": {},
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "write(\"foo\", \"bar\", 1): time 1 goes on the end of foo's times, later than any before it, so the list stays sorted. It returns null.",
+      "ko": "write(\"foo\", \"bar\", 1): 시점 1이 foo 키의 시점 목록 끝에 붙고, 앞의 어느 시점보다 늦어 목록은 정렬된 채입니다. null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "TimestampedStore",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "write",
+          "\"foo\", \"bar\", 1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "readAt",
+          "\"foo\", 1"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "readAt",
+          "\"foo\", 3"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "write",
+          "\"foo\", \"bar2\", 4"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "readAt",
+          "\"foo\", 4"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "times": {
+       "values": [
+        1
+       ],
+       "under": [
+        [
+         0,
+         "\"bar\""
+        ]
+       ],
+       "spans": {},
+       "pointers": {},
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "times",
+        "at": 0
+       },
+       "value": "1: \"bar\""
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "readAt(\"foo\", 1): mid = 0, time 1. 1 ≤ 1, so that write counts: the search keeps the times right of mid.",
+      "ko": "readAt(\"foo\", 1): mid = 0, 시점 1. 1 ≤ 1: 그 기록은 해당되므로 mid 오른쪽 시점들만 남깁니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "TimestampedStore",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "write",
+          "\"foo\", \"bar\", 1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "readAt",
+          "\"foo\", 1"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "readAt",
+          "\"foo\", 3"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "write",
+          "\"foo\", \"bar2\", 4"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "readAt",
+          "\"foo\", 4"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "times": {
+       "values": [
+        1
+       ],
+       "under": [
+        [
+         0,
+         "\"bar\""
+        ]
+       ],
+       "spans": {
+        "range": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "range",
+          "ko": "범위"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "lo": 0,
+        "mid": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "No time is after 1 (lo = 1 is past the end), so the last write, at time 1, is the latest at or before 1: it returns \"bar\".",
+      "ko": "1보다 늦은 시점이 없으므로(lo = 1, 목록 끝) 마지막 시점 1의 기록이 1 이하에서 가장 최근입니다. \"bar\" 값을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "TimestampedStore",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "write",
+          "\"foo\", \"bar\", 1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "readAt",
+          "\"foo\", 1"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "readAt",
+          "\"foo\", 3"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "write",
+          "\"foo\", \"bar2\", 4"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "readAt",
+          "\"foo\", 4"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "times": {
+       "values": [
+        1
+       ],
+       "under": [
+        [
+         0,
+         "\"bar\""
+        ]
+       ],
+       "spans": {},
+       "pointers": {
+        "lo": null,
+        "mid": null
+       },
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "\"bar\""
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "times",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       },
+       "value": "\"bar\""
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "readAt(\"foo\", 3): mid = 0, time 1. 1 ≤ 3, so that write counts: the search keeps the times right of mid.",
+      "ko": "readAt(\"foo\", 3): mid = 0, 시점 1. 1 ≤ 3: 그 기록은 해당되므로 mid 오른쪽 시점들만 남깁니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "TimestampedStore",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "write",
+          "\"foo\", \"bar\", 1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "readAt",
+          "\"foo\", 1"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "readAt",
+          "\"foo\", 3"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "write",
+          "\"foo\", \"bar2\", 4"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "readAt",
+          "\"foo\", 4"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "times": {
+       "values": [
+        1
+       ],
+       "under": [
+        [
+         0,
+         "\"bar\""
+        ]
+       ],
+       "spans": {
+        "range": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "range",
+          "ko": "범위"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "lo": 0,
+        "mid": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "\"bar\""
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "No time is after 3 (lo = 1 is past the end), so the last write, at time 1, is the latest at or before 3: it returns \"bar\".",
+      "ko": "3보다 늦은 시점이 없으므로(lo = 1, 목록 끝) 마지막 시점 1의 기록이 3 이하에서 가장 최근입니다. \"bar\" 값을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "TimestampedStore",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "write",
+          "\"foo\", \"bar\", 1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "readAt",
+          "\"foo\", 1"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "readAt",
+          "\"foo\", 3"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "write",
+          "\"foo\", \"bar2\", 4"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "readAt",
+          "\"foo\", 4"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "times": {
+       "values": [
+        1
+       ],
+       "under": [
+        [
+         0,
+         "\"bar\""
+        ]
+       ],
+       "spans": {},
+       "pointers": {
+        "lo": null,
+        "mid": null
+       },
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "\"bar\"",
+        "\"bar\""
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "times",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       },
+       "value": "\"bar\""
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "write(\"foo\", \"bar2\", 4): time 4 goes on the end of foo's times, later than any before it, so the list stays sorted. It returns null.",
+      "ko": "write(\"foo\", \"bar2\", 4): 시점 4가 foo 키의 시점 목록 끝에 붙고, 앞의 어느 시점보다 늦어 목록은 정렬된 채입니다. null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "TimestampedStore",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "write",
+          "\"foo\", \"bar\", 1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "readAt",
+          "\"foo\", 1"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "readAt",
+          "\"foo\", 3"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "write",
+          "\"foo\", \"bar2\", 4"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "readAt",
+          "\"foo\", 4"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "times": {
+       "values": [
+        1,
+        4
+       ],
+       "under": [
+        [
+         0,
+         "\"bar\""
+        ],
+        [
+         1,
+         "\"bar2\""
+        ]
+       ],
+       "spans": {},
+       "pointers": {},
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "\"bar\"",
+        "\"bar\"",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         4,
+         1
+        ]
+       },
+       "to": {
+        "view": "times",
+        "at": 1
+       },
+       "value": "4: \"bar2\""
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         4,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "readAt(\"foo\", 4): mid = 1, time 4. 4 ≤ 4, so that write counts: the search keeps the times right of mid.",
+      "ko": "readAt(\"foo\", 4): mid = 1, 시점 4. 4 ≤ 4: 그 기록은 해당되므로 mid 오른쪽 시점들만 남깁니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "TimestampedStore",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "write",
+          "\"foo\", \"bar\", 1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "readAt",
+          "\"foo\", 1"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "readAt",
+          "\"foo\", 3"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "write",
+          "\"foo\", \"bar2\", 4"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "readAt",
+          "\"foo\", 4"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ]
+        ]
+       }
+      },
+      "times": {
+       "values": [
+        1,
+        4
+       ],
+       "under": [
+        [
+         0,
+         "\"bar\""
+        ],
+        [
+         1,
+         "\"bar2\""
+        ]
+       ],
+       "spans": {
+        "range": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "range",
+          "ko": "범위"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "lo": 0,
+        "mid": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "\"bar\"",
+        "\"bar\"",
+        "null"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "No time is after 4 (lo = 2 is past the end), so the last write, at time 4, is the latest at or before 4: it returns \"bar2\".",
+      "ko": "4보다 늦은 시점이 없으므로(lo = 2, 목록 끝) 마지막 시점 4의 기록이 4 이하에서 가장 최근입니다. \"bar2\" 값을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "TimestampedStore",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "write",
+          "\"foo\", \"bar\", 1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "readAt",
+          "\"foo\", 1"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "readAt",
+          "\"foo\", 3"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "write",
+          "\"foo\", \"bar2\", 4"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "readAt",
+          "\"foo\", 4"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ]
+        ]
+       }
+      },
+      "times": {
+       "values": [
+        1,
+        4
+       ],
+       "under": [
+        [
+         0,
+         "\"bar\""
+        ],
+        [
+         1,
+         "\"bar2\""
+        ]
+       ],
+       "spans": {},
+       "pointers": {
+        "lo": null,
+        "mid": null
+       },
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "\"bar\"",
+        "\"bar\"",
+        "null",
+        "\"bar2\""
+       ],
+       "marks": {
+        "good": [
+         5
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "times",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 5
+       },
+       "value": "\"bar2\""
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every call is answered, in order: [null,null,\"bar\",\"bar\",null,\"bar2\"].",
+      "ko": "모든 호출의 반환값을 차례로 모았습니다. 답은 [null,null,\"bar\",\"bar\",null,\"bar2\"]입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "TimestampedStore",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "write",
+          "\"foo\", \"bar\", 1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "readAt",
+          "\"foo\", 1"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "readAt",
+          "\"foo\", 3"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "write",
+          "\"foo\", \"bar2\", 4"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "readAt",
+          "\"foo\", 4"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "times": {
+       "values": [
+        1,
+        4
+       ],
+       "under": [
+        [
+         0,
+         "\"bar\""
+        ],
+        [
+         1,
+         "\"bar2\""
+        ]
+       ],
+       "spans": {},
+       "pointers": {},
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "\"bar\"",
+        "\"bar\"",
+        "null",
+        "\"bar2\""
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      }
+     },
+     "answer": "[null,null,\"bar\",\"bar\",null,\"bar2\"]"
+    }
+   ],
+   "sampleInput": "[\"TimestampedStore\",\"write\",\"readAt\",\"readAt\",\"write\",\"readAt\"]\n[[],[\"foo\",\"bar\",1],[\"foo\",1],[\"foo\",3],[\"foo\",\"bar2\",4],[\"foo\",4]]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "[\"TimestampedStore\",\"write\",\"write\",\"readAt\",\"readAt\",\"readAt\"]\n[[],[\"hello\",\"world\",1],[\"hello\",\"code\",2],[\"hello\",1],[\"hello\",2],[\"hello\",3]]",
+   "expected": "[null,null,null,\"world\",\"code\",\"code\"]",
+   "frames": [
+    {
+     "caption": {
+      "en": "TimestampedStore() starts an empty store: no key has a write yet. It returns null.",
+      "ko": "TimestampedStore(): 빈 저장소를 만듭니다. 아직 기록된 키가 없고, null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "TimestampedStore",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "write",
+          "\"hello\", \"world\", 1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "write",
+          "\"hello\", \"code\", 2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "readAt",
+          "\"hello\", 1"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "readAt",
+          "\"hello\", 2"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "readAt",
+          "\"hello\", 3"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      },
+      "times": {
+       "values": [],
+       "under": [],
+       "spans": {},
+       "pointers": {},
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "write(\"hello\", \"world\", 1): time 1 goes on the end of hello's times, later than any before it, so the list stays sorted. It returns null.",
+      "ko": "write(\"hello\", \"world\", 1): 시점 1이 hello 키의 시점 목록 끝에 붙고, 앞의 어느 시점보다 늦어 목록은 정렬된 채입니다. null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "TimestampedStore",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "write",
+          "\"hello\", \"world\", 1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "write",
+          "\"hello\", \"code\", 2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "readAt",
+          "\"hello\", 1"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "readAt",
+          "\"hello\", 2"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "readAt",
+          "\"hello\", 3"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "times": {
+       "values": [
+        1
+       ],
+       "under": [
+        [
+         0,
+         "\"world\""
+        ]
+       ],
+       "spans": {},
+       "pointers": {},
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "times",
+        "at": 0
+       },
+       "value": "1: \"world\""
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "write(\"hello\", \"code\", 2): time 2 goes on the end of hello's times, later than any before it, so the list stays sorted. It returns null.",
+      "ko": "write(\"hello\", \"code\", 2): 시점 2가 hello 키의 시점 목록 끝에 붙고, 앞의 어느 시점보다 늦어 목록은 정렬된 채입니다. null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "TimestampedStore",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "write",
+          "\"hello\", \"world\", 1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "write",
+          "\"hello\", \"code\", 2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "readAt",
+          "\"hello\", 1"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "readAt",
+          "\"hello\", 2"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "readAt",
+          "\"hello\", 3"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "times": {
+       "values": [
+        1,
+        2
+       ],
+       "under": [
+        [
+         0,
+         "\"world\""
+        ],
+        [
+         1,
+         "\"code\""
+        ]
+       ],
+       "spans": {},
+       "pointers": {},
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         2,
+         1
+        ]
+       },
+       "to": {
+        "view": "times",
+        "at": 1
+       },
+       "value": "2: \"code\""
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         2,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "readAt(\"hello\", 1): mid = 1, time 2. 1 < 2, so that write is too late: the search keeps the times left of mid.",
+      "ko": "readAt(\"hello\", 1): mid = 1, 시점 2. 1 < 2: 그 기록은 너무 늦으므로 mid 왼쪽 시점들만 남깁니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "TimestampedStore",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "write",
+          "\"hello\", \"world\", 1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "write",
+          "\"hello\", \"code\", 2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "readAt",
+          "\"hello\", 1"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "readAt",
+          "\"hello\", 2"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "readAt",
+          "\"hello\", 3"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "times": {
+       "values": [
+        1,
+        2
+       ],
+       "under": [
+        [
+         0,
+         "\"world\""
+        ],
+        [
+         1,
+         "\"code\""
+        ]
+       ],
+       "spans": {
+        "range": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "range",
+          "ko": "범위"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "lo": 0,
+        "mid": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "readAt(\"hello\", 1): mid = 0, time 1. 1 ≤ 1, so that write counts: the search keeps the times right of mid.",
+      "ko": "readAt(\"hello\", 1): mid = 0, 시점 1. 1 ≤ 1: 그 기록은 해당되므로 mid 오른쪽 시점들만 남깁니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "TimestampedStore",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "write",
+          "\"hello\", \"world\", 1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "write",
+          "\"hello\", \"code\", 2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "readAt",
+          "\"hello\", 1"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "readAt",
+          "\"hello\", 2"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "readAt",
+          "\"hello\", 3"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "times": {
+       "values": [
+        1,
+        2
+       ],
+       "under": [
+        [
+         0,
+         "\"world\""
+        ],
+        [
+         1,
+         "\"code\""
+        ]
+       ],
+       "spans": {
+        "range": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "range",
+          "ko": "범위"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "lo": 0,
+        "mid": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The first time after 1 is at index 1, so the write before it, at time 1, is the latest at or before 1: it returns \"world\".",
+      "ko": "1보다 늦은 첫 시점은 인덱스 1에 있으므로, 그 앞 시점 1의 기록이 1 이하에서 가장 최근입니다. \"world\" 값을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "TimestampedStore",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "write",
+          "\"hello\", \"world\", 1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "write",
+          "\"hello\", \"code\", 2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "readAt",
+          "\"hello\", 1"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "readAt",
+          "\"hello\", 2"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "readAt",
+          "\"hello\", 3"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "times": {
+       "values": [
+        1,
+        2
+       ],
+       "under": [
+        [
+         0,
+         "\"world\""
+        ],
+        [
+         1,
+         "\"code\""
+        ]
+       ],
+       "spans": {},
+       "pointers": {
+        "lo": 1,
+        "mid": null
+       },
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "\"world\""
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "times",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       },
+       "value": "\"world\""
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "readAt(\"hello\", 2): mid = 1, time 2. 2 ≤ 2, so that write counts: the search keeps the times right of mid.",
+      "ko": "readAt(\"hello\", 2): mid = 1, 시점 2. 2 ≤ 2: 그 기록은 해당되므로 mid 오른쪽 시점들만 남깁니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "TimestampedStore",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "write",
+          "\"hello\", \"world\", 1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "write",
+          "\"hello\", \"code\", 2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "readAt",
+          "\"hello\", 1"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "readAt",
+          "\"hello\", 2"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "readAt",
+          "\"hello\", 3"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "times": {
+       "values": [
+        1,
+        2
+       ],
+       "under": [
+        [
+         0,
+         "\"world\""
+        ],
+        [
+         1,
+         "\"code\""
+        ]
+       ],
+       "spans": {
+        "range": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "range",
+          "ko": "범위"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "lo": 0,
+        "mid": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "\"world\""
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "No time is after 2 (lo = 2 is past the end), so the last write, at time 2, is the latest at or before 2: it returns \"code\".",
+      "ko": "2보다 늦은 시점이 없으므로(lo = 2, 목록 끝) 마지막 시점 2의 기록이 2 이하에서 가장 최근입니다. \"code\" 값을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "TimestampedStore",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "write",
+          "\"hello\", \"world\", 1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "write",
+          "\"hello\", \"code\", 2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "readAt",
+          "\"hello\", 1"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "readAt",
+          "\"hello\", 2"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "readAt",
+          "\"hello\", 3"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "times": {
+       "values": [
+        1,
+        2
+       ],
+       "under": [
+        [
+         0,
+         "\"world\""
+        ],
+        [
+         1,
+         "\"code\""
+        ]
+       ],
+       "spans": {},
+       "pointers": {
+        "lo": null,
+        "mid": null
+       },
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "\"world\"",
+        "\"code\""
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "times",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       },
+       "value": "\"code\""
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "readAt(\"hello\", 3): mid = 1, time 2. 2 ≤ 3, so that write counts: the search keeps the times right of mid.",
+      "ko": "readAt(\"hello\", 3): mid = 1, 시점 2. 2 ≤ 3: 그 기록은 해당되므로 mid 오른쪽 시점들만 남깁니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "TimestampedStore",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "write",
+          "\"hello\", \"world\", 1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "write",
+          "\"hello\", \"code\", 2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "readAt",
+          "\"hello\", 1"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "readAt",
+          "\"hello\", 2"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "readAt",
+          "\"hello\", 3"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ]
+        ]
+       }
+      },
+      "times": {
+       "values": [
+        1,
+        2
+       ],
+       "under": [
+        [
+         0,
+         "\"world\""
+        ],
+        [
+         1,
+         "\"code\""
+        ]
+       ],
+       "spans": {
+        "range": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "range",
+          "ko": "범위"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "lo": 0,
+        "mid": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "\"world\"",
+        "\"code\""
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "No time is after 3 (lo = 2 is past the end), so the last write, at time 2, is the latest at or before 3: it returns \"code\".",
+      "ko": "3보다 늦은 시점이 없으므로(lo = 2, 목록 끝) 마지막 시점 2의 기록이 3 이하에서 가장 최근입니다. \"code\" 값을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "TimestampedStore",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "write",
+          "\"hello\", \"world\", 1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "write",
+          "\"hello\", \"code\", 2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "readAt",
+          "\"hello\", 1"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "readAt",
+          "\"hello\", 2"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "readAt",
+          "\"hello\", 3"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ]
+        ]
+       }
+      },
+      "times": {
+       "values": [
+        1,
+        2
+       ],
+       "under": [
+        [
+         0,
+         "\"world\""
+        ],
+        [
+         1,
+         "\"code\""
+        ]
+       ],
+       "spans": {},
+       "pointers": {
+        "lo": null,
+        "mid": null
+       },
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "\"world\"",
+        "\"code\"",
+        "\"code\""
+       ],
+       "marks": {
+        "good": [
+         5
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "times",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 5
+       },
+       "value": "\"code\""
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every call is answered, in order: [null,null,null,\"world\",\"code\",\"code\"].",
+      "ko": "모든 호출의 반환값을 차례로 모았습니다. 답은 [null,null,null,\"world\",\"code\",\"code\"]입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "TimestampedStore",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "write",
+          "\"hello\", \"world\", 1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "write",
+          "\"hello\", \"code\", 2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "readAt",
+          "\"hello\", 1"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "readAt",
+          "\"hello\", 2"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "readAt",
+          "\"hello\", 3"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "times": {
+       "values": [
+        1,
+        2
+       ],
+       "under": [
+        [
+         0,
+         "\"world\""
+        ],
+        [
+         1,
+         "\"code\""
+        ]
+       ],
+       "spans": {},
+       "pointers": {},
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "\"world\"",
+        "\"code\"",
+        "\"code\""
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      }
+     },
+     "answer": "[null,null,null,\"world\",\"code\",\"code\"]"
+    }
+   ],
+   "sampleInput": "[\"TimestampedStore\",\"write\",\"write\",\"readAt\",\"readAt\",\"readAt\"]\n[[],[\"hello\",\"world\",1],[\"hello\",\"code\",2],[\"hello\",1],[\"hello\",2],[\"hello\",3]]"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "[\"TimestampedStore\",\"write\",\"readAt\",\"readAt\"]\n[[],[\"key\",\"val\",5],[\"key\",3],[\"key\",5]]",
+   "expected": "[null,null,\"\",\"val\"]",
+   "frames": [
+    {
+     "caption": {
+      "en": "TimestampedStore() starts an empty store: no key has a write yet. It returns null.",
+      "ko": "TimestampedStore(): 빈 저장소를 만듭니다. 아직 기록된 키가 없고, null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "TimestampedStore",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "write",
+          "\"key\", \"val\", 5"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "readAt",
+          "\"key\", 3"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "readAt",
+          "\"key\", 5"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      },
+      "times": {
+       "values": [],
+       "under": [],
+       "spans": {},
+       "pointers": {},
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "write(\"key\", \"val\", 5): time 5 goes on the end of key's times, later than any before it, so the list stays sorted. It returns null.",
+      "ko": "write(\"key\", \"val\", 5): 시점 5가 key 키의 시점 목록 끝에 붙고, 앞의 어느 시점보다 늦어 목록은 정렬된 채입니다. null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "TimestampedStore",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "write",
+          "\"key\", \"val\", 5"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "readAt",
+          "\"key\", 3"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "readAt",
+          "\"key\", 5"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "times": {
+       "values": [
+        5
+       ],
+       "under": [
+        [
+         0,
+         "\"val\""
+        ]
+       ],
+       "spans": {},
+       "pointers": {},
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "times",
+        "at": 0
+       },
+       "value": "5: \"val\""
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "readAt(\"key\", 3): mid = 0, time 5. 3 < 5, so that write is too late: the search keeps the times left of mid.",
+      "ko": "readAt(\"key\", 3): mid = 0, 시점 5. 3 < 5: 그 기록은 너무 늦으므로 mid 왼쪽 시점들만 남깁니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "TimestampedStore",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "write",
+          "\"key\", \"val\", 5"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "readAt",
+          "\"key\", 3"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "readAt",
+          "\"key\", 5"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "times": {
+       "values": [
+        5
+       ],
+       "under": [
+        [
+         0,
+         "\"val\""
+        ]
+       ],
+       "spans": {
+        "range": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "range",
+          "ko": "범위"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "lo": 0,
+        "mid": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "lo = 0: even the first write, at time 5, is after 3, so key had no value yet and readAt returns \"\".",
+      "ko": "lo = 0: 첫 기록조차 3보다 늦으므로 그 시점에는 key 키에 값이 없었습니다. \"\" 값을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "TimestampedStore",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "write",
+          "\"key\", \"val\", 5"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "readAt",
+          "\"key\", 3"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "readAt",
+          "\"key\", 5"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "times": {
+       "values": [
+        5
+       ],
+       "under": [
+        [
+         0,
+         "\"val\""
+        ]
+       ],
+       "spans": {},
+       "pointers": {
+        "lo": 0,
+        "mid": null
+       },
+       "marks": {
+        "bad": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "\"\""
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         2,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       },
+       "value": "\"\""
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "readAt(\"key\", 5): mid = 0, time 5. 5 ≤ 5, so that write counts: the search keeps the times right of mid.",
+      "ko": "readAt(\"key\", 5): mid = 0, 시점 5. 5 ≤ 5: 그 기록은 해당되므로 mid 오른쪽 시점들만 남깁니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "TimestampedStore",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "write",
+          "\"key\", \"val\", 5"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "readAt",
+          "\"key\", 3"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "readAt",
+          "\"key\", 5"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "times": {
+       "values": [
+        5
+       ],
+       "under": [
+        [
+         0,
+         "\"val\""
+        ]
+       ],
+       "spans": {
+        "range": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "range",
+          "ko": "범위"
+         },
+         "fade": true
+        }
+       },
+       "pointers": {
+        "lo": 0,
+        "mid": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "\"\""
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "No time is after 5 (lo = 1 is past the end), so the last write, at time 5, is the latest at or before 5: it returns \"val\".",
+      "ko": "5보다 늦은 시점이 없으므로(lo = 1, 목록 끝) 마지막 시점 5의 기록이 5 이하에서 가장 최근입니다. \"val\" 값을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "TimestampedStore",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "write",
+          "\"key\", \"val\", 5"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "readAt",
+          "\"key\", 3"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "readAt",
+          "\"key\", 5"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "times": {
+       "values": [
+        5
+       ],
+       "under": [
+        [
+         0,
+         "\"val\""
+        ]
+       ],
+       "spans": {},
+       "pointers": {
+        "lo": null,
+        "mid": null
+       },
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "\"\"",
+        "\"val\""
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "times",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       },
+       "value": "\"val\""
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every call is answered, in order: [null,null,\"\",\"val\"].",
+      "ko": "모든 호출의 반환값을 차례로 모았습니다. 답은 [null,null,\"\",\"val\"]입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "TimestampedStore",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "write",
+          "\"key\", \"val\", 5"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "readAt",
+          "\"key\", 3"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "readAt",
+          "\"key\", 5"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "times": {
+       "values": [
+        5
+       ],
+       "under": [
+        [
+         0,
+         "\"val\""
+        ]
+       ],
+       "spans": {},
+       "pointers": {},
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "\"\"",
+        "\"val\""
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      }
+     },
+     "answer": "[null,null,\"\",\"val\"]"
+    }
+   ],
+   "sampleInput": "[\"TimestampedStore\",\"write\",\"readAt\",\"readAt\"]\n[[],[\"key\",\"val\",5],[\"key\",3],[\"key\",5]]"
+  }
+ ]
+}
