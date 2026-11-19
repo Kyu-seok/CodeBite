@@ -11,15 +11,21 @@ class TreeNode:
 class Solution:
     def listBuildPaths(self, root: Optional[TreeNode], target: int) -> list[list[int]]:
         paths: list[list[int]] = []
-        # Right is pushed before left so the stack pops in left-first DFS order.
-        stack = [(root, [root.val], root.val)] if root else []
-        while stack:
-            node, path, total = stack.pop()
+        path: list[int] = []
+
+        # Depth first, left before right: the path holds the open calls' values, so a leaf whose sum hits target
+        # copies it out, and each call takes its own value off again as it returns.
+        def walk(node: TreeNode, total: int) -> None:
+            path.append(node.val)
+            total += node.val
             if not node.left and not node.right:
                 if total == target:
-                    paths.append(path)
-                continue
-            for child in (node.right, node.left):
+                    paths.append(list(path))
+            for child in (node.left, node.right):
                 if child:
-                    stack.append((child, path + [child.val], total + child.val))
+                    walk(child, total)
+            path.pop()
+
+        if root:
+            walk(root, 0)
         return paths
