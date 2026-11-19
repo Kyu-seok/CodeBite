@@ -1,0 +1,1939 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Rebuild the Tournament Line",
+  "ko": "참가자 줄 세우기"
+ },
+ "approach": {
+  "en": "Seat the tallest players first. A shorter player doesn't change anyone's k, and when a player is seated everyone already in line is at least as tall, so exactly k of them must stand ahead: insert at index k.",
+  "ko": "키가 큰 사람부터 세웁니다. 더 작은 사람은 누구의 k도 바꾸지 않고, 한 사람을 세울 때 이미 줄에 선 사람은 모두 키가 그 이상이므로 그중 정확히 k명이 앞에 있어야 합니다. 그래서 인덱스 k에 끼워 넣습니다."
+ },
+ "views": [
+  {
+   "id": "players",
+   "type": "array",
+   "title": {
+    "en": "players: height, k above",
+    "ko": "players (참가자): 키, 위 태그는 k"
+   }
+  },
+  {
+   "id": "order",
+   "type": "array",
+   "title": {
+    "en": "sorted: tallest first, then smaller k",
+    "ko": "정렬: 키 큰 순, 같으면 k 작은 순"
+   },
+   "empty": {
+    "en": "not sorted yet",
+    "ko": "아직 정렬 전"
+   }
+  },
+  {
+   "id": "line",
+   "type": "array",
+   "title": {
+    "en": "line, front first",
+    "ko": "줄 (맨 앞부터)"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "players = [[3,0],[6,0],[6,1],[4,1]]",
+   "expected": "[[3,0],[6,0],[4,1],[6,1]]",
+   "frames": [
+    {
+     "caption": {
+      "en": "4 players, scrambled. Each is a height h with k, the number of players at least h tall who stand ahead of them.",
+      "ko": "참가자 4명이 뒤섞여 있습니다. 각자 키 h와 k, 곧 자기 앞에 선 키 h 이상인 사람 수를 가집니다."
+     },
+     "views": {
+      "players": {
+       "values": [
+        3,
+        6,
+        6,
+        4
+       ],
+       "tags": [
+        [
+         0,
+         "k=0"
+        ],
+        [
+         1,
+         "k=0"
+        ],
+        [
+         2,
+         "k=1"
+        ],
+        [
+         3,
+         "k=1"
+        ]
+       ]
+      },
+      "order": {
+       "values": [],
+       "tags": [],
+       "pointers": {
+        "p": null
+       },
+       "marks": {
+        "dim": []
+       }
+      },
+      "line": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Sort tallest first, and among equal heights the smaller k first: [6,0], [6,1], [4,1], [3,0].",
+      "ko": "키가 큰 순으로, 키가 같으면 k가 작은 순으로 정렬합니다: [6,0], [6,1], [4,1], [3,0]."
+     },
+     "views": {
+      "players": {
+       "values": [
+        3,
+        6,
+        6,
+        4
+       ],
+       "tags": [
+        [
+         0,
+         "k=0"
+        ],
+        [
+         1,
+         "k=0"
+        ],
+        [
+         2,
+         "k=1"
+        ],
+        [
+         3,
+         "k=1"
+        ]
+       ]
+      },
+      "order": {
+       "values": [
+        6,
+        6,
+        4,
+        3
+       ],
+       "tags": [
+        [
+         0,
+         "k=0"
+        ],
+        [
+         1,
+         "k=1"
+        ],
+        [
+         2,
+         "k=1"
+        ],
+        [
+         3,
+         "k=0"
+        ]
+       ],
+       "pointers": {
+        "p": null
+       },
+       "marks": {
+        "dim": [],
+        "good": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "line": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "players",
+        "at": 1
+       },
+       "to": {
+        "view": "order",
+        "at": 0
+       },
+       "value": 6
+      },
+      {
+       "from": {
+        "view": "players",
+        "at": 2
+       },
+       "to": {
+        "view": "order",
+        "at": 1
+       },
+       "value": 6
+      },
+      {
+       "from": {
+        "view": "players",
+        "at": 3
+       },
+       "to": {
+        "view": "order",
+        "at": 2
+       },
+       "value": 4
+      },
+      {
+       "from": {
+        "view": "players",
+        "at": 0
+       },
+       "to": {
+        "view": "order",
+        "at": 3
+       },
+       "value": 3
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "[6,0] goes first into the empty line, at index 0.",
+      "ko": "[6,0] 참가자가 빈 줄의 인덱스 0에 섭니다."
+     },
+     "views": {
+      "players": {
+       "values": [
+        3,
+        6,
+        6,
+        4
+       ],
+       "tags": [
+        [
+         0,
+         "k=0"
+        ],
+        [
+         1,
+         "k=0"
+        ],
+        [
+         2,
+         "k=1"
+        ],
+        [
+         3,
+         "k=1"
+        ]
+       ]
+      },
+      "order": {
+       "values": [
+        6,
+        6,
+        4,
+        3
+       ],
+       "tags": [
+        [
+         0,
+         "k=0"
+        ],
+        [
+         1,
+         "k=1"
+        ],
+        [
+         2,
+         "k=1"
+        ],
+        [
+         3,
+         "k=0"
+        ]
+       ],
+       "pointers": {
+        "p": 0
+       },
+       "marks": {
+        "dim": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "line": {
+       "values": [
+        6
+       ],
+       "tags": [
+        [
+         0,
+         "k=0"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "order",
+        "at": 0
+       },
+       "to": {
+        "view": "line",
+        "at": 0
+       },
+       "value": 6
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "[6,1]: the one player already in line is at least 6 tall, so 1 of them must be ahead. Insert at index 1.",
+      "ko": "[6,1] 참가자: 줄에 선 1명은 키가 6 이상이므로 그중 1명이 앞에 있어야 합니다. 인덱스 1에 끼워 넣습니다."
+     },
+     "views": {
+      "players": {
+       "values": [
+        3,
+        6,
+        6,
+        4
+       ],
+       "tags": [
+        [
+         0,
+         "k=0"
+        ],
+        [
+         1,
+         "k=0"
+        ],
+        [
+         2,
+         "k=1"
+        ],
+        [
+         3,
+         "k=1"
+        ]
+       ]
+      },
+      "order": {
+       "values": [
+        6,
+        6,
+        4,
+        3
+       ],
+       "tags": [
+        [
+         0,
+         "k=0"
+        ],
+        [
+         1,
+         "k=1"
+        ],
+        [
+         2,
+         "k=1"
+        ],
+        [
+         3,
+         "k=0"
+        ]
+       ],
+       "pointers": {
+        "p": 1
+       },
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "line": {
+       "values": [
+        6,
+        6
+       ],
+       "tags": [
+        [
+         0,
+         "k=0"
+        ],
+        [
+         1,
+         "k=1"
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "order",
+        "at": 1
+       },
+       "to": {
+        "view": "line",
+        "at": 1
+       },
+       "value": 6
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "[4,1]: all 2 already in line are at least 4 tall, so 1 of them must be ahead. Insert at index 1; the player behind steps back.",
+      "ko": "[4,1] 참가자: 줄에 선 2명은 모두 키가 4 이상이므로 그중 1명이 앞에 있어야 합니다. 인덱스 1에 끼워 넣습니다. 뒤의 1명은 한 칸씩 물러납니다."
+     },
+     "views": {
+      "players": {
+       "values": [
+        3,
+        6,
+        6,
+        4
+       ],
+       "tags": [
+        [
+         0,
+         "k=0"
+        ],
+        [
+         1,
+         "k=0"
+        ],
+        [
+         2,
+         "k=1"
+        ],
+        [
+         3,
+         "k=1"
+        ]
+       ]
+      },
+      "order": {
+       "values": [
+        6,
+        6,
+        4,
+        3
+       ],
+       "tags": [
+        [
+         0,
+         "k=0"
+        ],
+        [
+         1,
+         "k=1"
+        ],
+        [
+         2,
+         "k=1"
+        ],
+        [
+         3,
+         "k=0"
+        ]
+       ],
+       "pointers": {
+        "p": 2
+       },
+       "marks": {
+        "dim": [
+         0,
+         1
+        ],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "line": {
+       "values": [
+        6,
+        4,
+        6
+       ],
+       "tags": [
+        [
+         0,
+         "k=0"
+        ],
+        [
+         1,
+         "k=1"
+        ],
+        [
+         2,
+         "k=1"
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "order",
+        "at": 2
+       },
+       "to": {
+        "view": "line",
+        "at": 1
+       },
+       "value": 4
+      },
+      {
+       "from": {
+        "view": "line",
+        "at": 1
+       },
+       "to": {
+        "view": "line",
+        "at": 2
+       },
+       "value": 6
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "[3,0]: all 3 already in line are at least 3 tall, so 0 of them must be ahead. Insert at index 0; the 3 behind step back.",
+      "ko": "[3,0] 참가자: 줄에 선 3명은 모두 키가 3 이상이므로 그중 0명이 앞에 있어야 합니다. 인덱스 0에 끼워 넣습니다. 뒤의 3명은 한 칸씩 물러납니다."
+     },
+     "views": {
+      "players": {
+       "values": [
+        3,
+        6,
+        6,
+        4
+       ],
+       "tags": [
+        [
+         0,
+         "k=0"
+        ],
+        [
+         1,
+         "k=0"
+        ],
+        [
+         2,
+         "k=1"
+        ],
+        [
+         3,
+         "k=1"
+        ]
+       ]
+      },
+      "order": {
+       "values": [
+        6,
+        6,
+        4,
+        3
+       ],
+       "tags": [
+        [
+         0,
+         "k=0"
+        ],
+        [
+         1,
+         "k=1"
+        ],
+        [
+         2,
+         "k=1"
+        ],
+        [
+         3,
+         "k=0"
+        ]
+       ],
+       "pointers": {
+        "p": 3
+       },
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2
+        ],
+        "lit": [
+         3
+        ]
+       }
+      },
+      "line": {
+       "values": [
+        3,
+        6,
+        4,
+        6
+       ],
+       "tags": [
+        [
+         0,
+         "k=0"
+        ],
+        [
+         1,
+         "k=0"
+        ],
+        [
+         2,
+         "k=1"
+        ],
+        [
+         3,
+         "k=1"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "order",
+        "at": 3
+       },
+       "to": {
+        "view": "line",
+        "at": 0
+       },
+       "value": 3
+      },
+      {
+       "from": {
+        "view": "line",
+        "at": 0
+       },
+       "to": {
+        "view": "line",
+        "at": 1
+       },
+       "value": 6
+      },
+      {
+       "from": {
+        "view": "line",
+        "at": 1
+       },
+       "to": {
+        "view": "line",
+        "at": 2
+       },
+       "value": 4
+      },
+      {
+       "from": {
+        "view": "line",
+        "at": 2
+       },
+       "to": {
+        "view": "line",
+        "at": 3
+       },
+       "value": 6
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every player is seated: [[3,0],[6,0],[4,1],[6,1]]. Each later, shorter player went in without changing anyone's count ahead. Answer: [[3,0],[6,0],[4,1],[6,1]].",
+      "ko": "모든 참가자가 섰습니다: [[3,0],[6,0],[4,1],[6,1]]. 나중에 들어온 작은 사람은 누구의 앞사람 수도 바꾸지 않았습니다. 답은 [[3,0],[6,0],[4,1],[6,1]]입니다."
+     },
+     "views": {
+      "players": {
+       "values": [
+        3,
+        6,
+        6,
+        4
+       ],
+       "tags": [
+        [
+         0,
+         "k=0"
+        ],
+        [
+         1,
+         "k=0"
+        ],
+        [
+         2,
+         "k=1"
+        ],
+        [
+         3,
+         "k=1"
+        ]
+       ]
+      },
+      "order": {
+       "values": [
+        6,
+        6,
+        4,
+        3
+       ],
+       "tags": [
+        [
+         0,
+         "k=0"
+        ],
+        [
+         1,
+         "k=1"
+        ],
+        [
+         2,
+         "k=1"
+        ],
+        [
+         3,
+         "k=0"
+        ]
+       ],
+       "pointers": {
+        "p": null
+       },
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "line": {
+       "values": [
+        3,
+        6,
+        4,
+        6
+       ],
+       "tags": [
+        [
+         0,
+         "k=0"
+        ],
+        [
+         1,
+         "k=0"
+        ],
+        [
+         2,
+         "k=1"
+        ],
+        [
+         3,
+         "k=1"
+        ]
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      }
+     },
+     "answer": "[[3,0],[6,0],[4,1],[6,1]]"
+    }
+   ],
+   "sampleInput": "[[3,0],[6,0],[6,1],[4,1]]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "players = [[2,0],[5,0],[2,1],[5,1]]",
+   "expected": "[[2,0],[2,1],[5,0],[5,1]]",
+   "frames": [
+    {
+     "caption": {
+      "en": "4 players, scrambled. Each is a height h with k, the number of players at least h tall who stand ahead of them.",
+      "ko": "참가자 4명이 뒤섞여 있습니다. 각자 키 h와 k, 곧 자기 앞에 선 키 h 이상인 사람 수를 가집니다."
+     },
+     "views": {
+      "players": {
+       "values": [
+        2,
+        5,
+        2,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         "k=0"
+        ],
+        [
+         1,
+         "k=0"
+        ],
+        [
+         2,
+         "k=1"
+        ],
+        [
+         3,
+         "k=1"
+        ]
+       ]
+      },
+      "order": {
+       "values": [],
+       "tags": [],
+       "pointers": {
+        "p": null
+       },
+       "marks": {
+        "dim": []
+       }
+      },
+      "line": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Sort tallest first, and among equal heights the smaller k first: [5,0], [5,1], [2,0], [2,1].",
+      "ko": "키가 큰 순으로, 키가 같으면 k가 작은 순으로 정렬합니다: [5,0], [5,1], [2,0], [2,1]."
+     },
+     "views": {
+      "players": {
+       "values": [
+        2,
+        5,
+        2,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         "k=0"
+        ],
+        [
+         1,
+         "k=0"
+        ],
+        [
+         2,
+         "k=1"
+        ],
+        [
+         3,
+         "k=1"
+        ]
+       ]
+      },
+      "order": {
+       "values": [
+        5,
+        5,
+        2,
+        2
+       ],
+       "tags": [
+        [
+         0,
+         "k=0"
+        ],
+        [
+         1,
+         "k=1"
+        ],
+        [
+         2,
+         "k=0"
+        ],
+        [
+         3,
+         "k=1"
+        ]
+       ],
+       "pointers": {
+        "p": null
+       },
+       "marks": {
+        "dim": [],
+        "good": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "line": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "players",
+        "at": 1
+       },
+       "to": {
+        "view": "order",
+        "at": 0
+       },
+       "value": 5
+      },
+      {
+       "from": {
+        "view": "players",
+        "at": 3
+       },
+       "to": {
+        "view": "order",
+        "at": 1
+       },
+       "value": 5
+      },
+      {
+       "from": {
+        "view": "players",
+        "at": 0
+       },
+       "to": {
+        "view": "order",
+        "at": 2
+       },
+       "value": 2
+      },
+      {
+       "from": {
+        "view": "players",
+        "at": 2
+       },
+       "to": {
+        "view": "order",
+        "at": 3
+       },
+       "value": 2
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "[5,0] goes first into the empty line, at index 0.",
+      "ko": "[5,0] 참가자가 빈 줄의 인덱스 0에 섭니다."
+     },
+     "views": {
+      "players": {
+       "values": [
+        2,
+        5,
+        2,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         "k=0"
+        ],
+        [
+         1,
+         "k=0"
+        ],
+        [
+         2,
+         "k=1"
+        ],
+        [
+         3,
+         "k=1"
+        ]
+       ]
+      },
+      "order": {
+       "values": [
+        5,
+        5,
+        2,
+        2
+       ],
+       "tags": [
+        [
+         0,
+         "k=0"
+        ],
+        [
+         1,
+         "k=1"
+        ],
+        [
+         2,
+         "k=0"
+        ],
+        [
+         3,
+         "k=1"
+        ]
+       ],
+       "pointers": {
+        "p": 0
+       },
+       "marks": {
+        "dim": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "line": {
+       "values": [
+        5
+       ],
+       "tags": [
+        [
+         0,
+         "k=0"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "order",
+        "at": 0
+       },
+       "to": {
+        "view": "line",
+        "at": 0
+       },
+       "value": 5
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "[5,1]: the one player already in line is at least 5 tall, so 1 of them must be ahead. Insert at index 1.",
+      "ko": "[5,1] 참가자: 줄에 선 1명은 키가 5 이상이므로 그중 1명이 앞에 있어야 합니다. 인덱스 1에 끼워 넣습니다."
+     },
+     "views": {
+      "players": {
+       "values": [
+        2,
+        5,
+        2,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         "k=0"
+        ],
+        [
+         1,
+         "k=0"
+        ],
+        [
+         2,
+         "k=1"
+        ],
+        [
+         3,
+         "k=1"
+        ]
+       ]
+      },
+      "order": {
+       "values": [
+        5,
+        5,
+        2,
+        2
+       ],
+       "tags": [
+        [
+         0,
+         "k=0"
+        ],
+        [
+         1,
+         "k=1"
+        ],
+        [
+         2,
+         "k=0"
+        ],
+        [
+         3,
+         "k=1"
+        ]
+       ],
+       "pointers": {
+        "p": 1
+       },
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "line": {
+       "values": [
+        5,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         "k=0"
+        ],
+        [
+         1,
+         "k=1"
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "order",
+        "at": 1
+       },
+       "to": {
+        "view": "line",
+        "at": 1
+       },
+       "value": 5
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "[2,0]: all 2 already in line are at least 2 tall, so 0 of them must be ahead. Insert at index 0; the 2 behind step back.",
+      "ko": "[2,0] 참가자: 줄에 선 2명은 모두 키가 2 이상이므로 그중 0명이 앞에 있어야 합니다. 인덱스 0에 끼워 넣습니다. 뒤의 2명은 한 칸씩 물러납니다."
+     },
+     "views": {
+      "players": {
+       "values": [
+        2,
+        5,
+        2,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         "k=0"
+        ],
+        [
+         1,
+         "k=0"
+        ],
+        [
+         2,
+         "k=1"
+        ],
+        [
+         3,
+         "k=1"
+        ]
+       ]
+      },
+      "order": {
+       "values": [
+        5,
+        5,
+        2,
+        2
+       ],
+       "tags": [
+        [
+         0,
+         "k=0"
+        ],
+        [
+         1,
+         "k=1"
+        ],
+        [
+         2,
+         "k=0"
+        ],
+        [
+         3,
+         "k=1"
+        ]
+       ],
+       "pointers": {
+        "p": 2
+       },
+       "marks": {
+        "dim": [
+         0,
+         1
+        ],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "line": {
+       "values": [
+        2,
+        5,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         "k=0"
+        ],
+        [
+         1,
+         "k=0"
+        ],
+        [
+         2,
+         "k=1"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "order",
+        "at": 2
+       },
+       "to": {
+        "view": "line",
+        "at": 0
+       },
+       "value": 2
+      },
+      {
+       "from": {
+        "view": "line",
+        "at": 0
+       },
+       "to": {
+        "view": "line",
+        "at": 1
+       },
+       "value": 5
+      },
+      {
+       "from": {
+        "view": "line",
+        "at": 1
+       },
+       "to": {
+        "view": "line",
+        "at": 2
+       },
+       "value": 5
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "[2,1]: all 3 already in line are at least 2 tall, so 1 of them must be ahead. Insert at index 1; the 2 behind step back.",
+      "ko": "[2,1] 참가자: 줄에 선 3명은 모두 키가 2 이상이므로 그중 1명이 앞에 있어야 합니다. 인덱스 1에 끼워 넣습니다. 뒤의 2명은 한 칸씩 물러납니다."
+     },
+     "views": {
+      "players": {
+       "values": [
+        2,
+        5,
+        2,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         "k=0"
+        ],
+        [
+         1,
+         "k=0"
+        ],
+        [
+         2,
+         "k=1"
+        ],
+        [
+         3,
+         "k=1"
+        ]
+       ]
+      },
+      "order": {
+       "values": [
+        5,
+        5,
+        2,
+        2
+       ],
+       "tags": [
+        [
+         0,
+         "k=0"
+        ],
+        [
+         1,
+         "k=1"
+        ],
+        [
+         2,
+         "k=0"
+        ],
+        [
+         3,
+         "k=1"
+        ]
+       ],
+       "pointers": {
+        "p": 3
+       },
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2
+        ],
+        "lit": [
+         3
+        ]
+       }
+      },
+      "line": {
+       "values": [
+        2,
+        2,
+        5,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         "k=0"
+        ],
+        [
+         1,
+         "k=1"
+        ],
+        [
+         2,
+         "k=0"
+        ],
+        [
+         3,
+         "k=1"
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "order",
+        "at": 3
+       },
+       "to": {
+        "view": "line",
+        "at": 1
+       },
+       "value": 2
+      },
+      {
+       "from": {
+        "view": "line",
+        "at": 1
+       },
+       "to": {
+        "view": "line",
+        "at": 2
+       },
+       "value": 5
+      },
+      {
+       "from": {
+        "view": "line",
+        "at": 2
+       },
+       "to": {
+        "view": "line",
+        "at": 3
+       },
+       "value": 5
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every player is seated: [[2,0],[2,1],[5,0],[5,1]]. Each later, shorter player went in without changing anyone's count ahead. Answer: [[2,0],[2,1],[5,0],[5,1]].",
+      "ko": "모든 참가자가 섰습니다: [[2,0],[2,1],[5,0],[5,1]]. 나중에 들어온 작은 사람은 누구의 앞사람 수도 바꾸지 않았습니다. 답은 [[2,0],[2,1],[5,0],[5,1]]입니다."
+     },
+     "views": {
+      "players": {
+       "values": [
+        2,
+        5,
+        2,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         "k=0"
+        ],
+        [
+         1,
+         "k=0"
+        ],
+        [
+         2,
+         "k=1"
+        ],
+        [
+         3,
+         "k=1"
+        ]
+       ]
+      },
+      "order": {
+       "values": [
+        5,
+        5,
+        2,
+        2
+       ],
+       "tags": [
+        [
+         0,
+         "k=0"
+        ],
+        [
+         1,
+         "k=1"
+        ],
+        [
+         2,
+         "k=0"
+        ],
+        [
+         3,
+         "k=1"
+        ]
+       ],
+       "pointers": {
+        "p": null
+       },
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "line": {
+       "values": [
+        2,
+        2,
+        5,
+        5
+       ],
+       "tags": [
+        [
+         0,
+         "k=0"
+        ],
+        [
+         1,
+         "k=1"
+        ],
+        [
+         2,
+         "k=0"
+        ],
+        [
+         3,
+         "k=1"
+        ]
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      }
+     },
+     "answer": "[[2,0],[2,1],[5,0],[5,1]]"
+    }
+   ],
+   "sampleInput": "[[2,0],[5,0],[2,1],[5,1]]"
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "players = [[3,0],[3,1]]",
+   "expected": "[[3,0],[3,1]]",
+   "frames": [
+    {
+     "caption": {
+      "en": "2 players, scrambled. Each is a height h with k, the number of players at least h tall who stand ahead of them.",
+      "ko": "참가자 2명이 뒤섞여 있습니다. 각자 키 h와 k, 곧 자기 앞에 선 키 h 이상인 사람 수를 가집니다."
+     },
+     "views": {
+      "players": {
+       "values": [
+        3,
+        3
+       ],
+       "tags": [
+        [
+         0,
+         "k=0"
+        ],
+        [
+         1,
+         "k=1"
+        ]
+       ]
+      },
+      "order": {
+       "values": [],
+       "tags": [],
+       "pointers": {
+        "p": null
+       },
+       "marks": {
+        "dim": []
+       }
+      },
+      "line": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Sort tallest first, and among equal heights the smaller k first: [3,0], [3,1].",
+      "ko": "키가 큰 순으로, 키가 같으면 k가 작은 순으로 정렬합니다: [3,0], [3,1]."
+     },
+     "views": {
+      "players": {
+       "values": [
+        3,
+        3
+       ],
+       "tags": [
+        [
+         0,
+         "k=0"
+        ],
+        [
+         1,
+         "k=1"
+        ]
+       ]
+      },
+      "order": {
+       "values": [
+        3,
+        3
+       ],
+       "tags": [
+        [
+         0,
+         "k=0"
+        ],
+        [
+         1,
+         "k=1"
+        ]
+       ],
+       "pointers": {
+        "p": null
+       },
+       "marks": {
+        "dim": [],
+        "good": [
+         0,
+         1
+        ]
+       }
+      },
+      "line": {
+       "values": [],
+       "tags": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "players",
+        "at": 0
+       },
+       "to": {
+        "view": "order",
+        "at": 0
+       },
+       "value": 3
+      },
+      {
+       "from": {
+        "view": "players",
+        "at": 1
+       },
+       "to": {
+        "view": "order",
+        "at": 1
+       },
+       "value": 3
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "[3,0] goes first into the empty line, at index 0.",
+      "ko": "[3,0] 참가자가 빈 줄의 인덱스 0에 섭니다."
+     },
+     "views": {
+      "players": {
+       "values": [
+        3,
+        3
+       ],
+       "tags": [
+        [
+         0,
+         "k=0"
+        ],
+        [
+         1,
+         "k=1"
+        ]
+       ]
+      },
+      "order": {
+       "values": [
+        3,
+        3
+       ],
+       "tags": [
+        [
+         0,
+         "k=0"
+        ],
+        [
+         1,
+         "k=1"
+        ]
+       ],
+       "pointers": {
+        "p": 0
+       },
+       "marks": {
+        "dim": [],
+        "lit": [
+         0
+        ]
+       }
+      },
+      "line": {
+       "values": [
+        3
+       ],
+       "tags": [
+        [
+         0,
+         "k=0"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "order",
+        "at": 0
+       },
+       "to": {
+        "view": "line",
+        "at": 0
+       },
+       "value": 3
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "[3,1]: the one player already in line is at least 3 tall, so 1 of them must be ahead. Insert at index 1.",
+      "ko": "[3,1] 참가자: 줄에 선 1명은 키가 3 이상이므로 그중 1명이 앞에 있어야 합니다. 인덱스 1에 끼워 넣습니다."
+     },
+     "views": {
+      "players": {
+       "values": [
+        3,
+        3
+       ],
+       "tags": [
+        [
+         0,
+         "k=0"
+        ],
+        [
+         1,
+         "k=1"
+        ]
+       ]
+      },
+      "order": {
+       "values": [
+        3,
+        3
+       ],
+       "tags": [
+        [
+         0,
+         "k=0"
+        ],
+        [
+         1,
+         "k=1"
+        ]
+       ],
+       "pointers": {
+        "p": 1
+       },
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "line": {
+       "values": [
+        3,
+        3
+       ],
+       "tags": [
+        [
+         0,
+         "k=0"
+        ],
+        [
+         1,
+         "k=1"
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "order",
+        "at": 1
+       },
+       "to": {
+        "view": "line",
+        "at": 1
+       },
+       "value": 3
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every player is seated: [[3,0],[3,1]]. Each later, shorter player went in without changing anyone's count ahead. Answer: [[3,0],[3,1]].",
+      "ko": "모든 참가자가 섰습니다: [[3,0],[3,1]]. 나중에 들어온 작은 사람은 누구의 앞사람 수도 바꾸지 않았습니다. 답은 [[3,0],[3,1]]입니다."
+     },
+     "views": {
+      "players": {
+       "values": [
+        3,
+        3
+       ],
+       "tags": [
+        [
+         0,
+         "k=0"
+        ],
+        [
+         1,
+         "k=1"
+        ]
+       ]
+      },
+      "order": {
+       "values": [
+        3,
+        3
+       ],
+       "tags": [
+        [
+         0,
+         "k=0"
+        ],
+        [
+         1,
+         "k=1"
+        ]
+       ],
+       "pointers": {
+        "p": null
+       },
+       "marks": {
+        "dim": [
+         0,
+         1
+        ]
+       }
+      },
+      "line": {
+       "values": [
+        3,
+        3
+       ],
+       "tags": [
+        [
+         0,
+         "k=0"
+        ],
+        [
+         1,
+         "k=1"
+        ]
+       ],
+       "marks": {
+        "path": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "answer": "[[3,0],[3,1]]"
+    }
+   ],
+   "sampleInput": "[[3,0],[3,1]]"
+  }
+ ]
+}
