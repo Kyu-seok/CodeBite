@@ -1,0 +1,4417 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Count Task Orderings",
+  "ko": "유효한 작업 순서 개수"
+ },
+ "approach": {
+  "en": "Without the rule there are n! orders. Within each subtree its root must come first, which only 1 in size of its orders do, and the subtrees' chances are independent: divide n! by every subtree's size.",
+  "ko": "규칙이 없으면 순서는 n!가지입니다. 각 서브트리 안에서는 루트가 가장 먼저 와야 하는데, 그런 순서는 크기분의 1이고 서브트리마다 독립입니다. 그래서 n!을 모든 서브트리 크기로 나눕니다."
+ },
+ "views": [
+  {
+   "id": "parent",
+   "type": "array",
+   "title": {
+    "en": "parent",
+    "ko": "parent (부모 작업)"
+   }
+  },
+  {
+   "id": "tasks",
+   "type": "tree",
+   "title": {
+    "en": "the task tree",
+    "ko": "작업 트리"
+   }
+  },
+  {
+   "id": "order",
+   "type": "array",
+   "title": {
+    "en": "breadth-first order",
+    "ko": "order (너비 우선 순서)"
+   }
+  },
+  {
+   "id": "size",
+   "type": "array",
+   "title": {
+    "en": "subtree size per task",
+    "ko": "size (작업별 서브트리 크기)"
+   }
+  },
+  {
+   "id": "calc",
+   "type": "array",
+   "title": {
+    "en": "n! / product of sizes",
+    "ko": "n! / 크기의 곱"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "parent = [-1,0,0,2,2]",
+   "expected": "8",
+   "frames": [
+    {
+     "caption": {
+      "en": "5 tasks; each parent link is an edge, so they form a tree rooted at task 0. Every size starts at 1, the task itself, and both products at 1.",
+      "ko": "작업이 5개입니다. 부모 관계가 간선이 되어 작업 0을 루트로 하는 트리를 이룹니다. 크기는 모두 자기 자신인 1, 두 곱도 1에서 시작합니다."
+     },
+     "views": {
+      "parent": {
+       "values": [
+        -1,
+        0,
+        0,
+        2,
+        2
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "tasks": {
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "order": {
+       "values": [
+        0,
+        "",
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "task": null
+       },
+       "marks": {},
+       "unread": [
+        1,
+        2,
+        3,
+        4
+       ]
+      },
+      "size": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {}
+      },
+      "calc": {
+       "values": [
+        1,
+        1,
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "n!"
+        ],
+        [
+         1,
+         "∏ size"
+        ],
+        [
+         2,
+         {
+          "en": "answer",
+          "ko": "답"
+         }
+        ]
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Task 0 is next in the order; its children 1, 2 join the end, so parents always come before their children.",
+      "ko": "순서에서 다음은 작업 0입니다. 자식 1, 2번이 뒤에 붙으므로 부모가 늘 자식보다 앞에 옵니다."
+     },
+     "views": {
+      "parent": {
+       "values": [
+        -1,
+        0,
+        0,
+        2,
+        2
+       ],
+       "marks": {}
+      },
+      "tasks": {
+       "nodeMarks": {
+        "lit": [
+         0
+        ],
+        "good": [
+         1,
+         2
+        ]
+       }
+      },
+      "order": {
+       "values": [
+        0,
+        1,
+        2,
+        "",
+        ""
+       ],
+       "pointers": {
+        "task": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [
+         1,
+         2
+        ]
+       },
+       "unread": [
+        3,
+        4
+       ]
+      },
+      "size": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {}
+      },
+      "calc": {
+       "values": [
+        1,
+        1,
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "n!"
+        ],
+        [
+         1,
+         "∏ size"
+        ],
+        [
+         2,
+         {
+          "en": "answer",
+          "ko": "답"
+         }
+        ]
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tasks",
+        "at": 1
+       },
+       "to": {
+        "view": "order",
+        "at": 1
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "tasks",
+        "at": 2
+       },
+       "to": {
+        "view": "order",
+        "at": 2
+       },
+       "value": "2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Task 2 is next in the order; its children 3, 4 join the end, so parents always come before their children.",
+      "ko": "순서에서 다음은 작업 2입니다. 자식 3, 4번이 뒤에 붙으므로 부모가 늘 자식보다 앞에 옵니다."
+     },
+     "views": {
+      "parent": {
+       "values": [
+        -1,
+        0,
+        0,
+        2,
+        2
+       ],
+       "marks": {}
+      },
+      "tasks": {
+       "nodeMarks": {
+        "lit": [
+         2
+        ],
+        "good": [
+         3,
+         4
+        ]
+       }
+      },
+      "order": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "pointers": {
+        "task": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ],
+        "good": [
+         3,
+         4
+        ]
+       },
+       "unread": []
+      },
+      "size": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {}
+      },
+      "calc": {
+       "values": [
+        1,
+        1,
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "n!"
+        ],
+        [
+         1,
+         "∏ size"
+        ],
+        [
+         2,
+         {
+          "en": "answer",
+          "ko": "답"
+         }
+        ]
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tasks",
+        "at": 3
+       },
+       "to": {
+        "view": "order",
+        "at": 3
+       },
+       "value": "3"
+      },
+      {
+       "from": {
+        "view": "tasks",
+        "at": 4
+       },
+       "to": {
+        "view": "order",
+        "at": 4
+       },
+       "value": "4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Walking the order backwards, task 4's subtree is complete with size 1. It adds into its parent, task 2: 1 + 1 = 2.",
+      "ko": "순서를 거꾸로 걸으면 작업 4의 서브트리는 크기 1로 완성됩니다. 부모인 작업 2에 더합니다: 1 + 1 = 2."
+     },
+     "views": {
+      "parent": {
+       "values": [
+        -1,
+        0,
+        0,
+        2,
+        2
+       ],
+       "marks": {}
+      },
+      "tasks": {
+       "nodeMarks": {
+        "lit": [
+         4
+        ],
+        "good": [
+         2
+        ]
+       }
+      },
+      "order": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "pointers": {
+        "task": 4
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       },
+       "unread": []
+      },
+      "size": {
+       "values": [
+        1,
+        1,
+        2,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         4
+        ],
+        "good": [
+         2
+        ]
+       }
+      },
+      "calc": {
+       "values": [
+        1,
+        1,
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "n!"
+        ],
+        [
+         1,
+         "∏ size"
+        ],
+        [
+         2,
+         {
+          "en": "answer",
+          "ko": "답"
+         }
+        ]
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "size",
+        "at": 4
+       },
+       "to": {
+        "view": "size",
+        "at": 2
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Walking the order backwards, task 3's subtree is complete with size 1. It adds into its parent, task 2: 2 + 1 = 3.",
+      "ko": "순서를 거꾸로 걸으면 작업 3의 서브트리는 크기 1로 완성됩니다. 부모인 작업 2에 더합니다: 2 + 1 = 3."
+     },
+     "views": {
+      "parent": {
+       "values": [
+        -1,
+        0,
+        0,
+        2,
+        2
+       ],
+       "marks": {}
+      },
+      "tasks": {
+       "nodeMarks": {
+        "lit": [
+         3
+        ],
+        "good": [
+         2
+        ]
+       }
+      },
+      "order": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "pointers": {
+        "task": 3
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       },
+       "unread": []
+      },
+      "size": {
+       "values": [
+        1,
+        1,
+        3,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         3
+        ],
+        "good": [
+         2
+        ]
+       }
+      },
+      "calc": {
+       "values": [
+        1,
+        1,
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "n!"
+        ],
+        [
+         1,
+         "∏ size"
+        ],
+        [
+         2,
+         {
+          "en": "answer",
+          "ko": "답"
+         }
+        ]
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "size",
+        "at": 3
+       },
+       "to": {
+        "view": "size",
+        "at": 2
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Walking the order backwards, task 2's subtree is complete with size 3. It adds into its parent, task 0: 1 + 3 = 4.",
+      "ko": "순서를 거꾸로 걸으면 작업 2의 서브트리는 크기 3으로 완성됩니다. 부모인 작업 0에 더합니다: 1 + 3 = 4."
+     },
+     "views": {
+      "parent": {
+       "values": [
+        -1,
+        0,
+        0,
+        2,
+        2
+       ],
+       "marks": {}
+      },
+      "tasks": {
+       "nodeMarks": {
+        "lit": [
+         2
+        ],
+        "good": [
+         0
+        ]
+       }
+      },
+      "order": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "pointers": {
+        "task": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       },
+       "unread": []
+      },
+      "size": {
+       "values": [
+        4,
+        1,
+        3,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         2
+        ],
+        "good": [
+         0
+        ]
+       }
+      },
+      "calc": {
+       "values": [
+        1,
+        1,
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "n!"
+        ],
+        [
+         1,
+         "∏ size"
+        ],
+        [
+         2,
+         {
+          "en": "answer",
+          "ko": "답"
+         }
+        ]
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "size",
+        "at": 2
+       },
+       "to": {
+        "view": "size",
+        "at": 0
+       },
+       "value": "+3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Walking the order backwards, task 1's subtree is complete with size 1. It adds into its parent, task 0: 4 + 1 = 5.",
+      "ko": "순서를 거꾸로 걸으면 작업 1의 서브트리는 크기 1로 완성됩니다. 부모인 작업 0에 더합니다: 4 + 1 = 5."
+     },
+     "views": {
+      "parent": {
+       "values": [
+        -1,
+        0,
+        0,
+        2,
+        2
+       ],
+       "marks": {}
+      },
+      "tasks": {
+       "nodeMarks": {
+        "lit": [
+         1
+        ],
+        "good": [
+         0
+        ]
+       }
+      },
+      "order": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "pointers": {
+        "task": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       },
+       "unread": []
+      },
+      "size": {
+       "values": [
+        5,
+        1,
+        3,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         1
+        ],
+        "good": [
+         0
+        ]
+       }
+      },
+      "calc": {
+       "values": [
+        1,
+        1,
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "n!"
+        ],
+        [
+         1,
+         "∏ size"
+        ],
+        [
+         2,
+         {
+          "en": "answer",
+          "ko": "답"
+         }
+        ]
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "size",
+        "at": 1
+       },
+       "to": {
+        "view": "size",
+        "at": 0
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Ignoring the parents, 5 tasks can go in 5! = 1×2×3×4×5 = 120 orders (kept modulo 10^9 + 7).",
+      "ko": "부모를 무시하면 작업 5개의 순서는 5! = 1×2×3×4×5 = 120가지입니다(10^9 + 7로 나눈 나머지로 계산)."
+     },
+     "views": {
+      "parent": {
+       "values": [
+        -1,
+        0,
+        0,
+        2,
+        2
+       ],
+       "marks": {}
+      },
+      "tasks": {
+       "nodeMarks": {}
+      },
+      "order": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "pointers": {
+        "task": null
+       },
+       "marks": {},
+       "unread": []
+      },
+      "size": {
+       "values": [
+        5,
+        1,
+        3,
+        1,
+        1
+       ],
+       "marks": {}
+      },
+      "calc": {
+       "values": [
+        120,
+        1,
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "n!"
+        ],
+        [
+         1,
+         "∏ size"
+        ],
+        [
+         2,
+         {
+          "en": "answer",
+          "ko": "답"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "calc",
+        "at": 0
+       },
+       "value": "5!"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Task 0's subtree has 5 tasks, and task 0 must come first among them: 1 in 5. The product of sizes becomes 1 × 5 = 5.",
+      "ko": "작업 0의 서브트리에는 작업이 5개 있고 그중 작업 0이 먼저 와야 하므로 5분의 1입니다. 크기의 곱은 1 × 5 = 5입니다."
+     },
+     "views": {
+      "parent": {
+       "values": [
+        -1,
+        0,
+        0,
+        2,
+        2
+       ],
+       "marks": {}
+      },
+      "tasks": {
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "order": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "pointers": {
+        "task": null
+       },
+       "marks": {},
+       "unread": []
+      },
+      "size": {
+       "values": [
+        5,
+        1,
+        3,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "calc": {
+       "values": [
+        120,
+        5,
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "n!"
+        ],
+        [
+         1,
+         "∏ size"
+        ],
+        [
+         2,
+         {
+          "en": "answer",
+          "ko": "답"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "size",
+        "at": 0
+       },
+       "to": {
+        "view": "calc",
+        "at": 1
+       },
+       "value": "×5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Task 1's subtree is just itself, size 1: it is first among itself in every order. The product of sizes stays 5 × 1 = 5.",
+      "ko": "작업 1의 서브트리는 자기 자신뿐인 크기 1이라 어느 순서에서나 조건을 만족합니다. 크기의 곱은 5 × 1 = 5 그대로입니다."
+     },
+     "views": {
+      "parent": {
+       "values": [
+        -1,
+        0,
+        0,
+        2,
+        2
+       ],
+       "marks": {}
+      },
+      "tasks": {
+       "nodeMarks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "order": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "pointers": {
+        "task": null
+       },
+       "marks": {},
+       "unread": []
+      },
+      "size": {
+       "values": [
+        5,
+        1,
+        3,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "calc": {
+       "values": [
+        120,
+        5,
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "n!"
+        ],
+        [
+         1,
+         "∏ size"
+        ],
+        [
+         2,
+         {
+          "en": "answer",
+          "ko": "답"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "size",
+        "at": 1
+       },
+       "to": {
+        "view": "calc",
+        "at": 1
+       },
+       "value": "×1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Task 2's subtree has 3 tasks, and task 2 must come first among them: 1 in 3. The product of sizes becomes 5 × 3 = 15.",
+      "ko": "작업 2의 서브트리에는 작업이 3개 있고 그중 작업 2가 먼저 와야 하므로 3분의 1입니다. 크기의 곱은 5 × 3 = 15입니다."
+     },
+     "views": {
+      "parent": {
+       "values": [
+        -1,
+        0,
+        0,
+        2,
+        2
+       ],
+       "marks": {}
+      },
+      "tasks": {
+       "nodeMarks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "order": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "pointers": {
+        "task": null
+       },
+       "marks": {},
+       "unread": []
+      },
+      "size": {
+       "values": [
+        5,
+        1,
+        3,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "calc": {
+       "values": [
+        120,
+        15,
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "n!"
+        ],
+        [
+         1,
+         "∏ size"
+        ],
+        [
+         2,
+         {
+          "en": "answer",
+          "ko": "답"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "size",
+        "at": 2
+       },
+       "to": {
+        "view": "calc",
+        "at": 1
+       },
+       "value": "×3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Task 3's subtree is just itself, size 1: it is first among itself in every order. The product of sizes stays 15 × 1 = 15.",
+      "ko": "작업 3의 서브트리는 자기 자신뿐인 크기 1이라 어느 순서에서나 조건을 만족합니다. 크기의 곱은 15 × 1 = 15 그대로입니다."
+     },
+     "views": {
+      "parent": {
+       "values": [
+        -1,
+        0,
+        0,
+        2,
+        2
+       ],
+       "marks": {}
+      },
+      "tasks": {
+       "nodeMarks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "order": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "pointers": {
+        "task": null
+       },
+       "marks": {},
+       "unread": []
+      },
+      "size": {
+       "values": [
+        5,
+        1,
+        3,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "calc": {
+       "values": [
+        120,
+        15,
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "n!"
+        ],
+        [
+         1,
+         "∏ size"
+        ],
+        [
+         2,
+         {
+          "en": "answer",
+          "ko": "답"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "size",
+        "at": 3
+       },
+       "to": {
+        "view": "calc",
+        "at": 1
+       },
+       "value": "×1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Task 4's subtree is just itself, size 1: it is first among itself in every order. The product of sizes stays 15 × 1 = 15.",
+      "ko": "작업 4의 서브트리는 자기 자신뿐인 크기 1이라 어느 순서에서나 조건을 만족합니다. 크기의 곱은 15 × 1 = 15 그대로입니다."
+     },
+     "views": {
+      "parent": {
+       "values": [
+        -1,
+        0,
+        0,
+        2,
+        2
+       ],
+       "marks": {}
+      },
+      "tasks": {
+       "nodeMarks": {
+        "lit": [
+         4
+        ]
+       }
+      },
+      "order": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "pointers": {
+        "task": null
+       },
+       "marks": {},
+       "unread": []
+      },
+      "size": {
+       "values": [
+        5,
+        1,
+        3,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         4
+        ]
+       }
+      },
+      "calc": {
+       "values": [
+        120,
+        15,
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "n!"
+        ],
+        [
+         1,
+         "∏ size"
+        ],
+        [
+         2,
+         {
+          "en": "answer",
+          "ko": "답"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "size",
+        "at": 4
+       },
+       "to": {
+        "view": "calc",
+        "at": 1
+       },
+       "value": "×1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Divide: 120 / 15 = 8. Modulo the prime 10^9 + 7, dividing is multiplying by 15^(10^9 + 5), which gives the same 8.",
+      "ko": "나눕니다: 120 / 15 = 8. 소수 10^9 + 7로 나눈 나머지에서는 15의 (10^9 + 5)제곱을 곱하는 것이 나누기와 같아 똑같이 8입니다."
+     },
+     "views": {
+      "parent": {
+       "values": [
+        -1,
+        0,
+        0,
+        2,
+        2
+       ],
+       "marks": {}
+      },
+      "tasks": {
+       "nodeMarks": {}
+      },
+      "order": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "pointers": {
+        "task": null
+       },
+       "marks": {},
+       "unread": []
+      },
+      "size": {
+       "values": [
+        5,
+        1,
+        3,
+        1,
+        1
+       ],
+       "marks": {}
+      },
+      "calc": {
+       "values": [
+        120,
+        15,
+        8
+       ],
+       "tags": [
+        [
+         0,
+         "n!"
+        ],
+        [
+         1,
+         "∏ size"
+        ],
+        [
+         2,
+         {
+          "en": "answer",
+          "ko": "답"
+         }
+        ]
+       ],
+       "marks": {
+        "path": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calc",
+        "at": 0
+       },
+       "to": {
+        "view": "calc",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "calc",
+        "at": 1
+       },
+       "to": {
+        "view": "calc",
+        "at": 2
+       },
+       "value": "/15"
+      }
+     ],
+     "answer": "8"
+    }
+   ],
+   "setup": {
+    "tasks": {
+     "nodes": [
+      {
+       "id": 0,
+       "value": 0
+      },
+      {
+       "id": 1,
+       "value": 1
+      },
+      {
+       "id": 2,
+       "value": 2
+      },
+      {
+       "id": 3,
+       "value": 3
+      },
+      {
+       "id": 4,
+       "value": 4
+      }
+     ],
+     "edges": [
+      {
+       "from": 0,
+       "to": 1
+      },
+      {
+       "from": 0,
+       "to": 2
+      },
+      {
+       "from": 2,
+       "to": 3
+      },
+      {
+       "from": 2,
+       "to": 4
+      }
+     ]
+    }
+   },
+   "sampleInput": "[-1,0,0,2,2]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "parent = [-1,0,1,2,3]",
+   "expected": "1",
+   "frames": [
+    {
+     "caption": {
+      "en": "5 tasks; each parent link is an edge, so they form a tree rooted at task 0. Every size starts at 1, the task itself, and both products at 1.",
+      "ko": "작업이 5개입니다. 부모 관계가 간선이 되어 작업 0을 루트로 하는 트리를 이룹니다. 크기는 모두 자기 자신인 1, 두 곱도 1에서 시작합니다."
+     },
+     "views": {
+      "parent": {
+       "values": [
+        -1,
+        0,
+        1,
+        2,
+        3
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "tasks": {
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "order": {
+       "values": [
+        0,
+        "",
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "task": null
+       },
+       "marks": {},
+       "unread": [
+        1,
+        2,
+        3,
+        4
+       ]
+      },
+      "size": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {}
+      },
+      "calc": {
+       "values": [
+        1,
+        1,
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "n!"
+        ],
+        [
+         1,
+         "∏ size"
+        ],
+        [
+         2,
+         {
+          "en": "answer",
+          "ko": "답"
+         }
+        ]
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Task 0 is next in the order; its child 1 join the end, so parents always come before their children.",
+      "ko": "순서에서 다음은 작업 0입니다. 자식 1번이 뒤에 붙으므로 부모가 늘 자식보다 앞에 옵니다."
+     },
+     "views": {
+      "parent": {
+       "values": [
+        -1,
+        0,
+        1,
+        2,
+        3
+       ],
+       "marks": {}
+      },
+      "tasks": {
+       "nodeMarks": {
+        "lit": [
+         0
+        ],
+        "good": [
+         1
+        ]
+       }
+      },
+      "order": {
+       "values": [
+        0,
+        1,
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "task": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [
+         1
+        ]
+       },
+       "unread": [
+        2,
+        3,
+        4
+       ]
+      },
+      "size": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {}
+      },
+      "calc": {
+       "values": [
+        1,
+        1,
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "n!"
+        ],
+        [
+         1,
+         "∏ size"
+        ],
+        [
+         2,
+         {
+          "en": "answer",
+          "ko": "답"
+         }
+        ]
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tasks",
+        "at": 1
+       },
+       "to": {
+        "view": "order",
+        "at": 1
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Task 1 is next in the order; its child 2 join the end, so parents always come before their children.",
+      "ko": "순서에서 다음은 작업 1입니다. 자식 2번이 뒤에 붙으므로 부모가 늘 자식보다 앞에 옵니다."
+     },
+     "views": {
+      "parent": {
+       "values": [
+        -1,
+        0,
+        1,
+        2,
+        3
+       ],
+       "marks": {}
+      },
+      "tasks": {
+       "nodeMarks": {
+        "lit": [
+         1
+        ],
+        "good": [
+         2
+        ]
+       }
+      },
+      "order": {
+       "values": [
+        0,
+        1,
+        2,
+        "",
+        ""
+       ],
+       "pointers": {
+        "task": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ],
+        "good": [
+         2
+        ]
+       },
+       "unread": [
+        3,
+        4
+       ]
+      },
+      "size": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {}
+      },
+      "calc": {
+       "values": [
+        1,
+        1,
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "n!"
+        ],
+        [
+         1,
+         "∏ size"
+        ],
+        [
+         2,
+         {
+          "en": "answer",
+          "ko": "답"
+         }
+        ]
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tasks",
+        "at": 2
+       },
+       "to": {
+        "view": "order",
+        "at": 2
+       },
+       "value": "2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Task 2 is next in the order; its child 3 join the end, so parents always come before their children.",
+      "ko": "순서에서 다음은 작업 2입니다. 자식 3번이 뒤에 붙으므로 부모가 늘 자식보다 앞에 옵니다."
+     },
+     "views": {
+      "parent": {
+       "values": [
+        -1,
+        0,
+        1,
+        2,
+        3
+       ],
+       "marks": {}
+      },
+      "tasks": {
+       "nodeMarks": {
+        "lit": [
+         2
+        ],
+        "good": [
+         3
+        ]
+       }
+      },
+      "order": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        ""
+       ],
+       "pointers": {
+        "task": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ],
+        "good": [
+         3
+        ]
+       },
+       "unread": [
+        4
+       ]
+      },
+      "size": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {}
+      },
+      "calc": {
+       "values": [
+        1,
+        1,
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "n!"
+        ],
+        [
+         1,
+         "∏ size"
+        ],
+        [
+         2,
+         {
+          "en": "answer",
+          "ko": "답"
+         }
+        ]
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tasks",
+        "at": 3
+       },
+       "to": {
+        "view": "order",
+        "at": 3
+       },
+       "value": "3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Task 3 is next in the order; its child 4 join the end, so parents always come before their children.",
+      "ko": "순서에서 다음은 작업 3입니다. 자식 4번이 뒤에 붙으므로 부모가 늘 자식보다 앞에 옵니다."
+     },
+     "views": {
+      "parent": {
+       "values": [
+        -1,
+        0,
+        1,
+        2,
+        3
+       ],
+       "marks": {}
+      },
+      "tasks": {
+       "nodeMarks": {
+        "lit": [
+         3
+        ],
+        "good": [
+         4
+        ]
+       }
+      },
+      "order": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "pointers": {
+        "task": 3
+       },
+       "marks": {
+        "lit": [
+         3
+        ],
+        "good": [
+         4
+        ]
+       },
+       "unread": []
+      },
+      "size": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {}
+      },
+      "calc": {
+       "values": [
+        1,
+        1,
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "n!"
+        ],
+        [
+         1,
+         "∏ size"
+        ],
+        [
+         2,
+         {
+          "en": "answer",
+          "ko": "답"
+         }
+        ]
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tasks",
+        "at": 4
+       },
+       "to": {
+        "view": "order",
+        "at": 4
+       },
+       "value": "4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Walking the order backwards, task 4's subtree is complete with size 1. It adds into its parent, task 3: 1 + 1 = 2.",
+      "ko": "순서를 거꾸로 걸으면 작업 4의 서브트리는 크기 1로 완성됩니다. 부모인 작업 3에 더합니다: 1 + 1 = 2."
+     },
+     "views": {
+      "parent": {
+       "values": [
+        -1,
+        0,
+        1,
+        2,
+        3
+       ],
+       "marks": {}
+      },
+      "tasks": {
+       "nodeMarks": {
+        "lit": [
+         4
+        ],
+        "good": [
+         3
+        ]
+       }
+      },
+      "order": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "pointers": {
+        "task": 4
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       },
+       "unread": []
+      },
+      "size": {
+       "values": [
+        1,
+        1,
+        1,
+        2,
+        1
+       ],
+       "marks": {
+        "lit": [
+         4
+        ],
+        "good": [
+         3
+        ]
+       }
+      },
+      "calc": {
+       "values": [
+        1,
+        1,
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "n!"
+        ],
+        [
+         1,
+         "∏ size"
+        ],
+        [
+         2,
+         {
+          "en": "answer",
+          "ko": "답"
+         }
+        ]
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "size",
+        "at": 4
+       },
+       "to": {
+        "view": "size",
+        "at": 3
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Walking the order backwards, task 3's subtree is complete with size 2. It adds into its parent, task 2: 1 + 2 = 3.",
+      "ko": "순서를 거꾸로 걸으면 작업 3의 서브트리는 크기 2로 완성됩니다. 부모인 작업 2에 더합니다: 1 + 2 = 3."
+     },
+     "views": {
+      "parent": {
+       "values": [
+        -1,
+        0,
+        1,
+        2,
+        3
+       ],
+       "marks": {}
+      },
+      "tasks": {
+       "nodeMarks": {
+        "lit": [
+         3
+        ],
+        "good": [
+         2
+        ]
+       }
+      },
+      "order": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "pointers": {
+        "task": 3
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       },
+       "unread": []
+      },
+      "size": {
+       "values": [
+        1,
+        1,
+        3,
+        2,
+        1
+       ],
+       "marks": {
+        "lit": [
+         3
+        ],
+        "good": [
+         2
+        ]
+       }
+      },
+      "calc": {
+       "values": [
+        1,
+        1,
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "n!"
+        ],
+        [
+         1,
+         "∏ size"
+        ],
+        [
+         2,
+         {
+          "en": "answer",
+          "ko": "답"
+         }
+        ]
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "size",
+        "at": 3
+       },
+       "to": {
+        "view": "size",
+        "at": 2
+       },
+       "value": "+2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Walking the order backwards, task 2's subtree is complete with size 3. It adds into its parent, task 1: 1 + 3 = 4.",
+      "ko": "순서를 거꾸로 걸으면 작업 2의 서브트리는 크기 3으로 완성됩니다. 부모인 작업 1에 더합니다: 1 + 3 = 4."
+     },
+     "views": {
+      "parent": {
+       "values": [
+        -1,
+        0,
+        1,
+        2,
+        3
+       ],
+       "marks": {}
+      },
+      "tasks": {
+       "nodeMarks": {
+        "lit": [
+         2
+        ],
+        "good": [
+         1
+        ]
+       }
+      },
+      "order": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "pointers": {
+        "task": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       },
+       "unread": []
+      },
+      "size": {
+       "values": [
+        1,
+        4,
+        3,
+        2,
+        1
+       ],
+       "marks": {
+        "lit": [
+         2
+        ],
+        "good": [
+         1
+        ]
+       }
+      },
+      "calc": {
+       "values": [
+        1,
+        1,
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "n!"
+        ],
+        [
+         1,
+         "∏ size"
+        ],
+        [
+         2,
+         {
+          "en": "answer",
+          "ko": "답"
+         }
+        ]
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "size",
+        "at": 2
+       },
+       "to": {
+        "view": "size",
+        "at": 1
+       },
+       "value": "+3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Walking the order backwards, task 1's subtree is complete with size 4. It adds into its parent, task 0: 1 + 4 = 5.",
+      "ko": "순서를 거꾸로 걸으면 작업 1의 서브트리는 크기 4로 완성됩니다. 부모인 작업 0에 더합니다: 1 + 4 = 5."
+     },
+     "views": {
+      "parent": {
+       "values": [
+        -1,
+        0,
+        1,
+        2,
+        3
+       ],
+       "marks": {}
+      },
+      "tasks": {
+       "nodeMarks": {
+        "lit": [
+         1
+        ],
+        "good": [
+         0
+        ]
+       }
+      },
+      "order": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "pointers": {
+        "task": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       },
+       "unread": []
+      },
+      "size": {
+       "values": [
+        5,
+        4,
+        3,
+        2,
+        1
+       ],
+       "marks": {
+        "lit": [
+         1
+        ],
+        "good": [
+         0
+        ]
+       }
+      },
+      "calc": {
+       "values": [
+        1,
+        1,
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "n!"
+        ],
+        [
+         1,
+         "∏ size"
+        ],
+        [
+         2,
+         {
+          "en": "answer",
+          "ko": "답"
+         }
+        ]
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "size",
+        "at": 1
+       },
+       "to": {
+        "view": "size",
+        "at": 0
+       },
+       "value": "+4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Ignoring the parents, 5 tasks can go in 5! = 1×2×3×4×5 = 120 orders (kept modulo 10^9 + 7).",
+      "ko": "부모를 무시하면 작업 5개의 순서는 5! = 1×2×3×4×5 = 120가지입니다(10^9 + 7로 나눈 나머지로 계산)."
+     },
+     "views": {
+      "parent": {
+       "values": [
+        -1,
+        0,
+        1,
+        2,
+        3
+       ],
+       "marks": {}
+      },
+      "tasks": {
+       "nodeMarks": {}
+      },
+      "order": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "pointers": {
+        "task": null
+       },
+       "marks": {},
+       "unread": []
+      },
+      "size": {
+       "values": [
+        5,
+        4,
+        3,
+        2,
+        1
+       ],
+       "marks": {}
+      },
+      "calc": {
+       "values": [
+        120,
+        1,
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "n!"
+        ],
+        [
+         1,
+         "∏ size"
+        ],
+        [
+         2,
+         {
+          "en": "answer",
+          "ko": "답"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "calc",
+        "at": 0
+       },
+       "value": "5!"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Task 0's subtree has 5 tasks, and task 0 must come first among them: 1 in 5. The product of sizes becomes 1 × 5 = 5.",
+      "ko": "작업 0의 서브트리에는 작업이 5개 있고 그중 작업 0이 먼저 와야 하므로 5분의 1입니다. 크기의 곱은 1 × 5 = 5입니다."
+     },
+     "views": {
+      "parent": {
+       "values": [
+        -1,
+        0,
+        1,
+        2,
+        3
+       ],
+       "marks": {}
+      },
+      "tasks": {
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "order": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "pointers": {
+        "task": null
+       },
+       "marks": {},
+       "unread": []
+      },
+      "size": {
+       "values": [
+        5,
+        4,
+        3,
+        2,
+        1
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "calc": {
+       "values": [
+        120,
+        5,
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "n!"
+        ],
+        [
+         1,
+         "∏ size"
+        ],
+        [
+         2,
+         {
+          "en": "answer",
+          "ko": "답"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "size",
+        "at": 0
+       },
+       "to": {
+        "view": "calc",
+        "at": 1
+       },
+       "value": "×5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Task 1's subtree has 4 tasks, and task 1 must come first among them: 1 in 4. The product of sizes becomes 5 × 4 = 20.",
+      "ko": "작업 1의 서브트리에는 작업이 4개 있고 그중 작업 1이 먼저 와야 하므로 4분의 1입니다. 크기의 곱은 5 × 4 = 20입니다."
+     },
+     "views": {
+      "parent": {
+       "values": [
+        -1,
+        0,
+        1,
+        2,
+        3
+       ],
+       "marks": {}
+      },
+      "tasks": {
+       "nodeMarks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "order": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "pointers": {
+        "task": null
+       },
+       "marks": {},
+       "unread": []
+      },
+      "size": {
+       "values": [
+        5,
+        4,
+        3,
+        2,
+        1
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "calc": {
+       "values": [
+        120,
+        20,
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "n!"
+        ],
+        [
+         1,
+         "∏ size"
+        ],
+        [
+         2,
+         {
+          "en": "answer",
+          "ko": "답"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "size",
+        "at": 1
+       },
+       "to": {
+        "view": "calc",
+        "at": 1
+       },
+       "value": "×4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Task 2's subtree has 3 tasks, and task 2 must come first among them: 1 in 3. The product of sizes becomes 20 × 3 = 60.",
+      "ko": "작업 2의 서브트리에는 작업이 3개 있고 그중 작업 2가 먼저 와야 하므로 3분의 1입니다. 크기의 곱은 20 × 3 = 60입니다."
+     },
+     "views": {
+      "parent": {
+       "values": [
+        -1,
+        0,
+        1,
+        2,
+        3
+       ],
+       "marks": {}
+      },
+      "tasks": {
+       "nodeMarks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "order": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "pointers": {
+        "task": null
+       },
+       "marks": {},
+       "unread": []
+      },
+      "size": {
+       "values": [
+        5,
+        4,
+        3,
+        2,
+        1
+       ],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "calc": {
+       "values": [
+        120,
+        60,
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "n!"
+        ],
+        [
+         1,
+         "∏ size"
+        ],
+        [
+         2,
+         {
+          "en": "answer",
+          "ko": "답"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "size",
+        "at": 2
+       },
+       "to": {
+        "view": "calc",
+        "at": 1
+       },
+       "value": "×3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Task 3's subtree has 2 tasks, and task 3 must come first among them: 1 in 2. The product of sizes becomes 60 × 2 = 120.",
+      "ko": "작업 3의 서브트리에는 작업이 2개 있고 그중 작업 3이 먼저 와야 하므로 2분의 1입니다. 크기의 곱은 60 × 2 = 120입니다."
+     },
+     "views": {
+      "parent": {
+       "values": [
+        -1,
+        0,
+        1,
+        2,
+        3
+       ],
+       "marks": {}
+      },
+      "tasks": {
+       "nodeMarks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "order": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "pointers": {
+        "task": null
+       },
+       "marks": {},
+       "unread": []
+      },
+      "size": {
+       "values": [
+        5,
+        4,
+        3,
+        2,
+        1
+       ],
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "calc": {
+       "values": [
+        120,
+        120,
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "n!"
+        ],
+        [
+         1,
+         "∏ size"
+        ],
+        [
+         2,
+         {
+          "en": "answer",
+          "ko": "답"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "size",
+        "at": 3
+       },
+       "to": {
+        "view": "calc",
+        "at": 1
+       },
+       "value": "×2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Task 4's subtree is just itself, size 1: it is first among itself in every order. The product of sizes stays 120 × 1 = 120.",
+      "ko": "작업 4의 서브트리는 자기 자신뿐인 크기 1이라 어느 순서에서나 조건을 만족합니다. 크기의 곱은 120 × 1 = 120 그대로입니다."
+     },
+     "views": {
+      "parent": {
+       "values": [
+        -1,
+        0,
+        1,
+        2,
+        3
+       ],
+       "marks": {}
+      },
+      "tasks": {
+       "nodeMarks": {
+        "lit": [
+         4
+        ]
+       }
+      },
+      "order": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "pointers": {
+        "task": null
+       },
+       "marks": {},
+       "unread": []
+      },
+      "size": {
+       "values": [
+        5,
+        4,
+        3,
+        2,
+        1
+       ],
+       "marks": {
+        "lit": [
+         4
+        ]
+       }
+      },
+      "calc": {
+       "values": [
+        120,
+        120,
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "n!"
+        ],
+        [
+         1,
+         "∏ size"
+        ],
+        [
+         2,
+         {
+          "en": "answer",
+          "ko": "답"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "size",
+        "at": 4
+       },
+       "to": {
+        "view": "calc",
+        "at": 1
+       },
+       "value": "×1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Divide: 120 / 120 = 1. Modulo the prime 10^9 + 7, dividing is multiplying by 120^(10^9 + 5), which gives the same 1.",
+      "ko": "나눕니다: 120 / 120 = 1. 소수 10^9 + 7로 나눈 나머지에서는 120의 (10^9 + 5)제곱을 곱하는 것이 나누기와 같아 똑같이 1입니다."
+     },
+     "views": {
+      "parent": {
+       "values": [
+        -1,
+        0,
+        1,
+        2,
+        3
+       ],
+       "marks": {}
+      },
+      "tasks": {
+       "nodeMarks": {}
+      },
+      "order": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "pointers": {
+        "task": null
+       },
+       "marks": {},
+       "unread": []
+      },
+      "size": {
+       "values": [
+        5,
+        4,
+        3,
+        2,
+        1
+       ],
+       "marks": {}
+      },
+      "calc": {
+       "values": [
+        120,
+        120,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         "n!"
+        ],
+        [
+         1,
+         "∏ size"
+        ],
+        [
+         2,
+         {
+          "en": "answer",
+          "ko": "답"
+         }
+        ]
+       ],
+       "marks": {
+        "path": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calc",
+        "at": 0
+       },
+       "to": {
+        "view": "calc",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "calc",
+        "at": 1
+       },
+       "to": {
+        "view": "calc",
+        "at": 2
+       },
+       "value": "/120"
+      }
+     ],
+     "answer": "1"
+    }
+   ],
+   "setup": {
+    "tasks": {
+     "nodes": [
+      {
+       "id": 0,
+       "value": 0
+      },
+      {
+       "id": 1,
+       "value": 1
+      },
+      {
+       "id": 2,
+       "value": 2
+      },
+      {
+       "id": 3,
+       "value": 3
+      },
+      {
+       "id": 4,
+       "value": 4
+      }
+     ],
+     "edges": [
+      {
+       "from": 0,
+       "to": 1
+      },
+      {
+       "from": 1,
+       "to": 2
+      },
+      {
+       "from": 2,
+       "to": 3
+      },
+      {
+       "from": 3,
+       "to": 4
+      }
+     ]
+    }
+   },
+   "sampleInput": "[-1,0,1,2,3]"
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "parent = [-1,0,0,0,0]",
+   "expected": "24",
+   "frames": [
+    {
+     "caption": {
+      "en": "5 tasks; each parent link is an edge, so they form a tree rooted at task 0. Every size starts at 1, the task itself, and both products at 1.",
+      "ko": "작업이 5개입니다. 부모 관계가 간선이 되어 작업 0을 루트로 하는 트리를 이룹니다. 크기는 모두 자기 자신인 1, 두 곱도 1에서 시작합니다."
+     },
+     "views": {
+      "parent": {
+       "values": [
+        -1,
+        0,
+        0,
+        0,
+        0
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "tasks": {
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "order": {
+       "values": [
+        0,
+        "",
+        "",
+        "",
+        ""
+       ],
+       "pointers": {
+        "task": null
+       },
+       "marks": {},
+       "unread": [
+        1,
+        2,
+        3,
+        4
+       ]
+      },
+      "size": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {}
+      },
+      "calc": {
+       "values": [
+        1,
+        1,
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "n!"
+        ],
+        [
+         1,
+         "∏ size"
+        ],
+        [
+         2,
+         {
+          "en": "answer",
+          "ko": "답"
+         }
+        ]
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Task 0 is next in the order; its children 1, 2, 3, 4 join the end, so parents always come before their children.",
+      "ko": "순서에서 다음은 작업 0입니다. 자식 1, 2, 3, 4번이 뒤에 붙으므로 부모가 늘 자식보다 앞에 옵니다."
+     },
+     "views": {
+      "parent": {
+       "values": [
+        -1,
+        0,
+        0,
+        0,
+        0
+       ],
+       "marks": {}
+      },
+      "tasks": {
+       "nodeMarks": {
+        "lit": [
+         0
+        ],
+        "good": [
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      },
+      "order": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "pointers": {
+        "task": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ],
+        "good": [
+         1,
+         2,
+         3,
+         4
+        ]
+       },
+       "unread": []
+      },
+      "size": {
+       "values": [
+        1,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {}
+      },
+      "calc": {
+       "values": [
+        1,
+        1,
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "n!"
+        ],
+        [
+         1,
+         "∏ size"
+        ],
+        [
+         2,
+         {
+          "en": "answer",
+          "ko": "답"
+         }
+        ]
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tasks",
+        "at": 1
+       },
+       "to": {
+        "view": "order",
+        "at": 1
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "tasks",
+        "at": 2
+       },
+       "to": {
+        "view": "order",
+        "at": 2
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "tasks",
+        "at": 3
+       },
+       "to": {
+        "view": "order",
+        "at": 3
+       },
+       "value": "3"
+      },
+      {
+       "from": {
+        "view": "tasks",
+        "at": 4
+       },
+       "to": {
+        "view": "order",
+        "at": 4
+       },
+       "value": "4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Walking the order backwards, task 4's subtree is complete with size 1. It adds into its parent, task 0: 1 + 1 = 2.",
+      "ko": "순서를 거꾸로 걸으면 작업 4의 서브트리는 크기 1로 완성됩니다. 부모인 작업 0에 더합니다: 1 + 1 = 2."
+     },
+     "views": {
+      "parent": {
+       "values": [
+        -1,
+        0,
+        0,
+        0,
+        0
+       ],
+       "marks": {}
+      },
+      "tasks": {
+       "nodeMarks": {
+        "lit": [
+         4
+        ],
+        "good": [
+         0
+        ]
+       }
+      },
+      "order": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "pointers": {
+        "task": 4
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       },
+       "unread": []
+      },
+      "size": {
+       "values": [
+        2,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         4
+        ],
+        "good": [
+         0
+        ]
+       }
+      },
+      "calc": {
+       "values": [
+        1,
+        1,
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "n!"
+        ],
+        [
+         1,
+         "∏ size"
+        ],
+        [
+         2,
+         {
+          "en": "answer",
+          "ko": "답"
+         }
+        ]
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "size",
+        "at": 4
+       },
+       "to": {
+        "view": "size",
+        "at": 0
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Walking the order backwards, task 3's subtree is complete with size 1. It adds into its parent, task 0: 2 + 1 = 3.",
+      "ko": "순서를 거꾸로 걸으면 작업 3의 서브트리는 크기 1로 완성됩니다. 부모인 작업 0에 더합니다: 2 + 1 = 3."
+     },
+     "views": {
+      "parent": {
+       "values": [
+        -1,
+        0,
+        0,
+        0,
+        0
+       ],
+       "marks": {}
+      },
+      "tasks": {
+       "nodeMarks": {
+        "lit": [
+         3
+        ],
+        "good": [
+         0
+        ]
+       }
+      },
+      "order": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "pointers": {
+        "task": 3
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       },
+       "unread": []
+      },
+      "size": {
+       "values": [
+        3,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         3
+        ],
+        "good": [
+         0
+        ]
+       }
+      },
+      "calc": {
+       "values": [
+        1,
+        1,
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "n!"
+        ],
+        [
+         1,
+         "∏ size"
+        ],
+        [
+         2,
+         {
+          "en": "answer",
+          "ko": "답"
+         }
+        ]
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "size",
+        "at": 3
+       },
+       "to": {
+        "view": "size",
+        "at": 0
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Walking the order backwards, task 2's subtree is complete with size 1. It adds into its parent, task 0: 3 + 1 = 4.",
+      "ko": "순서를 거꾸로 걸으면 작업 2의 서브트리는 크기 1로 완성됩니다. 부모인 작업 0에 더합니다: 3 + 1 = 4."
+     },
+     "views": {
+      "parent": {
+       "values": [
+        -1,
+        0,
+        0,
+        0,
+        0
+       ],
+       "marks": {}
+      },
+      "tasks": {
+       "nodeMarks": {
+        "lit": [
+         2
+        ],
+        "good": [
+         0
+        ]
+       }
+      },
+      "order": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "pointers": {
+        "task": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       },
+       "unread": []
+      },
+      "size": {
+       "values": [
+        4,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         2
+        ],
+        "good": [
+         0
+        ]
+       }
+      },
+      "calc": {
+       "values": [
+        1,
+        1,
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "n!"
+        ],
+        [
+         1,
+         "∏ size"
+        ],
+        [
+         2,
+         {
+          "en": "answer",
+          "ko": "답"
+         }
+        ]
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "size",
+        "at": 2
+       },
+       "to": {
+        "view": "size",
+        "at": 0
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Walking the order backwards, task 1's subtree is complete with size 1. It adds into its parent, task 0: 4 + 1 = 5.",
+      "ko": "순서를 거꾸로 걸으면 작업 1의 서브트리는 크기 1로 완성됩니다. 부모인 작업 0에 더합니다: 4 + 1 = 5."
+     },
+     "views": {
+      "parent": {
+       "values": [
+        -1,
+        0,
+        0,
+        0,
+        0
+       ],
+       "marks": {}
+      },
+      "tasks": {
+       "nodeMarks": {
+        "lit": [
+         1
+        ],
+        "good": [
+         0
+        ]
+       }
+      },
+      "order": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "pointers": {
+        "task": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       },
+       "unread": []
+      },
+      "size": {
+       "values": [
+        5,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         1
+        ],
+        "good": [
+         0
+        ]
+       }
+      },
+      "calc": {
+       "values": [
+        1,
+        1,
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "n!"
+        ],
+        [
+         1,
+         "∏ size"
+        ],
+        [
+         2,
+         {
+          "en": "answer",
+          "ko": "답"
+         }
+        ]
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "size",
+        "at": 1
+       },
+       "to": {
+        "view": "size",
+        "at": 0
+       },
+       "value": "+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Ignoring the parents, 5 tasks can go in 5! = 1×2×3×4×5 = 120 orders (kept modulo 10^9 + 7).",
+      "ko": "부모를 무시하면 작업 5개의 순서는 5! = 1×2×3×4×5 = 120가지입니다(10^9 + 7로 나눈 나머지로 계산)."
+     },
+     "views": {
+      "parent": {
+       "values": [
+        -1,
+        0,
+        0,
+        0,
+        0
+       ],
+       "marks": {}
+      },
+      "tasks": {
+       "nodeMarks": {}
+      },
+      "order": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "pointers": {
+        "task": null
+       },
+       "marks": {},
+       "unread": []
+      },
+      "size": {
+       "values": [
+        5,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {}
+      },
+      "calc": {
+       "values": [
+        120,
+        1,
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "n!"
+        ],
+        [
+         1,
+         "∏ size"
+        ],
+        [
+         2,
+         {
+          "en": "answer",
+          "ko": "답"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "calc",
+        "at": 0
+       },
+       "value": "5!"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Task 0's subtree has 5 tasks, and task 0 must come first among them: 1 in 5. The product of sizes becomes 1 × 5 = 5.",
+      "ko": "작업 0의 서브트리에는 작업이 5개 있고 그중 작업 0이 먼저 와야 하므로 5분의 1입니다. 크기의 곱은 1 × 5 = 5입니다."
+     },
+     "views": {
+      "parent": {
+       "values": [
+        -1,
+        0,
+        0,
+        0,
+        0
+       ],
+       "marks": {}
+      },
+      "tasks": {
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "order": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "pointers": {
+        "task": null
+       },
+       "marks": {},
+       "unread": []
+      },
+      "size": {
+       "values": [
+        5,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "calc": {
+       "values": [
+        120,
+        5,
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "n!"
+        ],
+        [
+         1,
+         "∏ size"
+        ],
+        [
+         2,
+         {
+          "en": "answer",
+          "ko": "답"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "size",
+        "at": 0
+       },
+       "to": {
+        "view": "calc",
+        "at": 1
+       },
+       "value": "×5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Task 1's subtree is just itself, size 1: it is first among itself in every order. The product of sizes stays 5 × 1 = 5.",
+      "ko": "작업 1의 서브트리는 자기 자신뿐인 크기 1이라 어느 순서에서나 조건을 만족합니다. 크기의 곱은 5 × 1 = 5 그대로입니다."
+     },
+     "views": {
+      "parent": {
+       "values": [
+        -1,
+        0,
+        0,
+        0,
+        0
+       ],
+       "marks": {}
+      },
+      "tasks": {
+       "nodeMarks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "order": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "pointers": {
+        "task": null
+       },
+       "marks": {},
+       "unread": []
+      },
+      "size": {
+       "values": [
+        5,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "calc": {
+       "values": [
+        120,
+        5,
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "n!"
+        ],
+        [
+         1,
+         "∏ size"
+        ],
+        [
+         2,
+         {
+          "en": "answer",
+          "ko": "답"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "size",
+        "at": 1
+       },
+       "to": {
+        "view": "calc",
+        "at": 1
+       },
+       "value": "×1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Task 2's subtree is just itself, size 1: it is first among itself in every order. The product of sizes stays 5 × 1 = 5.",
+      "ko": "작업 2의 서브트리는 자기 자신뿐인 크기 1이라 어느 순서에서나 조건을 만족합니다. 크기의 곱은 5 × 1 = 5 그대로입니다."
+     },
+     "views": {
+      "parent": {
+       "values": [
+        -1,
+        0,
+        0,
+        0,
+        0
+       ],
+       "marks": {}
+      },
+      "tasks": {
+       "nodeMarks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "order": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "pointers": {
+        "task": null
+       },
+       "marks": {},
+       "unread": []
+      },
+      "size": {
+       "values": [
+        5,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "calc": {
+       "values": [
+        120,
+        5,
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "n!"
+        ],
+        [
+         1,
+         "∏ size"
+        ],
+        [
+         2,
+         {
+          "en": "answer",
+          "ko": "답"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "size",
+        "at": 2
+       },
+       "to": {
+        "view": "calc",
+        "at": 1
+       },
+       "value": "×1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Task 3's subtree is just itself, size 1: it is first among itself in every order. The product of sizes stays 5 × 1 = 5.",
+      "ko": "작업 3의 서브트리는 자기 자신뿐인 크기 1이라 어느 순서에서나 조건을 만족합니다. 크기의 곱은 5 × 1 = 5 그대로입니다."
+     },
+     "views": {
+      "parent": {
+       "values": [
+        -1,
+        0,
+        0,
+        0,
+        0
+       ],
+       "marks": {}
+      },
+      "tasks": {
+       "nodeMarks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "order": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "pointers": {
+        "task": null
+       },
+       "marks": {},
+       "unread": []
+      },
+      "size": {
+       "values": [
+        5,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "calc": {
+       "values": [
+        120,
+        5,
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "n!"
+        ],
+        [
+         1,
+         "∏ size"
+        ],
+        [
+         2,
+         {
+          "en": "answer",
+          "ko": "답"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "size",
+        "at": 3
+       },
+       "to": {
+        "view": "calc",
+        "at": 1
+       },
+       "value": "×1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Task 4's subtree is just itself, size 1: it is first among itself in every order. The product of sizes stays 5 × 1 = 5.",
+      "ko": "작업 4의 서브트리는 자기 자신뿐인 크기 1이라 어느 순서에서나 조건을 만족합니다. 크기의 곱은 5 × 1 = 5 그대로입니다."
+     },
+     "views": {
+      "parent": {
+       "values": [
+        -1,
+        0,
+        0,
+        0,
+        0
+       ],
+       "marks": {}
+      },
+      "tasks": {
+       "nodeMarks": {
+        "lit": [
+         4
+        ]
+       }
+      },
+      "order": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "pointers": {
+        "task": null
+       },
+       "marks": {},
+       "unread": []
+      },
+      "size": {
+       "values": [
+        5,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {
+        "lit": [
+         4
+        ]
+       }
+      },
+      "calc": {
+       "values": [
+        120,
+        5,
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "n!"
+        ],
+        [
+         1,
+         "∏ size"
+        ],
+        [
+         2,
+         {
+          "en": "answer",
+          "ko": "답"
+         }
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "size",
+        "at": 4
+       },
+       "to": {
+        "view": "calc",
+        "at": 1
+       },
+       "value": "×1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Divide: 120 / 5 = 24. Modulo the prime 10^9 + 7, dividing is multiplying by 5^(10^9 + 5), which gives the same 24.",
+      "ko": "나눕니다: 120 / 5 = 24. 소수 10^9 + 7로 나눈 나머지에서는 5의 (10^9 + 5)제곱을 곱하는 것이 나누기와 같아 똑같이 24입니다."
+     },
+     "views": {
+      "parent": {
+       "values": [
+        -1,
+        0,
+        0,
+        0,
+        0
+       ],
+       "marks": {}
+      },
+      "tasks": {
+       "nodeMarks": {}
+      },
+      "order": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "pointers": {
+        "task": null
+       },
+       "marks": {},
+       "unread": []
+      },
+      "size": {
+       "values": [
+        5,
+        1,
+        1,
+        1,
+        1
+       ],
+       "marks": {}
+      },
+      "calc": {
+       "values": [
+        120,
+        5,
+        24
+       ],
+       "tags": [
+        [
+         0,
+         "n!"
+        ],
+        [
+         1,
+         "∏ size"
+        ],
+        [
+         2,
+         {
+          "en": "answer",
+          "ko": "답"
+         }
+        ]
+       ],
+       "marks": {
+        "path": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calc",
+        "at": 0
+       },
+       "to": {
+        "view": "calc",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "calc",
+        "at": 1
+       },
+       "to": {
+        "view": "calc",
+        "at": 2
+       },
+       "value": "/5"
+      }
+     ],
+     "answer": "24"
+    }
+   ],
+   "setup": {
+    "tasks": {
+     "nodes": [
+      {
+       "id": 0,
+       "value": 0
+      },
+      {
+       "id": 1,
+       "value": 1
+      },
+      {
+       "id": 2,
+       "value": 2
+      },
+      {
+       "id": 3,
+       "value": 3
+      },
+      {
+       "id": 4,
+       "value": 4
+      }
+     ],
+     "edges": [
+      {
+       "from": 0,
+       "to": 1
+      },
+      {
+       "from": 0,
+       "to": 2
+      },
+      {
+       "from": 0,
+       "to": 3
+      },
+      {
+       "from": 0,
+       "to": 4
+      }
+     ]
+    }
+   },
+   "sampleInput": "[-1,0,0,0,0]"
+  }
+ ]
+}
