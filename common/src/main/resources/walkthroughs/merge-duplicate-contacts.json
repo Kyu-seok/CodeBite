@@ -1,0 +1,3447 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Merge Duplicate Contacts",
+  "ko": "중복 연락처 합치기"
+ },
+ "approach": {
+  "en": "Union-find over emails: each email joins the group of its entry's first email, so entries that share an email end up under one root; then each root's emails, sorted, are one person.",
+  "ko": "이메일로 유니온 파인드를 합니다. 이메일마다 그 항목의 첫 이메일 그룹에 합쳐지므로, 이메일을 공유하는 항목들은 한 루트 아래로 모이고, 루트마다 정렬한 이메일이 한 사람입니다."
+ },
+ "views": [
+  {
+   "id": "emails",
+   "type": "graph",
+   "directed": false,
+   "title": {
+    "en": "emails (under: parent; tag: owner)",
+    "ko": "이메일 (아래: parent, 태그: 이름)"
+   }
+  },
+  {
+   "id": "groups",
+   "type": "map",
+   "title": {
+    "en": "groups (root → emails)",
+    "ko": "groups (루트 → 이메일)"
+   },
+   "empty": {
+    "en": "not started",
+    "ko": "아직 없음"
+   }
+  },
+  {
+   "id": "merged",
+   "type": "output",
+   "title": {
+    "en": "merged entries",
+    "ko": "합친 항목"
+   },
+   "empty": {
+    "en": "none yet",
+    "ko": "아직 없음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "accounts = [[\"Maya\",\"maya.dp@set.film\",\"mayalens@set.film\"],[\"Maya\",\"mayalens@set.film\",\"mk.camera@set.film\"],[\"Leo\",\"leo.grip@set.film\"],[\"Maya\",\"maya.solo@set.film\"]]",
+   "expected": "[[\"Leo\",\"leo.grip@set.film\"],[\"Maya\",\"maya.dp@set.film\",\"mayalens@set.film\",\"mk.camera@set.film\"],[\"Maya\",\"maya.solo@set.film\"]]",
+   "frames": [
+    {
+     "caption": {
+      "en": "4 entries, 5 distinct emails. Each email will point to a parent; an email that is its own parent is a root, and a root stands for one person.",
+      "ko": "항목 4개에 서로 다른 이메일이 5개 있습니다. 이메일마다 parent를 가리키며, 자기 자신이 parent인 이메일이 루트이고 루트 하나가 한 사람입니다."
+     },
+     "views": {
+      "emails": {
+       "nodes": [
+        {
+         "id": "maya.dp@set.film",
+         "label": "dp"
+        },
+        {
+         "id": "mayalens@set.film",
+         "label": "lens"
+        },
+        {
+         "id": "mk.camera@set.film",
+         "label": "cam"
+        },
+        {
+         "id": "leo.grip@set.film",
+         "label": "leo"
+        },
+        {
+         "id": "maya.solo@set.film",
+         "label": "solo"
+        }
+       ],
+       "values": {},
+       "nodeMarks": {
+        "dim": [
+         "maya.dp@set.film",
+         "mayalens@set.film",
+         "mk.camera@set.film",
+         "leo.grip@set.film",
+         "maya.solo@set.film"
+        ],
+        "path": [],
+        "good": [],
+        "lit": []
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "groups": {
+       "entries": [],
+       "marks": {}
+      },
+      "merged": {
+       "values": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Entry 1 (Maya): dp is new, so it starts as its own root, owned by Maya.",
+      "ko": "항목 1(Maya): dp 이메일은 처음 나왔으므로 자기 자신이 루트인 채로 시작하고, 주인은 Maya입니다."
+     },
+     "views": {
+      "emails": {
+       "nodes": [
+        {
+         "id": "maya.dp@set.film",
+         "label": "dp",
+         "tag": "Maya"
+        },
+        {
+         "id": "mayalens@set.film",
+         "label": "lens"
+        },
+        {
+         "id": "mk.camera@set.film",
+         "label": "cam"
+        },
+        {
+         "id": "leo.grip@set.film",
+         "label": "leo"
+        },
+        {
+         "id": "maya.solo@set.film",
+         "label": "solo"
+        }
+       ],
+       "values": {
+        "maya.dp@set.film": "dp"
+       },
+       "nodeMarks": {
+        "dim": [
+         "mayalens@set.film",
+         "mk.camera@set.film",
+         "leo.grip@set.film",
+         "maya.solo@set.film"
+        ],
+        "path": [],
+        "good": [
+         "maya.dp@set.film"
+        ],
+        "lit": [
+         "maya.dp@set.film"
+        ]
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "groups": {
+       "entries": [],
+       "marks": {}
+      },
+      "merged": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "emails",
+        "at": "maya.dp@set.film"
+       },
+       "value": "dp"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Entry 1 (Maya): lens is new, so it starts as its own root, owned by Maya.",
+      "ko": "항목 1(Maya): lens 이메일은 처음 나왔으므로 자기 자신이 루트인 채로 시작하고, 주인은 Maya입니다."
+     },
+     "views": {
+      "emails": {
+       "nodes": [
+        {
+         "id": "maya.dp@set.film",
+         "label": "dp",
+         "tag": "Maya"
+        },
+        {
+         "id": "mayalens@set.film",
+         "label": "lens",
+         "tag": "Maya"
+        },
+        {
+         "id": "mk.camera@set.film",
+         "label": "cam"
+        },
+        {
+         "id": "leo.grip@set.film",
+         "label": "leo"
+        },
+        {
+         "id": "maya.solo@set.film",
+         "label": "solo"
+        }
+       ],
+       "values": {
+        "maya.dp@set.film": "dp",
+        "mayalens@set.film": "lens"
+       },
+       "nodeMarks": {
+        "dim": [
+         "mk.camera@set.film",
+         "leo.grip@set.film",
+         "maya.solo@set.film"
+        ],
+        "path": [],
+        "good": [
+         "mayalens@set.film"
+        ],
+        "lit": [
+         "mayalens@set.film"
+        ]
+       },
+       "edgeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "groups": {
+       "entries": [],
+       "marks": {}
+      },
+      "merged": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "emails",
+        "at": "mayalens@set.film"
+       },
+       "value": "lens"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Entry 1 (Maya): lens shares the entry with dp, so parent[lens] = dp: lens's group joins dp's group, rooted at dp.",
+      "ko": "항목 1(Maya): lens 이메일은 dp 이메일과 같은 항목이므로 parent[lens] = dp, lens의 그룹이 루트가 dp인 dp의 그룹에 합쳐집니다."
+     },
+     "views": {
+      "emails": {
+       "nodes": [
+        {
+         "id": "maya.dp@set.film",
+         "label": "dp",
+         "tag": "Maya"
+        },
+        {
+         "id": "mayalens@set.film",
+         "label": "lens",
+         "tag": "Maya"
+        },
+        {
+         "id": "mk.camera@set.film",
+         "label": "cam"
+        },
+        {
+         "id": "leo.grip@set.film",
+         "label": "leo"
+        },
+        {
+         "id": "maya.solo@set.film",
+         "label": "solo"
+        }
+       ],
+       "values": {
+        "maya.dp@set.film": "dp",
+        "mayalens@set.film": "dp"
+       },
+       "nodeMarks": {
+        "dim": [
+         "mk.camera@set.film",
+         "leo.grip@set.film",
+         "maya.solo@set.film"
+        ],
+        "path": [],
+        "good": [
+         "mayalens@set.film"
+        ],
+        "lit": [
+         "maya.dp@set.film"
+        ]
+       },
+       "edgeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "groups": {
+       "entries": [],
+       "marks": {}
+      },
+      "merged": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "emails",
+        "at": "maya.dp@set.film"
+       },
+       "to": {
+        "view": "emails",
+        "at": "mayalens@set.film"
+       },
+       "value": "dp"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Entry 2 (Maya): cam is new, so it starts as its own root, owned by Maya.",
+      "ko": "항목 2(Maya): cam 이메일은 처음 나왔으므로 자기 자신이 루트인 채로 시작하고, 주인은 Maya입니다."
+     },
+     "views": {
+      "emails": {
+       "nodes": [
+        {
+         "id": "maya.dp@set.film",
+         "label": "dp",
+         "tag": "Maya"
+        },
+        {
+         "id": "mayalens@set.film",
+         "label": "lens",
+         "tag": "Maya"
+        },
+        {
+         "id": "mk.camera@set.film",
+         "label": "cam",
+         "tag": "Maya"
+        },
+        {
+         "id": "leo.grip@set.film",
+         "label": "leo"
+        },
+        {
+         "id": "maya.solo@set.film",
+         "label": "solo"
+        }
+       ],
+       "values": {
+        "maya.dp@set.film": "dp",
+        "mayalens@set.film": "dp",
+        "mk.camera@set.film": "cam"
+       },
+       "nodeMarks": {
+        "dim": [
+         "leo.grip@set.film",
+         "maya.solo@set.film"
+        ],
+        "path": [],
+        "good": [
+         "mk.camera@set.film"
+        ],
+        "lit": [
+         "mk.camera@set.film"
+        ]
+       },
+       "edgeMarks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "groups": {
+       "entries": [],
+       "marks": {}
+      },
+      "merged": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "emails",
+        "at": "mk.camera@set.film"
+       },
+       "value": "cam"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Entry 2 (Maya): cam shares the entry with lens, so parent[cam] = dp: cam's group joins lens's group, rooted at dp.",
+      "ko": "항목 2(Maya): cam 이메일은 lens 이메일과 같은 항목이므로 parent[cam] = dp, cam의 그룹이 루트가 dp인 lens의 그룹에 합쳐집니다."
+     },
+     "views": {
+      "emails": {
+       "nodes": [
+        {
+         "id": "maya.dp@set.film",
+         "label": "dp",
+         "tag": "Maya"
+        },
+        {
+         "id": "mayalens@set.film",
+         "label": "lens",
+         "tag": "Maya"
+        },
+        {
+         "id": "mk.camera@set.film",
+         "label": "cam",
+         "tag": "Maya"
+        },
+        {
+         "id": "leo.grip@set.film",
+         "label": "leo"
+        },
+        {
+         "id": "maya.solo@set.film",
+         "label": "solo"
+        }
+       ],
+       "values": {
+        "maya.dp@set.film": "dp",
+        "mayalens@set.film": "dp",
+        "mk.camera@set.film": "dp"
+       },
+       "nodeMarks": {
+        "dim": [
+         "leo.grip@set.film",
+         "maya.solo@set.film"
+        ],
+        "path": [],
+        "good": [
+         "mk.camera@set.film"
+        ],
+        "lit": [
+         "mayalens@set.film"
+        ]
+       },
+       "edgeMarks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "groups": {
+       "entries": [],
+       "marks": {}
+      },
+      "merged": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "emails",
+        "at": "maya.dp@set.film"
+       },
+       "to": {
+        "view": "emails",
+        "at": "mk.camera@set.film"
+       },
+       "value": "dp"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Entry 3 (Leo): leo is new, so it starts as its own root, owned by Leo.",
+      "ko": "항목 3(Leo): leo 이메일은 처음 나왔으므로 자기 자신이 루트인 채로 시작하고, 주인은 Leo입니다."
+     },
+     "views": {
+      "emails": {
+       "nodes": [
+        {
+         "id": "maya.dp@set.film",
+         "label": "dp",
+         "tag": "Maya"
+        },
+        {
+         "id": "mayalens@set.film",
+         "label": "lens",
+         "tag": "Maya"
+        },
+        {
+         "id": "mk.camera@set.film",
+         "label": "cam",
+         "tag": "Maya"
+        },
+        {
+         "id": "leo.grip@set.film",
+         "label": "leo",
+         "tag": "Leo"
+        },
+        {
+         "id": "maya.solo@set.film",
+         "label": "solo"
+        }
+       ],
+       "values": {
+        "maya.dp@set.film": "dp",
+        "mayalens@set.film": "dp",
+        "mk.camera@set.film": "dp",
+        "leo.grip@set.film": "leo"
+       },
+       "nodeMarks": {
+        "dim": [
+         "maya.solo@set.film"
+        ],
+        "path": [],
+        "good": [
+         "leo.grip@set.film"
+        ],
+        "lit": [
+         "leo.grip@set.film"
+        ]
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "groups": {
+       "entries": [],
+       "marks": {}
+      },
+      "merged": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "emails",
+        "at": "leo.grip@set.film"
+       },
+       "value": "leo"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Entry 4 (Maya): solo is new, so it starts as its own root, owned by Maya.",
+      "ko": "항목 4(Maya): solo 이메일은 처음 나왔으므로 자기 자신이 루트인 채로 시작하고, 주인은 Maya입니다."
+     },
+     "views": {
+      "emails": {
+       "nodes": [
+        {
+         "id": "maya.dp@set.film",
+         "label": "dp",
+         "tag": "Maya"
+        },
+        {
+         "id": "mayalens@set.film",
+         "label": "lens",
+         "tag": "Maya"
+        },
+        {
+         "id": "mk.camera@set.film",
+         "label": "cam",
+         "tag": "Maya"
+        },
+        {
+         "id": "leo.grip@set.film",
+         "label": "leo",
+         "tag": "Leo"
+        },
+        {
+         "id": "maya.solo@set.film",
+         "label": "solo",
+         "tag": "Maya"
+        }
+       ],
+       "values": {
+        "maya.dp@set.film": "dp",
+        "mayalens@set.film": "dp",
+        "mk.camera@set.film": "dp",
+        "leo.grip@set.film": "leo",
+        "maya.solo@set.film": "solo"
+       },
+       "nodeMarks": {
+        "dim": [],
+        "path": [],
+        "good": [
+         "maya.solo@set.film"
+        ],
+        "lit": [
+         "maya.solo@set.film"
+        ]
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "groups": {
+       "entries": [],
+       "marks": {}
+      },
+      "merged": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "emails",
+        "at": "maya.solo@set.film"
+       },
+       "value": "solo"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "dp's root is dp: a new group starts at dp.",
+      "ko": "dp 이메일의 루트는 dp입니다. dp 그룹이 새로 생깁니다."
+     },
+     "views": {
+      "emails": {
+       "nodes": [
+        {
+         "id": "maya.dp@set.film",
+         "label": "dp",
+         "tag": "Maya"
+        },
+        {
+         "id": "mayalens@set.film",
+         "label": "lens",
+         "tag": "Maya"
+        },
+        {
+         "id": "mk.camera@set.film",
+         "label": "cam",
+         "tag": "Maya"
+        },
+        {
+         "id": "leo.grip@set.film",
+         "label": "leo",
+         "tag": "Leo"
+        },
+        {
+         "id": "maya.solo@set.film",
+         "label": "solo",
+         "tag": "Maya"
+        }
+       ],
+       "values": {
+        "maya.dp@set.film": "dp",
+        "mayalens@set.film": "dp",
+        "mk.camera@set.film": "dp",
+        "leo.grip@set.film": "leo",
+        "maya.solo@set.film": "solo"
+       },
+       "nodeMarks": {
+        "dim": [],
+        "path": [],
+        "good": [],
+        "lit": [
+         "maya.dp@set.film"
+        ]
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "groups": {
+       "entries": [
+        {
+         "key": "dp",
+         "value": [
+          "dp"
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         "dp"
+        ]
+       }
+      },
+      "merged": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "emails",
+        "at": "maya.dp@set.film"
+       },
+       "to": {
+        "view": "groups",
+        "at": "dp"
+       },
+       "value": "dp"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "lens's root is dp: it joins group dp.",
+      "ko": "lens 이메일의 루트는 dp입니다. dp 그룹에 들어갑니다."
+     },
+     "views": {
+      "emails": {
+       "nodes": [
+        {
+         "id": "maya.dp@set.film",
+         "label": "dp",
+         "tag": "Maya"
+        },
+        {
+         "id": "mayalens@set.film",
+         "label": "lens",
+         "tag": "Maya"
+        },
+        {
+         "id": "mk.camera@set.film",
+         "label": "cam",
+         "tag": "Maya"
+        },
+        {
+         "id": "leo.grip@set.film",
+         "label": "leo",
+         "tag": "Leo"
+        },
+        {
+         "id": "maya.solo@set.film",
+         "label": "solo",
+         "tag": "Maya"
+        }
+       ],
+       "values": {
+        "maya.dp@set.film": "dp",
+        "mayalens@set.film": "dp",
+        "mk.camera@set.film": "dp",
+        "leo.grip@set.film": "leo",
+        "maya.solo@set.film": "solo"
+       },
+       "nodeMarks": {
+        "dim": [],
+        "path": [],
+        "good": [],
+        "lit": [
+         "mayalens@set.film"
+        ]
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "groups": {
+       "entries": [
+        {
+         "key": "dp",
+         "value": [
+          "dp",
+          "lens"
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         "dp"
+        ]
+       }
+      },
+      "merged": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "emails",
+        "at": "mayalens@set.film"
+       },
+       "to": {
+        "view": "groups",
+        "at": "dp"
+       },
+       "value": "lens"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "cam's root is dp: it joins group dp.",
+      "ko": "cam 이메일의 루트는 dp입니다. dp 그룹에 들어갑니다."
+     },
+     "views": {
+      "emails": {
+       "nodes": [
+        {
+         "id": "maya.dp@set.film",
+         "label": "dp",
+         "tag": "Maya"
+        },
+        {
+         "id": "mayalens@set.film",
+         "label": "lens",
+         "tag": "Maya"
+        },
+        {
+         "id": "mk.camera@set.film",
+         "label": "cam",
+         "tag": "Maya"
+        },
+        {
+         "id": "leo.grip@set.film",
+         "label": "leo",
+         "tag": "Leo"
+        },
+        {
+         "id": "maya.solo@set.film",
+         "label": "solo",
+         "tag": "Maya"
+        }
+       ],
+       "values": {
+        "maya.dp@set.film": "dp",
+        "mayalens@set.film": "dp",
+        "mk.camera@set.film": "dp",
+        "leo.grip@set.film": "leo",
+        "maya.solo@set.film": "solo"
+       },
+       "nodeMarks": {
+        "dim": [],
+        "path": [],
+        "good": [],
+        "lit": [
+         "mk.camera@set.film"
+        ]
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "groups": {
+       "entries": [
+        {
+         "key": "dp",
+         "value": [
+          "dp",
+          "lens",
+          "cam"
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         "dp"
+        ]
+       }
+      },
+      "merged": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "emails",
+        "at": "mk.camera@set.film"
+       },
+       "to": {
+        "view": "groups",
+        "at": "dp"
+       },
+       "value": "cam"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "leo's root is leo: a new group starts at leo.",
+      "ko": "leo 이메일의 루트는 leo입니다. leo 그룹이 새로 생깁니다."
+     },
+     "views": {
+      "emails": {
+       "nodes": [
+        {
+         "id": "maya.dp@set.film",
+         "label": "dp",
+         "tag": "Maya"
+        },
+        {
+         "id": "mayalens@set.film",
+         "label": "lens",
+         "tag": "Maya"
+        },
+        {
+         "id": "mk.camera@set.film",
+         "label": "cam",
+         "tag": "Maya"
+        },
+        {
+         "id": "leo.grip@set.film",
+         "label": "leo",
+         "tag": "Leo"
+        },
+        {
+         "id": "maya.solo@set.film",
+         "label": "solo",
+         "tag": "Maya"
+        }
+       ],
+       "values": {
+        "maya.dp@set.film": "dp",
+        "mayalens@set.film": "dp",
+        "mk.camera@set.film": "dp",
+        "leo.grip@set.film": "leo",
+        "maya.solo@set.film": "solo"
+       },
+       "nodeMarks": {
+        "dim": [],
+        "path": [],
+        "good": [],
+        "lit": [
+         "leo.grip@set.film"
+        ]
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "groups": {
+       "entries": [
+        {
+         "key": "dp",
+         "value": [
+          "dp",
+          "lens",
+          "cam"
+         ]
+        },
+        {
+         "key": "leo",
+         "value": [
+          "leo"
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         "leo"
+        ]
+       }
+      },
+      "merged": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "emails",
+        "at": "leo.grip@set.film"
+       },
+       "to": {
+        "view": "groups",
+        "at": "leo"
+       },
+       "value": "leo"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "solo's root is solo: a new group starts at solo.",
+      "ko": "solo 이메일의 루트는 solo입니다. solo 그룹이 새로 생깁니다."
+     },
+     "views": {
+      "emails": {
+       "nodes": [
+        {
+         "id": "maya.dp@set.film",
+         "label": "dp",
+         "tag": "Maya"
+        },
+        {
+         "id": "mayalens@set.film",
+         "label": "lens",
+         "tag": "Maya"
+        },
+        {
+         "id": "mk.camera@set.film",
+         "label": "cam",
+         "tag": "Maya"
+        },
+        {
+         "id": "leo.grip@set.film",
+         "label": "leo",
+         "tag": "Leo"
+        },
+        {
+         "id": "maya.solo@set.film",
+         "label": "solo",
+         "tag": "Maya"
+        }
+       ],
+       "values": {
+        "maya.dp@set.film": "dp",
+        "mayalens@set.film": "dp",
+        "mk.camera@set.film": "dp",
+        "leo.grip@set.film": "leo",
+        "maya.solo@set.film": "solo"
+       },
+       "nodeMarks": {
+        "dim": [],
+        "path": [],
+        "good": [],
+        "lit": [
+         "maya.solo@set.film"
+        ]
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "groups": {
+       "entries": [
+        {
+         "key": "dp",
+         "value": [
+          "dp",
+          "lens",
+          "cam"
+         ]
+        },
+        {
+         "key": "leo",
+         "value": [
+          "leo"
+         ]
+        },
+        {
+         "key": "solo",
+         "value": [
+          "solo"
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         "solo"
+        ]
+       }
+      },
+      "merged": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "emails",
+        "at": "maya.solo@set.film"
+       },
+       "to": {
+        "view": "groups",
+        "at": "solo"
+       },
+       "value": "solo"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Group dp is one person, Maya: their 3 emails, sorted, follow the name.",
+      "ko": "dp 그룹은 한 사람 Maya입니다. 이름 뒤에 이메일 3개를 사전순으로 붙입니다."
+     },
+     "views": {
+      "emails": {
+       "nodes": [
+        {
+         "id": "maya.dp@set.film",
+         "label": "dp",
+         "tag": "Maya"
+        },
+        {
+         "id": "mayalens@set.film",
+         "label": "lens",
+         "tag": "Maya"
+        },
+        {
+         "id": "mk.camera@set.film",
+         "label": "cam",
+         "tag": "Maya"
+        },
+        {
+         "id": "leo.grip@set.film",
+         "label": "leo",
+         "tag": "Leo"
+        },
+        {
+         "id": "maya.solo@set.film",
+         "label": "solo",
+         "tag": "Maya"
+        }
+       ],
+       "values": {
+        "maya.dp@set.film": "dp",
+        "mayalens@set.film": "dp",
+        "mk.camera@set.film": "dp",
+        "leo.grip@set.film": "leo",
+        "maya.solo@set.film": "solo"
+       },
+       "nodeMarks": {
+        "dim": [],
+        "path": [],
+        "good": [],
+        "lit": [
+         "maya.dp@set.film",
+         "mayalens@set.film",
+         "mk.camera@set.film"
+        ]
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "groups": {
+       "entries": [
+        {
+         "key": "dp",
+         "value": [
+          "dp",
+          "lens",
+          "cam"
+         ]
+        },
+        {
+         "key": "leo",
+         "value": [
+          "leo"
+         ]
+        },
+        {
+         "key": "solo",
+         "value": [
+          "solo"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         "dp"
+        ]
+       }
+      },
+      "merged": {
+       "values": [
+        "Maya: dp, lens, cam"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "groups",
+        "at": "dp"
+       },
+       "to": {
+        "view": "merged",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Group leo is one person, Leo: their email follows the name.",
+      "ko": "leo 그룹은 한 사람 Leo입니다. 이름 뒤에 이메일 1개를 사전순으로 붙입니다."
+     },
+     "views": {
+      "emails": {
+       "nodes": [
+        {
+         "id": "maya.dp@set.film",
+         "label": "dp",
+         "tag": "Maya"
+        },
+        {
+         "id": "mayalens@set.film",
+         "label": "lens",
+         "tag": "Maya"
+        },
+        {
+         "id": "mk.camera@set.film",
+         "label": "cam",
+         "tag": "Maya"
+        },
+        {
+         "id": "leo.grip@set.film",
+         "label": "leo",
+         "tag": "Leo"
+        },
+        {
+         "id": "maya.solo@set.film",
+         "label": "solo",
+         "tag": "Maya"
+        }
+       ],
+       "values": {
+        "maya.dp@set.film": "dp",
+        "mayalens@set.film": "dp",
+        "mk.camera@set.film": "dp",
+        "leo.grip@set.film": "leo",
+        "maya.solo@set.film": "solo"
+       },
+       "nodeMarks": {
+        "dim": [],
+        "path": [],
+        "good": [],
+        "lit": [
+         "leo.grip@set.film"
+        ]
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "groups": {
+       "entries": [
+        {
+         "key": "dp",
+         "value": [
+          "dp",
+          "lens",
+          "cam"
+         ]
+        },
+        {
+         "key": "leo",
+         "value": [
+          "leo"
+         ]
+        },
+        {
+         "key": "solo",
+         "value": [
+          "solo"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         "leo"
+        ]
+       }
+      },
+      "merged": {
+       "values": [
+        "Maya: dp, lens, cam",
+        "Leo: leo"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "groups",
+        "at": "leo"
+       },
+       "to": {
+        "view": "merged",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Group solo is one person, Maya: their email follows the name.",
+      "ko": "solo 그룹은 한 사람 Maya입니다. 이름 뒤에 이메일 1개를 사전순으로 붙입니다."
+     },
+     "views": {
+      "emails": {
+       "nodes": [
+        {
+         "id": "maya.dp@set.film",
+         "label": "dp",
+         "tag": "Maya"
+        },
+        {
+         "id": "mayalens@set.film",
+         "label": "lens",
+         "tag": "Maya"
+        },
+        {
+         "id": "mk.camera@set.film",
+         "label": "cam",
+         "tag": "Maya"
+        },
+        {
+         "id": "leo.grip@set.film",
+         "label": "leo",
+         "tag": "Leo"
+        },
+        {
+         "id": "maya.solo@set.film",
+         "label": "solo",
+         "tag": "Maya"
+        }
+       ],
+       "values": {
+        "maya.dp@set.film": "dp",
+        "mayalens@set.film": "dp",
+        "mk.camera@set.film": "dp",
+        "leo.grip@set.film": "leo",
+        "maya.solo@set.film": "solo"
+       },
+       "nodeMarks": {
+        "dim": [],
+        "path": [],
+        "good": [],
+        "lit": [
+         "maya.solo@set.film"
+        ]
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "groups": {
+       "entries": [
+        {
+         "key": "dp",
+         "value": [
+          "dp",
+          "lens",
+          "cam"
+         ]
+        },
+        {
+         "key": "leo",
+         "value": [
+          "leo"
+         ]
+        },
+        {
+         "key": "solo",
+         "value": [
+          "solo"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         "solo"
+        ]
+       }
+      },
+      "merged": {
+       "values": [
+        "Maya: dp, lens, cam",
+        "Leo: leo",
+        "Maya: solo"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "groups",
+        "at": "solo"
+       },
+       "to": {
+        "view": "merged",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "4 entries merge into 3 people. In order of first email, the answer is [[\"Leo\",\"leo.grip@set.film\"],[\"Maya\",\"maya.dp@set.film\",\"mayalens@set.film\",\"mk.camera@set.film\"],[\"Maya\",\"maya.solo@set.film\"]].",
+      "ko": "항목 4개가 3명으로 합쳐집니다. 첫 이메일 순으로 적은 답은 [[\"Leo\",\"leo.grip@set.film\"],[\"Maya\",\"maya.dp@set.film\",\"mayalens@set.film\",\"mk.camera@set.film\"],[\"Maya\",\"maya.solo@set.film\"]]입니다."
+     },
+     "views": {
+      "emails": {
+       "nodes": [
+        {
+         "id": "maya.dp@set.film",
+         "label": "dp",
+         "tag": "Maya"
+        },
+        {
+         "id": "mayalens@set.film",
+         "label": "lens",
+         "tag": "Maya"
+        },
+        {
+         "id": "mk.camera@set.film",
+         "label": "cam",
+         "tag": "Maya"
+        },
+        {
+         "id": "leo.grip@set.film",
+         "label": "leo",
+         "tag": "Leo"
+        },
+        {
+         "id": "maya.solo@set.film",
+         "label": "solo",
+         "tag": "Maya"
+        }
+       ],
+       "values": {
+        "maya.dp@set.film": "dp",
+        "mayalens@set.film": "dp",
+        "mk.camera@set.film": "dp",
+        "leo.grip@set.film": "leo",
+        "maya.solo@set.film": "solo"
+       },
+       "nodeMarks": {
+        "dim": [],
+        "path": [
+         "maya.dp@set.film",
+         "mayalens@set.film",
+         "mk.camera@set.film",
+         "leo.grip@set.film",
+         "maya.solo@set.film"
+        ],
+        "good": [],
+        "lit": []
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "groups": {
+       "entries": [
+        {
+         "key": "dp",
+         "value": [
+          "dp",
+          "lens",
+          "cam"
+         ]
+        },
+        {
+         "key": "leo",
+         "value": [
+          "leo"
+         ]
+        },
+        {
+         "key": "solo",
+         "value": [
+          "solo"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "merged": {
+       "values": [
+        "Maya: dp, lens, cam",
+        "Leo: leo",
+        "Maya: solo"
+       ],
+       "marks": {}
+      }
+     },
+     "answer": "[[\"Leo\",\"leo.grip@set.film\"],[\"Maya\",\"maya.dp@set.film\",\"mayalens@set.film\",\"mk.camera@set.film\"],[\"Maya\",\"maya.solo@set.film\"]]"
+    }
+   ],
+   "sampleInput": "[[\"Maya\",\"maya.dp@set.film\",\"mayalens@set.film\"],[\"Maya\",\"mayalens@set.film\",\"mk.camera@set.film\"],[\"Leo\",\"leo.grip@set.film\"],[\"Maya\",\"maya.solo@set.film\"]]",
+   "setup": {
+    "emails": {
+     "nodes": [
+      {
+       "id": "maya.dp@set.film",
+       "label": "dp"
+      },
+      {
+       "id": "mayalens@set.film",
+       "label": "lens"
+      },
+      {
+       "id": "mk.camera@set.film",
+       "label": "cam"
+      },
+      {
+       "id": "leo.grip@set.film",
+       "label": "leo"
+      },
+      {
+       "id": "maya.solo@set.film",
+       "label": "solo"
+      }
+     ],
+     "edges": [
+      {
+       "from": "maya.dp@set.film",
+       "to": "mayalens@set.film"
+      },
+      {
+       "from": "mayalens@set.film",
+       "to": "mk.camera@set.film"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "accounts = [[\"Ash\",\"ash1@set.film\",\"ash2@set.film\"],[\"Bea\",\"bea1@set.film\",\"bea2@set.film\"],[\"Cal\",\"cal1@set.film\",\"cal2@set.film\"]]",
+   "expected": "[[\"Ash\",\"ash1@set.film\",\"ash2@set.film\"],[\"Bea\",\"bea1@set.film\",\"bea2@set.film\"],[\"Cal\",\"cal1@set.film\",\"cal2@set.film\"]]",
+   "frames": [
+    {
+     "caption": {
+      "en": "3 entries, 6 distinct emails. Each email will point to a parent; an email that is its own parent is a root, and a root stands for one person.",
+      "ko": "항목 3개에 서로 다른 이메일이 6개 있습니다. 이메일마다 parent를 가리키며, 자기 자신이 parent인 이메일이 루트이고 루트 하나가 한 사람입니다."
+     },
+     "views": {
+      "emails": {
+       "nodes": [
+        {
+         "id": "ash1@set.film",
+         "label": "ash1"
+        },
+        {
+         "id": "ash2@set.film",
+         "label": "ash2"
+        },
+        {
+         "id": "bea1@set.film",
+         "label": "bea1"
+        },
+        {
+         "id": "bea2@set.film",
+         "label": "bea2"
+        },
+        {
+         "id": "cal1@set.film",
+         "label": "cal1"
+        },
+        {
+         "id": "cal2@set.film",
+         "label": "cal2"
+        }
+       ],
+       "values": {},
+       "nodeMarks": {
+        "dim": [
+         "ash1@set.film",
+         "ash2@set.film",
+         "bea1@set.film",
+         "bea2@set.film",
+         "cal1@set.film",
+         "cal2@set.film"
+        ],
+        "path": [],
+        "good": [],
+        "lit": []
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "groups": {
+       "entries": [],
+       "marks": {}
+      },
+      "merged": {
+       "values": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Entry 1 (Ash): ash1 is new, so it starts as its own root, owned by Ash.",
+      "ko": "항목 1(Ash): ash1 이메일은 처음 나왔으므로 자기 자신이 루트인 채로 시작하고, 주인은 Ash입니다."
+     },
+     "views": {
+      "emails": {
+       "nodes": [
+        {
+         "id": "ash1@set.film",
+         "label": "ash1",
+         "tag": "Ash"
+        },
+        {
+         "id": "ash2@set.film",
+         "label": "ash2"
+        },
+        {
+         "id": "bea1@set.film",
+         "label": "bea1"
+        },
+        {
+         "id": "bea2@set.film",
+         "label": "bea2"
+        },
+        {
+         "id": "cal1@set.film",
+         "label": "cal1"
+        },
+        {
+         "id": "cal2@set.film",
+         "label": "cal2"
+        }
+       ],
+       "values": {
+        "ash1@set.film": "ash1"
+       },
+       "nodeMarks": {
+        "dim": [
+         "ash2@set.film",
+         "bea1@set.film",
+         "bea2@set.film",
+         "cal1@set.film",
+         "cal2@set.film"
+        ],
+        "path": [],
+        "good": [
+         "ash1@set.film"
+        ],
+        "lit": [
+         "ash1@set.film"
+        ]
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "groups": {
+       "entries": [],
+       "marks": {}
+      },
+      "merged": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "emails",
+        "at": "ash1@set.film"
+       },
+       "value": "ash1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Entry 1 (Ash): ash2 is new, so it starts as its own root, owned by Ash.",
+      "ko": "항목 1(Ash): ash2 이메일은 처음 나왔으므로 자기 자신이 루트인 채로 시작하고, 주인은 Ash입니다."
+     },
+     "views": {
+      "emails": {
+       "nodes": [
+        {
+         "id": "ash1@set.film",
+         "label": "ash1",
+         "tag": "Ash"
+        },
+        {
+         "id": "ash2@set.film",
+         "label": "ash2",
+         "tag": "Ash"
+        },
+        {
+         "id": "bea1@set.film",
+         "label": "bea1"
+        },
+        {
+         "id": "bea2@set.film",
+         "label": "bea2"
+        },
+        {
+         "id": "cal1@set.film",
+         "label": "cal1"
+        },
+        {
+         "id": "cal2@set.film",
+         "label": "cal2"
+        }
+       ],
+       "values": {
+        "ash1@set.film": "ash1",
+        "ash2@set.film": "ash2"
+       },
+       "nodeMarks": {
+        "dim": [
+         "bea1@set.film",
+         "bea2@set.film",
+         "cal1@set.film",
+         "cal2@set.film"
+        ],
+        "path": [],
+        "good": [
+         "ash2@set.film"
+        ],
+        "lit": [
+         "ash2@set.film"
+        ]
+       },
+       "edgeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "groups": {
+       "entries": [],
+       "marks": {}
+      },
+      "merged": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "emails",
+        "at": "ash2@set.film"
+       },
+       "value": "ash2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Entry 1 (Ash): ash2 shares the entry with ash1, so parent[ash2] = ash1: ash2's group joins ash1's group, rooted at ash1.",
+      "ko": "항목 1(Ash): ash2 이메일은 ash1 이메일과 같은 항목이므로 parent[ash2] = ash1, ash2의 그룹이 루트가 ash1인 ash1의 그룹에 합쳐집니다."
+     },
+     "views": {
+      "emails": {
+       "nodes": [
+        {
+         "id": "ash1@set.film",
+         "label": "ash1",
+         "tag": "Ash"
+        },
+        {
+         "id": "ash2@set.film",
+         "label": "ash2",
+         "tag": "Ash"
+        },
+        {
+         "id": "bea1@set.film",
+         "label": "bea1"
+        },
+        {
+         "id": "bea2@set.film",
+         "label": "bea2"
+        },
+        {
+         "id": "cal1@set.film",
+         "label": "cal1"
+        },
+        {
+         "id": "cal2@set.film",
+         "label": "cal2"
+        }
+       ],
+       "values": {
+        "ash1@set.film": "ash1",
+        "ash2@set.film": "ash1"
+       },
+       "nodeMarks": {
+        "dim": [
+         "bea1@set.film",
+         "bea2@set.film",
+         "cal1@set.film",
+         "cal2@set.film"
+        ],
+        "path": [],
+        "good": [
+         "ash2@set.film"
+        ],
+        "lit": [
+         "ash1@set.film"
+        ]
+       },
+       "edgeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "groups": {
+       "entries": [],
+       "marks": {}
+      },
+      "merged": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "emails",
+        "at": "ash1@set.film"
+       },
+       "to": {
+        "view": "emails",
+        "at": "ash2@set.film"
+       },
+       "value": "ash1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Entry 2 (Bea): bea1 is new, so it starts as its own root, owned by Bea.",
+      "ko": "항목 2(Bea): bea1 이메일은 처음 나왔으므로 자기 자신이 루트인 채로 시작하고, 주인은 Bea입니다."
+     },
+     "views": {
+      "emails": {
+       "nodes": [
+        {
+         "id": "ash1@set.film",
+         "label": "ash1",
+         "tag": "Ash"
+        },
+        {
+         "id": "ash2@set.film",
+         "label": "ash2",
+         "tag": "Ash"
+        },
+        {
+         "id": "bea1@set.film",
+         "label": "bea1",
+         "tag": "Bea"
+        },
+        {
+         "id": "bea2@set.film",
+         "label": "bea2"
+        },
+        {
+         "id": "cal1@set.film",
+         "label": "cal1"
+        },
+        {
+         "id": "cal2@set.film",
+         "label": "cal2"
+        }
+       ],
+       "values": {
+        "ash1@set.film": "ash1",
+        "ash2@set.film": "ash1",
+        "bea1@set.film": "bea1"
+       },
+       "nodeMarks": {
+        "dim": [
+         "bea2@set.film",
+         "cal1@set.film",
+         "cal2@set.film"
+        ],
+        "path": [],
+        "good": [
+         "bea1@set.film"
+        ],
+        "lit": [
+         "bea1@set.film"
+        ]
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "groups": {
+       "entries": [],
+       "marks": {}
+      },
+      "merged": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "emails",
+        "at": "bea1@set.film"
+       },
+       "value": "bea1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Entry 2 (Bea): bea2 is new, so it starts as its own root, owned by Bea.",
+      "ko": "항목 2(Bea): bea2 이메일은 처음 나왔으므로 자기 자신이 루트인 채로 시작하고, 주인은 Bea입니다."
+     },
+     "views": {
+      "emails": {
+       "nodes": [
+        {
+         "id": "ash1@set.film",
+         "label": "ash1",
+         "tag": "Ash"
+        },
+        {
+         "id": "ash2@set.film",
+         "label": "ash2",
+         "tag": "Ash"
+        },
+        {
+         "id": "bea1@set.film",
+         "label": "bea1",
+         "tag": "Bea"
+        },
+        {
+         "id": "bea2@set.film",
+         "label": "bea2",
+         "tag": "Bea"
+        },
+        {
+         "id": "cal1@set.film",
+         "label": "cal1"
+        },
+        {
+         "id": "cal2@set.film",
+         "label": "cal2"
+        }
+       ],
+       "values": {
+        "ash1@set.film": "ash1",
+        "ash2@set.film": "ash1",
+        "bea1@set.film": "bea1",
+        "bea2@set.film": "bea2"
+       },
+       "nodeMarks": {
+        "dim": [
+         "cal1@set.film",
+         "cal2@set.film"
+        ],
+        "path": [],
+        "good": [
+         "bea2@set.film"
+        ],
+        "lit": [
+         "bea2@set.film"
+        ]
+       },
+       "edgeMarks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "groups": {
+       "entries": [],
+       "marks": {}
+      },
+      "merged": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "emails",
+        "at": "bea2@set.film"
+       },
+       "value": "bea2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Entry 2 (Bea): bea2 shares the entry with bea1, so parent[bea2] = bea1: bea2's group joins bea1's group, rooted at bea1.",
+      "ko": "항목 2(Bea): bea2 이메일은 bea1 이메일과 같은 항목이므로 parent[bea2] = bea1, bea2의 그룹이 루트가 bea1인 bea1의 그룹에 합쳐집니다."
+     },
+     "views": {
+      "emails": {
+       "nodes": [
+        {
+         "id": "ash1@set.film",
+         "label": "ash1",
+         "tag": "Ash"
+        },
+        {
+         "id": "ash2@set.film",
+         "label": "ash2",
+         "tag": "Ash"
+        },
+        {
+         "id": "bea1@set.film",
+         "label": "bea1",
+         "tag": "Bea"
+        },
+        {
+         "id": "bea2@set.film",
+         "label": "bea2",
+         "tag": "Bea"
+        },
+        {
+         "id": "cal1@set.film",
+         "label": "cal1"
+        },
+        {
+         "id": "cal2@set.film",
+         "label": "cal2"
+        }
+       ],
+       "values": {
+        "ash1@set.film": "ash1",
+        "ash2@set.film": "ash1",
+        "bea1@set.film": "bea1",
+        "bea2@set.film": "bea1"
+       },
+       "nodeMarks": {
+        "dim": [
+         "cal1@set.film",
+         "cal2@set.film"
+        ],
+        "path": [],
+        "good": [
+         "bea2@set.film"
+        ],
+        "lit": [
+         "bea1@set.film"
+        ]
+       },
+       "edgeMarks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "groups": {
+       "entries": [],
+       "marks": {}
+      },
+      "merged": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "emails",
+        "at": "bea1@set.film"
+       },
+       "to": {
+        "view": "emails",
+        "at": "bea2@set.film"
+       },
+       "value": "bea1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Entry 3 (Cal): cal1 is new, so it starts as its own root, owned by Cal.",
+      "ko": "항목 3(Cal): cal1 이메일은 처음 나왔으므로 자기 자신이 루트인 채로 시작하고, 주인은 Cal입니다."
+     },
+     "views": {
+      "emails": {
+       "nodes": [
+        {
+         "id": "ash1@set.film",
+         "label": "ash1",
+         "tag": "Ash"
+        },
+        {
+         "id": "ash2@set.film",
+         "label": "ash2",
+         "tag": "Ash"
+        },
+        {
+         "id": "bea1@set.film",
+         "label": "bea1",
+         "tag": "Bea"
+        },
+        {
+         "id": "bea2@set.film",
+         "label": "bea2",
+         "tag": "Bea"
+        },
+        {
+         "id": "cal1@set.film",
+         "label": "cal1",
+         "tag": "Cal"
+        },
+        {
+         "id": "cal2@set.film",
+         "label": "cal2"
+        }
+       ],
+       "values": {
+        "ash1@set.film": "ash1",
+        "ash2@set.film": "ash1",
+        "bea1@set.film": "bea1",
+        "bea2@set.film": "bea1",
+        "cal1@set.film": "cal1"
+       },
+       "nodeMarks": {
+        "dim": [
+         "cal2@set.film"
+        ],
+        "path": [],
+        "good": [
+         "cal1@set.film"
+        ],
+        "lit": [
+         "cal1@set.film"
+        ]
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "groups": {
+       "entries": [],
+       "marks": {}
+      },
+      "merged": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "emails",
+        "at": "cal1@set.film"
+       },
+       "value": "cal1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Entry 3 (Cal): cal2 is new, so it starts as its own root, owned by Cal.",
+      "ko": "항목 3(Cal): cal2 이메일은 처음 나왔으므로 자기 자신이 루트인 채로 시작하고, 주인은 Cal입니다."
+     },
+     "views": {
+      "emails": {
+       "nodes": [
+        {
+         "id": "ash1@set.film",
+         "label": "ash1",
+         "tag": "Ash"
+        },
+        {
+         "id": "ash2@set.film",
+         "label": "ash2",
+         "tag": "Ash"
+        },
+        {
+         "id": "bea1@set.film",
+         "label": "bea1",
+         "tag": "Bea"
+        },
+        {
+         "id": "bea2@set.film",
+         "label": "bea2",
+         "tag": "Bea"
+        },
+        {
+         "id": "cal1@set.film",
+         "label": "cal1",
+         "tag": "Cal"
+        },
+        {
+         "id": "cal2@set.film",
+         "label": "cal2",
+         "tag": "Cal"
+        }
+       ],
+       "values": {
+        "ash1@set.film": "ash1",
+        "ash2@set.film": "ash1",
+        "bea1@set.film": "bea1",
+        "bea2@set.film": "bea1",
+        "cal1@set.film": "cal1",
+        "cal2@set.film": "cal2"
+       },
+       "nodeMarks": {
+        "dim": [],
+        "path": [],
+        "good": [
+         "cal2@set.film"
+        ],
+        "lit": [
+         "cal2@set.film"
+        ]
+       },
+       "edgeMarks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "groups": {
+       "entries": [],
+       "marks": {}
+      },
+      "merged": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "emails",
+        "at": "cal2@set.film"
+       },
+       "value": "cal2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Entry 3 (Cal): cal2 shares the entry with cal1, so parent[cal2] = cal1: cal2's group joins cal1's group, rooted at cal1.",
+      "ko": "항목 3(Cal): cal2 이메일은 cal1 이메일과 같은 항목이므로 parent[cal2] = cal1, cal2의 그룹이 루트가 cal1인 cal1의 그룹에 합쳐집니다."
+     },
+     "views": {
+      "emails": {
+       "nodes": [
+        {
+         "id": "ash1@set.film",
+         "label": "ash1",
+         "tag": "Ash"
+        },
+        {
+         "id": "ash2@set.film",
+         "label": "ash2",
+         "tag": "Ash"
+        },
+        {
+         "id": "bea1@set.film",
+         "label": "bea1",
+         "tag": "Bea"
+        },
+        {
+         "id": "bea2@set.film",
+         "label": "bea2",
+         "tag": "Bea"
+        },
+        {
+         "id": "cal1@set.film",
+         "label": "cal1",
+         "tag": "Cal"
+        },
+        {
+         "id": "cal2@set.film",
+         "label": "cal2",
+         "tag": "Cal"
+        }
+       ],
+       "values": {
+        "ash1@set.film": "ash1",
+        "ash2@set.film": "ash1",
+        "bea1@set.film": "bea1",
+        "bea2@set.film": "bea1",
+        "cal1@set.film": "cal1",
+        "cal2@set.film": "cal1"
+       },
+       "nodeMarks": {
+        "dim": [],
+        "path": [],
+        "good": [
+         "cal2@set.film"
+        ],
+        "lit": [
+         "cal1@set.film"
+        ]
+       },
+       "edgeMarks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "groups": {
+       "entries": [],
+       "marks": {}
+      },
+      "merged": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "emails",
+        "at": "cal1@set.film"
+       },
+       "to": {
+        "view": "emails",
+        "at": "cal2@set.film"
+       },
+       "value": "cal1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "ash1's root is ash1: a new group starts at ash1.",
+      "ko": "ash1 이메일의 루트는 ash1입니다. ash1 그룹이 새로 생깁니다."
+     },
+     "views": {
+      "emails": {
+       "nodes": [
+        {
+         "id": "ash1@set.film",
+         "label": "ash1",
+         "tag": "Ash"
+        },
+        {
+         "id": "ash2@set.film",
+         "label": "ash2",
+         "tag": "Ash"
+        },
+        {
+         "id": "bea1@set.film",
+         "label": "bea1",
+         "tag": "Bea"
+        },
+        {
+         "id": "bea2@set.film",
+         "label": "bea2",
+         "tag": "Bea"
+        },
+        {
+         "id": "cal1@set.film",
+         "label": "cal1",
+         "tag": "Cal"
+        },
+        {
+         "id": "cal2@set.film",
+         "label": "cal2",
+         "tag": "Cal"
+        }
+       ],
+       "values": {
+        "ash1@set.film": "ash1",
+        "ash2@set.film": "ash1",
+        "bea1@set.film": "bea1",
+        "bea2@set.film": "bea1",
+        "cal1@set.film": "cal1",
+        "cal2@set.film": "cal1"
+       },
+       "nodeMarks": {
+        "dim": [],
+        "path": [],
+        "good": [],
+        "lit": [
+         "ash1@set.film"
+        ]
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "groups": {
+       "entries": [
+        {
+         "key": "ash1",
+         "value": [
+          "ash1"
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         "ash1"
+        ]
+       }
+      },
+      "merged": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "emails",
+        "at": "ash1@set.film"
+       },
+       "to": {
+        "view": "groups",
+        "at": "ash1"
+       },
+       "value": "ash1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "ash2's root is ash1: it joins group ash1.",
+      "ko": "ash2 이메일의 루트는 ash1입니다. ash1 그룹에 들어갑니다."
+     },
+     "views": {
+      "emails": {
+       "nodes": [
+        {
+         "id": "ash1@set.film",
+         "label": "ash1",
+         "tag": "Ash"
+        },
+        {
+         "id": "ash2@set.film",
+         "label": "ash2",
+         "tag": "Ash"
+        },
+        {
+         "id": "bea1@set.film",
+         "label": "bea1",
+         "tag": "Bea"
+        },
+        {
+         "id": "bea2@set.film",
+         "label": "bea2",
+         "tag": "Bea"
+        },
+        {
+         "id": "cal1@set.film",
+         "label": "cal1",
+         "tag": "Cal"
+        },
+        {
+         "id": "cal2@set.film",
+         "label": "cal2",
+         "tag": "Cal"
+        }
+       ],
+       "values": {
+        "ash1@set.film": "ash1",
+        "ash2@set.film": "ash1",
+        "bea1@set.film": "bea1",
+        "bea2@set.film": "bea1",
+        "cal1@set.film": "cal1",
+        "cal2@set.film": "cal1"
+       },
+       "nodeMarks": {
+        "dim": [],
+        "path": [],
+        "good": [],
+        "lit": [
+         "ash2@set.film"
+        ]
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "groups": {
+       "entries": [
+        {
+         "key": "ash1",
+         "value": [
+          "ash1",
+          "ash2"
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         "ash1"
+        ]
+       }
+      },
+      "merged": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "emails",
+        "at": "ash2@set.film"
+       },
+       "to": {
+        "view": "groups",
+        "at": "ash1"
+       },
+       "value": "ash2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "bea1's root is bea1: a new group starts at bea1.",
+      "ko": "bea1 이메일의 루트는 bea1입니다. bea1 그룹이 새로 생깁니다."
+     },
+     "views": {
+      "emails": {
+       "nodes": [
+        {
+         "id": "ash1@set.film",
+         "label": "ash1",
+         "tag": "Ash"
+        },
+        {
+         "id": "ash2@set.film",
+         "label": "ash2",
+         "tag": "Ash"
+        },
+        {
+         "id": "bea1@set.film",
+         "label": "bea1",
+         "tag": "Bea"
+        },
+        {
+         "id": "bea2@set.film",
+         "label": "bea2",
+         "tag": "Bea"
+        },
+        {
+         "id": "cal1@set.film",
+         "label": "cal1",
+         "tag": "Cal"
+        },
+        {
+         "id": "cal2@set.film",
+         "label": "cal2",
+         "tag": "Cal"
+        }
+       ],
+       "values": {
+        "ash1@set.film": "ash1",
+        "ash2@set.film": "ash1",
+        "bea1@set.film": "bea1",
+        "bea2@set.film": "bea1",
+        "cal1@set.film": "cal1",
+        "cal2@set.film": "cal1"
+       },
+       "nodeMarks": {
+        "dim": [],
+        "path": [],
+        "good": [],
+        "lit": [
+         "bea1@set.film"
+        ]
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "groups": {
+       "entries": [
+        {
+         "key": "ash1",
+         "value": [
+          "ash1",
+          "ash2"
+         ]
+        },
+        {
+         "key": "bea1",
+         "value": [
+          "bea1"
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         "bea1"
+        ]
+       }
+      },
+      "merged": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "emails",
+        "at": "bea1@set.film"
+       },
+       "to": {
+        "view": "groups",
+        "at": "bea1"
+       },
+       "value": "bea1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "bea2's root is bea1: it joins group bea1.",
+      "ko": "bea2 이메일의 루트는 bea1입니다. bea1 그룹에 들어갑니다."
+     },
+     "views": {
+      "emails": {
+       "nodes": [
+        {
+         "id": "ash1@set.film",
+         "label": "ash1",
+         "tag": "Ash"
+        },
+        {
+         "id": "ash2@set.film",
+         "label": "ash2",
+         "tag": "Ash"
+        },
+        {
+         "id": "bea1@set.film",
+         "label": "bea1",
+         "tag": "Bea"
+        },
+        {
+         "id": "bea2@set.film",
+         "label": "bea2",
+         "tag": "Bea"
+        },
+        {
+         "id": "cal1@set.film",
+         "label": "cal1",
+         "tag": "Cal"
+        },
+        {
+         "id": "cal2@set.film",
+         "label": "cal2",
+         "tag": "Cal"
+        }
+       ],
+       "values": {
+        "ash1@set.film": "ash1",
+        "ash2@set.film": "ash1",
+        "bea1@set.film": "bea1",
+        "bea2@set.film": "bea1",
+        "cal1@set.film": "cal1",
+        "cal2@set.film": "cal1"
+       },
+       "nodeMarks": {
+        "dim": [],
+        "path": [],
+        "good": [],
+        "lit": [
+         "bea2@set.film"
+        ]
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "groups": {
+       "entries": [
+        {
+         "key": "ash1",
+         "value": [
+          "ash1",
+          "ash2"
+         ]
+        },
+        {
+         "key": "bea1",
+         "value": [
+          "bea1",
+          "bea2"
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         "bea1"
+        ]
+       }
+      },
+      "merged": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "emails",
+        "at": "bea2@set.film"
+       },
+       "to": {
+        "view": "groups",
+        "at": "bea1"
+       },
+       "value": "bea2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "cal1's root is cal1: a new group starts at cal1.",
+      "ko": "cal1 이메일의 루트는 cal1입니다. cal1 그룹이 새로 생깁니다."
+     },
+     "views": {
+      "emails": {
+       "nodes": [
+        {
+         "id": "ash1@set.film",
+         "label": "ash1",
+         "tag": "Ash"
+        },
+        {
+         "id": "ash2@set.film",
+         "label": "ash2",
+         "tag": "Ash"
+        },
+        {
+         "id": "bea1@set.film",
+         "label": "bea1",
+         "tag": "Bea"
+        },
+        {
+         "id": "bea2@set.film",
+         "label": "bea2",
+         "tag": "Bea"
+        },
+        {
+         "id": "cal1@set.film",
+         "label": "cal1",
+         "tag": "Cal"
+        },
+        {
+         "id": "cal2@set.film",
+         "label": "cal2",
+         "tag": "Cal"
+        }
+       ],
+       "values": {
+        "ash1@set.film": "ash1",
+        "ash2@set.film": "ash1",
+        "bea1@set.film": "bea1",
+        "bea2@set.film": "bea1",
+        "cal1@set.film": "cal1",
+        "cal2@set.film": "cal1"
+       },
+       "nodeMarks": {
+        "dim": [],
+        "path": [],
+        "good": [],
+        "lit": [
+         "cal1@set.film"
+        ]
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "groups": {
+       "entries": [
+        {
+         "key": "ash1",
+         "value": [
+          "ash1",
+          "ash2"
+         ]
+        },
+        {
+         "key": "bea1",
+         "value": [
+          "bea1",
+          "bea2"
+         ]
+        },
+        {
+         "key": "cal1",
+         "value": [
+          "cal1"
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         "cal1"
+        ]
+       }
+      },
+      "merged": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "emails",
+        "at": "cal1@set.film"
+       },
+       "to": {
+        "view": "groups",
+        "at": "cal1"
+       },
+       "value": "cal1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "cal2's root is cal1: it joins group cal1.",
+      "ko": "cal2 이메일의 루트는 cal1입니다. cal1 그룹에 들어갑니다."
+     },
+     "views": {
+      "emails": {
+       "nodes": [
+        {
+         "id": "ash1@set.film",
+         "label": "ash1",
+         "tag": "Ash"
+        },
+        {
+         "id": "ash2@set.film",
+         "label": "ash2",
+         "tag": "Ash"
+        },
+        {
+         "id": "bea1@set.film",
+         "label": "bea1",
+         "tag": "Bea"
+        },
+        {
+         "id": "bea2@set.film",
+         "label": "bea2",
+         "tag": "Bea"
+        },
+        {
+         "id": "cal1@set.film",
+         "label": "cal1",
+         "tag": "Cal"
+        },
+        {
+         "id": "cal2@set.film",
+         "label": "cal2",
+         "tag": "Cal"
+        }
+       ],
+       "values": {
+        "ash1@set.film": "ash1",
+        "ash2@set.film": "ash1",
+        "bea1@set.film": "bea1",
+        "bea2@set.film": "bea1",
+        "cal1@set.film": "cal1",
+        "cal2@set.film": "cal1"
+       },
+       "nodeMarks": {
+        "dim": [],
+        "path": [],
+        "good": [],
+        "lit": [
+         "cal2@set.film"
+        ]
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "groups": {
+       "entries": [
+        {
+         "key": "ash1",
+         "value": [
+          "ash1",
+          "ash2"
+         ]
+        },
+        {
+         "key": "bea1",
+         "value": [
+          "bea1",
+          "bea2"
+         ]
+        },
+        {
+         "key": "cal1",
+         "value": [
+          "cal1",
+          "cal2"
+         ]
+        }
+       ],
+       "marks": {
+        "good": [
+         "cal1"
+        ]
+       }
+      },
+      "merged": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "emails",
+        "at": "cal2@set.film"
+       },
+       "to": {
+        "view": "groups",
+        "at": "cal1"
+       },
+       "value": "cal2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Group ash1 is one person, Ash: their 2 emails, sorted, follow the name.",
+      "ko": "ash1 그룹은 한 사람 Ash입니다. 이름 뒤에 이메일 2개를 사전순으로 붙입니다."
+     },
+     "views": {
+      "emails": {
+       "nodes": [
+        {
+         "id": "ash1@set.film",
+         "label": "ash1",
+         "tag": "Ash"
+        },
+        {
+         "id": "ash2@set.film",
+         "label": "ash2",
+         "tag": "Ash"
+        },
+        {
+         "id": "bea1@set.film",
+         "label": "bea1",
+         "tag": "Bea"
+        },
+        {
+         "id": "bea2@set.film",
+         "label": "bea2",
+         "tag": "Bea"
+        },
+        {
+         "id": "cal1@set.film",
+         "label": "cal1",
+         "tag": "Cal"
+        },
+        {
+         "id": "cal2@set.film",
+         "label": "cal2",
+         "tag": "Cal"
+        }
+       ],
+       "values": {
+        "ash1@set.film": "ash1",
+        "ash2@set.film": "ash1",
+        "bea1@set.film": "bea1",
+        "bea2@set.film": "bea1",
+        "cal1@set.film": "cal1",
+        "cal2@set.film": "cal1"
+       },
+       "nodeMarks": {
+        "dim": [],
+        "path": [],
+        "good": [],
+        "lit": [
+         "ash1@set.film",
+         "ash2@set.film"
+        ]
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "groups": {
+       "entries": [
+        {
+         "key": "ash1",
+         "value": [
+          "ash1",
+          "ash2"
+         ]
+        },
+        {
+         "key": "bea1",
+         "value": [
+          "bea1",
+          "bea2"
+         ]
+        },
+        {
+         "key": "cal1",
+         "value": [
+          "cal1",
+          "cal2"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         "ash1"
+        ]
+       }
+      },
+      "merged": {
+       "values": [
+        "Ash: ash1, ash2"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "groups",
+        "at": "ash1"
+       },
+       "to": {
+        "view": "merged",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Group bea1 is one person, Bea: their 2 emails, sorted, follow the name.",
+      "ko": "bea1 그룹은 한 사람 Bea입니다. 이름 뒤에 이메일 2개를 사전순으로 붙입니다."
+     },
+     "views": {
+      "emails": {
+       "nodes": [
+        {
+         "id": "ash1@set.film",
+         "label": "ash1",
+         "tag": "Ash"
+        },
+        {
+         "id": "ash2@set.film",
+         "label": "ash2",
+         "tag": "Ash"
+        },
+        {
+         "id": "bea1@set.film",
+         "label": "bea1",
+         "tag": "Bea"
+        },
+        {
+         "id": "bea2@set.film",
+         "label": "bea2",
+         "tag": "Bea"
+        },
+        {
+         "id": "cal1@set.film",
+         "label": "cal1",
+         "tag": "Cal"
+        },
+        {
+         "id": "cal2@set.film",
+         "label": "cal2",
+         "tag": "Cal"
+        }
+       ],
+       "values": {
+        "ash1@set.film": "ash1",
+        "ash2@set.film": "ash1",
+        "bea1@set.film": "bea1",
+        "bea2@set.film": "bea1",
+        "cal1@set.film": "cal1",
+        "cal2@set.film": "cal1"
+       },
+       "nodeMarks": {
+        "dim": [],
+        "path": [],
+        "good": [],
+        "lit": [
+         "bea1@set.film",
+         "bea2@set.film"
+        ]
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "groups": {
+       "entries": [
+        {
+         "key": "ash1",
+         "value": [
+          "ash1",
+          "ash2"
+         ]
+        },
+        {
+         "key": "bea1",
+         "value": [
+          "bea1",
+          "bea2"
+         ]
+        },
+        {
+         "key": "cal1",
+         "value": [
+          "cal1",
+          "cal2"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         "bea1"
+        ]
+       }
+      },
+      "merged": {
+       "values": [
+        "Ash: ash1, ash2",
+        "Bea: bea1, bea2"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "groups",
+        "at": "bea1"
+       },
+       "to": {
+        "view": "merged",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Group cal1 is one person, Cal: their 2 emails, sorted, follow the name.",
+      "ko": "cal1 그룹은 한 사람 Cal입니다. 이름 뒤에 이메일 2개를 사전순으로 붙입니다."
+     },
+     "views": {
+      "emails": {
+       "nodes": [
+        {
+         "id": "ash1@set.film",
+         "label": "ash1",
+         "tag": "Ash"
+        },
+        {
+         "id": "ash2@set.film",
+         "label": "ash2",
+         "tag": "Ash"
+        },
+        {
+         "id": "bea1@set.film",
+         "label": "bea1",
+         "tag": "Bea"
+        },
+        {
+         "id": "bea2@set.film",
+         "label": "bea2",
+         "tag": "Bea"
+        },
+        {
+         "id": "cal1@set.film",
+         "label": "cal1",
+         "tag": "Cal"
+        },
+        {
+         "id": "cal2@set.film",
+         "label": "cal2",
+         "tag": "Cal"
+        }
+       ],
+       "values": {
+        "ash1@set.film": "ash1",
+        "ash2@set.film": "ash1",
+        "bea1@set.film": "bea1",
+        "bea2@set.film": "bea1",
+        "cal1@set.film": "cal1",
+        "cal2@set.film": "cal1"
+       },
+       "nodeMarks": {
+        "dim": [],
+        "path": [],
+        "good": [],
+        "lit": [
+         "cal1@set.film",
+         "cal2@set.film"
+        ]
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "groups": {
+       "entries": [
+        {
+         "key": "ash1",
+         "value": [
+          "ash1",
+          "ash2"
+         ]
+        },
+        {
+         "key": "bea1",
+         "value": [
+          "bea1",
+          "bea2"
+         ]
+        },
+        {
+         "key": "cal1",
+         "value": [
+          "cal1",
+          "cal2"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         "cal1"
+        ]
+       }
+      },
+      "merged": {
+       "values": [
+        "Ash: ash1, ash2",
+        "Bea: bea1, bea2",
+        "Cal: cal1, cal2"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "groups",
+        "at": "cal1"
+       },
+       "to": {
+        "view": "merged",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "3 entries merge into 3 people. In order of first email, the answer is [[\"Ash\",\"ash1@set.film\",\"ash2@set.film\"],[\"Bea\",\"bea1@set.film\",\"bea2@set.film\"],[\"Cal\",\"cal1@set.film\",\"cal2@set.film\"]].",
+      "ko": "항목 3개가 3명으로 합쳐집니다. 첫 이메일 순으로 적은 답은 [[\"Ash\",\"ash1@set.film\",\"ash2@set.film\"],[\"Bea\",\"bea1@set.film\",\"bea2@set.film\"],[\"Cal\",\"cal1@set.film\",\"cal2@set.film\"]]입니다."
+     },
+     "views": {
+      "emails": {
+       "nodes": [
+        {
+         "id": "ash1@set.film",
+         "label": "ash1",
+         "tag": "Ash"
+        },
+        {
+         "id": "ash2@set.film",
+         "label": "ash2",
+         "tag": "Ash"
+        },
+        {
+         "id": "bea1@set.film",
+         "label": "bea1",
+         "tag": "Bea"
+        },
+        {
+         "id": "bea2@set.film",
+         "label": "bea2",
+         "tag": "Bea"
+        },
+        {
+         "id": "cal1@set.film",
+         "label": "cal1",
+         "tag": "Cal"
+        },
+        {
+         "id": "cal2@set.film",
+         "label": "cal2",
+         "tag": "Cal"
+        }
+       ],
+       "values": {
+        "ash1@set.film": "ash1",
+        "ash2@set.film": "ash1",
+        "bea1@set.film": "bea1",
+        "bea2@set.film": "bea1",
+        "cal1@set.film": "cal1",
+        "cal2@set.film": "cal1"
+       },
+       "nodeMarks": {
+        "dim": [],
+        "path": [
+         "ash1@set.film",
+         "ash2@set.film",
+         "bea1@set.film",
+         "bea2@set.film",
+         "cal1@set.film",
+         "cal2@set.film"
+        ],
+        "good": [],
+        "lit": []
+       },
+       "edgeMarks": {
+        "lit": []
+       }
+      },
+      "groups": {
+       "entries": [
+        {
+         "key": "ash1",
+         "value": [
+          "ash1",
+          "ash2"
+         ]
+        },
+        {
+         "key": "bea1",
+         "value": [
+          "bea1",
+          "bea2"
+         ]
+        },
+        {
+         "key": "cal1",
+         "value": [
+          "cal1",
+          "cal2"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "merged": {
+       "values": [
+        "Ash: ash1, ash2",
+        "Bea: bea1, bea2",
+        "Cal: cal1, cal2"
+       ],
+       "marks": {}
+      }
+     },
+     "answer": "[[\"Ash\",\"ash1@set.film\",\"ash2@set.film\"],[\"Bea\",\"bea1@set.film\",\"bea2@set.film\"],[\"Cal\",\"cal1@set.film\",\"cal2@set.film\"]]"
+    }
+   ],
+   "sampleInput": "[[\"Ash\",\"ash1@set.film\",\"ash2@set.film\"],[\"Bea\",\"bea1@set.film\",\"bea2@set.film\"],[\"Cal\",\"cal1@set.film\",\"cal2@set.film\"]]",
+   "setup": {
+    "emails": {
+     "nodes": [
+      {
+       "id": "ash1@set.film",
+       "label": "ash1"
+      },
+      {
+       "id": "ash2@set.film",
+       "label": "ash2"
+      },
+      {
+       "id": "bea1@set.film",
+       "label": "bea1"
+      },
+      {
+       "id": "bea2@set.film",
+       "label": "bea2"
+      },
+      {
+       "id": "cal1@set.film",
+       "label": "cal1"
+      },
+      {
+       "id": "cal2@set.film",
+       "label": "cal2"
+      }
+     ],
+     "edges": [
+      {
+       "from": "ash1@set.film",
+       "to": "ash2@set.film"
+      },
+      {
+       "from": "bea1@set.film",
+       "to": "bea2@set.film"
+      },
+      {
+       "from": "cal1@set.film",
+       "to": "cal2@set.film"
+      }
+     ]
+    }
+   }
+  }
+ ]
+}

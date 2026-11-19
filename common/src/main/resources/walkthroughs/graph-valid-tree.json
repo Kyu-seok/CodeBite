@@ -1,0 +1,1885 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Graph Valid Tree",
+  "ko": "유효한 트리 판별"
+ },
+ "approach": {
+  "en": "A tree on n nodes has exactly n - 1 edges. With that many, it is a tree unless an edge joins two nodes already connected (a cycle), which union-find sees as both ends sharing a root.",
+  "ko": "노드 n개짜리 트리는 간선이 정확히 n - 1개입니다. 간선 수가 맞으면, 이미 이어진 두 노드를 잇는 간선(사이클)이 없는 한 트리이며, 유니온 파인드에서는 두 끝의 루트가 같은 것으로 보입니다."
+ },
+ "views": [
+  {
+   "id": "graph",
+   "type": "graph",
+   "directed": false,
+   "title": {
+    "en": "edges (tag: root of the group)",
+    "ko": "간선 (태그: 그룹의 루트)"
+   }
+  },
+  {
+   "id": "parent",
+   "type": "array",
+   "title": {
+    "en": "parent (index: node)",
+    "ko": "parent (인덱스: 노드)"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "n = 6, edges = [[0,1],[0,2],[1,3],[1,4],[2,5]]",
+   "expected": "true",
+   "frames": [
+    {
+     "caption": {
+      "en": "6 nodes and 5 edges, exactly n - 1: the count fits a tree. Each node starts as its own group (parent[v] = v); now join the groups edge by edge.",
+      "ko": "노드 6개에 간선 5개로 정확히 n - 1개이니 개수는 트리와 맞습니다. 노드마다 자기 그룹으로 시작하며(parent[v] = v), 이제 간선마다 그룹을 합칩니다."
+     },
+     "views": {
+      "graph": {
+       "nodes": [
+        {
+         "id": 0,
+         "tag": {
+          "en": "root 0",
+          "ko": "루트 0"
+         }
+        },
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 1",
+          "ko": "루트 1"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 5,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "lit": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       },
+       "nodeMarks": {}
+      },
+      "parent": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+       ],
+       "pointers": {},
+       "marks": {
+        "lit": [],
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Edge [0,1]: 0 is a root, 1 is a root. Roots 0 and 1 differ: two groups.",
+      "ko": "간선 [0,1]: 0번은 루트, 1번은 루트. 루트 0과 1이 달라 서로 다른 두 그룹입니다."
+     },
+     "views": {
+      "graph": {
+       "nodes": [
+        {
+         "id": 0,
+         "tag": {
+          "en": "root 0",
+          "ko": "루트 0"
+         }
+        },
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 1",
+          "ko": "루트 1"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 5,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         1,
+         2,
+         3,
+         4
+        ],
+        "lit": [
+         0
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         0,
+         1
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+       ],
+       "pointers": {
+        "root a": 0,
+        "root b": 1
+       },
+       "marks": {
+        "lit": [
+         0,
+         1
+        ],
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "parent[0] = 1: group 0 joins group 1.",
+      "ko": "parent[0] = 1: 0번 그룹이 1번 그룹에 합쳐집니다."
+     },
+     "views": {
+      "graph": {
+       "nodes": [
+        {
+         "id": 0,
+         "tag": {
+          "en": "root 1",
+          "ko": "루트 1"
+         }
+        },
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 1",
+          "ko": "루트 1"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 5,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         1,
+         2,
+         3,
+         4
+        ],
+        "lit": [
+         0
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         0,
+         1
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        1,
+        1,
+        2,
+        3,
+        4,
+        5
+       ],
+       "pointers": {},
+       "marks": {
+        "lit": [],
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "parent",
+        "at": 1
+       },
+       "to": {
+        "view": "parent",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Edge [0,2]: find(0) climbs 0 → 1, 2 is a root. Roots 1 and 2 differ: two groups.",
+      "ko": "간선 [0,2]: 0번에서 0 → 1로 올라감, 2번은 루트. 루트 1과 2가 달라 서로 다른 두 그룹입니다."
+     },
+     "views": {
+      "graph": {
+       "nodes": [
+        {
+         "id": 0,
+         "tag": {
+          "en": "root 1",
+          "ko": "루트 1"
+         }
+        },
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 1",
+          "ko": "루트 1"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 5,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         2,
+         3,
+         4
+        ],
+        "lit": [
+         1
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         0,
+         2
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        1,
+        1,
+        2,
+        3,
+        4,
+        5
+       ],
+       "pointers": {
+        "root a": 1,
+        "root b": 2
+       },
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2
+        ],
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "parent[1] = 2: group 1 joins group 2.",
+      "ko": "parent[1] = 2: 1번 그룹이 2번 그룹에 합쳐집니다."
+     },
+     "views": {
+      "graph": {
+       "nodes": [
+        {
+         "id": 0,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 5,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         2,
+         3,
+         4
+        ],
+        "lit": [
+         1
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         0,
+         2
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        1,
+        2,
+        2,
+        3,
+        4,
+        5
+       ],
+       "pointers": {},
+       "marks": {
+        "lit": [],
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "parent",
+        "at": 2
+       },
+       "to": {
+        "view": "parent",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Edge [1,3]: find(1) climbs 1 → 2, 3 is a root. Roots 2 and 3 differ: two groups.",
+      "ko": "간선 [1,3]: 1번에서 1 → 2로 올라감, 3번은 루트. 루트 2와 3이 달라 서로 다른 두 그룹입니다."
+     },
+     "views": {
+      "graph": {
+       "nodes": [
+        {
+         "id": 0,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 5,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         3,
+         4
+        ],
+        "lit": [
+         2
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         1,
+         3
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        1,
+        2,
+        2,
+        3,
+        4,
+        5
+       ],
+       "pointers": {
+        "root a": 2,
+        "root b": 3
+       },
+       "marks": {
+        "lit": [
+         1,
+         2,
+         3
+        ],
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "parent[2] = 3: group 2 joins group 3.",
+      "ko": "parent[2] = 3: 2번 그룹이 3번 그룹에 합쳐집니다."
+     },
+     "views": {
+      "graph": {
+       "nodes": [
+        {
+         "id": 0,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 5,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         3,
+         4
+        ],
+        "lit": [
+         2
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         1,
+         3
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        1,
+        2,
+        3,
+        3,
+        4,
+        5
+       ],
+       "pointers": {},
+       "marks": {
+        "lit": [],
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "parent",
+        "at": 3
+       },
+       "to": {
+        "view": "parent",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Edge [1,4]: find(1) climbs 1 → 3, 4 is a root; on the way, parent[1] jumps to 3. Roots 3 and 4 differ: two groups.",
+      "ko": "간선 [1,4]: 1번에서 1 → 3으로 올라감, 4번은 루트 (올라가는 길에 건너뜀: parent[1] = 3). 루트 3과 4가 달라 서로 다른 두 그룹입니다."
+     },
+     "views": {
+      "graph": {
+       "nodes": [
+        {
+         "id": 0,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 5,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         4
+        ],
+        "lit": [
+         3
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         1,
+         4
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        1,
+        3,
+        3,
+        3,
+        4,
+        5
+       ],
+       "pointers": {
+        "root a": 3,
+        "root b": 4
+       },
+       "marks": {
+        "lit": [
+         1,
+         3,
+         4
+        ],
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "parent",
+        "at": 2
+       },
+       "to": {
+        "view": "parent",
+        "at": 1
+       },
+       "value": "3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "parent[3] = 4: group 3 joins group 4.",
+      "ko": "parent[3] = 4: 3번 그룹이 4번 그룹에 합쳐집니다."
+     },
+     "views": {
+      "graph": {
+       "nodes": [
+        {
+         "id": 0,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 5,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         4
+        ],
+        "lit": [
+         3
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         1,
+         4
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        1,
+        3,
+        3,
+        4,
+        4,
+        5
+       ],
+       "pointers": {},
+       "marks": {
+        "lit": [],
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "parent",
+        "at": 4
+       },
+       "to": {
+        "view": "parent",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Edge [2,5]: find(2) climbs 2 → 4, 5 is a root; on the way, parent[2] jumps to 4. Roots 4 and 5 differ: two groups.",
+      "ko": "간선 [2,5]: 2번에서 2 → 4로 올라감, 5번은 루트 (올라가는 길에 건너뜀: parent[2] = 4). 루트 4와 5가 달라 서로 다른 두 그룹입니다."
+     },
+     "views": {
+      "graph": {
+       "nodes": [
+        {
+         "id": 0,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        },
+        {
+         "id": 5,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [],
+        "lit": [
+         4
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         2,
+         5
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        1,
+        3,
+        4,
+        4,
+        4,
+        5
+       ],
+       "pointers": {
+        "root a": 4,
+        "root b": 5
+       },
+       "marks": {
+        "lit": [
+         2,
+         4,
+         5
+        ],
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "parent",
+        "at": 3
+       },
+       "to": {
+        "view": "parent",
+        "at": 2
+       },
+       "value": "4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "parent[4] = 5: group 4 joins group 5.",
+      "ko": "parent[4] = 5: 4번 그룹이 5번 그룹에 합쳐집니다."
+     },
+     "views": {
+      "graph": {
+       "nodes": [
+        {
+         "id": 0,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 5,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [],
+        "lit": [
+         4
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         2,
+         5
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        1,
+        3,
+        4,
+        4,
+        5,
+        5
+       ],
+       "pointers": {},
+       "marks": {
+        "lit": [],
+        "good": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "parent",
+        "at": 5
+       },
+       "to": {
+        "view": "parent",
+        "at": 4
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "All 5 edges joined two different groups, so no cycle: every node now has root 5, one connected group. It is a tree: true.",
+      "ko": "간선 5개가 모두 서로 다른 두 그룹을 합쳐 사이클이 없고, 모든 노드의 루트가 5번인 한 그룹입니다. 트리이므로 true입니다."
+     },
+     "views": {
+      "graph": {
+       "nodes": [
+        {
+         "id": 0,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        },
+        {
+         "id": 5,
+         "tag": {
+          "en": "root 5",
+          "ko": "루트 5"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       },
+       "nodeMarks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        1,
+        3,
+        4,
+        4,
+        5,
+        5
+       ],
+       "pointers": {},
+       "marks": {
+        "lit": [],
+        "good": []
+       }
+      }
+     },
+     "answer": "true"
+    }
+   ],
+   "setup": {
+    "graph": {
+     "edges": [
+      {
+       "from": 0,
+       "to": 1
+      },
+      {
+       "from": 0,
+       "to": 2
+      },
+      {
+       "from": 1,
+       "to": 3
+      },
+      {
+       "from": 1,
+       "to": 4
+      },
+      {
+       "from": 2,
+       "to": 5
+      }
+     ]
+    }
+   },
+   "sampleInput": "6\n[[0,1],[0,2],[1,3],[1,4],[2,5]]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "n = 4, edges = [[0,1],[1,2],[2,0],[0,3]]",
+   "expected": "false",
+   "frames": [
+    {
+     "caption": {
+      "en": "4 nodes but 4 edges, and a tree on 4 nodes has exactly 3. So many edges must close a cycle: false.",
+      "ko": "노드는 4개인데 간선이 4개이고, 노드 4개짜리 트리의 간선은 정확히 3개입니다. 간선이 이만큼 많으면 사이클이 생기므로 false입니다."
+     },
+     "views": {
+      "graph": {
+       "nodes": [
+        {
+         "id": 0,
+         "tag": {
+          "en": "root 0",
+          "ko": "루트 0"
+         }
+        },
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 1",
+          "ko": "루트 1"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "bad": [
+         0,
+         1,
+         2,
+         3
+        ]
+       },
+       "nodeMarks": {}
+      },
+      "parent": {
+       "values": [
+        0,
+        1,
+        2,
+        3
+       ],
+       "pointers": {},
+       "marks": {
+        "lit": [],
+        "good": []
+       }
+      }
+     },
+     "answer": "false"
+    }
+   ],
+   "setup": {
+    "graph": {
+     "edges": [
+      {
+       "from": 0,
+       "to": 1
+      },
+      {
+       "from": 1,
+       "to": 2
+      },
+      {
+       "from": 2,
+       "to": 0
+      },
+      {
+       "from": 0,
+       "to": 3
+      }
+     ]
+    }
+   },
+   "sampleInput": "4\n[[0,1],[1,2],[2,0],[0,3]]"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "n = 5, edges = [[0,1],[2,3]]",
+   "expected": "false",
+   "frames": [
+    {
+     "caption": {
+      "en": "5 nodes but 2 edges, and a tree on 5 nodes has exactly 4. So few edges can't connect every node: false.",
+      "ko": "노드는 5개인데 간선이 2개이고, 노드 5개짜리 트리의 간선은 정확히 4개입니다. 간선이 이만큼 적으면 모든 노드를 이을 수 없으므로 false입니다."
+     },
+     "views": {
+      "graph": {
+       "nodes": [
+        {
+         "id": 0,
+         "tag": {
+          "en": "root 0",
+          "ko": "루트 0"
+         }
+        },
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 1",
+          "ko": "루트 1"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        },
+        {
+         "id": 4,
+         "tag": {
+          "en": "root 4",
+          "ko": "루트 4"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "bad": [
+         0,
+         1
+        ]
+       },
+       "nodeMarks": {}
+      },
+      "parent": {
+       "values": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "pointers": {},
+       "marks": {
+        "lit": [],
+        "good": []
+       }
+      }
+     },
+     "answer": "false"
+    }
+   ],
+   "setup": {
+    "graph": {
+     "edges": [
+      {
+       "from": 0,
+       "to": 1
+      },
+      {
+       "from": 2,
+       "to": 3
+      }
+     ]
+    }
+   },
+   "sampleInput": "5\n[[0,1],[2,3]]"
+  },
+  {
+   "label": {
+    "en": "n - 1 edges, with a cycle",
+    "ko": "간선 n - 1개, 사이클 있음"
+   },
+   "input": "n = 4, edges = [[0,1],[1,2],[2,0]]",
+   "expected": "false",
+   "frames": [
+    {
+     "caption": {
+      "en": "4 nodes and 3 edges, exactly n - 1: the count fits a tree. Each node starts as its own group (parent[v] = v); now join the groups edge by edge.",
+      "ko": "노드 4개에 간선 3개로 정확히 n - 1개이니 개수는 트리와 맞습니다. 노드마다 자기 그룹으로 시작하며(parent[v] = v), 이제 간선마다 그룹을 합칩니다."
+     },
+     "views": {
+      "graph": {
+       "nodes": [
+        {
+         "id": 0,
+         "tag": {
+          "en": "root 0",
+          "ko": "루트 0"
+         }
+        },
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 1",
+          "ko": "루트 1"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "lit": [
+         0,
+         1,
+         2
+        ]
+       },
+       "nodeMarks": {}
+      },
+      "parent": {
+       "values": [
+        0,
+        1,
+        2,
+        3
+       ],
+       "pointers": {},
+       "marks": {
+        "lit": [],
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Edge [0,1]: 0 is a root, 1 is a root. Roots 0 and 1 differ: two groups.",
+      "ko": "간선 [0,1]: 0번은 루트, 1번은 루트. 루트 0과 1이 달라 서로 다른 두 그룹입니다."
+     },
+     "views": {
+      "graph": {
+       "nodes": [
+        {
+         "id": 0,
+         "tag": {
+          "en": "root 0",
+          "ko": "루트 0"
+         }
+        },
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 1",
+          "ko": "루트 1"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         1,
+         2
+        ],
+        "lit": [
+         0
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         0,
+         1
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        0,
+        1,
+        2,
+        3
+       ],
+       "pointers": {
+        "root a": 0,
+        "root b": 1
+       },
+       "marks": {
+        "lit": [
+         0,
+         1
+        ],
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "parent[0] = 1: group 0 joins group 1.",
+      "ko": "parent[0] = 1: 0번 그룹이 1번 그룹에 합쳐집니다."
+     },
+     "views": {
+      "graph": {
+       "nodes": [
+        {
+         "id": 0,
+         "tag": {
+          "en": "root 1",
+          "ko": "루트 1"
+         }
+        },
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 1",
+          "ko": "루트 1"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         1,
+         2
+        ],
+        "lit": [
+         0
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         0,
+         1
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        1,
+        1,
+        2,
+        3
+       ],
+       "pointers": {},
+       "marks": {
+        "lit": [],
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "parent",
+        "at": 1
+       },
+       "to": {
+        "view": "parent",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Edge [1,2]: 1 is a root, 2 is a root. Roots 1 and 2 differ: two groups.",
+      "ko": "간선 [1,2]: 1번은 루트, 2번은 루트. 루트 1과 2가 달라 서로 다른 두 그룹입니다."
+     },
+     "views": {
+      "graph": {
+       "nodes": [
+        {
+         "id": 0,
+         "tag": {
+          "en": "root 1",
+          "ko": "루트 1"
+         }
+        },
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 1",
+          "ko": "루트 1"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         2
+        ],
+        "lit": [
+         1
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         1,
+         2
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        1,
+        1,
+        2,
+        3
+       ],
+       "pointers": {
+        "root a": 1,
+        "root b": 2
+       },
+       "marks": {
+        "lit": [
+         1,
+         2
+        ],
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "parent[1] = 2: group 1 joins group 2.",
+      "ko": "parent[1] = 2: 1번 그룹이 2번 그룹에 합쳐집니다."
+     },
+     "views": {
+      "graph": {
+       "nodes": [
+        {
+         "id": 0,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [
+         2
+        ],
+        "lit": [
+         1
+        ]
+       },
+       "nodeMarks": {
+        "lit": [
+         1,
+         2
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        1,
+        2,
+        2,
+        3
+       ],
+       "pointers": {},
+       "marks": {
+        "lit": [],
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "parent",
+        "at": 2
+       },
+       "to": {
+        "view": "parent",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Edge [2,0]: 2 is a root, find(0) climbs 0 → 2; on the way, parent[0] jumps to 2. Both roots are 2: 2 and 0 are already connected, so this edge closes a cycle: false.",
+      "ko": "간선 [2,0]: 2번은 루트, 0번에서 0 → 2로 올라감 (올라가는 길에 건너뜀: parent[0] = 2). 두 루트가 모두 2번이라 2번과 0번은 이미 이어져 있으므로 이 간선이 사이클을 닫습니다: false."
+     },
+     "views": {
+      "graph": {
+       "nodes": [
+        {
+         "id": 0,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 1,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 2,
+         "tag": {
+          "en": "root 2",
+          "ko": "루트 2"
+         }
+        },
+        {
+         "id": 3,
+         "tag": {
+          "en": "root 3",
+          "ko": "루트 3"
+         }
+        }
+       ],
+       "edgeMarks": {
+        "dim": [],
+        "bad": [
+         2
+        ]
+       },
+       "nodeMarks": {
+        "bad": [
+         2,
+         0
+        ]
+       }
+      },
+      "parent": {
+       "values": [
+        2,
+        2,
+        2,
+        3
+       ],
+       "pointers": {
+        "root": 2
+       },
+       "marks": {
+        "lit": [
+         0,
+         2
+        ],
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "parent",
+        "at": 1
+       },
+       "to": {
+        "view": "parent",
+        "at": 0
+       },
+       "value": "2"
+      }
+     ],
+     "answer": "false"
+    }
+   ],
+   "extra": true,
+   "setup": {
+    "graph": {
+     "edges": [
+      {
+       "from": 0,
+       "to": 1
+      },
+      {
+       "from": 1,
+       "to": 2
+      },
+      {
+       "from": 2,
+       "to": 0
+      }
+     ]
+    }
+   }
+  }
+ ]
+}
