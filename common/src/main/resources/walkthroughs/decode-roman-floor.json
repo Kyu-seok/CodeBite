@@ -20,7 +20,10 @@
   {
    "id": "total",
    "type": "output",
-   "title": "total"
+   "title": {
+    "en": "total",
+    "ko": "total (합계)"
+   }
   }
  ],
  "runs": [

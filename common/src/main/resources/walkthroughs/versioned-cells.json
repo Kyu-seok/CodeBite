@@ -156,7 +156,10 @@
       "state": {
        "items": [
         {
-         "label": "snap_id",
+         "label": {
+          "en": "snap_id",
+          "ko": "snap_id (다음 스냅샷 id)"
+         },
          "value": 0
         }
        ]
@@ -304,7 +307,10 @@
       "state": {
        "items": [
         {
-         "label": "snap_id",
+         "label": {
+          "en": "snap_id",
+          "ko": "snap_id (다음 스냅샷 id)"
+         },
          "value": 0
         }
        ]
@@ -481,7 +487,10 @@
       "state": {
        "items": [
         {
-         "label": "snap_id",
+         "label": {
+          "en": "snap_id",
+          "ko": "snap_id (다음 스냅샷 id)"
+         },
          "value": 1
         }
        ]
@@ -663,7 +672,10 @@
       "state": {
        "items": [
         {
-         "label": "snap_id",
+         "label": {
+          "en": "snap_id",
+          "ko": "snap_id (다음 스냅샷 id)"
+         },
          "value": 1
         }
        ]
@@ -871,7 +883,10 @@
       "state": {
        "items": [
         {
-         "label": "snap_id",
+         "label": {
+          "en": "snap_id",
+          "ko": "snap_id (다음 스냅샷 id)"
+         },
          "value": 1
         }
        ]
@@ -1005,7 +1020,10 @@
       "state": {
        "items": [
         {
-         "label": "snap_id",
+         "label": {
+          "en": "snap_id",
+          "ko": "snap_id (다음 스냅샷 id)"
+         },
          "value": 1
         }
        ]
@@ -1161,7 +1179,10 @@
       "state": {
        "items": [
         {
-         "label": "snap_id",
+         "label": {
+          "en": "snap_id",
+          "ko": "snap_id (다음 스냅샷 id)"
+         },
          "value": 0
         }
        ]
@@ -1319,7 +1340,10 @@
       "state": {
        "items": [
         {
-         "label": "snap_id",
+         "label": {
+          "en": "snap_id",
+          "ko": "snap_id (다음 스냅샷 id)"
+         },
          "value": 0
         }
        ]
@@ -1519,7 +1543,10 @@
       "state": {
        "items": [
         {
-         "label": "snap_id",
+         "label": {
+          "en": "snap_id",
+          "ko": "snap_id (다음 스냅샷 id)"
+         },
          "value": 0
         }
        ]
@@ -1715,7 +1742,10 @@
       "state": {
        "items": [
         {
-         "label": "snap_id",
+         "label": {
+          "en": "snap_id",
+          "ko": "snap_id (다음 스냅샷 id)"
+         },
          "value": 1
         }
        ]
@@ -1916,7 +1946,10 @@
       "state": {
        "items": [
         {
-         "label": "snap_id",
+         "label": {
+          "en": "snap_id",
+          "ko": "snap_id (다음 스냅샷 id)"
+         },
          "value": 1
         }
        ]
@@ -2130,7 +2163,10 @@
       "state": {
        "items": [
         {
-         "label": "snap_id",
+         "label": {
+          "en": "snap_id",
+          "ko": "snap_id (다음 스냅샷 id)"
+         },
          "value": 2
         }
        ]
@@ -2349,7 +2385,10 @@
       "state": {
        "items": [
         {
-         "label": "snap_id",
+         "label": {
+          "en": "snap_id",
+          "ko": "snap_id (다음 스냅샷 id)"
+         },
          "value": 2
         }
        ]
@@ -2572,7 +2611,10 @@
       "state": {
        "items": [
         {
-         "label": "snap_id",
+         "label": {
+          "en": "snap_id",
+          "ko": "snap_id (다음 스냅샷 id)"
+         },
          "value": 2
         }
        ]
@@ -2719,7 +2761,10 @@
       "state": {
        "items": [
         {
-         "label": "snap_id",
+         "label": {
+          "en": "snap_id",
+          "ko": "snap_id (다음 스냅샷 id)"
+         },
          "value": 2
         }
        ]
@@ -2855,7 +2900,10 @@
       "state": {
        "items": [
         {
-         "label": "snap_id",
+         "label": {
+          "en": "snap_id",
+          "ko": "snap_id (다음 스냅샷 id)"
+         },
          "value": 0
         }
        ]
@@ -2974,7 +3022,10 @@
       "state": {
        "items": [
         {
-         "label": "snap_id",
+         "label": {
+          "en": "snap_id",
+          "ko": "snap_id (다음 스냅샷 id)"
+         },
          "value": 1
         }
        ]
@@ -3126,7 +3177,10 @@
       "state": {
        "items": [
         {
-         "label": "snap_id",
+         "label": {
+          "en": "snap_id",
+          "ko": "snap_id (다음 스냅샷 id)"
+         },
          "value": 1
         }
        ]
@@ -3292,7 +3346,10 @@
       "state": {
        "items": [
         {
-         "label": "snap_id",
+         "label": {
+          "en": "snap_id",
+          "ko": "snap_id (다음 스냅샷 id)"
+         },
          "value": 1
         }
        ]
@@ -3471,7 +3528,10 @@
       "state": {
        "items": [
         {
-         "label": "snap_id",
+         "label": {
+          "en": "snap_id",
+          "ko": "snap_id (다음 스냅샷 id)"
+         },
          "value": 2
         }
        ]
@@ -3650,7 +3710,10 @@
       "state": {
        "items": [
         {
-         "label": "snap_id",
+         "label": {
+          "en": "snap_id",
+          "ko": "snap_id (다음 스냅샷 id)"
+         },
          "value": 2
         }
        ]
@@ -3769,7 +3832,10 @@
       "state": {
        "items": [
         {
-         "label": "snap_id",
+         "label": {
+          "en": "snap_id",
+          "ko": "snap_id (다음 스냅샷 id)"
+         },
          "value": 2
         }
        ]

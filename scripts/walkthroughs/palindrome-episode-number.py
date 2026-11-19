@@ -25,7 +25,7 @@ wt = Walkthrough(
      "ko": "수를 문자열로 쓰고 뒤집은 다음, 두 문자열을 자리마다 비교합니다. 회문은 어느 쪽에서 읽어도 같습니다."},
     views=[
         {"id": "text", "type": "array", "title": {"en": "text = str(episode)", "ko": "text = str(episode)"}},
-        {"id": "rev", "type": "array", "title": "text[::-1]"},
+        {"id": "rev", "type": "array", "title": {"en": "text[::-1]", "ko": "text[::-1] (뒤집은 text)"}},
     ],
 )
 

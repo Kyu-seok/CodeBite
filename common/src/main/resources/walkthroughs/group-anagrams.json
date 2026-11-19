@@ -12,7 +12,10 @@
   {
    "id": "words",
    "type": "table",
-   "title": "strs"
+   "title": {
+    "en": "strs",
+    "ko": "strs (단어들)"
+   }
   },
   {
    "id": "groups",

@@ -26,8 +26,8 @@ wt = Walkthrough(
            "0이 될 때까지 반복하며 1 비트를 셉니다."},
     views=[
         {"id": "left", "type": "array", "title": {"en": "leftFlags (tag: place value)", "ko": "leftFlags (태그: 자릿값)"}},
-        {"id": "right", "type": "array", "title": "rightFlags"},
-        {"id": "diff", "type": "array", "title": "diff = leftFlags ^ rightFlags"},
+        {"id": "right", "type": "array", "title": {"en": "rightFlags", "ko": "rightFlags (오른쪽 팀원)"}},
+        {"id": "diff", "type": "array", "title": {"en": "diff = leftFlags ^ rightFlags", "ko": "diff (엇갈린 비트) = leftFlags ^ rightFlags"}},
         {"id": "count", "type": "output", "title": {"en": "count", "ko": "count (다른 자리 수)"}},
     ],
 )

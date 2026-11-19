@@ -72,7 +72,7 @@ def solve(menu, target, run):
                         "marks": {"lit": [cell(i) for i in lit], "path": [cell(i) for i in path],
                                   "dim": [cell(i) for i in range(n) if i not in in_range and i not in lit
                                           and i not in path]}},
-                  state={"items": [{"label": "target", "value": target}]},
+                  state={"items": [{"label": {"en": "target", "ko": "target (목표)"}, "value": target}]},
                   moves=moves, **answer)
 
     frame({"en": f"Look for {target} in a {rows} × {cols} menu: read row by row it is one sorted list of {n} "

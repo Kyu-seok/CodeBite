@@ -73,7 +73,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
          "value": 318
         }
        ]
@@ -134,7 +137,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
          "value": 318
         }
        ]
@@ -195,7 +201,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
          "value": 318
         }
        ]
@@ -232,7 +241,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
          "value": 318
         }
        ]
@@ -293,7 +305,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
          "value": 200
         }
        ]
@@ -354,7 +369,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
          "value": 200
         }
        ]
@@ -415,7 +433,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
          "value": 200
         }
        ]
@@ -466,7 +487,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
          "value": 200
         }
        ]
@@ -514,7 +538,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
          "value": 200
         }
        ]

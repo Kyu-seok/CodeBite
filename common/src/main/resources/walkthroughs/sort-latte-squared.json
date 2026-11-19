@@ -12,7 +12,10 @@
   {
    "id": "drifts",
    "type": "array",
-   "title": "drifts"
+   "title": {
+    "en": "drifts",
+    "ko": "drifts (온도 차)"
+   }
   },
   {
    "id": "result",

@@ -32,7 +32,7 @@ wt = Walkthrough(
          "title": {"en": "|exponent|'s bits, lowest first (tag: place value)", "ko": "|exponent|의 비트, 낮은 자리부터 (태그: 자릿값)"}},
         {"id": "squares", "type": "array",
          "title": {"en": "base squared k times (tag: power of b)", "ko": "k번 제곱한 base (태그: b의 거듭제곱)"}},
-        {"id": "result", "type": "output", "title": "result"},
+        {"id": "result", "type": "output", "title": {"en": "result", "ko": "result (결과)"}},
     ],
 )
 

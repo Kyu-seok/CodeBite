@@ -171,7 +171,10 @@
       "state": {
        "items": [
         {
-         "label": "size",
+         "label": {
+          "en": "size",
+          "ko": "size (개수)"
+         },
          "value": 0,
          "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
         }
@@ -324,7 +327,10 @@
       "state": {
        "items": [
         {
-         "label": "size",
+         "label": {
+          "en": "size",
+          "ko": "size (개수)"
+         },
          "value": 1,
          "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
         }
@@ -515,7 +521,10 @@
       "state": {
        "items": [
         {
-         "label": "size",
+         "label": {
+          "en": "size",
+          "ko": "size (개수)"
+         },
          "value": 2,
          "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
         }
@@ -713,7 +722,10 @@
       "state": {
        "items": [
         {
-         "label": "size",
+         "label": {
+          "en": "size",
+          "ko": "size (개수)"
+         },
          "value": 3,
          "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
         }
@@ -922,7 +934,10 @@
       "state": {
        "items": [
         {
-         "label": "size",
+         "label": {
+          "en": "size",
+          "ko": "size (개수)"
+         },
          "value": 3,
          "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
         }
@@ -1124,7 +1139,10 @@
       "state": {
        "items": [
         {
-         "label": "size",
+         "label": {
+          "en": "size",
+          "ko": "size (개수)"
+         },
          "value": 3,
          "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
         }
@@ -1328,7 +1346,10 @@
       "state": {
        "items": [
         {
-         "label": "size",
+         "label": {
+          "en": "size",
+          "ko": "size (개수)"
+         },
          "value": 3,
          "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
         }
@@ -1550,7 +1571,10 @@
       "state": {
        "items": [
         {
-         "label": "size",
+         "label": {
+          "en": "size",
+          "ko": "size (개수)"
+         },
          "value": 2,
          "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
         }
@@ -1779,7 +1803,10 @@
       "state": {
        "items": [
         {
-         "label": "size",
+         "label": {
+          "en": "size",
+          "ko": "size (개수)"
+         },
          "value": 3,
          "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
         }
@@ -2031,7 +2058,10 @@
       "state": {
        "items": [
         {
-         "label": "size",
+         "label": {
+          "en": "size",
+          "ko": "size (개수)"
+         },
          "value": 3,
          "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
         }
@@ -2178,7 +2208,10 @@
       "state": {
        "items": [
         {
-         "label": "size",
+         "label": {
+          "en": "size",
+          "ko": "size (개수)"
+         },
          "value": 3,
          "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
         }
@@ -2313,7 +2346,10 @@
       "state": {
        "items": [
         {
-         "label": "size",
+         "label": {
+          "en": "size",
+          "ko": "size (개수)"
+         },
          "value": 0,
          "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
         }
@@ -2429,7 +2465,10 @@
       "state": {
        "items": [
         {
-         "label": "size",
+         "label": {
+          "en": "size",
+          "ko": "size (개수)"
+         },
          "value": 1,
          "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
         }
@@ -2585,7 +2624,10 @@
       "state": {
        "items": [
         {
-         "label": "size",
+         "label": {
+          "en": "size",
+          "ko": "size (개수)"
+         },
          "value": 0,
          "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
         }
@@ -2733,7 +2775,10 @@
       "state": {
        "items": [
         {
-         "label": "size",
+         "label": {
+          "en": "size",
+          "ko": "size (개수)"
+         },
          "value": 0,
          "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
         }
@@ -2890,7 +2935,10 @@
       "state": {
        "items": [
         {
-         "label": "size",
+         "label": {
+          "en": "size",
+          "ko": "size (개수)"
+         },
          "value": 0,
          "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
         }
@@ -3003,7 +3051,10 @@
       "state": {
        "items": [
         {
-         "label": "size",
+         "label": {
+          "en": "size",
+          "ko": "size (개수)"
+         },
          "value": 0,
          "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
         }
@@ -3142,7 +3193,10 @@
       "state": {
        "items": [
         {
-         "label": "size",
+         "label": {
+          "en": "size",
+          "ko": "size (개수)"
+         },
          "value": 0,
          "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
         }
@@ -3270,7 +3324,10 @@
       "state": {
        "items": [
         {
-         "label": "size",
+         "label": {
+          "en": "size",
+          "ko": "size (개수)"
+         },
          "value": 0,
          "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
         }
@@ -3425,7 +3482,10 @@
       "state": {
        "items": [
         {
-         "label": "size",
+         "label": {
+          "en": "size",
+          "ko": "size (개수)"
+         },
          "value": 1,
          "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
         }
@@ -3600,7 +3660,10 @@
       "state": {
        "items": [
         {
-         "label": "size",
+         "label": {
+          "en": "size",
+          "ko": "size (개수)"
+         },
          "value": 1,
          "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
         }
@@ -3770,7 +3833,10 @@
       "state": {
        "items": [
         {
-         "label": "size",
+         "label": {
+          "en": "size",
+          "ko": "size (개수)"
+         },
          "value": 1,
          "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
         }
@@ -3950,7 +4016,10 @@
       "state": {
        "items": [
         {
-         "label": "size",
+         "label": {
+          "en": "size",
+          "ko": "size (개수)"
+         },
          "value": 2,
          "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
         }
@@ -4150,7 +4219,10 @@
       "state": {
        "items": [
         {
-         "label": "size",
+         "label": {
+          "en": "size",
+          "ko": "size (개수)"
+         },
          "value": 2,
          "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
         }
@@ -4276,7 +4348,10 @@
       "state": {
        "items": [
         {
-         "label": "size",
+         "label": {
+          "en": "size",
+          "ko": "size (개수)"
+         },
          "value": 2,
          "why": "size is the field FixedRing keeps; it counts the slots not faded, which can wrap past the end, so no span can draw it"
         }

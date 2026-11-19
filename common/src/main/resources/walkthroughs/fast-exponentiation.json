@@ -28,7 +28,10 @@
   {
    "id": "result",
    "type": "output",
-   "title": "result"
+   "title": {
+    "en": "result",
+    "ko": "result (결과)"
+   }
   }
  ],
  "runs": [

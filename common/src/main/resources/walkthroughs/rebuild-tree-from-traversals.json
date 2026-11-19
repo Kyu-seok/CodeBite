@@ -12,12 +12,18 @@
   {
    "id": "preorder",
    "type": "array",
-   "title": "preorder"
+   "title": {
+    "en": "preorder",
+    "ko": "preorder (전위 순회)"
+   }
   },
   {
    "id": "inorder",
    "type": "array",
-   "title": "inorder"
+   "title": {
+    "en": "inorder",
+    "ko": "inorder (중위 순회)"
+   }
   },
   {
    "id": "position",

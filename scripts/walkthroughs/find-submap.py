@@ -28,8 +28,8 @@ wt = Walkthrough(
      "ko": "없는 자식마다 # 표시를 적는 전위 순회는 서브트리의 모양과 값을 정확히 나타내고, 서브트리의 순회는 전체 트리 순회 "
            "안에 끊기지 않고 이어진 한 구간입니다. 그래서 subRoot의 순회가 root의 순회 안에 그대로 있을 때만 서브트리입니다."},
     views=[
-        {"id": "root", "type": "tree", "arity": 2, "title": "root"},
-        {"id": "sub", "type": "tree", "arity": 2, "title": "subRoot"},
+        {"id": "root", "type": "tree", "arity": 2, "title": {"en": "root", "ko": "root (큰 트리)"}},
+        {"id": "sub", "type": "tree", "arity": 2, "title": {"en": "subRoot", "ko": "subRoot (찾는 트리)"}},
         {"id": "subwalk", "type": "array", "title": {"en": "walk of subRoot", "ko": "subRoot의 순회"}},
         {"id": "rootwalk", "type": "array", "title": {"en": "walk of root", "ko": "root의 순회"}},
     ],

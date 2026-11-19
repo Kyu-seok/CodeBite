@@ -13,13 +13,19 @@
    "id": "root",
    "type": "tree",
    "arity": 2,
-   "title": "root"
+   "title": {
+    "en": "root",
+    "ko": "root (큰 트리)"
+   }
   },
   {
    "id": "sub",
    "type": "tree",
    "arity": 2,
-   "title": "subRoot"
+   "title": {
+    "en": "subRoot",
+    "ko": "subRoot (찾는 트리)"
+   }
   },
   {
    "id": "subwalk",

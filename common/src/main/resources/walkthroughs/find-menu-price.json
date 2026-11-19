@@ -113,7 +113,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
          "value": 22
         }
        ]
@@ -217,7 +220,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
          "value": 22
         }
        ]
@@ -362,7 +368,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
          "value": 22
         }
        ]
@@ -497,7 +506,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
          "value": 22
         }
        ]
@@ -606,7 +618,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
          "value": 9
         }
        ]
@@ -710,7 +725,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
          "value": 9
         }
        ]
@@ -859,7 +877,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
          "value": 9
         }
        ]
@@ -1010,7 +1031,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
          "value": 9
         }
        ]
@@ -1160,7 +1184,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
          "value": 9
         }
        ]

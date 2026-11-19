@@ -31,8 +31,8 @@ wt = Walkthrough(
            "순회의 다음 값을 루트로 삼아 중위 순회에서 찾고, 그 왼쪽 값들로 왼쪽 서브트리를, 오른쪽 값들로 오른쪽 "
            "서브트리를 재귀적으로 만듭니다."},
     views=[
-        {"id": "preorder", "type": "array", "title": "preorder"},
-        {"id": "inorder", "type": "array", "title": "inorder"},
+        {"id": "preorder", "type": "array", "title": {"en": "preorder", "ko": "preorder (전위 순회)"}},
+        {"id": "inorder", "type": "array", "title": {"en": "inorder", "ko": "inorder (중위 순회)"}},
         {"id": "position", "type": "map", "title": {"en": "position (inorder index)", "ko": "position (중위 인덱스)"},
          "empty": {"en": "empty", "ko": "비어 있음"}},
         {"id": "tree", "type": "tree", "arity": 2, "title": {"en": "rebuilt tree", "ko": "복원한 트리"},
