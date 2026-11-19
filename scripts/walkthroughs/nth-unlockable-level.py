@@ -63,9 +63,9 @@ def solve(n, run):
               level_marks={"good": [0]})
         frame({"en": "Answer: 1.", "ko": "답은 1입니다."}, level_marks={"path": [0]}, answer="1")
         return
-    frame({"en": f"Level 1 comes first. All three pointers start on it: nothing has been multiplied yet. "
+    frame({"en": f"Level 1 comes first, and all three pointers start on it since nothing has been multiplied yet; "
                  f"{n} levels are needed.",
-           "ko": f"레벨 1이 가장 먼저입니다. 아직 아무것도 곱하지 않았으니 세 포인터 모두 1을 가리킵니다. 레벨이 "
+           "ko": f"레벨 1이 가장 먼저이고, 아직 아무것도 곱하지 않았으니 세 포인터 모두 1을 가리킵니다. 레벨이 "
                  f"{n}개 필요합니다."},
           level_marks={"good": [0]})
     stale = [0, 1, 2]  # products whose pointer moved since they were worked out

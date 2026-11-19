@@ -30,7 +30,7 @@
     {
      "caption": {
       "en": "A bar of 5. best[0] = 0 is never used, and best[1] = 1: a bar of 1 can't be split, so it only counts kept whole.",
-      "ko": "길이 5 막대입니다. best[0] = 0은 쓰이지 않고, best[1] = 1입니다. 길이 1은 쪼갤 수 없으니 그대로 둔 1뿐입니다."
+      "ko": "길이 5 막대입니다. best[0] = 0은 쓰이지 않고, 길이 1은 쪼갤 수 없으니 best[1] 값은 그대로 둔 1입니다."
      },
      "views": {
       "best": {
@@ -378,7 +378,7 @@
     {
      "caption": {
       "en": "A bar of 11. best[0] = 0 is never used, and best[1] = 1: a bar of 1 can't be split, so it only counts kept whole.",
-      "ko": "길이 11 막대입니다. best[0] = 0은 쓰이지 않고, best[1] = 1입니다. 길이 1은 쪼갤 수 없으니 그대로 둔 1뿐입니다."
+      "ko": "길이 11 막대입니다. best[0] = 0은 쓰이지 않고, 길이 1은 쪼갤 수 없으니 best[1] 값은 그대로 둔 1입니다."
      },
      "views": {
       "best": {
@@ -1378,7 +1378,7 @@
     {
      "caption": {
       "en": "A bar of 10. best[0] = 0 is never used, and best[1] = 1: a bar of 1 can't be split, so it only counts kept whole.",
-      "ko": "길이 10 막대입니다. best[0] = 0은 쓰이지 않고, best[1] = 1입니다. 길이 1은 쪼갤 수 없으니 그대로 둔 1뿐입니다."
+      "ko": "길이 10 막대입니다. best[0] = 0은 쓰이지 않고, 길이 1은 쪼갤 수 없으니 best[1] 값은 그대로 둔 1입니다."
      },
      "views": {
       "best": {

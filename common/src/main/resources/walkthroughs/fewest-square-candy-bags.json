@@ -38,7 +38,7 @@
     {
      "caption": {
       "en": "The squares up to 7 are 1, 4. Amount 0 needs 0 bags; every other amount starts at 7, more than it can need (all 1s).",
-      "ko": "7 이하의 제곱수는 1, 4입니다. 사탕 0개에는 봉지 0개, 나머지 개수는 7에서 시작합니다. 1짜리로만 담아도 이보다 많이 들지 않습니다."
+      "ko": "7 이하의 제곱수는 1, 4입니다. 사탕 0개에는 봉지 0개, 나머지 개수는 7에서 시작하는데, 1짜리로만 담아도 이보다 많이 들지 않습니다."
      },
      "views": {
       "squares": {
@@ -701,7 +701,7 @@
     {
      "caption": {
       "en": "The squares up to 17 are 1, 4, 9, 16. Amount 0 needs 0 bags; every other amount starts at 17, more than it can need (all 1s).",
-      "ko": "17 이하의 제곱수는 1, 4, 9, 16입니다. 사탕 0개에는 봉지 0개, 나머지 개수는 17에서 시작합니다. 1짜리로만 담아도 이보다 많이 들지 않습니다."
+      "ko": "17 이하의 제곱수는 1, 4, 9, 16입니다. 사탕 0개에는 봉지 0개, 나머지 개수는 17에서 시작하는데, 1짜리로만 담아도 이보다 많이 들지 않습니다."
      },
      "views": {
       "squares": {
@@ -2595,7 +2595,7 @@
     {
      "caption": {
       "en": "The squares up to 5 are 1, 4. Amount 0 needs 0 bags; every other amount starts at 5, more than it can need (all 1s).",
-      "ko": "5 이하의 제곱수는 1, 4입니다. 사탕 0개에는 봉지 0개, 나머지 개수는 5에서 시작합니다. 1짜리로만 담아도 이보다 많이 들지 않습니다."
+      "ko": "5 이하의 제곱수는 1, 4입니다. 사탕 0개에는 봉지 0개, 나머지 개수는 5에서 시작하는데, 1짜리로만 담아도 이보다 많이 들지 않습니다."
      },
      "views": {
       "squares": {

@@ -796,7 +796,7 @@
     {
      "caption": {
       "en": "nums[2] = 4 < nums[4] = 8, so 8 can follow runs ending at index 2: length 2 + 1 = 3, the same as now, so these runs are more ways to reach it. Count becomes 1 + 1 = 2.",
-      "ko": "nums[2] = 4 < nums[4] = 8: 인덱스 2에서 끝나는 부분수열 뒤에 nums[4] 값을 붙일 수 있습니다. 길이 2 + 1 = 3으로 지금과 같으므로 그 길이를 만드는 방법이 늘어납니다. count는 1 + 1 = 2가 됩니다."
+      "ko": "nums[2] = 4 < nums[4] = 8: 인덱스 2에서 끝나는 부분수열 뒤에 nums[4] 값을 붙일 수 있습니다. 길이 2 + 1 = 3으로 지금과 같아 그 길이를 만드는 방법이 늘어나므로 count는 1 + 1 = 2가 됩니다."
      },
      "views": {
       "nums": {
@@ -2541,7 +2541,7 @@
     {
      "caption": {
       "en": "nums[3] = 3 < nums[4] = 5, so 5 can follow runs ending at index 3: length 3 + 1 = 4, the same as now, so these runs are more ways to reach it. Count becomes 1 + 1 = 2.",
-      "ko": "nums[3] = 3 < nums[4] = 5: 인덱스 3에서 끝나는 부분수열 뒤에 nums[4] 값을 붙일 수 있습니다. 길이 3 + 1 = 4로 지금과 같으므로 그 길이를 만드는 방법이 늘어납니다. count는 1 + 1 = 2가 됩니다."
+      "ko": "nums[3] = 3 < nums[4] = 5: 인덱스 3에서 끝나는 부분수열 뒤에 nums[4] 값을 붙일 수 있습니다. 길이 3 + 1 = 4로 지금과 같아 그 길이를 만드는 방법이 늘어나므로 count는 1 + 1 = 2가 됩니다."
      },
      "views": {
       "nums": {
@@ -3308,7 +3308,7 @@
     {
      "caption": {
       "en": "nums[3] = 3 < nums[6] = 7, so 7 can follow runs ending at index 3: length 3 + 1 = 4, the same as now, so these runs are more ways to reach it. Count becomes 1 + 1 = 2.",
-      "ko": "nums[3] = 3 < nums[6] = 7: 인덱스 3에서 끝나는 부분수열 뒤에 nums[6] 값을 붙일 수 있습니다. 길이 3 + 1 = 4로 지금과 같으므로 그 길이를 만드는 방법이 늘어납니다. count는 1 + 1 = 2가 됩니다."
+      "ko": "nums[3] = 3 < nums[6] = 7: 인덱스 3에서 끝나는 부분수열 뒤에 nums[6] 값을 붙일 수 있습니다. 길이 3 + 1 = 4로 지금과 같아 그 길이를 만드는 방법이 늘어나므로 count는 1 + 1 = 2가 됩니다."
      },
      "views": {
       "nums": {
@@ -3511,7 +3511,7 @@
     {
      "caption": {
       "en": "nums[5] = 4 < nums[6] = 7, so 7 can follow runs ending at index 5: length 4 + 1 = 5, the same as now, so these runs are more ways to reach it. Count becomes 2 + 1 = 3.",
-      "ko": "nums[5] = 4 < nums[6] = 7: 인덱스 5에서 끝나는 부분수열 뒤에 nums[6] 값을 붙일 수 있습니다. 길이 4 + 1 = 5로 지금과 같으므로 그 길이를 만드는 방법이 늘어납니다. count는 2 + 1 = 3이 됩니다."
+      "ko": "nums[5] = 4 < nums[6] = 7: 인덱스 5에서 끝나는 부분수열 뒤에 nums[6] 값을 붙일 수 있습니다. 길이 4 + 1 = 5로 지금과 같아 그 길이를 만드는 방법이 늘어나므로 count는 2 + 1 = 3이 됩니다."
      },
      "views": {
       "nums": {

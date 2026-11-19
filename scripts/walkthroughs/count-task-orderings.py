@@ -66,7 +66,7 @@ def solve(parent, run):
 
     frame({"en": f"{n} {plural(n, 'task', 'tasks')}; each parent link is an edge, so they form a tree rooted at "
                  "task 0. Every size starts at 1, the task itself, and both products at 1.",
-           "ko": f"작업이 {n}개입니다. 부모 관계가 간선이 되어 작업 0을 루트로 하는 트리를 이룹니다. 크기는 모두 "
+           "ko": f"작업이 {n}개이고, 부모 관계가 간선이 되어 작업 0을 루트로 하는 트리를 이룹니다. 크기는 모두 "
                  "자기 자신인 1, 두 곱도 1에서 시작합니다."},
           parent_marks={"lit": list(range(n))}, node_marks={"lit": [0]})
     pos = 0

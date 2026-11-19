@@ -51,8 +51,8 @@ def solve(length, run):
 
     frame({"en": f"A bar of {length}. best[0] = 0 is never used, and best[1] = 1: a bar of 1 can't be split, so "
                  "it only counts kept whole.",
-           "ko": f"길이 {length} 막대입니다. best[0] = 0은 쓰이지 않고, best[1] = 1입니다. 길이 1은 쪼갤 수 "
-                 "없으니 그대로 둔 1뿐입니다."},
+           "ko": f"길이 {length} 막대입니다. best[0] = 0은 쓰이지 않고, 길이 1은 쪼갤 수 없으니 best[1] 값은 "
+                 "그대로 둔 1입니다."},
           marks={"good": [1], "dim": [0]})
     for total in range(2, length + 1):
         under = []

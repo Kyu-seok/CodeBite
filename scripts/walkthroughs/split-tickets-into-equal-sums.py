@@ -18,7 +18,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import josa, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import josa, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, move, probe  # noqa: E402
 
 SLUG = "split-tickets-into-equal-sums"
@@ -97,18 +97,18 @@ def solve(tickets, run):
     if group is not None:
         picked = " + ".join(str(tickets[i]) for i in group)
         names = ", ".join(map(str, group))
-        frame({"en": f"Is {half} reachable? Yes: tickets {names}, {picked} = {half}, form one group and the rest "
-                     "the other. Answer: true.",
-               "ko": f"{josa(half, '을를')} 만들 수 있을까요? 네, 티켓 {names}번의 {picked} = {half}로 한 그룹을, "
-                     "나머지로 다른 그룹을 만듭니다. 답은 true입니다."},
+        frame({"en": f"Is {half} reachable? Yes: {plural(len(group), 'ticket', 'tickets')} {names} ({picked} = "
+                     f"{half}) form one group and the rest the other, so the answer is true.",
+               "ko": f"{josa(half, '을를')} 만들 수 있을까요? 네, 티켓 {names}번으로({picked} = {half}) 한 그룹, "
+                     "나머지로 다른 그룹을 만들므로 답은 true입니다."},
               unread=[], ticket_marks={"path": group}, set_marks={"path": [half]},
               probes=[probe(half, hit=True, label={"en": f"{total} / 2 = {half}", "ko": f"{total} / 2 = {half}"})],
               answer="true")
     else:
-        frame({"en": f"Is {half} reachable? No: no group of tickets adds up to {half}, so the tickets can't be "
-                     "split evenly. Answer: false.",
-               "ko": f"{josa(half, '을를')} 만들 수 있을까요? 아니요. 어떤 티켓 조합도 합이 {josa(half, '이가')} "
-                     "되지 않으므로 똑같이 나눌 수 없습니다. 답은 false입니다."},
+        frame({"en": f"Is {half} reachable? No group of tickets adds up to {half}, so they can't be split "
+                     "evenly and the answer is false.",
+               "ko": f"{josa(half, '을를')} 만들 수 있을까요? 어떤 티켓 조합도 합이 {josa(half, '이가')} 되지 않아 "
+                     "똑같이 나눌 수 없으므로 답은 false입니다."},
               unread=[],
               probes=[probe(half, hit=False, label={"en": f"{total} / 2 = {half}", "ko": f"{total} / 2 = {half}"})],
               answer="false")

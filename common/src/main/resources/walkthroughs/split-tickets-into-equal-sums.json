@@ -625,8 +625,8 @@
     },
     {
      "caption": {
-      "en": "Is 5 reachable? Yes: tickets 0, 1, 2, 3 + 1 + 1 = 5, form one group and the rest the other. Answer: true.",
-      "ko": "5를 만들 수 있을까요? 네, 티켓 0, 1, 2번의 3 + 1 + 1 = 5로 한 그룹을, 나머지로 다른 그룹을 만듭니다. 답은 true입니다."
+      "en": "Is 5 reachable? Yes: tickets 0, 1, 2 (3 + 1 + 1 = 5) form one group and the rest the other, so the answer is true.",
+      "ko": "5를 만들 수 있을까요? 네, 티켓 0, 1, 2번으로(3 + 1 + 1 = 5) 한 그룹, 나머지로 다른 그룹을 만들므로 답은 true입니다."
      },
      "views": {
       "tickets": {
@@ -1123,8 +1123,8 @@
     },
     {
      "caption": {
-      "en": "Is 6 reachable? No: no group of tickets adds up to 6, so the tickets can't be split evenly. Answer: false.",
-      "ko": "6을 만들 수 있을까요? 아니요. 어떤 티켓 조합도 합이 6이 되지 않으므로 똑같이 나눌 수 없습니다. 답은 false입니다."
+      "en": "Is 6 reachable? No group of tickets adds up to 6, so they can't be split evenly and the answer is false.",
+      "ko": "6을 만들 수 있을까요? 어떤 티켓 조합도 합이 6이 되지 않아 똑같이 나눌 수 없으므로 답은 false입니다."
      },
      "views": {
       "tickets": {
@@ -1385,8 +1385,8 @@
     },
     {
      "caption": {
-      "en": "Is 1 reachable? Yes: tickets 0, 1 = 1, form one group and the rest the other. Answer: true.",
-      "ko": "1을 만들 수 있을까요? 네, 티켓 0번의 1 = 1로 한 그룹을, 나머지로 다른 그룹을 만듭니다. 답은 true입니다."
+      "en": "Is 1 reachable? Yes: ticket 0 (1 = 1) form one group and the rest the other, so the answer is true.",
+      "ko": "1을 만들 수 있을까요? 네, 티켓 0번으로(1 = 1) 한 그룹, 나머지로 다른 그룹을 만들므로 답은 true입니다."
      },
      "views": {
       "tickets": {

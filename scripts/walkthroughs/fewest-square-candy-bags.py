@@ -57,7 +57,7 @@ def solve(candies, run):
     frame({"en": f"The squares up to {candies} are {', '.join(map(str, squares))}. Amount 0 needs 0 bags; every "
                  f"other amount starts at {candies}, more than it can need (all 1s).",
            "ko": f"{candies} 이하의 제곱수는 {', '.join(map(str, squares))}입니다. 사탕 0개에는 봉지 0개, 나머지 "
-                 f"개수는 {candies}에서 시작합니다. 1짜리로만 담아도 이보다 많이 들지 않습니다."},
+                 f"개수는 {candies}에서 시작하는데, 1짜리로만 담아도 이보다 많이 들지 않습니다."},
           cells={"good": [0]}, unread=list(range(1, candies + 1)))
     for amount in range(1, candies + 1):
         tried = []

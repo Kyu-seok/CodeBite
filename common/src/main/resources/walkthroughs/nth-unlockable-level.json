@@ -37,8 +37,8 @@
    "frames": [
     {
      "caption": {
-      "en": "Level 1 comes first. All three pointers start on it: nothing has been multiplied yet. 7 levels are needed.",
-      "ko": "레벨 1이 가장 먼저입니다. 아직 아무것도 곱하지 않았으니 세 포인터 모두 1을 가리킵니다. 레벨이 7개 필요합니다."
+      "en": "Level 1 comes first, and all three pointers start on it since nothing has been multiplied yet; 7 levels are needed.",
+      "ko": "레벨 1이 가장 먼저이고, 아직 아무것도 곱하지 않았으니 세 포인터 모두 1을 가리킵니다. 레벨이 7개 필요합니다."
      },
      "views": {
       "levels": {
@@ -1082,8 +1082,8 @@
    "frames": [
     {
      "caption": {
-      "en": "Level 1 comes first. All three pointers start on it: nothing has been multiplied yet. 12 levels are needed.",
-      "ko": "레벨 1이 가장 먼저입니다. 아직 아무것도 곱하지 않았으니 세 포인터 모두 1을 가리킵니다. 레벨이 12개 필요합니다."
+      "en": "Level 1 comes first, and all three pointers start on it since nothing has been multiplied yet; 12 levels are needed.",
+      "ko": "레벨 1이 가장 먼저이고, 아직 아무것도 곱하지 않았으니 세 포인터 모두 1을 가리킵니다. 레벨이 12개 필요합니다."
      },
      "views": {
       "levels": {

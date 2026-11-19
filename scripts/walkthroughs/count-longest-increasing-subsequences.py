@@ -99,7 +99,7 @@ def solve(nums, run):
                 frame({"en": f"{head_en}: length {lj} + 1 = {li}, the same as now, so these runs are more ways to "
                              f"reach it. Count becomes {ci} + {cj} = {count[i]}.",
                        "ko": f"{head_ko}. 길이 {lj} + 1 = {josa(li, '(으)로')} 지금과"
-                             f" 같으므로 그 길이를 만드는 방법이 늘어납니다. count는 {ci} + {cj} = "
+                             f" 같아 그 길이를 만드는 방법이 늘어나므로 count는 {ci} + {cj} = "
                              f"{josa(count[i], '이가')} 됩니다."},
                       i=i, j=j, nums_marks={"lit": [j, i], "dim": not_smaller},
                       length_marks={"lit": [j, i]}, count_marks={"lit": [j], "good": [i]},
