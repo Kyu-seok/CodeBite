@@ -762,8 +762,8 @@ class WalkthroughsMatchSamplesTest {
             "call pushed with no move                 | callstack | {'calls': [{'name': 'f', 'args': {'n': 2}}]} | {'calls': [{'name': 'f', 'args': {'n': 2}}, {'name': 'f', 'args': {'n': 1}}]} | [] | callstack \"v\" at 1 now holds {\"n\":1}",
             "value pushed with no move                | stack     | {'values': [3]}               | {'values': [3, 1]}                        | []                                 | stack \"v\" at 1 now holds 1",
             "top replaced with no move                | stack     | {'values': [3, 1]}            | {'values': [3, 4]}                        | []                                 | stack \"v\" at 1 now holds 4",
-            "value pushed with no move                | stack     | {'values': [3]}               | {'values': [3, 1]}                        | []                                 | stack \"v\" at 1 now holds 1",
-            "top replaced with no move                | stack     | {'values': [3, 1]}            | {'values': [3, 4]}                        | []                                 | stack \"v\" at 1 now holds 4",
+            "value inserted in the middle, no move    | array     | {'values': [1, 5, 6]}         | {'values': [1, 2, 5, 6]}                  | []                                 | array \"v\" at 1 now holds 2",
+            "middle cell replaced, not inserted       | array     | {'values': [1, 5, 6]}         | {'values': [1, 2, 6]}                     | []                                 | array \"v\" at 1 now holds 2",
             "graph node value changed                 | graph     | {'nodes': [{'id': 'a'}, {'id': 'b'}], 'edges': [{'from': 'a', 'to': 'b'}]} | {'nodes': [{'id': 'a'}, {'id': 'b'}], 'edges': [{'from': 'a', 'to': 'b'}], 'values': {'b': 7}} | [] | graph \"v\" at b now holds 7",
     })
     void aChangeWithNoMoveIsCaught(String breakage, String type, String before, String after, String moves, String expected)
@@ -783,7 +783,6 @@ class WalkthroughsMatchSamplesTest {
             "tree child added by a move into it       | tree  | {'nodes': [{'id': 0, 'value': 'a'}], 'edges': []} | {'nodes': [{'id': 0, 'value': 'a'}, {'id': 1, 'value': 'b'}], 'edges': [{'from': 0, 'to': 1, 'label': 'x'}]} | [{'from': {'view': 'v', 'at': 0}, 'to': {'view': 'v', 'at': 1}}]",
             "linked list arrow turned                 | linkedlist | {'nodes': [{'id': 1, 'value': 1}, {'id': 2, 'value': 2}], 'next': {'1': 2, '2': null}} | {'nodes': [{'id': 1, 'value': 1}, {'id': 2, 'value': 2}], 'next': {'1': null, '2': 1}} | []",
             "call popped                              | callstack | {'calls': [{'name': 'f', 'args': {'n': 2}}, {'name': 'f', 'args': {'n': 1}}]} | {'calls': [{'name': 'f', 'args': {'n': 2}}]} | []",
-            "value popped                             | stack | {'values': [3, 1]}              | {'values': [3]}                | []",
             "value popped                             | stack | {'values': [3, 1]}              | {'values': [3]}                | []",
             "only read                                | array | {'values': [1, 2]}              | {'values': [1, 2], 'marks': {'lit': [0]}} | []",
             "value inserted in the middle             | array | {'values': [1, 5, 6]}           | {'values': [1, 2, 5, 6]}       | [{'to': {'view': 'v', 'at': 1}}]",
@@ -1667,13 +1666,8 @@ class WalkthroughsMatchSamplesTest {
                 // a second link per node besides its edges (next to the node on its right in its level): one kind
                 Predicate<JsonNode> node = k -> k != null && (k.isTextual() || k.isNumber()) && ids.contains(k.asText());
                 JsonNode links = s.path("links");
-                if (links.size() > 1) p.add("links holds " + links.size() + " kinds: a node draws one link besides its edges");
-                links.fields().forEachRemaining(link -> link.getValue().fields().forEachRemaining(e -> {
-                    if (!ids.contains(e.getKey())) p.add(link.getKey() + " names " + e.getKey() + ", not a node id");
-                    else if (!e.getValue().isNull() && !node.test(e.getValue())) p.add(link.getKey() + " of " + e.getKey() + " is " + e.getValue() + ", not a node id");
-                }));
-                p.addAll(marks(s.get("linkMarks"), k -> k.isArray() && k.size() == 2 && k.get(0).isTextual()
-                        && links.path(k.get(0).asText()).has(k.get(1).asText()) && node.test(k.get(1)), "[link, node] with that link"));
+                p.addAll(linkProblems(links, ids, node, "its edges"));
+                p.addAll(marks(s.get("linkMarks"), k -> isLinkKey(links, k, node), "[link, node] with that link"));
                 yield p;
             }
             case "linkedlist" -> {
@@ -1695,11 +1689,7 @@ class WalkthroughsMatchSamplesTest {
                 });
                 // a second link per node (a copy's related, a doubly linked list's prev): one kind besides next
                 JsonNode links = s.path("links");
-                if (links.size() > 1) p.add("links holds " + links.size() + " kinds: a node draws one link besides next");
-                links.fields().forEachRemaining(link -> link.getValue().fields().forEachRemaining(e -> {
-                    if (!ids.contains(e.getKey())) p.add(link.getKey() + " names " + e.getKey() + ", not a node id");
-                    else if (!e.getValue().isNull() && !node.test(e.getValue())) p.add(link.getKey() + " of " + e.getKey() + " is " + e.getValue() + ", not a node id");
-                }));
+                p.addAll(linkProblems(links, ids, node, "next"));
                 s.path("linkCuts").fields().forEachRemaining(cut -> {
                     if (!links.has(cut.getKey())) p.add("linkCuts names " + cut.getKey() + ", not a link in links");
                     else cut.getValue().fields().forEachRemaining(e -> {
@@ -1707,8 +1697,7 @@ class WalkthroughsMatchSamplesTest {
                     });
                 });
                 p.addAll(marks(s.get("marks"), node, "node id"));
-                p.addAll(marks(s.get("linkMarks"), k -> k.isArray()
-                        ? k.size() == 2 && k.get(0).isTextual() && links.path(k.get(0).asText()).has(k.get(1).asText()) && node.test(k.get(1))
+                p.addAll(marks(s.get("linkMarks"), k -> k.isArray() ? isLinkKey(links, k, node)
                         : node.test(k) && s.path("next").has(k.asText()), "node with a next or a [link, node] with that link"));
                 yield p;
             }
@@ -1836,6 +1825,26 @@ class WalkthroughsMatchSamplesTest {
             }
         }
         return p;
+    }
+
+    /**
+     * What is wrong with a tree's or linked list's second link per node, {@code links} ({@code {kind: {id: id or null}}}):
+     * more than one kind (a node draws one link besides {@code besides}), or a link from or to no node.
+     */
+    private static List<String> linkProblems(JsonNode links, Set<String> ids, Predicate<JsonNode> node, String besides) {
+        List<String> p = new ArrayList<>();
+        if (links.size() > 1) p.add("links holds " + links.size() + " kinds: a node draws one link besides " + besides);
+        links.fields().forEachRemaining(link -> link.getValue().fields().forEachRemaining(e -> {
+            if (!ids.contains(e.getKey())) p.add(link.getKey() + " names " + e.getKey() + ", not a node id");
+            else if (!e.getValue().isNull() && !node.test(e.getValue())) p.add(link.getKey() + " of " + e.getKey() + " is " + e.getValue() + ", not a node id");
+        }));
+        return p;
+    }
+
+    /** Whether {@code k} is a {@code [link, node]} key naming a node that has that link in {@code links}. */
+    private static boolean isLinkKey(JsonNode links, JsonNode k, Predicate<JsonNode> node) {
+        return k.isArray() && k.size() == 2 && k.get(0).isTextual() && links.path(k.get(0).asText()).has(k.get(1).asText())
+                && node.test(k.get(1));
     }
 
     private static boolean allRows(JsonNode cells) {
