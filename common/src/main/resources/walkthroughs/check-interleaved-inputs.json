@@ -1,0 +1,3776 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Check Interleaved Inputs",
+  "ko": "두 입력 교차 병합 검사"
+ },
+ "approach": {
+  "en": "Fill a table of whether A's first i letters and B's first j letters weave into merged's first i + j. A cell is ✓ when merged's letter there is A's next letter and the cell above is ✓, or B's next letter and the cell to the left is ✓.",
+  "ko": "A의 앞 i글자와 B의 앞 j글자로 merged의 앞 i + j글자를 만들 수 있는지 표로 채웁니다. 그 자리의 merged 글자가 A의 다음 글자이고 위 칸이 ✓이거나, B의 다음 글자이고 왼쪽 칸이 ✓이면 ✓입니다."
+ },
+ "views": [
+  {
+   "id": "table",
+   "type": "grid",
+   "title": {
+    "en": "A prefix (rows) × B prefix (columns) weave into merged?",
+    "ko": "A 앞부분(행) × B 앞부분(열)로 merged를 만들 수 있는가"
+   },
+   "values": {
+    "a": {
+     "tone": "a"
+    },
+    "b": {
+     "tone": "a"
+    },
+    "c": {
+     "tone": "a"
+    },
+    "d": {
+     "tone": "a"
+    },
+    "e": {
+     "tone": "a"
+    },
+    "f": {
+     "tone": "a"
+    },
+    "g": {
+     "tone": "a"
+    },
+    "h": {
+     "tone": "a"
+    },
+    "i": {
+     "tone": "a"
+    },
+    "j": {
+     "tone": "a"
+    },
+    "k": {
+     "tone": "a"
+    },
+    "l": {
+     "tone": "a"
+    },
+    "m": {
+     "tone": "a"
+    },
+    "n": {
+     "tone": "a"
+    },
+    "o": {
+     "tone": "a"
+    },
+    "p": {
+     "tone": "a"
+    },
+    "q": {
+     "tone": "a"
+    },
+    "r": {
+     "tone": "a"
+    },
+    "s": {
+     "tone": "a"
+    },
+    "t": {
+     "tone": "a"
+    },
+    "u": {
+     "tone": "a"
+    },
+    "v": {
+     "tone": "a"
+    },
+    "w": {
+     "tone": "a"
+    },
+    "x": {
+     "tone": "a"
+    },
+    "y": {
+     "tone": "a"
+    },
+    "z": {
+     "tone": "a"
+    },
+    "∅": {
+     "tone": "a"
+    },
+    "T": {
+     "glyph": "✓",
+     "tone": "c"
+    },
+    "F": {
+     "glyph": "✗",
+     "tone": "plain"
+    },
+    "": {
+     "glyph": "",
+     "tone": "plain"
+    },
+    " ": {
+     "glyph": "",
+     "tone": "empty"
+    }
+   }
+  },
+  {
+   "id": "merged",
+   "type": "array",
+   "title": {
+    "en": "merged",
+    "ko": "merged (병합 기록)"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "controllerA = \"cat\", controllerB = \"dog\", merged = \"cdoagt\"",
+   "expected": "true",
+   "frames": [
+    {
+     "caption": {
+      "en": "A = \"cat\", B = \"dog\", merged = \"cdoagt\": 3 + 3 = 6 letters, so the lengths fit. Two empty prefixes make the empty merged prefix: ✓.",
+      "ko": "A = \"cat\", B = \"dog\", merged = \"cdoagt\": 3 + 3 = 6글자로 길이가 맞습니다. 빈 앞부분 둘은 빈 merged 앞부분을 만듭니다: ✓."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "∅",
+         "d",
+         "o",
+         "g"
+        ],
+        [
+         "∅",
+         "T",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "c",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "t",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "good": [
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "merged": {
+       "values": [
+        "c",
+        "d",
+        "o",
+        "a",
+        "g",
+        "t"
+       ],
+       "pointers": {
+        "k": null
+       },
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "merged[0] = 'c': left is ✓ and B's next letter is 'd'. So neither gives it: ✗.",
+      "ko": "merged[0] = 'c': 왼쪽 칸은 ✓, B의 다음 글자는 'd'입니다. 따라서 어느 쪽으로도 만들 수 없어 ✗입니다."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "∅",
+         "d",
+         "o",
+         "g"
+        ],
+        [
+         "∅",
+         "T",
+         "F",
+         " ",
+         " "
+        ],
+        [
+         "c",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "t",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          1,
+          1
+         ],
+         [
+          0,
+          2
+         ]
+        ],
+        "bad": [
+         [
+          1,
+          2
+         ]
+        ]
+       }
+      },
+      "merged": {
+       "values": [
+        "c",
+        "d",
+        "o",
+        "a",
+        "g",
+        "t"
+       ],
+       "pointers": {
+        "k": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         1,
+         2
+        ]
+       },
+       "value": "✗",
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "merged[1] = 'd': left is ✗ and B's next letter is 'o'. So neither gives it: ✗.",
+      "ko": "merged[1] = 'd': 왼쪽 칸은 ✗, B의 다음 글자는 'o'입니다. 따라서 어느 쪽으로도 만들 수 없어 ✗입니다."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "∅",
+         "d",
+         "o",
+         "g"
+        ],
+        [
+         "∅",
+         "T",
+         "F",
+         "F",
+         " "
+        ],
+        [
+         "c",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "t",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          1,
+          2
+         ],
+         [
+          0,
+          3
+         ]
+        ],
+        "bad": [
+         [
+          1,
+          3
+         ]
+        ]
+       }
+      },
+      "merged": {
+       "values": [
+        "c",
+        "d",
+        "o",
+        "a",
+        "g",
+        "t"
+       ],
+       "pointers": {
+        "k": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         1,
+         2
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         1,
+         3
+        ]
+       },
+       "value": "✗",
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "merged[2] = 'o': left is ✗ and B's next letter is 'g'. So neither gives it: ✗.",
+      "ko": "merged[2] = 'o': 왼쪽 칸은 ✗, B의 다음 글자는 'g'입니다. 따라서 어느 쪽으로도 만들 수 없어 ✗입니다."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "∅",
+         "d",
+         "o",
+         "g"
+        ],
+        [
+         "∅",
+         "T",
+         "F",
+         "F",
+         "F"
+        ],
+        [
+         "c",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "t",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          1,
+          3
+         ],
+         [
+          0,
+          4
+         ]
+        ],
+        "bad": [
+         [
+          1,
+          4
+         ]
+        ]
+       }
+      },
+      "merged": {
+       "values": [
+        "c",
+        "d",
+        "o",
+        "a",
+        "g",
+        "t"
+       ],
+       "pointers": {
+        "k": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         1,
+         3
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         1,
+         4
+        ]
+       },
+       "value": "✗",
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "merged[0] = 'c': above is ✓ and A's next letter is 'c'. So A's 'c' goes here: ✓.",
+      "ko": "merged[0] = 'c': 위 칸은 ✓, A의 다음 글자는 'c'입니다. 따라서 A의 'c' 글자를 놓을 수 있어 ✓입니다."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "∅",
+         "d",
+         "o",
+         "g"
+        ],
+        [
+         "∅",
+         "T",
+         "F",
+         "F",
+         "F"
+        ],
+        [
+         "c",
+         "T",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "t",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ]
+        ],
+        "good": [
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "merged": {
+       "values": [
+        "c",
+        "d",
+        "o",
+        "a",
+        "g",
+        "t"
+       ],
+       "pointers": {
+        "k": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         2,
+         1
+        ]
+       },
+       "value": "✓"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "merged[1] = 'd': above is ✗ and A's next letter is 'c'; left is ✓ and B's next letter is 'd'. So B's 'd' goes here: ✓.",
+      "ko": "merged[1] = 'd': 위 칸은 ✗, A의 다음 글자는 'c', 왼쪽 칸은 ✓, B의 다음 글자는 'd'입니다. 따라서 B의 'd' 글자를 놓을 수 있어 ✓입니다."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "∅",
+         "d",
+         "o",
+         "g"
+        ],
+        [
+         "∅",
+         "T",
+         "F",
+         "F",
+         "F"
+        ],
+        [
+         "c",
+         "T",
+         "T",
+         " ",
+         " "
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "t",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          1,
+          2
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          0,
+          2
+         ]
+        ],
+        "good": [
+         [
+          2,
+          2
+         ]
+        ]
+       }
+      },
+      "merged": {
+       "values": [
+        "c",
+        "d",
+        "o",
+        "a",
+        "g",
+        "t"
+       ],
+       "pointers": {
+        "k": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         2,
+         1
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         2,
+         2
+        ]
+       },
+       "value": "✓"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "merged[2] = 'o': above is ✗ and A's next letter is 'c'; left is ✓ and B's next letter is 'o'. So B's 'o' goes here: ✓.",
+      "ko": "merged[2] = 'o': 위 칸은 ✗, A의 다음 글자는 'c', 왼쪽 칸은 ✓, B의 다음 글자는 'o'입니다. 따라서 B의 'o' 글자를 놓을 수 있어 ✓입니다."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "∅",
+         "d",
+         "o",
+         "g"
+        ],
+        [
+         "∅",
+         "T",
+         "F",
+         "F",
+         "F"
+        ],
+        [
+         "c",
+         "T",
+         "T",
+         "T",
+         " "
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "t",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          1,
+          3
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          2
+         ],
+         [
+          0,
+          3
+         ]
+        ],
+        "good": [
+         [
+          2,
+          3
+         ]
+        ]
+       }
+      },
+      "merged": {
+       "values": [
+        "c",
+        "d",
+        "o",
+        "a",
+        "g",
+        "t"
+       ],
+       "pointers": {
+        "k": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         2,
+         2
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         2,
+         3
+        ]
+       },
+       "value": "✓"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "merged[3] = 'a': above is ✗ and A's next letter is 'c'; left is ✓ and B's next letter is 'g'. So neither gives it: ✗.",
+      "ko": "merged[3] = 'a': 위 칸은 ✗, A의 다음 글자는 'c', 왼쪽 칸은 ✓, B의 다음 글자는 'g'입니다. 따라서 어느 쪽으로도 만들 수 없어 ✗입니다."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "∅",
+         "d",
+         "o",
+         "g"
+        ],
+        [
+         "∅",
+         "T",
+         "F",
+         "F",
+         "F"
+        ],
+        [
+         "c",
+         "T",
+         "T",
+         "T",
+         "F"
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "t",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          1,
+          4
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          3
+         ],
+         [
+          0,
+          4
+         ]
+        ],
+        "bad": [
+         [
+          2,
+          4
+         ]
+        ]
+       }
+      },
+      "merged": {
+       "values": [
+        "c",
+        "d",
+        "o",
+        "a",
+        "g",
+        "t"
+       ],
+       "pointers": {
+        "k": 3
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         1,
+         4
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         2,
+         4
+        ]
+       },
+       "value": "✗",
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "merged[1] = 'd': above is ✓ and A's next letter is 'a'. So neither gives it: ✗.",
+      "ko": "merged[1] = 'd': 위 칸은 ✓, A의 다음 글자는 'a'입니다. 따라서 어느 쪽으로도 만들 수 없어 ✗입니다."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "∅",
+         "d",
+         "o",
+         "g"
+        ],
+        [
+         "∅",
+         "T",
+         "F",
+         "F",
+         "F"
+        ],
+        [
+         "c",
+         "T",
+         "T",
+         "T",
+         "F"
+        ],
+        [
+         "a",
+         "F",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "t",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ]
+        ],
+        "bad": [
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "merged": {
+       "values": [
+        "c",
+        "d",
+        "o",
+        "a",
+        "g",
+        "t"
+       ],
+       "pointers": {
+        "k": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         2,
+         1
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         3,
+         1
+        ]
+       },
+       "value": "✗",
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "merged[2] = 'o': above is ✓ and A's next letter is 'a'; left is ✗ and B's next letter is 'd'. So neither gives it: ✗.",
+      "ko": "merged[2] = 'o': 위 칸은 ✓, A의 다음 글자는 'a', 왼쪽 칸은 ✗, B의 다음 글자는 'd'입니다. 따라서 어느 쪽으로도 만들 수 없어 ✗입니다."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "∅",
+         "d",
+         "o",
+         "g"
+        ],
+        [
+         "∅",
+         "T",
+         "F",
+         "F",
+         "F"
+        ],
+        [
+         "c",
+         "T",
+         "T",
+         "T",
+         "F"
+        ],
+        [
+         "a",
+         "F",
+         "F",
+         " ",
+         " "
+        ],
+        [
+         "t",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          2,
+          2
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          0,
+          2
+         ]
+        ],
+        "bad": [
+         [
+          3,
+          2
+         ]
+        ]
+       }
+      },
+      "merged": {
+       "values": [
+        "c",
+        "d",
+        "o",
+        "a",
+        "g",
+        "t"
+       ],
+       "pointers": {
+        "k": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         2,
+         2
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         3,
+         2
+        ]
+       },
+       "value": "✗",
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "merged[3] = 'a': above is ✓ and A's next letter is 'a'; left is ✗ and B's next letter is 'o'. So A's 'a' goes here: ✓.",
+      "ko": "merged[3] = 'a': 위 칸은 ✓, A의 다음 글자는 'a', 왼쪽 칸은 ✗, B의 다음 글자는 'o'입니다. 따라서 A의 'a' 글자를 놓을 수 있어 ✓입니다."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "∅",
+         "d",
+         "o",
+         "g"
+        ],
+        [
+         "∅",
+         "T",
+         "F",
+         "F",
+         "F"
+        ],
+        [
+         "c",
+         "T",
+         "T",
+         "T",
+         "F"
+        ],
+        [
+         "a",
+         "F",
+         "F",
+         "T",
+         " "
+        ],
+        [
+         "t",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          2,
+          3
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          2
+         ],
+         [
+          0,
+          3
+         ]
+        ],
+        "good": [
+         [
+          3,
+          3
+         ]
+        ]
+       }
+      },
+      "merged": {
+       "values": [
+        "c",
+        "d",
+        "o",
+        "a",
+        "g",
+        "t"
+       ],
+       "pointers": {
+        "k": 3
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         2,
+         3
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         3,
+         3
+        ]
+       },
+       "value": "✓"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "merged[4] = 'g': above is ✗ and A's next letter is 'a'; left is ✓ and B's next letter is 'g'. So B's 'g' goes here: ✓.",
+      "ko": "merged[4] = 'g': 위 칸은 ✗, A의 다음 글자는 'a', 왼쪽 칸은 ✓, B의 다음 글자는 'g'입니다. 따라서 B의 'g' 글자를 놓을 수 있어 ✓입니다."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "∅",
+         "d",
+         "o",
+         "g"
+        ],
+        [
+         "∅",
+         "T",
+         "F",
+         "F",
+         "F"
+        ],
+        [
+         "c",
+         "T",
+         "T",
+         "T",
+         "F"
+        ],
+        [
+         "a",
+         "F",
+         "F",
+         "T",
+         "T"
+        ],
+        [
+         "t",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          2,
+          4
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          3
+         ],
+         [
+          0,
+          4
+         ]
+        ],
+        "good": [
+         [
+          3,
+          4
+         ]
+        ]
+       }
+      },
+      "merged": {
+       "values": [
+        "c",
+        "d",
+        "o",
+        "a",
+        "g",
+        "t"
+       ],
+       "pointers": {
+        "k": 4
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         3,
+         3
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         3,
+         4
+        ]
+       },
+       "value": "✓"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "merged[2] = 'o': above is ✗ and A's next letter is 't'. So neither gives it: ✗.",
+      "ko": "merged[2] = 'o': 위 칸은 ✗, A의 다음 글자는 't'입니다. 따라서 어느 쪽으로도 만들 수 없어 ✗입니다."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "∅",
+         "d",
+         "o",
+         "g"
+        ],
+        [
+         "∅",
+         "T",
+         "F",
+         "F",
+         "F"
+        ],
+        [
+         "c",
+         "T",
+         "T",
+         "T",
+         "F"
+        ],
+        [
+         "a",
+         "F",
+         "F",
+         "T",
+         "T"
+        ],
+        [
+         "t",
+         "F",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ]
+        ],
+        "bad": [
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "merged": {
+       "values": [
+        "c",
+        "d",
+        "o",
+        "a",
+        "g",
+        "t"
+       ],
+       "pointers": {
+        "k": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         3,
+         1
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         4,
+         1
+        ]
+       },
+       "value": "✗",
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "merged[3] = 'a': above is ✗ and A's next letter is 't'; left is ✗ and B's next letter is 'd'. So neither gives it: ✗.",
+      "ko": "merged[3] = 'a': 위 칸은 ✗, A의 다음 글자는 't', 왼쪽 칸은 ✗, B의 다음 글자는 'd'입니다. 따라서 어느 쪽으로도 만들 수 없어 ✗입니다."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "∅",
+         "d",
+         "o",
+         "g"
+        ],
+        [
+         "∅",
+         "T",
+         "F",
+         "F",
+         "F"
+        ],
+        [
+         "c",
+         "T",
+         "T",
+         "T",
+         "F"
+        ],
+        [
+         "a",
+         "F",
+         "F",
+         "T",
+         "T"
+        ],
+        [
+         "t",
+         "F",
+         "F",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          3,
+          2
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ],
+         [
+          0,
+          2
+         ]
+        ],
+        "bad": [
+         [
+          4,
+          2
+         ]
+        ]
+       }
+      },
+      "merged": {
+       "values": [
+        "c",
+        "d",
+        "o",
+        "a",
+        "g",
+        "t"
+       ],
+       "pointers": {
+        "k": 3
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         3,
+         2
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         4,
+         2
+        ]
+       },
+       "value": "✗",
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "merged[4] = 'g': above is ✓ and A's next letter is 't'; left is ✗ and B's next letter is 'o'. So neither gives it: ✗.",
+      "ko": "merged[4] = 'g': 위 칸은 ✓, A의 다음 글자는 't', 왼쪽 칸은 ✗, B의 다음 글자는 'o'입니다. 따라서 어느 쪽으로도 만들 수 없어 ✗입니다."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "∅",
+         "d",
+         "o",
+         "g"
+        ],
+        [
+         "∅",
+         "T",
+         "F",
+         "F",
+         "F"
+        ],
+        [
+         "c",
+         "T",
+         "T",
+         "T",
+         "F"
+        ],
+        [
+         "a",
+         "F",
+         "F",
+         "T",
+         "T"
+        ],
+        [
+         "t",
+         "F",
+         "F",
+         "F",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          3,
+          3
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          2
+         ],
+         [
+          0,
+          3
+         ]
+        ],
+        "bad": [
+         [
+          4,
+          3
+         ]
+        ]
+       }
+      },
+      "merged": {
+       "values": [
+        "c",
+        "d",
+        "o",
+        "a",
+        "g",
+        "t"
+       ],
+       "pointers": {
+        "k": 4
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         3,
+         3
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         4,
+         3
+        ]
+       },
+       "value": "✗",
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "merged[5] = 't': above is ✓ and A's next letter is 't'; left is ✗ and B's next letter is 'g'. So A's 't' goes here: ✓.",
+      "ko": "merged[5] = 't': 위 칸은 ✓, A의 다음 글자는 't', 왼쪽 칸은 ✗, B의 다음 글자는 'g'입니다. 따라서 A의 't' 글자를 놓을 수 있어 ✓입니다."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "∅",
+         "d",
+         "o",
+         "g"
+        ],
+        [
+         "∅",
+         "T",
+         "F",
+         "F",
+         "F"
+        ],
+        [
+         "c",
+         "T",
+         "T",
+         "T",
+         "F"
+        ],
+        [
+         "a",
+         "F",
+         "F",
+         "T",
+         "T"
+        ],
+        [
+         "t",
+         "F",
+         "F",
+         "F",
+         "T"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          3,
+          4
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          3
+         ],
+         [
+          0,
+          4
+         ]
+        ],
+        "good": [
+         [
+          4,
+          4
+         ]
+        ]
+       }
+      },
+      "merged": {
+       "values": [
+        "c",
+        "d",
+        "o",
+        "a",
+        "g",
+        "t"
+       ],
+       "pointers": {
+        "k": 5
+       },
+       "marks": {
+        "lit": [
+         5
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         3,
+         4
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         4,
+         4
+        ]
+       },
+       "value": "✓"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The corner is ✓. Walking back along the ✓ cells gives the order the letters were taken: c (A), d (B), o (B), a (A), g (B), t (A). Answer: true.",
+      "ko": "오른쪽 아래 칸이 ✓입니다. ✓ 칸을 거슬러 가면 글자를 가져온 순서가 나옵니다: c (A), d (B), o (B), a (A), g (B), t (A). 답은 true입니다."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "∅",
+         "d",
+         "o",
+         "g"
+        ],
+        [
+         "∅",
+         "T",
+         "F",
+         "F",
+         "F"
+        ],
+        [
+         "c",
+         "T",
+         "T",
+         "T",
+         "F"
+        ],
+        [
+         "a",
+         "F",
+         "F",
+         "T",
+         "T"
+        ],
+        [
+         "t",
+         "F",
+         "F",
+         "F",
+         "T"
+        ]
+       ],
+       "marks": {
+        "path": [
+         [
+          4,
+          4
+         ],
+         [
+          3,
+          4
+         ],
+         [
+          3,
+          3
+         ],
+         [
+          2,
+          3
+         ],
+         [
+          2,
+          2
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "merged": {
+       "values": [
+        "c",
+        "d",
+        "o",
+        "a",
+        "g",
+        "t"
+       ],
+       "pointers": {
+        "k": null
+       },
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      }
+     },
+     "answer": "true"
+    }
+   ],
+   "sampleInput": "cat\ndog\ncdoagt"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "controllerA = \"abc\", controllerB = \"xyz\", merged = \"axbzyc\"",
+   "expected": "false",
+   "frames": [
+    {
+     "caption": {
+      "en": "A = \"abc\", B = \"xyz\", merged = \"axbzyc\": 3 + 3 = 6 letters, so the lengths fit. Two empty prefixes make the empty merged prefix: ✓.",
+      "ko": "A = \"abc\", B = \"xyz\", merged = \"axbzyc\": 3 + 3 = 6글자로 길이가 맞습니다. 빈 앞부분 둘은 빈 merged 앞부분을 만듭니다: ✓."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "∅",
+         "x",
+         "y",
+         "z"
+        ],
+        [
+         "∅",
+         "T",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "c",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "good": [
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "merged": {
+       "values": [
+        "a",
+        "x",
+        "b",
+        "z",
+        "y",
+        "c"
+       ],
+       "pointers": {
+        "k": null
+       },
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "merged[0] = 'a': left is ✓ and B's next letter is 'x'. So neither gives it: ✗.",
+      "ko": "merged[0] = 'a': 왼쪽 칸은 ✓, B의 다음 글자는 'x'입니다. 따라서 어느 쪽으로도 만들 수 없어 ✗입니다."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "∅",
+         "x",
+         "y",
+         "z"
+        ],
+        [
+         "∅",
+         "T",
+         "F",
+         " ",
+         " "
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "c",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          1,
+          1
+         ],
+         [
+          0,
+          2
+         ]
+        ],
+        "bad": [
+         [
+          1,
+          2
+         ]
+        ]
+       }
+      },
+      "merged": {
+       "values": [
+        "a",
+        "x",
+        "b",
+        "z",
+        "y",
+        "c"
+       ],
+       "pointers": {
+        "k": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         1,
+         2
+        ]
+       },
+       "value": "✗",
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "merged[1] = 'x': left is ✗ and B's next letter is 'y'. So neither gives it: ✗.",
+      "ko": "merged[1] = 'x': 왼쪽 칸은 ✗, B의 다음 글자는 'y'입니다. 따라서 어느 쪽으로도 만들 수 없어 ✗입니다."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "∅",
+         "x",
+         "y",
+         "z"
+        ],
+        [
+         "∅",
+         "T",
+         "F",
+         "F",
+         " "
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "c",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          1,
+          2
+         ],
+         [
+          0,
+          3
+         ]
+        ],
+        "bad": [
+         [
+          1,
+          3
+         ]
+        ]
+       }
+      },
+      "merged": {
+       "values": [
+        "a",
+        "x",
+        "b",
+        "z",
+        "y",
+        "c"
+       ],
+       "pointers": {
+        "k": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         1,
+         2
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         1,
+         3
+        ]
+       },
+       "value": "✗",
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "merged[2] = 'b': left is ✗ and B's next letter is 'z'. So neither gives it: ✗.",
+      "ko": "merged[2] = 'b': 왼쪽 칸은 ✗, B의 다음 글자는 'z'입니다. 따라서 어느 쪽으로도 만들 수 없어 ✗입니다."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "∅",
+         "x",
+         "y",
+         "z"
+        ],
+        [
+         "∅",
+         "T",
+         "F",
+         "F",
+         "F"
+        ],
+        [
+         "a",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "c",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          1,
+          3
+         ],
+         [
+          0,
+          4
+         ]
+        ],
+        "bad": [
+         [
+          1,
+          4
+         ]
+        ]
+       }
+      },
+      "merged": {
+       "values": [
+        "a",
+        "x",
+        "b",
+        "z",
+        "y",
+        "c"
+       ],
+       "pointers": {
+        "k": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         1,
+         3
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         1,
+         4
+        ]
+       },
+       "value": "✗",
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "merged[0] = 'a': above is ✓ and A's next letter is 'a'. So A's 'a' goes here: ✓.",
+      "ko": "merged[0] = 'a': 위 칸은 ✓, A의 다음 글자는 'a'입니다. 따라서 A의 'a' 글자를 놓을 수 있어 ✓입니다."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "∅",
+         "x",
+         "y",
+         "z"
+        ],
+        [
+         "∅",
+         "T",
+         "F",
+         "F",
+         "F"
+        ],
+        [
+         "a",
+         "T",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "c",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ]
+        ],
+        "good": [
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "merged": {
+       "values": [
+        "a",
+        "x",
+        "b",
+        "z",
+        "y",
+        "c"
+       ],
+       "pointers": {
+        "k": 0
+       },
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         2,
+         1
+        ]
+       },
+       "value": "✓"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "merged[1] = 'x': above is ✗ and A's next letter is 'a'; left is ✓ and B's next letter is 'x'. So B's 'x' goes here: ✓.",
+      "ko": "merged[1] = 'x': 위 칸은 ✗, A의 다음 글자는 'a', 왼쪽 칸은 ✓, B의 다음 글자는 'x'입니다. 따라서 B의 'x' 글자를 놓을 수 있어 ✓입니다."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "∅",
+         "x",
+         "y",
+         "z"
+        ],
+        [
+         "∅",
+         "T",
+         "F",
+         "F",
+         "F"
+        ],
+        [
+         "a",
+         "T",
+         "T",
+         " ",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "c",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          1,
+          2
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          0,
+          2
+         ]
+        ],
+        "good": [
+         [
+          2,
+          2
+         ]
+        ]
+       }
+      },
+      "merged": {
+       "values": [
+        "a",
+        "x",
+        "b",
+        "z",
+        "y",
+        "c"
+       ],
+       "pointers": {
+        "k": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         2,
+         1
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         2,
+         2
+        ]
+       },
+       "value": "✓"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "merged[2] = 'b': above is ✗ and A's next letter is 'a'; left is ✓ and B's next letter is 'y'. So neither gives it: ✗.",
+      "ko": "merged[2] = 'b': 위 칸은 ✗, A의 다음 글자는 'a', 왼쪽 칸은 ✓, B의 다음 글자는 'y'입니다. 따라서 어느 쪽으로도 만들 수 없어 ✗입니다."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "∅",
+         "x",
+         "y",
+         "z"
+        ],
+        [
+         "∅",
+         "T",
+         "F",
+         "F",
+         "F"
+        ],
+        [
+         "a",
+         "T",
+         "T",
+         "F",
+         " "
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "c",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          1,
+          3
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          2
+         ],
+         [
+          0,
+          3
+         ]
+        ],
+        "bad": [
+         [
+          2,
+          3
+         ]
+        ]
+       }
+      },
+      "merged": {
+       "values": [
+        "a",
+        "x",
+        "b",
+        "z",
+        "y",
+        "c"
+       ],
+       "pointers": {
+        "k": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         1,
+         3
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         2,
+         3
+        ]
+       },
+       "value": "✗",
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "merged[3] = 'z': above is ✗ and A's next letter is 'a'; left is ✗ and B's next letter is 'z'. So neither gives it: ✗.",
+      "ko": "merged[3] = 'z': 위 칸은 ✗, A의 다음 글자는 'a', 왼쪽 칸은 ✗, B의 다음 글자는 'z'입니다. 따라서 어느 쪽으로도 만들 수 없어 ✗입니다."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "∅",
+         "x",
+         "y",
+         "z"
+        ],
+        [
+         "∅",
+         "T",
+         "F",
+         "F",
+         "F"
+        ],
+        [
+         "a",
+         "T",
+         "T",
+         "F",
+         "F"
+        ],
+        [
+         "b",
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "c",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          1,
+          4
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          3
+         ],
+         [
+          0,
+          4
+         ]
+        ],
+        "bad": [
+         [
+          2,
+          4
+         ]
+        ]
+       }
+      },
+      "merged": {
+       "values": [
+        "a",
+        "x",
+        "b",
+        "z",
+        "y",
+        "c"
+       ],
+       "pointers": {
+        "k": 3
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         1,
+         4
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         2,
+         4
+        ]
+       },
+       "value": "✗",
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "merged[1] = 'x': above is ✓ and A's next letter is 'b'. So neither gives it: ✗.",
+      "ko": "merged[1] = 'x': 위 칸은 ✓, A의 다음 글자는 'b'입니다. 따라서 어느 쪽으로도 만들 수 없어 ✗입니다."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "∅",
+         "x",
+         "y",
+         "z"
+        ],
+        [
+         "∅",
+         "T",
+         "F",
+         "F",
+         "F"
+        ],
+        [
+         "a",
+         "T",
+         "T",
+         "F",
+         "F"
+        ],
+        [
+         "b",
+         "F",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         "c",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ]
+        ],
+        "bad": [
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "merged": {
+       "values": [
+        "a",
+        "x",
+        "b",
+        "z",
+        "y",
+        "c"
+       ],
+       "pointers": {
+        "k": 1
+       },
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         2,
+         1
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         3,
+         1
+        ]
+       },
+       "value": "✗",
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "merged[2] = 'b': above is ✓ and A's next letter is 'b'; left is ✗ and B's next letter is 'x'. So A's 'b' goes here: ✓.",
+      "ko": "merged[2] = 'b': 위 칸은 ✓, A의 다음 글자는 'b', 왼쪽 칸은 ✗, B의 다음 글자는 'x'입니다. 따라서 A의 'b' 글자를 놓을 수 있어 ✓입니다."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "∅",
+         "x",
+         "y",
+         "z"
+        ],
+        [
+         "∅",
+         "T",
+         "F",
+         "F",
+         "F"
+        ],
+        [
+         "a",
+         "T",
+         "T",
+         "F",
+         "F"
+        ],
+        [
+         "b",
+         "F",
+         "T",
+         " ",
+         " "
+        ],
+        [
+         "c",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          2,
+          2
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          0,
+          2
+         ]
+        ],
+        "good": [
+         [
+          3,
+          2
+         ]
+        ]
+       }
+      },
+      "merged": {
+       "values": [
+        "a",
+        "x",
+        "b",
+        "z",
+        "y",
+        "c"
+       ],
+       "pointers": {
+        "k": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         2,
+         2
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         3,
+         2
+        ]
+       },
+       "value": "✓"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "merged[3] = 'z': above is ✗ and A's next letter is 'b'; left is ✓ and B's next letter is 'y'. So neither gives it: ✗.",
+      "ko": "merged[3] = 'z': 위 칸은 ✗, A의 다음 글자는 'b', 왼쪽 칸은 ✓, B의 다음 글자는 'y'입니다. 따라서 어느 쪽으로도 만들 수 없어 ✗입니다."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "∅",
+         "x",
+         "y",
+         "z"
+        ],
+        [
+         "∅",
+         "T",
+         "F",
+         "F",
+         "F"
+        ],
+        [
+         "a",
+         "T",
+         "T",
+         "F",
+         "F"
+        ],
+        [
+         "b",
+         "F",
+         "T",
+         "F",
+         " "
+        ],
+        [
+         "c",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          2,
+          3
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          2
+         ],
+         [
+          0,
+          3
+         ]
+        ],
+        "bad": [
+         [
+          3,
+          3
+         ]
+        ]
+       }
+      },
+      "merged": {
+       "values": [
+        "a",
+        "x",
+        "b",
+        "z",
+        "y",
+        "c"
+       ],
+       "pointers": {
+        "k": 3
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         2,
+         3
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         3,
+         3
+        ]
+       },
+       "value": "✗",
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "merged[4] = 'y': above is ✗ and A's next letter is 'b'; left is ✗ and B's next letter is 'z'. So neither gives it: ✗.",
+      "ko": "merged[4] = 'y': 위 칸은 ✗, A의 다음 글자는 'b', 왼쪽 칸은 ✗, B의 다음 글자는 'z'입니다. 따라서 어느 쪽으로도 만들 수 없어 ✗입니다."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "∅",
+         "x",
+         "y",
+         "z"
+        ],
+        [
+         "∅",
+         "T",
+         "F",
+         "F",
+         "F"
+        ],
+        [
+         "a",
+         "T",
+         "T",
+         "F",
+         "F"
+        ],
+        [
+         "b",
+         "F",
+         "T",
+         "F",
+         "F"
+        ],
+        [
+         "c",
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          2,
+          4
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          3
+         ],
+         [
+          0,
+          4
+         ]
+        ],
+        "bad": [
+         [
+          3,
+          4
+         ]
+        ]
+       }
+      },
+      "merged": {
+       "values": [
+        "a",
+        "x",
+        "b",
+        "z",
+        "y",
+        "c"
+       ],
+       "pointers": {
+        "k": 4
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         2,
+         4
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         3,
+         4
+        ]
+       },
+       "value": "✗",
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "merged[2] = 'b': above is ✗ and A's next letter is 'c'. So neither gives it: ✗.",
+      "ko": "merged[2] = 'b': 위 칸은 ✗, A의 다음 글자는 'c'입니다. 따라서 어느 쪽으로도 만들 수 없어 ✗입니다."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "∅",
+         "x",
+         "y",
+         "z"
+        ],
+        [
+         "∅",
+         "T",
+         "F",
+         "F",
+         "F"
+        ],
+        [
+         "a",
+         "T",
+         "T",
+         "F",
+         "F"
+        ],
+        [
+         "b",
+         "F",
+         "T",
+         "F",
+         "F"
+        ],
+        [
+         "c",
+         "F",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ]
+        ],
+        "bad": [
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "merged": {
+       "values": [
+        "a",
+        "x",
+        "b",
+        "z",
+        "y",
+        "c"
+       ],
+       "pointers": {
+        "k": 2
+       },
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         3,
+         1
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         4,
+         1
+        ]
+       },
+       "value": "✗",
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "merged[3] = 'z': above is ✓ and A's next letter is 'c'; left is ✗ and B's next letter is 'x'. So neither gives it: ✗.",
+      "ko": "merged[3] = 'z': 위 칸은 ✓, A의 다음 글자는 'c', 왼쪽 칸은 ✗, B의 다음 글자는 'x'입니다. 따라서 어느 쪽으로도 만들 수 없어 ✗입니다."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "∅",
+         "x",
+         "y",
+         "z"
+        ],
+        [
+         "∅",
+         "T",
+         "F",
+         "F",
+         "F"
+        ],
+        [
+         "a",
+         "T",
+         "T",
+         "F",
+         "F"
+        ],
+        [
+         "b",
+         "F",
+         "T",
+         "F",
+         "F"
+        ],
+        [
+         "c",
+         "F",
+         "F",
+         " ",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          3,
+          2
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ],
+         [
+          0,
+          2
+         ]
+        ],
+        "bad": [
+         [
+          4,
+          2
+         ]
+        ]
+       }
+      },
+      "merged": {
+       "values": [
+        "a",
+        "x",
+        "b",
+        "z",
+        "y",
+        "c"
+       ],
+       "pointers": {
+        "k": 3
+       },
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         3,
+         2
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         4,
+         2
+        ]
+       },
+       "value": "✗",
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "merged[4] = 'y': above is ✗ and A's next letter is 'c'; left is ✗ and B's next letter is 'y'. So neither gives it: ✗.",
+      "ko": "merged[4] = 'y': 위 칸은 ✗, A의 다음 글자는 'c', 왼쪽 칸은 ✗, B의 다음 글자는 'y'입니다. 따라서 어느 쪽으로도 만들 수 없어 ✗입니다."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "∅",
+         "x",
+         "y",
+         "z"
+        ],
+        [
+         "∅",
+         "T",
+         "F",
+         "F",
+         "F"
+        ],
+        [
+         "a",
+         "T",
+         "T",
+         "F",
+         "F"
+        ],
+        [
+         "b",
+         "F",
+         "T",
+         "F",
+         "F"
+        ],
+        [
+         "c",
+         "F",
+         "F",
+         "F",
+         " "
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          3,
+          3
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          2
+         ],
+         [
+          0,
+          3
+         ]
+        ],
+        "bad": [
+         [
+          4,
+          3
+         ]
+        ]
+       }
+      },
+      "merged": {
+       "values": [
+        "a",
+        "x",
+        "b",
+        "z",
+        "y",
+        "c"
+       ],
+       "pointers": {
+        "k": 4
+       },
+       "marks": {
+        "lit": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         3,
+         3
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         4,
+         3
+        ]
+       },
+       "value": "✗",
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "merged[5] = 'c': above is ✗ and A's next letter is 'c'; left is ✗ and B's next letter is 'z'. So neither gives it: ✗.",
+      "ko": "merged[5] = 'c': 위 칸은 ✗, A의 다음 글자는 'c', 왼쪽 칸은 ✗, B의 다음 글자는 'z'입니다. 따라서 어느 쪽으로도 만들 수 없어 ✗입니다."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "∅",
+         "x",
+         "y",
+         "z"
+        ],
+        [
+         "∅",
+         "T",
+         "F",
+         "F",
+         "F"
+        ],
+        [
+         "a",
+         "T",
+         "T",
+         "F",
+         "F"
+        ],
+        [
+         "b",
+         "F",
+         "T",
+         "F",
+         "F"
+        ],
+        [
+         "c",
+         "F",
+         "F",
+         "F",
+         "F"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         [
+          3,
+          4
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          3
+         ],
+         [
+          0,
+          4
+         ]
+        ],
+        "bad": [
+         [
+          4,
+          4
+         ]
+        ]
+       }
+      },
+      "merged": {
+       "values": [
+        "a",
+        "x",
+        "b",
+        "z",
+        "y",
+        "c"
+       ],
+       "pointers": {
+        "k": 5
+       },
+       "marks": {
+        "lit": [
+         5
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "table",
+        "at": [
+         3,
+         4
+        ]
+       },
+       "to": {
+        "view": "table",
+        "at": [
+         4,
+         4
+        ]
+       },
+       "value": "✗",
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The corner is ✗: no way of taking A's and B's letters in order spells \"axbzyc\". Answer: false.",
+      "ko": "오른쪽 아래 칸이 ✗입니다. A와 B의 글자를 순서대로 어떻게 가져와도 \"axbzyc\" 문자열이 되지 않으므로 답은 false입니다."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "∅",
+         "x",
+         "y",
+         "z"
+        ],
+        [
+         "∅",
+         "T",
+         "F",
+         "F",
+         "F"
+        ],
+        [
+         "a",
+         "T",
+         "T",
+         "F",
+         "F"
+        ],
+        [
+         "b",
+         "F",
+         "T",
+         "F",
+         "F"
+        ],
+        [
+         "c",
+         "F",
+         "F",
+         "F",
+         "F"
+        ]
+       ],
+       "marks": {
+        "bad": [
+         [
+          4,
+          4
+         ]
+        ]
+       }
+      },
+      "merged": {
+       "values": [
+        "a",
+        "x",
+        "b",
+        "z",
+        "y",
+        "c"
+       ],
+       "pointers": {
+        "k": null
+       },
+       "marks": {}
+      }
+     },
+     "answer": "false"
+    }
+   ],
+   "sampleInput": "abc\nxyz\naxbzyc"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "controllerA = \"\", controllerB = \"\", merged = \"\"",
+   "expected": "true",
+   "frames": [
+    {
+     "caption": {
+      "en": "A = \"\", B = \"\", merged = \"\": 0 + 0 = 0 letters, so the lengths fit. Two empty prefixes make the empty merged prefix: ✓.",
+      "ko": "A = \"\", B = \"\", merged = \"\": 0 + 0 = 0글자로 길이가 맞습니다. 빈 앞부분 둘은 빈 merged 앞부분을 만듭니다: ✓."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "∅"
+        ],
+        [
+         "∅",
+         "T"
+        ]
+       ],
+       "marks": {
+        "good": [
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "merged": {
+       "values": [],
+       "pointers": {
+        "k": null
+       },
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "All three strings are empty, and two empty inputs weave into an empty merge. Answer: true.",
+      "ko": "세 문자열이 모두 비어 있고, 빈 입력 둘은 빈 병합 기록을 만듭니다. 답은 true입니다."
+     },
+     "views": {
+      "table": {
+       "cells": [
+        [
+         "",
+         "∅"
+        ],
+        [
+         "∅",
+         "T"
+        ]
+       ],
+       "marks": {
+        "path": [
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "merged": {
+       "values": [],
+       "pointers": {
+        "k": null
+       },
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "answer": "true"
+    }
+   ],
+   "sampleInput": "\n\n"
+  }
+ ]
+}
