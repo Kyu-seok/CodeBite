@@ -1,0 +1,3302 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Snack Combo Picks",
+  "ko": "간식 조합 뽑기"
+ },
+ "approach": {
+  "en": "Sort the flavors; each call holds one combo, adds it to the answer and extends it with each flavor after the last one it took. At one depth, a flavor equal to the one just tried is skipped: it would build the same combos again.",
+  "ko": "맛을 정렬합니다. 호출 하나가 조합 하나를 맡아 답에 넣고, 마지막으로 고른 맛 뒤의 맛으로 조합을 늘립니다. 같은 깊이에서 방금 시도한 맛과 같은 맛은 같은 조합을 또 만들므로 건너뜁니다."
+ },
+ "views": [
+  {
+   "id": "snacks",
+   "type": "array",
+   "title": {
+    "en": "snacks, sorted",
+    "ko": "snacks (정렬한 맛)"
+   }
+  },
+  {
+   "id": "calls",
+   "type": "tree",
+   "title": {
+    "en": "calls (+x: the flavor taken)",
+    "ko": "호출 (+x: 고른 맛)"
+   }
+  },
+  {
+   "id": "result",
+   "type": "output",
+   "title": {
+    "en": "combos",
+    "ko": "조합"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "snacks = [2,5,5]",
+   "expected": "[[],[2],[2,5],[2,5,5],[5],[5,5]]",
+   "frames": [
+    {
+     "caption": {
+      "en": "The first call holds the empty combo [] and adds it to the answer; it will extend [] with 2, 5, each flavor once.",
+      "ko": "첫 호출은 빈 조합([])을 맡아 답에 넣고, 맛마다 한 번씩 2, 5를 붙여 봅니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        2,
+        5,
+        5
+       ],
+       "marks": {
+        "dim": [],
+        "bad": []
+       },
+       "pointers": {
+        "start": 0
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        }
+       ],
+       "edges": [],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ]
+      },
+      "result": {
+       "values": [
+        "[]"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "calls",
+        "at": 0
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take 2 (index 0): the call for [2] adds it to the answer; next it tries 5.",
+      "ko": "0번 칸의 2를 고릅니다. [2] 호출이 이 조합을 답에 넣고, 다음으로 5를 붙여 봅니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        2,
+        5,
+        5
+       ],
+       "marks": {
+        "dim": [
+         0
+        ],
+        "bad": []
+       },
+       "pointers": {
+        "start": 1
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[2]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+2"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         1
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ]
+      },
+      "result": {
+       "values": [
+        "[]",
+        "[2]"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "snacks",
+        "at": 0
+       },
+       "to": {
+        "view": "calls",
+        "at": 1
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take 5 (index 1): the call for [2,5] adds it to the answer; next it tries 5.",
+      "ko": "1번 칸의 5를 고릅니다. [2,5] 호출이 이 조합을 답에 넣고, 다음으로 5를 붙여 봅니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        2,
+        5,
+        5
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1
+        ],
+        "bad": []
+       },
+       "pointers": {
+        "start": 2
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[2]"
+        },
+        {
+         "id": 2,
+         "value": "[2,5]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+2"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+5"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         2
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        2
+       ]
+      },
+      "result": {
+       "values": [
+        "[]",
+        "[2]",
+        "[2,5]"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "snacks",
+        "at": 1
+       },
+       "to": {
+        "view": "calls",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take 5 (index 2): the call for [2,5,5] adds it to the answer; no snack comes after it, so it returns.",
+      "ko": "2번 칸의 5를 고릅니다. [2,5,5] 호출이 이 조합을 답에 넣고, 그 뒤에 남은 간식이 없으므로 돌아갑니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        2,
+        5,
+        5
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2
+        ],
+        "bad": []
+       },
+       "pointers": {}
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[2]"
+        },
+        {
+         "id": 2,
+         "value": "[2,5]"
+        },
+        {
+         "id": 3,
+         "value": "[2,5,5]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+2"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+5"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "+5"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         3
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        2,
+        3
+       ]
+      },
+      "result": {
+       "values": [
+        "[]",
+        "[2]",
+        "[2,5]",
+        "[2,5,5]"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "snacks",
+        "at": 2
+       },
+       "to": {
+        "view": "calls",
+        "at": 3
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 3
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Back in the call for [2]: the snack at index 2 is 5 again, the flavor it just tried, so taking it would repeat the combos below +5: skipped. The call returns.",
+      "ko": "[2] 호출로 돌아왔습니다. 2번 칸도 방금 시도한 맛 5가 다시 나온 것이라 고르면 +5 아래의 조합이 되풀이되므로 건너뛰고 돌아갑니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        2,
+        5,
+        5
+       ],
+       "marks": {
+        "dim": [
+         0
+        ],
+        "bad": [
+         2
+        ]
+       },
+       "pointers": {
+        "start": 1
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[2]"
+        },
+        {
+         "id": 2,
+         "value": "[2,5]"
+        },
+        {
+         "id": 3,
+         "value": "[2,5,5]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+2"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+5"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "+5"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         1
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ]
+      },
+      "result": {
+       "values": [
+        "[]",
+        "[2]",
+        "[2,5]",
+        "[2,5,5]"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Take 5 (index 1): the call for [5] adds it to the answer; next it tries 5.",
+      "ko": "1번 칸의 5를 고릅니다. [5] 호출이 이 조합을 답에 넣고, 다음으로 5를 붙여 봅니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        2,
+        5,
+        5
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1
+        ],
+        "bad": []
+       },
+       "pointers": {
+        "start": 2
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[2]"
+        },
+        {
+         "id": 2,
+         "value": "[2,5]"
+        },
+        {
+         "id": 3,
+         "value": "[2,5,5]"
+        },
+        {
+         "id": 4,
+         "value": "[5]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+2"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+5"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "+5"
+        },
+        {
+         "from": 0,
+         "to": 4,
+         "label": "+5"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         4
+        ]
+       },
+       "shade": [
+        0,
+        4
+       ]
+      },
+      "result": {
+       "values": [
+        "[]",
+        "[2]",
+        "[2,5]",
+        "[2,5,5]",
+        "[5]"
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "snacks",
+        "at": 1
+       },
+       "to": {
+        "view": "calls",
+        "at": 4
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take 5 (index 2): the call for [5,5] adds it to the answer; no snack comes after it, so it returns.",
+      "ko": "2번 칸의 5를 고릅니다. [5,5] 호출이 이 조합을 답에 넣고, 그 뒤에 남은 간식이 없으므로 돌아갑니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        2,
+        5,
+        5
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2
+        ],
+        "bad": []
+       },
+       "pointers": {}
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[2]"
+        },
+        {
+         "id": 2,
+         "value": "[2,5]"
+        },
+        {
+         "id": 3,
+         "value": "[2,5,5]"
+        },
+        {
+         "id": 4,
+         "value": "[5]"
+        },
+        {
+         "id": 5,
+         "value": "[5,5]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+2"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+5"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "+5"
+        },
+        {
+         "from": 0,
+         "to": 4,
+         "label": "+5"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "+5"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         5
+        ]
+       },
+       "shade": [
+        0,
+        4,
+        5
+       ]
+      },
+      "result": {
+       "values": [
+        "[]",
+        "[2]",
+        "[2,5]",
+        "[2,5,5]",
+        "[5]",
+        "[5,5]"
+       ],
+       "marks": {
+        "good": [
+         5
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "snacks",
+        "at": 2
+       },
+       "to": {
+        "view": "calls",
+        "at": 5
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 5
+       },
+       "to": {
+        "view": "result",
+        "at": 5
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Back in the call for []: the snack at index 2 is 5 again, the flavor it just tried, so taking it would repeat the combos below +5: skipped. The call returns.",
+      "ko": "[] 호출로 돌아왔습니다. 2번 칸도 방금 시도한 맛 5가 다시 나온 것이라 고르면 +5 아래의 조합이 되풀이되므로 건너뛰고 돌아갑니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        2,
+        5,
+        5
+       ],
+       "marks": {
+        "dim": [],
+        "bad": [
+         2
+        ]
+       },
+       "pointers": {
+        "start": 0
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[2]"
+        },
+        {
+         "id": 2,
+         "value": "[2,5]"
+        },
+        {
+         "id": 3,
+         "value": "[2,5,5]"
+        },
+        {
+         "id": 4,
+         "value": "[5]"
+        },
+        {
+         "id": 5,
+         "value": "[5,5]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+2"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+5"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "+5"
+        },
+        {
+         "from": 0,
+         "to": 4,
+         "label": "+5"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "+5"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ]
+      },
+      "result": {
+       "values": [
+        "[]",
+        "[2]",
+        "[2,5]",
+        "[2,5,5]",
+        "[5]",
+        "[5,5]"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Every call has returned: 6 calls, one per distinct combo, so the answer holds 6 combos.",
+      "ko": "모든 호출이 끝났습니다. 호출 6번이 서로 다른 조합을 하나씩 만들었으니 답에는 조합 6개가 있습니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        2,
+        5,
+        5
+       ],
+       "marks": {},
+       "pointers": {}
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[2]"
+        },
+        {
+         "id": 2,
+         "value": "[2,5]"
+        },
+        {
+         "id": 3,
+         "value": "[2,5,5]"
+        },
+        {
+         "id": 4,
+         "value": "[5]"
+        },
+        {
+         "id": 5,
+         "value": "[5,5]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+2"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+5"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "+5"
+        },
+        {
+         "from": 0,
+         "to": 4,
+         "label": "+5"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "+5"
+        }
+       ],
+       "nodeMarks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       },
+       "shade": []
+      },
+      "result": {
+       "values": [
+        "[]",
+        "[2]",
+        "[2,5]",
+        "[2,5,5]",
+        "[5]",
+        "[5,5]"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      }
+     },
+     "answer": "[[],[2],[2,5],[2,5,5],[5],[5,5]]"
+    }
+   ],
+   "sampleInput": "[2,5,5]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "snacks = [5]",
+   "expected": "[[],[5]]",
+   "frames": [
+    {
+     "caption": {
+      "en": "The first call holds the empty combo [] and adds it to the answer; it will extend [] with 5, each flavor once.",
+      "ko": "첫 호출은 빈 조합([])을 맡아 답에 넣고, 맛마다 한 번씩 5를 붙여 봅니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        5
+       ],
+       "marks": {
+        "dim": [],
+        "bad": []
+       },
+       "pointers": {
+        "start": 0
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        }
+       ],
+       "edges": [],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ]
+      },
+      "result": {
+       "values": [
+        "[]"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "calls",
+        "at": 0
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take 5 (index 0): the call for [5] adds it to the answer; no snack comes after it, so it returns.",
+      "ko": "0번 칸의 5를 고릅니다. [5] 호출이 이 조합을 답에 넣고, 그 뒤에 남은 간식이 없으므로 돌아갑니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        5
+       ],
+       "marks": {
+        "dim": [
+         0
+        ],
+        "bad": []
+       },
+       "pointers": {}
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[5]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+5"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         1
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ]
+      },
+      "result": {
+       "values": [
+        "[]",
+        "[5]"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "snacks",
+        "at": 0
+       },
+       "to": {
+        "view": "calls",
+        "at": 1
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every call has returned: 2 calls, one per distinct combo, so the answer holds 2 combos.",
+      "ko": "모든 호출이 끝났습니다. 호출 2번이 서로 다른 조합을 하나씩 만들었으니 답에는 조합 2개가 있습니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        5
+       ],
+       "marks": {},
+       "pointers": {}
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[5]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+5"
+        }
+       ],
+       "nodeMarks": {
+        "path": [
+         0,
+         1
+        ]
+       },
+       "shade": []
+      },
+      "result": {
+       "values": [
+        "[]",
+        "[5]"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "answer": "[[],[5]]"
+    }
+   ],
+   "sampleInput": "[5]"
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "snacks = [2,2,2,1,2]",
+   "expected": "[[],[1],[1,2],[1,2,2],[1,2,2,2],[1,2,2,2,2],[2],[2,2],[2,2,2],[2,2,2,2]]",
+   "frames": [
+    {
+     "caption": {
+      "en": "The first call holds the empty combo [] and adds it to the answer; it will extend [] with 1, 2, each flavor once.",
+      "ko": "첫 호출은 빈 조합([])을 맡아 답에 넣고, 맛마다 한 번씩 1, 2를 붙여 봅니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        1,
+        2,
+        2,
+        2,
+        2
+       ],
+       "marks": {
+        "dim": [],
+        "bad": []
+       },
+       "pointers": {
+        "start": 0
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        }
+       ],
+       "edges": [],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ]
+      },
+      "result": {
+       "values": [
+        "[]"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "calls",
+        "at": 0
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take 1 (index 0): the call for [1] adds it to the answer; next it tries 2.",
+      "ko": "0번 칸의 1을 고릅니다. [1] 호출이 이 조합을 답에 넣고, 다음으로 2를 붙여 봅니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        1,
+        2,
+        2,
+        2,
+        2
+       ],
+       "marks": {
+        "dim": [
+         0
+        ],
+        "bad": []
+       },
+       "pointers": {
+        "start": 1
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[1]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+1"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         1
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ]
+      },
+      "result": {
+       "values": [
+        "[]",
+        "[1]"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "snacks",
+        "at": 0
+       },
+       "to": {
+        "view": "calls",
+        "at": 1
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take 2 (index 1): the call for [1,2] adds it to the answer; next it tries 2.",
+      "ko": "1번 칸의 2를 고릅니다. [1,2] 호출이 이 조합을 답에 넣고, 다음으로 2를 붙여 봅니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        1,
+        2,
+        2,
+        2,
+        2
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1
+        ],
+        "bad": []
+       },
+       "pointers": {
+        "start": 2
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[1]"
+        },
+        {
+         "id": 2,
+         "value": "[1,2]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+1"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+2"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         2
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        2
+       ]
+      },
+      "result": {
+       "values": [
+        "[]",
+        "[1]",
+        "[1,2]"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "snacks",
+        "at": 1
+       },
+       "to": {
+        "view": "calls",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take 2 (index 2): the call for [1,2,2] adds it to the answer; next it tries 2.",
+      "ko": "2번 칸의 2를 고릅니다. [1,2,2] 호출이 이 조합을 답에 넣고, 다음으로 2를 붙여 봅니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        1,
+        2,
+        2,
+        2,
+        2
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2
+        ],
+        "bad": []
+       },
+       "pointers": {
+        "start": 3
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[1]"
+        },
+        {
+         "id": 2,
+         "value": "[1,2]"
+        },
+        {
+         "id": 3,
+         "value": "[1,2,2]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+1"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+2"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "+2"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         3
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        2,
+        3
+       ]
+      },
+      "result": {
+       "values": [
+        "[]",
+        "[1]",
+        "[1,2]",
+        "[1,2,2]"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "snacks",
+        "at": 2
+       },
+       "to": {
+        "view": "calls",
+        "at": 3
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 3
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take 2 (index 3): the call for [1,2,2,2] adds it to the answer; next it tries 2.",
+      "ko": "3번 칸의 2를 고릅니다. [1,2,2,2] 호출이 이 조합을 답에 넣고, 다음으로 2를 붙여 봅니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        1,
+        2,
+        2,
+        2,
+        2
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3
+        ],
+        "bad": []
+       },
+       "pointers": {
+        "start": 4
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[1]"
+        },
+        {
+         "id": 2,
+         "value": "[1,2]"
+        },
+        {
+         "id": 3,
+         "value": "[1,2,2]"
+        },
+        {
+         "id": 4,
+         "value": "[1,2,2,2]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+1"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+2"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "+2"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "+2"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         4
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ]
+      },
+      "result": {
+       "values": [
+        "[]",
+        "[1]",
+        "[1,2]",
+        "[1,2,2]",
+        "[1,2,2,2]"
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "snacks",
+        "at": 3
+       },
+       "to": {
+        "view": "calls",
+        "at": 4
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take 2 (index 4): the call for [1,2,2,2,2] adds it to the answer; no snack comes after it, so it returns.",
+      "ko": "4번 칸의 2를 고릅니다. [1,2,2,2,2] 호출이 이 조합을 답에 넣고, 그 뒤에 남은 간식이 없으므로 돌아갑니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        1,
+        2,
+        2,
+        2,
+        2
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ],
+        "bad": []
+       },
+       "pointers": {}
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[1]"
+        },
+        {
+         "id": 2,
+         "value": "[1,2]"
+        },
+        {
+         "id": 3,
+         "value": "[1,2,2]"
+        },
+        {
+         "id": 4,
+         "value": "[1,2,2,2]"
+        },
+        {
+         "id": 5,
+         "value": "[1,2,2,2,2]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+1"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+2"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "+2"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "+2"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "+2"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         5
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+       ]
+      },
+      "result": {
+       "values": [
+        "[]",
+        "[1]",
+        "[1,2]",
+        "[1,2,2]",
+        "[1,2,2,2]",
+        "[1,2,2,2,2]"
+       ],
+       "marks": {
+        "good": [
+         5
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "snacks",
+        "at": 4
+       },
+       "to": {
+        "view": "calls",
+        "at": 5
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 5
+       },
+       "to": {
+        "view": "result",
+        "at": 5
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Back in the call for [1,2,2]: the snack at index 4 is 2 again, the flavor it just tried, so taking it would repeat the combos below +2: skipped. The call returns.",
+      "ko": "[1,2,2] 호출로 돌아왔습니다. 4번 칸도 방금 시도한 맛 2가 다시 나온 것이라 고르면 +2 아래의 조합이 되풀이되므로 건너뛰고 돌아갑니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        1,
+        2,
+        2,
+        2,
+        2
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2
+        ],
+        "bad": [
+         4
+        ]
+       },
+       "pointers": {
+        "start": 3
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[1]"
+        },
+        {
+         "id": 2,
+         "value": "[1,2]"
+        },
+        {
+         "id": 3,
+         "value": "[1,2,2]"
+        },
+        {
+         "id": 4,
+         "value": "[1,2,2,2]"
+        },
+        {
+         "id": 5,
+         "value": "[1,2,2,2,2]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+1"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+2"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "+2"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "+2"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "+2"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         3
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        2,
+        3
+       ]
+      },
+      "result": {
+       "values": [
+        "[]",
+        "[1]",
+        "[1,2]",
+        "[1,2,2]",
+        "[1,2,2,2]",
+        "[1,2,2,2,2]"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Back in the call for [1,2]: the snacks at indexes 3, 4 are 2 again, the flavor it just tried, so taking one would repeat the combos below +2: skipped. The call returns.",
+      "ko": "[1,2] 호출로 돌아왔습니다. 3, 4번 칸도 방금 시도한 맛 2가 다시 나온 것이라 고르면 +2 아래의 조합이 되풀이되므로 건너뛰고 돌아갑니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        1,
+        2,
+        2,
+        2,
+        2
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1
+        ],
+        "bad": [
+         3,
+         4
+        ]
+       },
+       "pointers": {
+        "start": 2
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[1]"
+        },
+        {
+         "id": 2,
+         "value": "[1,2]"
+        },
+        {
+         "id": 3,
+         "value": "[1,2,2]"
+        },
+        {
+         "id": 4,
+         "value": "[1,2,2,2]"
+        },
+        {
+         "id": 5,
+         "value": "[1,2,2,2,2]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+1"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+2"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "+2"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "+2"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "+2"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         2
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        2
+       ]
+      },
+      "result": {
+       "values": [
+        "[]",
+        "[1]",
+        "[1,2]",
+        "[1,2,2]",
+        "[1,2,2,2]",
+        "[1,2,2,2,2]"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Back in the call for [1]: the snacks at indexes 2, 3, 4 are 2 again, the flavor it just tried, so taking one would repeat the combos below +2: skipped. The call returns.",
+      "ko": "[1] 호출로 돌아왔습니다. 2, 3, 4번 칸도 방금 시도한 맛 2가 다시 나온 것이라 고르면 +2 아래의 조합이 되풀이되므로 건너뛰고 돌아갑니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        1,
+        2,
+        2,
+        2,
+        2
+       ],
+       "marks": {
+        "dim": [
+         0
+        ],
+        "bad": [
+         2,
+         3,
+         4
+        ]
+       },
+       "pointers": {
+        "start": 1
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[1]"
+        },
+        {
+         "id": 2,
+         "value": "[1,2]"
+        },
+        {
+         "id": 3,
+         "value": "[1,2,2]"
+        },
+        {
+         "id": 4,
+         "value": "[1,2,2,2]"
+        },
+        {
+         "id": 5,
+         "value": "[1,2,2,2,2]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+1"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+2"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "+2"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "+2"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "+2"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         1
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ]
+      },
+      "result": {
+       "values": [
+        "[]",
+        "[1]",
+        "[1,2]",
+        "[1,2,2]",
+        "[1,2,2,2]",
+        "[1,2,2,2,2]"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Take 2 (index 1): the call for [2] adds it to the answer; next it tries 2.",
+      "ko": "1번 칸의 2를 고릅니다. [2] 호출이 이 조합을 답에 넣고, 다음으로 2를 붙여 봅니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        1,
+        2,
+        2,
+        2,
+        2
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1
+        ],
+        "bad": []
+       },
+       "pointers": {
+        "start": 2
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[1]"
+        },
+        {
+         "id": 2,
+         "value": "[1,2]"
+        },
+        {
+         "id": 3,
+         "value": "[1,2,2]"
+        },
+        {
+         "id": 4,
+         "value": "[1,2,2,2]"
+        },
+        {
+         "id": 5,
+         "value": "[1,2,2,2,2]"
+        },
+        {
+         "id": 6,
+         "value": "[2]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+1"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+2"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "+2"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "+2"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "+2"
+        },
+        {
+         "from": 0,
+         "to": 6,
+         "label": "+2"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         6
+        ]
+       },
+       "shade": [
+        0,
+        6
+       ]
+      },
+      "result": {
+       "values": [
+        "[]",
+        "[1]",
+        "[1,2]",
+        "[1,2,2]",
+        "[1,2,2,2]",
+        "[1,2,2,2,2]",
+        "[2]"
+       ],
+       "marks": {
+        "good": [
+         6
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "snacks",
+        "at": 1
+       },
+       "to": {
+        "view": "calls",
+        "at": 6
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 6
+       },
+       "to": {
+        "view": "result",
+        "at": 6
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take 2 (index 2): the call for [2,2] adds it to the answer; next it tries 2.",
+      "ko": "2번 칸의 2를 고릅니다. [2,2] 호출이 이 조합을 답에 넣고, 다음으로 2를 붙여 봅니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        1,
+        2,
+        2,
+        2,
+        2
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2
+        ],
+        "bad": []
+       },
+       "pointers": {
+        "start": 3
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[1]"
+        },
+        {
+         "id": 2,
+         "value": "[1,2]"
+        },
+        {
+         "id": 3,
+         "value": "[1,2,2]"
+        },
+        {
+         "id": 4,
+         "value": "[1,2,2,2]"
+        },
+        {
+         "id": 5,
+         "value": "[1,2,2,2,2]"
+        },
+        {
+         "id": 6,
+         "value": "[2]"
+        },
+        {
+         "id": 7,
+         "value": "[2,2]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+1"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+2"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "+2"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "+2"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "+2"
+        },
+        {
+         "from": 0,
+         "to": 6,
+         "label": "+2"
+        },
+        {
+         "from": 6,
+         "to": 7,
+         "label": "+2"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         7
+        ]
+       },
+       "shade": [
+        0,
+        6,
+        7
+       ]
+      },
+      "result": {
+       "values": [
+        "[]",
+        "[1]",
+        "[1,2]",
+        "[1,2,2]",
+        "[1,2,2,2]",
+        "[1,2,2,2,2]",
+        "[2]",
+        "[2,2]"
+       ],
+       "marks": {
+        "good": [
+         7
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "snacks",
+        "at": 2
+       },
+       "to": {
+        "view": "calls",
+        "at": 7
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 7
+       },
+       "to": {
+        "view": "result",
+        "at": 7
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take 2 (index 3): the call for [2,2,2] adds it to the answer; next it tries 2.",
+      "ko": "3번 칸의 2를 고릅니다. [2,2,2] 호출이 이 조합을 답에 넣고, 다음으로 2를 붙여 봅니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        1,
+        2,
+        2,
+        2,
+        2
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3
+        ],
+        "bad": []
+       },
+       "pointers": {
+        "start": 4
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[1]"
+        },
+        {
+         "id": 2,
+         "value": "[1,2]"
+        },
+        {
+         "id": 3,
+         "value": "[1,2,2]"
+        },
+        {
+         "id": 4,
+         "value": "[1,2,2,2]"
+        },
+        {
+         "id": 5,
+         "value": "[1,2,2,2,2]"
+        },
+        {
+         "id": 6,
+         "value": "[2]"
+        },
+        {
+         "id": 7,
+         "value": "[2,2]"
+        },
+        {
+         "id": 8,
+         "value": "[2,2,2]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+1"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+2"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "+2"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "+2"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "+2"
+        },
+        {
+         "from": 0,
+         "to": 6,
+         "label": "+2"
+        },
+        {
+         "from": 6,
+         "to": 7,
+         "label": "+2"
+        },
+        {
+         "from": 7,
+         "to": 8,
+         "label": "+2"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         8
+        ]
+       },
+       "shade": [
+        0,
+        6,
+        7,
+        8
+       ]
+      },
+      "result": {
+       "values": [
+        "[]",
+        "[1]",
+        "[1,2]",
+        "[1,2,2]",
+        "[1,2,2,2]",
+        "[1,2,2,2,2]",
+        "[2]",
+        "[2,2]",
+        "[2,2,2]"
+       ],
+       "marks": {
+        "good": [
+         8
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "snacks",
+        "at": 3
+       },
+       "to": {
+        "view": "calls",
+        "at": 8
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 8
+       },
+       "to": {
+        "view": "result",
+        "at": 8
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Take 2 (index 4): the call for [2,2,2,2] adds it to the answer; no snack comes after it, so it returns.",
+      "ko": "4번 칸의 2를 고릅니다. [2,2,2,2] 호출이 이 조합을 답에 넣고, 그 뒤에 남은 간식이 없으므로 돌아갑니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        1,
+        2,
+        2,
+        2,
+        2
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ],
+        "bad": []
+       },
+       "pointers": {}
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[1]"
+        },
+        {
+         "id": 2,
+         "value": "[1,2]"
+        },
+        {
+         "id": 3,
+         "value": "[1,2,2]"
+        },
+        {
+         "id": 4,
+         "value": "[1,2,2,2]"
+        },
+        {
+         "id": 5,
+         "value": "[1,2,2,2,2]"
+        },
+        {
+         "id": 6,
+         "value": "[2]"
+        },
+        {
+         "id": 7,
+         "value": "[2,2]"
+        },
+        {
+         "id": 8,
+         "value": "[2,2,2]"
+        },
+        {
+         "id": 9,
+         "value": "[2,2,2,2]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+1"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+2"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "+2"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "+2"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "+2"
+        },
+        {
+         "from": 0,
+         "to": 6,
+         "label": "+2"
+        },
+        {
+         "from": 6,
+         "to": 7,
+         "label": "+2"
+        },
+        {
+         "from": 7,
+         "to": 8,
+         "label": "+2"
+        },
+        {
+         "from": 8,
+         "to": 9,
+         "label": "+2"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         9
+        ]
+       },
+       "shade": [
+        0,
+        6,
+        7,
+        8,
+        9
+       ]
+      },
+      "result": {
+       "values": [
+        "[]",
+        "[1]",
+        "[1,2]",
+        "[1,2,2]",
+        "[1,2,2,2]",
+        "[1,2,2,2,2]",
+        "[2]",
+        "[2,2]",
+        "[2,2,2]",
+        "[2,2,2,2]"
+       ],
+       "marks": {
+        "good": [
+         9
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "snacks",
+        "at": 4
+       },
+       "to": {
+        "view": "calls",
+        "at": 9
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 9
+       },
+       "to": {
+        "view": "result",
+        "at": 9
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Back in the call for [2,2]: the snack at index 4 is 2 again, the flavor it just tried, so taking it would repeat the combos below +2: skipped. The call returns.",
+      "ko": "[2,2] 호출로 돌아왔습니다. 4번 칸도 방금 시도한 맛 2가 다시 나온 것이라 고르면 +2 아래의 조합이 되풀이되므로 건너뛰고 돌아갑니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        1,
+        2,
+        2,
+        2,
+        2
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2
+        ],
+        "bad": [
+         4
+        ]
+       },
+       "pointers": {
+        "start": 3
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[1]"
+        },
+        {
+         "id": 2,
+         "value": "[1,2]"
+        },
+        {
+         "id": 3,
+         "value": "[1,2,2]"
+        },
+        {
+         "id": 4,
+         "value": "[1,2,2,2]"
+        },
+        {
+         "id": 5,
+         "value": "[1,2,2,2,2]"
+        },
+        {
+         "id": 6,
+         "value": "[2]"
+        },
+        {
+         "id": 7,
+         "value": "[2,2]"
+        },
+        {
+         "id": 8,
+         "value": "[2,2,2]"
+        },
+        {
+         "id": 9,
+         "value": "[2,2,2,2]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+1"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+2"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "+2"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "+2"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "+2"
+        },
+        {
+         "from": 0,
+         "to": 6,
+         "label": "+2"
+        },
+        {
+         "from": 6,
+         "to": 7,
+         "label": "+2"
+        },
+        {
+         "from": 7,
+         "to": 8,
+         "label": "+2"
+        },
+        {
+         "from": 8,
+         "to": 9,
+         "label": "+2"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         7
+        ]
+       },
+       "shade": [
+        0,
+        6,
+        7
+       ]
+      },
+      "result": {
+       "values": [
+        "[]",
+        "[1]",
+        "[1,2]",
+        "[1,2,2]",
+        "[1,2,2,2]",
+        "[1,2,2,2,2]",
+        "[2]",
+        "[2,2]",
+        "[2,2,2]",
+        "[2,2,2,2]"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Back in the call for [2]: the snacks at indexes 3, 4 are 2 again, the flavor it just tried, so taking one would repeat the combos below +2: skipped. The call returns.",
+      "ko": "[2] 호출로 돌아왔습니다. 3, 4번 칸도 방금 시도한 맛 2가 다시 나온 것이라 고르면 +2 아래의 조합이 되풀이되므로 건너뛰고 돌아갑니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        1,
+        2,
+        2,
+        2,
+        2
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1
+        ],
+        "bad": [
+         3,
+         4
+        ]
+       },
+       "pointers": {
+        "start": 2
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[1]"
+        },
+        {
+         "id": 2,
+         "value": "[1,2]"
+        },
+        {
+         "id": 3,
+         "value": "[1,2,2]"
+        },
+        {
+         "id": 4,
+         "value": "[1,2,2,2]"
+        },
+        {
+         "id": 5,
+         "value": "[1,2,2,2,2]"
+        },
+        {
+         "id": 6,
+         "value": "[2]"
+        },
+        {
+         "id": 7,
+         "value": "[2,2]"
+        },
+        {
+         "id": 8,
+         "value": "[2,2,2]"
+        },
+        {
+         "id": 9,
+         "value": "[2,2,2,2]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+1"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+2"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "+2"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "+2"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "+2"
+        },
+        {
+         "from": 0,
+         "to": 6,
+         "label": "+2"
+        },
+        {
+         "from": 6,
+         "to": 7,
+         "label": "+2"
+        },
+        {
+         "from": 7,
+         "to": 8,
+         "label": "+2"
+        },
+        {
+         "from": 8,
+         "to": 9,
+         "label": "+2"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         6
+        ]
+       },
+       "shade": [
+        0,
+        6
+       ]
+      },
+      "result": {
+       "values": [
+        "[]",
+        "[1]",
+        "[1,2]",
+        "[1,2,2]",
+        "[1,2,2,2]",
+        "[1,2,2,2,2]",
+        "[2]",
+        "[2,2]",
+        "[2,2,2]",
+        "[2,2,2,2]"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Back in the call for []: the snacks at indexes 2, 3, 4 are 2 again, the flavor it just tried, so taking one would repeat the combos below +2: skipped. The call returns.",
+      "ko": "[] 호출로 돌아왔습니다. 2, 3, 4번 칸도 방금 시도한 맛 2가 다시 나온 것이라 고르면 +2 아래의 조합이 되풀이되므로 건너뛰고 돌아갑니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        1,
+        2,
+        2,
+        2,
+        2
+       ],
+       "marks": {
+        "dim": [],
+        "bad": [
+         2,
+         3,
+         4
+        ]
+       },
+       "pointers": {
+        "start": 0
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[1]"
+        },
+        {
+         "id": 2,
+         "value": "[1,2]"
+        },
+        {
+         "id": 3,
+         "value": "[1,2,2]"
+        },
+        {
+         "id": 4,
+         "value": "[1,2,2,2]"
+        },
+        {
+         "id": 5,
+         "value": "[1,2,2,2,2]"
+        },
+        {
+         "id": 6,
+         "value": "[2]"
+        },
+        {
+         "id": 7,
+         "value": "[2,2]"
+        },
+        {
+         "id": 8,
+         "value": "[2,2,2]"
+        },
+        {
+         "id": 9,
+         "value": "[2,2,2,2]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+1"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+2"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "+2"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "+2"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "+2"
+        },
+        {
+         "from": 0,
+         "to": 6,
+         "label": "+2"
+        },
+        {
+         "from": 6,
+         "to": 7,
+         "label": "+2"
+        },
+        {
+         "from": 7,
+         "to": 8,
+         "label": "+2"
+        },
+        {
+         "from": 8,
+         "to": 9,
+         "label": "+2"
+        }
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ]
+      },
+      "result": {
+       "values": [
+        "[]",
+        "[1]",
+        "[1,2]",
+        "[1,2,2]",
+        "[1,2,2,2]",
+        "[1,2,2,2,2]",
+        "[2]",
+        "[2,2]",
+        "[2,2,2]",
+        "[2,2,2,2]"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Every call has returned: 10 calls, one per distinct combo, so the answer holds 10 combos.",
+      "ko": "모든 호출이 끝났습니다. 호출 10번이 서로 다른 조합을 하나씩 만들었으니 답에는 조합 10개가 있습니다."
+     },
+     "views": {
+      "snacks": {
+       "values": [
+        1,
+        2,
+        2,
+        2,
+        2
+       ],
+       "marks": {},
+       "pointers": {}
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "[]"
+        },
+        {
+         "id": 1,
+         "value": "[1]"
+        },
+        {
+         "id": 2,
+         "value": "[1,2]"
+        },
+        {
+         "id": 3,
+         "value": "[1,2,2]"
+        },
+        {
+         "id": 4,
+         "value": "[1,2,2,2]"
+        },
+        {
+         "id": 5,
+         "value": "[1,2,2,2,2]"
+        },
+        {
+         "id": 6,
+         "value": "[2]"
+        },
+        {
+         "id": 7,
+         "value": "[2,2]"
+        },
+        {
+         "id": 8,
+         "value": "[2,2,2]"
+        },
+        {
+         "id": 9,
+         "value": "[2,2,2,2]"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "+1"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "+2"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "+2"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "+2"
+        },
+        {
+         "from": 4,
+         "to": 5,
+         "label": "+2"
+        },
+        {
+         "from": 0,
+         "to": 6,
+         "label": "+2"
+        },
+        {
+         "from": 6,
+         "to": 7,
+         "label": "+2"
+        },
+        {
+         "from": 7,
+         "to": 8,
+         "label": "+2"
+        },
+        {
+         "from": 8,
+         "to": 9,
+         "label": "+2"
+        }
+       ],
+       "nodeMarks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7,
+         8,
+         9
+        ]
+       },
+       "shade": []
+      },
+      "result": {
+       "values": [
+        "[]",
+        "[1]",
+        "[1,2]",
+        "[1,2,2]",
+        "[1,2,2,2]",
+        "[1,2,2,2,2]",
+        "[2]",
+        "[2,2]",
+        "[2,2,2]",
+        "[2,2,2,2]"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7,
+         8,
+         9
+        ]
+       }
+      }
+     },
+     "answer": "[[],[1],[1,2],[1,2,2],[1,2,2,2],[1,2,2,2,2],[2],[2,2],[2,2,2],[2,2,2,2]]"
+    }
+   ],
+   "sampleInput": "[2,2,2,1,2]"
+  }
+ ]
+}
