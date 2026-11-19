@@ -15,6 +15,7 @@ export type View =
   | { id: string; type: 'tree'; title?: Text; empty?: Text; /** children take fixed slots (2: a binary tree's left and right) */ arity?: number }
   | { id: string; type: 'linkedlist'; title?: Text; empty?: Text }
   | { id: string; type: 'callstack'; title?: Text; empty?: Text }
+  | { id: string; type: 'stack'; title?: Text; empty?: Text }
   | { id: string; type: 'table'; title?: Text }
   | { id: string; type: 'vars'; title?: Text };
 
@@ -84,11 +85,14 @@ export interface LinkedListState {
 export interface CallStackState {
   calls: { name: Text; args?: Record<string, unknown>; note?: Text }[]; marks?: Marks<number>;
 }
+/** A stack of values drawn upright on a fixed base, bottom first, the top at the top; `tags` label cells above their
+ *  value. Address: a position from the bottom. */
+export interface StackState { values: unknown[]; marks?: Marks<number>; tags?: [number, Text][] }
 export interface TableState { columns?: Text[]; rows: { label: Text; cells: unknown[] }[]; marks?: Marks<[number, number]> }
 /** `why` is never drawn: the reason an item stays in vars though the drawing shows the same value (references/format.md). */
 export interface VarsState { items: { label: Text; value: unknown; mark?: Mark | null; empty?: Text; why?: string }[] }
 
-/** A place in a view: an array or output index, a map key, a set member, a queue position from the front, a grid [row, col], a table [row, col], an intervals [group, index], a graph or tree node id or [from, to] edge, a linked-list node id, a call-stack position from the bottom. Each view type that holds values defines its `at`. */
+/** A place in a view: an array or output index, a map key, a set member, a queue position from the front, a grid [row, col], a table [row, col], an intervals [group, index], a graph or tree node id or [from, to] edge, a linked-list node id, a call-stack or stack position from the bottom. Each view type that holds values defines its `at`. */
 export interface Address { view: string; at: number | string | [number, number] | [string | number, string | number] }
 /** A value going from one place to another. No `from`: created at `to`; no `to`: dropped from `from`.
  *  `value` is the chip's text (default: the source's); `mark` overrides the colour (default: path into an output, bad when dropped, else good). */

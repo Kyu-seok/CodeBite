@@ -52,7 +52,7 @@ class WalkthroughsMatchSamplesTest {
     private static final WalkthroughAddresses ADDRESSES = WalkthroughAddresses.kit();
 
     private static final List<String> VIEW_TYPES = List.of("grid", "array", "map", "set", "output", "queue", "intervals", "graph", "tree", "linkedlist",
-            "callstack", "table", "vars");
+            "callstack", "stack", "table", "vars");
     private static final List<String> MARKS = List.of("lit", "good", "bad", "path", "dim");
 
     /**
@@ -594,8 +594,47 @@ class WalkthroughsMatchSamplesTest {
         assertCaught(walkthrough, samples(1), breakage, expected);
     }
 
+    /**
+     * One run of readings {@code xs} [3, 1, 4] and a stack {@code s} of readings tagged with their day: day 0's 3 is on
+     * the stack, and day 1's 1 moves from its cell onto the top.
+     */
+    private static ObjectNode stackFixture() throws Exception {
+        return walkthrough("[{'id': 'xs', 'type': 'array'}, {'id': 's', 'type': 'stack'}]", """
+                [{'views': {'xs': {'values': [3, 1, 4]}, 's': {'values': [3], 'tags': [[0, 'day 0']]}}},
+                 {'views': {'xs': {'values': [3, 1, 4]},
+                            's': {'values': [3, 1], 'tags': [[0, 'day 0'], [1, {'en': 'day 1', 'ko': '1일차'}]], 'marks': {'good': [1]}}},
+                  'moves': [{'from': {'view': 'xs', 'at': 1}, 'to': {'view': 's', 'at': 1}}]}]""");
+    }
+
     @ParameterizedTest(name = "{0}")
-    @ValueSource(strings = {"samples", "moves", "table", "intervals", "set", "board", "graph", "span", "recursion"})
+    @CsvSource(delimiter = '|', quoteCharacter = '`', value = {
+            "stack values not a list        | view \"s\": values must be a list, bottom first",
+            "stack tag past the top         | view \"s\": tag [2,\"day 2\"] is outside the stack",
+            "stack tag that is not text     | view \"s\": tag [1,5] is not Text",
+            "stack mark past the top        | view \"s\": mark \"lit\" names 2, not a position from the bottom",
+            "push to a place past the top   | is not a position from the bottom of stack \"s\"",
+    })
+    void aBrokenStackIsCaught(String breakage, String expected) throws Exception {
+        ObjectNode walkthrough = stackFixture();
+        ObjectNode frame = (ObjectNode) walkthrough.get("runs").get(0).get("frames").get(1);
+        ObjectNode stack = (ObjectNode) frame.get("views").get("s");
+        switch (breakage) {
+            case "stack values not a list" -> stack.put("values", "3 1");
+            case "stack tag past the top" -> ((ArrayNode) stack.get("tags")).addArray().add(2).add("day 2");
+            case "stack tag that is not text" -> {
+                ArrayNode tag = (ArrayNode) stack.get("tags").get(1);
+                tag.remove(1);
+                tag.add(5);
+            }
+            case "stack mark past the top" -> ((ObjectNode) stack.get("marks")).putArray("lit").add(2);
+            case "push to a place past the top" -> ((ObjectNode) frame.get("moves").get(0).get("to")).put("at", 2);
+            default -> throw new IllegalArgumentException(breakage);
+        }
+        assertCaught(walkthrough, samples(1), breakage, expected);
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @ValueSource(strings = {"samples", "moves", "table", "intervals", "set", "board", "graph", "span", "recursion", "stack"})
     void aFixtureUnbrokenPasses(String fixture) throws Exception {
         ObjectNode walkthrough = switch (fixture) {
             case "samples" -> samplesFixture();
@@ -607,6 +646,7 @@ class WalkthroughsMatchSamplesTest {
             case "graph" -> graphFixture();
             case "span" -> spanFixture();
             case "recursion" -> recursionFixture();
+            case "stack" -> stackFixture();
             default -> throw new IllegalArgumentException(fixture);
         };
         assertEquals(List.of(), mismatches("fixture", walkthrough, samples(walkthrough.get("runs").size())));
@@ -697,6 +737,10 @@ class WalkthroughsMatchSamplesTest {
             "tree child added, only its edge moved into | tree    | {'nodes': [{'id': 0, 'value': 'a'}], 'edges': []} | {'nodes': [{'id': 0, 'value': 'a'}, {'id': 1, 'value': 'b'}], 'edges': [{'from': 0, 'to': 1}]} | [{'from': {'view': 'v', 'at': 0}, 'to': {'view': 'v', 'at': [0, 1]}}] | tree \"v\" at 1 now holds \"b\"",
             "tree edge relabelled, a move into its child only | tree | {'nodes': [{'id': 0, 'value': 'a'}, {'id': 1, 'value': 'b'}], 'edges': [{'from': 0, 'to': 1, 'label': 'x'}]} | {'nodes': [{'id': 0, 'value': 'a'}, {'id': 1, 'value': 'b'}], 'edges': [{'from': 0, 'to': 1, 'label': 'y'}]} | [{'from': {'view': 'v', 'at': 0}, 'to': {'view': 'v', 'at': 1}}] | tree \"v\" at [0,1] now holds \"y\"",
             "call pushed with no move                 | callstack | {'calls': [{'name': 'f', 'args': {'n': 2}}]} | {'calls': [{'name': 'f', 'args': {'n': 2}}, {'name': 'f', 'args': {'n': 1}}]} | [] | callstack \"v\" at 1 now holds {\"n\":1}",
+            "value pushed with no move                | stack     | {'values': [3]}               | {'values': [3, 1]}                        | []                                 | stack \"v\" at 1 now holds 1",
+            "top replaced with no move                | stack     | {'values': [3, 1]}            | {'values': [3, 4]}                        | []                                 | stack \"v\" at 1 now holds 4",
+            "value pushed with no move                | stack     | {'values': [3]}               | {'values': [3, 1]}                        | []                                 | stack \"v\" at 1 now holds 1",
+            "top replaced with no move                | stack     | {'values': [3, 1]}            | {'values': [3, 4]}                        | []                                 | stack \"v\" at 1 now holds 4",
             "graph node value changed                 | graph     | {'nodes': [{'id': 'a'}, {'id': 'b'}], 'edges': [{'from': 'a', 'to': 'b'}]} | {'nodes': [{'id': 'a'}, {'id': 'b'}], 'edges': [{'from': 'a', 'to': 'b'}], 'values': {'b': 7}} | [] | graph \"v\" at b now holds 7",
     })
     void aChangeWithNoMoveIsCaught(String breakage, String type, String before, String after, String moves, String expected)
@@ -716,6 +760,8 @@ class WalkthroughsMatchSamplesTest {
             "tree child added by a move into it       | tree  | {'nodes': [{'id': 0, 'value': 'a'}], 'edges': []} | {'nodes': [{'id': 0, 'value': 'a'}, {'id': 1, 'value': 'b'}], 'edges': [{'from': 0, 'to': 1, 'label': 'x'}]} | [{'from': {'view': 'v', 'at': 0}, 'to': {'view': 'v', 'at': 1}}]",
             "linked list arrow turned                 | linkedlist | {'nodes': [{'id': 1, 'value': 1}, {'id': 2, 'value': 2}], 'next': {'1': 2, '2': null}} | {'nodes': [{'id': 1, 'value': 1}, {'id': 2, 'value': 2}], 'next': {'1': null, '2': 1}} | []",
             "call popped                              | callstack | {'calls': [{'name': 'f', 'args': {'n': 2}}, {'name': 'f', 'args': {'n': 1}}]} | {'calls': [{'name': 'f', 'args': {'n': 2}}]} | []",
+            "value popped                             | stack | {'values': [3, 1]}              | {'values': [3]}                | []",
+            "value popped                             | stack | {'values': [3, 1]}              | {'values': [3]}                | []",
             "only read                                | array | {'values': [1, 2]}              | {'values': [1, 2], 'marks': {'lit': [0]}} | []",
     })
     void aChangeTheRuleAllowsPasses(String allowed, String type, String before, String after, String moves) throws Exception {
@@ -1621,6 +1667,18 @@ class WalkthroughsMatchSamplesTest {
                     if (c.has("note") && !isText(c.get("note"))) p.add("call " + i + ": note is not Text");
                 }
                 p.addAll(marks(s.get("marks"), k -> k.isInt() && k.asInt() >= 0 && k.asInt() < calls.size(), "call position"));
+                yield p;
+            }
+            case "stack" -> {
+                JsonNode values = s.get("values");
+                if (values == null || !values.isArray()) yield List.of("values must be a list, bottom first");
+                Predicate<JsonNode> inside = i -> i != null && i.isInt() && i.asInt() >= 0 && i.asInt() < values.size();
+                List<String> p = new ArrayList<>();
+                for (JsonNode tag : s.path("tags")) {
+                    if (!tag.isArray() || !inside.test(tag.get(0))) p.add("tag " + tag + " is outside the stack");
+                    else if (!isText(tag.get(1))) p.add("tag " + tag + " is not Text");
+                }
+                p.addAll(marks(s.get("marks"), inside, "position from the bottom"));
                 yield p;
             }
             case "table" -> {

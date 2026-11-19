@@ -19,26 +19,18 @@
   },
   {
    "id": "inbox",
-   "type": "array",
+   "type": "stack",
    "title": {
-    "en": "inbox (stack, top on the right)",
-    "ko": "inbox (스택, 오른쪽이 맨 위)"
-   },
-   "empty": {
-    "en": "empty",
-    "ko": "비어 있음"
+    "en": "inbox (stack)",
+    "ko": "inbox (스택)"
    }
   },
   {
    "id": "outbox",
-   "type": "array",
+   "type": "stack",
    "title": {
-    "en": "outbox (stack, top on the right)",
-    "ko": "outbox (스택, 오른쪽이 맨 위)"
-   },
-   "empty": {
-    "en": "empty",
-    "ko": "비어 있음"
+    "en": "outbox (stack)",
+    "ko": "outbox (스택)"
    }
   },
   {

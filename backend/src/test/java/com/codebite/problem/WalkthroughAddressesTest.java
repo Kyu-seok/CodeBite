@@ -26,7 +26,7 @@ class WalkthroughAddressesTest {
     void theCopiedTableNamesTheViewTypesThatTakeAddresses() {
         WalkthroughAddresses kit = WalkthroughAddresses.kit();
         assertEquals(Set.of("grid", "array", "map", "set", "output", "queue", "table", "graph", "intervals", "tree",
-                "linkedlist", "callstack"), kit.viewTypes());
+                "linkedlist", "callstack", "stack"), kit.viewTypes());
     }
 
     @Test

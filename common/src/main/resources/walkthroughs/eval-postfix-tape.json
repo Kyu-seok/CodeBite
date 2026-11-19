@@ -19,10 +19,10 @@
   },
   {
    "id": "stack",
-   "type": "array",
+   "type": "stack",
    "title": {
-    "en": "stack (top on the right)",
-    "ko": "스택 (오른쪽이 맨 위)"
+    "en": "stack",
+    "ko": "스택"
    },
    "empty": {
     "en": "empty",

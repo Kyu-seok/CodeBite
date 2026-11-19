@@ -19,10 +19,10 @@
   },
   {
    "id": "pending",
-   "type": "array",
+   "type": "stack",
    "title": {
-    "en": "pending stack (top on the right)",
-    "ko": "기다리는 날 스택 (오른쪽이 맨 위)"
+    "en": "pending days",
+    "ko": "기다리는 날"
    }
   },
   {
