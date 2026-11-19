@@ -1,0 +1,1351 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Peak Score Streak",
+  "ko": "최고 점수 구간"
+ },
+ "approach": {
+  "en": "The best streak ending on a note either goes on from the streak before it or starts over at that note: start over whenever the streak before has a negative sum, and keep the best sum seen.",
+  "ko": "어떤 노트에서 끝나는 최고의 구간은 앞 구간에 이어 붙이거나 그 노트에서 새로 시작합니다. 앞 구간의 합이 음수이면 새로 시작하고, 지금까지 본 가장 큰 합을 기억합니다."
+ },
+ "views": [
+  {
+   "id": "nums",
+   "type": "array",
+   "title": {
+    "en": "nums (points per note)",
+    "ko": "nums (노트별 점수)"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "nums = [3,-2,5,-1,2,-8,4,3]",
+   "expected": "7",
+   "frames": [
+    {
+     "caption": {
+      "en": "8 notes. The streak ending on note 0 can only be [3], so it sums to 3, and that is the best so far.",
+      "ko": "노트가 8개입니다. 노트 0에서 끝나는 구간은 [3] 하나뿐이라 합이 3이고, 지금까지의 최고 합도 3입니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        3,
+        -2,
+        5,
+        -1,
+        2,
+        -8,
+        4,
+        3
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "under": [
+        [
+         0,
+         "3"
+        ]
+       ],
+       "spans": {
+        "best": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "best 3",
+          "ko": "best (최고 합) 3"
+         },
+         "below": true
+        },
+        "streak": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "sum 3",
+          "ko": "합 3"
+         }
+        }
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+       ],
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         0
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The streak before sums to 3, not negative, so it goes on: 3 − 2 = 1. The best stays 3.",
+      "ko": "앞 구간의 합 3이 음수가 아니므로 이어 붙입니다: 3 − 2 = 1. 최고 합은 3 그대로입니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        3,
+        -2,
+        5,
+        -1,
+        2,
+        -8,
+        4,
+        3
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "under": [
+        [
+         0,
+         "3"
+        ],
+        [
+         1,
+         "1"
+        ]
+       ],
+       "spans": {
+        "best": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "best 3",
+          "ko": "best (최고 합) 3"
+         },
+         "below": true
+        },
+        "streak": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "sum 1",
+          "ko": "합 1"
+         }
+        }
+       },
+       "unread": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+       ],
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 0
+       },
+       "to": {
+        "view": "nums",
+        "at": 1
+       },
+       "value": "3−2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The streak before sums to 1, not negative, so it goes on: 1 + 5 = 6. 6 beats the best, 3.",
+      "ko": "앞 구간의 합 1이 음수가 아니므로 이어 붙입니다: 1 + 5 = 6. 6이 최고 합 3보다 큽니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        3,
+        -2,
+        5,
+        -1,
+        2,
+        -8,
+        4,
+        3
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "under": [
+        [
+         0,
+         "3"
+        ],
+        [
+         1,
+         "1"
+        ],
+        [
+         2,
+         "6"
+        ]
+       ],
+       "spans": {
+        "best": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "best 6",
+          "ko": "best (최고 합) 6"
+         },
+         "mark": "good",
+         "below": true
+        },
+        "streak": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "sum 6",
+          "ko": "합 6"
+         },
+         "mark": "good"
+        }
+       },
+       "unread": [
+        3,
+        4,
+        5,
+        6,
+        7
+       ],
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 1
+       },
+       "to": {
+        "view": "nums",
+        "at": 2
+       },
+       "value": "1+5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The streak before sums to 6, not negative, so it goes on: 6 − 1 = 5. The best stays 6.",
+      "ko": "앞 구간의 합 6이 음수가 아니므로 이어 붙입니다: 6 − 1 = 5. 최고 합은 6 그대로입니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        3,
+        -2,
+        5,
+        -1,
+        2,
+        -8,
+        4,
+        3
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "under": [
+        [
+         0,
+         "3"
+        ],
+        [
+         1,
+         "1"
+        ],
+        [
+         2,
+         "6"
+        ],
+        [
+         3,
+         "5"
+        ]
+       ],
+       "spans": {
+        "best": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "best 6",
+          "ko": "best (최고 합) 6"
+         },
+         "below": true
+        },
+        "streak": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "sum 5",
+          "ko": "합 5"
+         }
+        }
+       },
+       "unread": [
+        4,
+        5,
+        6,
+        7
+       ],
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 2
+       },
+       "to": {
+        "view": "nums",
+        "at": 3
+       },
+       "value": "6−1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The streak before sums to 5, not negative, so it goes on: 5 + 2 = 7. 7 beats the best, 6.",
+      "ko": "앞 구간의 합 5가 음수가 아니므로 이어 붙입니다: 5 + 2 = 7. 7이 최고 합 6보다 큽니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        3,
+        -2,
+        5,
+        -1,
+        2,
+        -8,
+        4,
+        3
+       ],
+       "pointers": {
+        "i": 4
+       },
+       "under": [
+        [
+         0,
+         "3"
+        ],
+        [
+         1,
+         "1"
+        ],
+        [
+         2,
+         "6"
+        ],
+        [
+         3,
+         "5"
+        ],
+        [
+         4,
+         "7"
+        ]
+       ],
+       "spans": {
+        "best": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "best 7",
+          "ko": "best (최고 합) 7"
+         },
+         "mark": "good",
+         "below": true
+        },
+        "streak": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "sum 7",
+          "ko": "합 7"
+         },
+         "mark": "good"
+        }
+       },
+       "unread": [
+        5,
+        6,
+        7
+       ],
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 3
+       },
+       "to": {
+        "view": "nums",
+        "at": 4
+       },
+       "value": "5+2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The streak before sums to 7, not negative, so it goes on: 7 − 8 = -1. The best stays 7.",
+      "ko": "앞 구간의 합 7이 음수가 아니므로 이어 붙입니다: 7 − 8 = -1. 최고 합은 7 그대로입니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        3,
+        -2,
+        5,
+        -1,
+        2,
+        -8,
+        4,
+        3
+       ],
+       "pointers": {
+        "i": 5
+       },
+       "under": [
+        [
+         0,
+         "3"
+        ],
+        [
+         1,
+         "1"
+        ],
+        [
+         2,
+         "6"
+        ],
+        [
+         3,
+         "5"
+        ],
+        [
+         4,
+         "7"
+        ],
+        [
+         5,
+         "-1"
+        ]
+       ],
+       "spans": {
+        "best": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "best 7",
+          "ko": "best (최고 합) 7"
+         },
+         "below": true
+        },
+        "streak": {
+         "from": 0,
+         "to": 5,
+         "label": {
+          "en": "sum -1",
+          "ko": "합 -1"
+         }
+        }
+       },
+       "unread": [
+        6,
+        7
+       ],
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         5
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 4
+       },
+       "to": {
+        "view": "nums",
+        "at": 5
+       },
+       "value": "7−8"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The streak before sums to -1, below 0, so it would only drag 4 down: start over at 4. The best stays 7.",
+      "ko": "앞 구간의 합 -1이 0보다 작아 4를 깎을 뿐이므로, 4에서 새로 시작합니다. 최고 합은 7 그대로입니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        3,
+        -2,
+        5,
+        -1,
+        2,
+        -8,
+        4,
+        3
+       ],
+       "pointers": {
+        "i": 6
+       },
+       "under": [
+        [
+         0,
+         "3"
+        ],
+        [
+         1,
+         "1"
+        ],
+        [
+         2,
+         "6"
+        ],
+        [
+         3,
+         "5"
+        ],
+        [
+         4,
+         "7"
+        ],
+        [
+         5,
+         "-1"
+        ],
+        [
+         6,
+         "4"
+        ]
+       ],
+       "spans": {
+        "best": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "best 7",
+          "ko": "best (최고 합) 7"
+         },
+         "below": true
+        },
+        "streak": {
+         "from": 6,
+         "to": 6,
+         "label": {
+          "en": "sum 4",
+          "ko": "합 4"
+         }
+        }
+       },
+       "unread": [
+        7
+       ],
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         6
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The streak before sums to 4, not negative, so it goes on: 4 + 3 = 7. The best stays 7.",
+      "ko": "앞 구간의 합 4가 음수가 아니므로 이어 붙입니다: 4 + 3 = 7. 최고 합은 7 그대로입니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        3,
+        -2,
+        5,
+        -1,
+        2,
+        -8,
+        4,
+        3
+       ],
+       "pointers": {
+        "i": 7
+       },
+       "under": [
+        [
+         0,
+         "3"
+        ],
+        [
+         1,
+         "1"
+        ],
+        [
+         2,
+         "6"
+        ],
+        [
+         3,
+         "5"
+        ],
+        [
+         4,
+         "7"
+        ],
+        [
+         5,
+         "-1"
+        ],
+        [
+         6,
+         "4"
+        ],
+        [
+         7,
+         "7"
+        ]
+       ],
+       "spans": {
+        "best": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "best 7",
+          "ko": "best (최고 합) 7"
+         },
+         "below": true
+        },
+        "streak": {
+         "from": 6,
+         "to": 7,
+         "label": {
+          "en": "sum 7",
+          "ko": "합 7"
+         }
+        }
+       },
+       "unread": [],
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         7
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 6
+       },
+       "to": {
+        "view": "nums",
+        "at": 7
+       },
+       "value": "4+3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every note read. The best streak is notes 0 to 4, [3,-2,5,-1,2], with sum 7. Answer: 7.",
+      "ko": "모든 노트를 읽었습니다. 가장 좋은 구간은 노트 0부터 4까지의 [3,-2,5,-1,2] 구간으로 합이 7입니다. 답은 7입니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        3,
+        -2,
+        5,
+        -1,
+        2,
+        -8,
+        4,
+        3
+       ],
+       "pointers": {
+        "i": null
+       },
+       "under": [
+        [
+         0,
+         "3"
+        ],
+        [
+         1,
+         "1"
+        ],
+        [
+         2,
+         "6"
+        ],
+        [
+         3,
+         "5"
+        ],
+        [
+         4,
+         "7"
+        ],
+        [
+         5,
+         "-1"
+        ],
+        [
+         6,
+         "4"
+        ],
+        [
+         7,
+         "7"
+        ]
+       ],
+       "spans": {
+        "best": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "best 7",
+          "ko": "best (최고 합) 7"
+         },
+         "mark": "path",
+         "below": true
+        }
+       },
+       "unread": [],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ],
+        "good": [],
+        "lit": []
+       }
+      }
+     },
+     "answer": "7"
+    }
+   ],
+   "sampleInput": "[3,-2,5,-1,2,-8,4,3]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "nums = [-4]",
+   "expected": "-4",
+   "frames": [
+    {
+     "caption": {
+      "en": "1 note. The streak ending on note 0 can only be [-4], so it sums to -4, and that is the best so far.",
+      "ko": "노트가 1개입니다. 노트 0에서 끝나는 구간은 [-4] 하나뿐이라 합이 -4이고, 지금까지의 최고 합도 -4입니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        -4
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "under": [
+        [
+         0,
+         "-4"
+        ]
+       ],
+       "spans": {
+        "best": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "best -4",
+          "ko": "best (최고 합) -4"
+         },
+         "below": true
+        },
+        "streak": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "sum -4",
+          "ko": "합 -4"
+         }
+        }
+       },
+       "unread": [],
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         0
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Every note read. The best streak is note 0 alone, [-4], with sum -4. Answer: -4.",
+      "ko": "모든 노트를 읽었습니다. 가장 좋은 구간은 노트 0 하나뿐인 [-4] 구간으로 합이 -4입니다. 답은 -4입니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        -4
+       ],
+       "pointers": {
+        "i": null
+       },
+       "under": [
+        [
+         0,
+         "-4"
+        ]
+       ],
+       "spans": {
+        "best": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "best -4",
+          "ko": "best (최고 합) -4"
+         },
+         "mark": "path",
+         "below": true
+        }
+       },
+       "unread": [],
+       "marks": {
+        "path": [
+         0
+        ],
+        "good": [],
+        "lit": []
+       }
+      }
+     },
+     "answer": "-4"
+    }
+   ],
+   "sampleInput": "[-4]"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "nums = [2,1,-3,6,4]",
+   "expected": "10",
+   "frames": [
+    {
+     "caption": {
+      "en": "5 notes. The streak ending on note 0 can only be [2], so it sums to 2, and that is the best so far.",
+      "ko": "노트가 5개입니다. 노트 0에서 끝나는 구간은 [2] 하나뿐이라 합이 2이고, 지금까지의 최고 합도 2입니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        2,
+        1,
+        -3,
+        6,
+        4
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "under": [
+        [
+         0,
+         "2"
+        ]
+       ],
+       "spans": {
+        "best": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "best 2",
+          "ko": "best (최고 합) 2"
+         },
+         "below": true
+        },
+        "streak": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "sum 2",
+          "ko": "합 2"
+         }
+        }
+       },
+       "unread": [
+        1,
+        2,
+        3,
+        4
+       ],
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         0
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The streak before sums to 2, not negative, so it goes on: 2 + 1 = 3. 3 beats the best, 2.",
+      "ko": "앞 구간의 합 2가 음수가 아니므로 이어 붙입니다: 2 + 1 = 3. 3이 최고 합 2보다 큽니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        2,
+        1,
+        -3,
+        6,
+        4
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "under": [
+        [
+         0,
+         "2"
+        ],
+        [
+         1,
+         "3"
+        ]
+       ],
+       "spans": {
+        "best": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "best 3",
+          "ko": "best (최고 합) 3"
+         },
+         "mark": "good",
+         "below": true
+        },
+        "streak": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "sum 3",
+          "ko": "합 3"
+         },
+         "mark": "good"
+        }
+       },
+       "unread": [
+        2,
+        3,
+        4
+       ],
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 0
+       },
+       "to": {
+        "view": "nums",
+        "at": 1
+       },
+       "value": "2+1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The streak before sums to 3, not negative, so it goes on: 3 − 3 = 0. The best stays 3.",
+      "ko": "앞 구간의 합 3이 음수가 아니므로 이어 붙입니다: 3 − 3 = 0. 최고 합은 3 그대로입니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        2,
+        1,
+        -3,
+        6,
+        4
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "under": [
+        [
+         0,
+         "2"
+        ],
+        [
+         1,
+         "3"
+        ],
+        [
+         2,
+         "0"
+        ]
+       ],
+       "spans": {
+        "best": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "best 3",
+          "ko": "best (최고 합) 3"
+         },
+         "below": true
+        },
+        "streak": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "sum 0",
+          "ko": "합 0"
+         }
+        }
+       },
+       "unread": [
+        3,
+        4
+       ],
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 1
+       },
+       "to": {
+        "view": "nums",
+        "at": 2
+       },
+       "value": "3−3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The streak before sums to 0, not negative, so it goes on: 0 + 6 = 6. 6 beats the best, 3.",
+      "ko": "앞 구간의 합 0이 음수가 아니므로 이어 붙입니다: 0 + 6 = 6. 6이 최고 합 3보다 큽니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        2,
+        1,
+        -3,
+        6,
+        4
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "under": [
+        [
+         0,
+         "2"
+        ],
+        [
+         1,
+         "3"
+        ],
+        [
+         2,
+         "0"
+        ],
+        [
+         3,
+         "6"
+        ]
+       ],
+       "spans": {
+        "best": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "best 6",
+          "ko": "best (최고 합) 6"
+         },
+         "mark": "good",
+         "below": true
+        },
+        "streak": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "sum 6",
+          "ko": "합 6"
+         },
+         "mark": "good"
+        }
+       },
+       "unread": [
+        4
+       ],
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 2
+       },
+       "to": {
+        "view": "nums",
+        "at": 3
+       },
+       "value": "0+6"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The streak before sums to 6, not negative, so it goes on: 6 + 4 = 10. 10 beats the best, 6.",
+      "ko": "앞 구간의 합 6이 음수가 아니므로 이어 붙입니다: 6 + 4 = 10. 10이 최고 합 6보다 큽니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        2,
+        1,
+        -3,
+        6,
+        4
+       ],
+       "pointers": {
+        "i": 4
+       },
+       "under": [
+        [
+         0,
+         "2"
+        ],
+        [
+         1,
+         "3"
+        ],
+        [
+         2,
+         "0"
+        ],
+        [
+         3,
+         "6"
+        ],
+        [
+         4,
+         "10"
+        ]
+       ],
+       "spans": {
+        "best": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "best 10",
+          "ko": "best (최고 합) 10"
+         },
+         "mark": "good",
+         "below": true
+        },
+        "streak": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "sum 10",
+          "ko": "합 10"
+         },
+         "mark": "good"
+        }
+       },
+       "unread": [],
+       "marks": {
+        "path": [],
+        "good": [],
+        "lit": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "nums",
+        "at": 3
+       },
+       "to": {
+        "view": "nums",
+        "at": 4
+       },
+       "value": "6+4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every note read. The best streak is notes 0 to 4, [2,1,-3,6,4], with sum 10. Answer: 10.",
+      "ko": "모든 노트를 읽었습니다. 가장 좋은 구간은 노트 0부터 4까지의 [2,1,-3,6,4] 구간으로 합이 10입니다. 답은 10입니다."
+     },
+     "views": {
+      "nums": {
+       "values": [
+        2,
+        1,
+        -3,
+        6,
+        4
+       ],
+       "pointers": {
+        "i": null
+       },
+       "under": [
+        [
+         0,
+         "2"
+        ],
+        [
+         1,
+         "3"
+        ],
+        [
+         2,
+         "0"
+        ],
+        [
+         3,
+         "6"
+        ],
+        [
+         4,
+         "10"
+        ]
+       ],
+       "spans": {
+        "best": {
+         "from": 0,
+         "to": 4,
+         "label": {
+          "en": "best 10",
+          "ko": "best (최고 합) 10"
+         },
+         "mark": "path",
+         "below": true
+        }
+       },
+       "unread": [],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ],
+        "good": [],
+        "lit": []
+       }
+      }
+     },
+     "answer": "10"
+    }
+   ],
+   "sampleInput": "[2,1,-3,6,4]"
+  }
+ ]
+}
