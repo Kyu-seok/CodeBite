@@ -1,0 +1,1117 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Longest Folder Path",
+  "ko": "가장 긴 폴더 경로"
+ },
+ "approach": {
+  "en": "Every path bends at one highest folder, so it is that folder's longest chain down on the left plus its longest chain down on the right. One pass from the leaves up: each folder returns its height, and adds its two children's heights to try the path bending there.",
+  "ko": "모든 경로는 가장 높은 폴더 하나에서 꺾이므로, 그 폴더의 왼쪽으로 가장 긴 체인과 오른쪽으로 가장 긴 체인을 이은 것입니다. 리프에서 위로 한 번 훑으며 각 폴더는 자기 높이를 돌려주고, 두 자식의 높이를 더해 거기서 꺾이는 경로를 재 봅니다."
+ },
+ "views": [
+  {
+   "id": "tree",
+   "type": "tree",
+   "arity": 2,
+   "title": {
+    "en": "root (under each node: the height it returns)",
+    "ko": "root (노드 아래: 돌려주는 높이)"
+   }
+  },
+  {
+   "id": "best",
+   "type": "output",
+   "title": {
+    "en": "best: longest path so far, in edges",
+    "ko": "best (지금까지 가장 긴 경로의 간선 수)"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "root = [7,3,8,1,4,null,9]",
+   "expected": "4",
+   "frames": [
+    {
+     "caption": {
+      "en": "A folder tree of 6 folders. Each call returns its folder's height; best starts at 0 edges.",
+      "ko": "폴더 6개짜리 트리입니다. 각 호출은 자기 폴더의 높이를 돌려주며, best는 간선 0개에서 시작합니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": []
+       },
+       "shade": [],
+       "edgeMarks": {},
+       "tags": []
+      },
+      "best": {
+       "values": [
+        "0"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "7 has children: first find its left child 3's height.",
+      "ko": "7은 자식이 있으므로 먼저 왼쪽 자식 3의 높이를 구합니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ],
+       "edgeMarks": {},
+       "tags": []
+      },
+      "best": {
+       "values": [
+        "0"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "3 has children: first find its left child 1's height.",
+      "ko": "3은 자식이 있으므로 먼저 왼쪽 자식 1의 높이를 구합니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         1
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ],
+       "edgeMarks": {},
+       "tags": []
+      },
+      "best": {
+       "values": [
+        "0"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "1 is a leaf: height 1, and no path bends here (0 edges).",
+      "ko": "1은 리프입니다. 높이는 1이고, 여기서 꺾이는 경로는 간선 0개입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "good": [
+         3
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ],
+       "edgeMarks": {},
+       "tags": [
+        [
+         3,
+         {
+          "en": "height 1",
+          "ko": "높이 1"
+         }
+        ]
+       ]
+      },
+      "best": {
+       "values": [
+        "0"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "4 is a leaf: height 1, and no path bends here (0 edges).",
+      "ko": "4는 리프입니다. 높이는 1이고, 여기서 꺾이는 경로는 간선 0개입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         3
+        ],
+        "good": [
+         4
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ],
+       "edgeMarks": {},
+       "tags": [
+        [
+         3,
+         {
+          "en": "height 1",
+          "ko": "높이 1"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "height 1",
+          "ko": "높이 1"
+         }
+        ]
+       ]
+      },
+      "best": {
+       "values": [
+        "0"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "3: left height 1 + right height 1 = 2 edges bending here, a new best. It returns 1 + 1 = 2.",
+      "ko": "3: 왼쪽 높이 1 + 오른쪽 높이 1 = 간선 2개가 여기서 꺾이며 새 best입니다. 1 + 1 = 2를 돌려줍니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         3,
+         4
+        ],
+        "good": [
+         1
+        ]
+       },
+       "shade": [
+        0
+       ],
+       "edgeMarks": {},
+       "tags": [
+        [
+         3,
+         {
+          "en": "height 1",
+          "ko": "높이 1"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "height 1",
+          "ko": "높이 1"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "height 2",
+          "ko": "높이 2"
+         }
+        ]
+       ]
+      },
+      "best": {
+       "values": [
+        "2"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 3
+       },
+       "to": {
+        "view": "tree",
+        "at": 1
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "tree",
+        "at": 4
+       },
+       "to": {
+        "view": "tree",
+        "at": 1
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "tree",
+        "at": 1
+       },
+       "to": {
+        "view": "best",
+        "at": 0
+       },
+       "value": "2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "8's left side is empty (height 0): find its right child 9's height.",
+      "ko": "8의 왼쪽은 비어 있으므로(높이 0) 오른쪽 자식 9의 높이를 구합니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         3,
+         4,
+         1
+        ],
+        "lit": [
+         2
+        ]
+       },
+       "shade": [
+        0,
+        2
+       ],
+       "edgeMarks": {},
+       "tags": [
+        [
+         3,
+         {
+          "en": "height 1",
+          "ko": "높이 1"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "height 1",
+          "ko": "높이 1"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "height 2",
+          "ko": "높이 2"
+         }
+        ]
+       ]
+      },
+      "best": {
+       "values": [
+        "2"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "9 is a leaf: height 1, and no path bends here (0 edges).",
+      "ko": "9는 리프입니다. 높이는 1이고, 여기서 꺾이는 경로는 간선 0개입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         3,
+         4,
+         1
+        ],
+        "good": [
+         6
+        ]
+       },
+       "shade": [
+        0,
+        2
+       ],
+       "edgeMarks": {},
+       "tags": [
+        [
+         3,
+         {
+          "en": "height 1",
+          "ko": "높이 1"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "height 1",
+          "ko": "높이 1"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "height 2",
+          "ko": "높이 2"
+         }
+        ],
+        [
+         6,
+         {
+          "en": "height 1",
+          "ko": "높이 1"
+         }
+        ]
+       ]
+      },
+      "best": {
+       "values": [
+        "2"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "8: left height 0 + right height 1 = 1 edge bending here, not more than best 2. It returns 1 + 1 = 2.",
+      "ko": "8: 왼쪽 높이 0 + 오른쪽 높이 1 = 간선 1개가 여기서 꺾이며 best 2보다 길지 않습니다. 1 + 1 = 2를 돌려줍니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         3,
+         4,
+         1,
+         6
+        ],
+        "good": [
+         2
+        ]
+       },
+       "shade": [
+        0
+       ],
+       "edgeMarks": {},
+       "tags": [
+        [
+         3,
+         {
+          "en": "height 1",
+          "ko": "높이 1"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "height 1",
+          "ko": "높이 1"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "height 2",
+          "ko": "높이 2"
+         }
+        ],
+        [
+         6,
+         {
+          "en": "height 1",
+          "ko": "높이 1"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "height 2",
+          "ko": "높이 2"
+         }
+        ]
+       ]
+      },
+      "best": {
+       "values": [
+        "2"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 6
+       },
+       "to": {
+        "view": "tree",
+        "at": 2
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "7: left height 2 + right height 2 = 4 edges bending here, a new best. It returns 1 + 2 = 3.",
+      "ko": "7: 왼쪽 높이 2 + 오른쪽 높이 2 = 간선 4개가 여기서 꺾이며 새 best입니다. 1 + 2 = 3을 돌려줍니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         3,
+         4,
+         1,
+         6,
+         2
+        ],
+        "good": [
+         0
+        ]
+       },
+       "shade": [],
+       "edgeMarks": {},
+       "tags": [
+        [
+         3,
+         {
+          "en": "height 1",
+          "ko": "높이 1"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "height 1",
+          "ko": "높이 1"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "height 2",
+          "ko": "높이 2"
+         }
+        ],
+        [
+         6,
+         {
+          "en": "height 1",
+          "ko": "높이 1"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "height 2",
+          "ko": "높이 2"
+         }
+        ],
+        [
+         0,
+         {
+          "en": "height 3",
+          "ko": "높이 3"
+         }
+        ]
+       ]
+      },
+      "best": {
+       "values": [
+        "4"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 1
+       },
+       "to": {
+        "view": "tree",
+        "at": 0
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "tree",
+        "at": 2
+       },
+       "to": {
+        "view": "tree",
+        "at": 0
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "tree",
+        "at": 0
+       },
+       "to": {
+        "view": "best",
+        "at": 0
+       },
+       "value": "4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The longest path bends at 7: 1 -> 3 -> 7 -> 8 -> 9, 4 edges.",
+      "ko": "가장 긴 경로는 7에서 꺾이는 경로 1 -> 3 -> 7 -> 8 -> 9, 간선 4개입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "path": [
+         3,
+         1,
+         0,
+         2,
+         6
+        ],
+        "dim": [
+         4
+        ]
+       },
+       "shade": [],
+       "edgeMarks": {
+        "path": [
+         [
+          1,
+          3
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          0,
+          2
+         ],
+         [
+          2,
+          6
+         ]
+        ]
+       },
+       "tags": [
+        [
+         3,
+         {
+          "en": "height 1",
+          "ko": "높이 1"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "height 1",
+          "ko": "높이 1"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "height 2",
+          "ko": "높이 2"
+         }
+        ],
+        [
+         6,
+         {
+          "en": "height 1",
+          "ko": "높이 1"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "height 2",
+          "ko": "높이 2"
+         }
+        ],
+        [
+         0,
+         {
+          "en": "height 3",
+          "ko": "높이 3"
+         }
+        ]
+       ]
+      },
+      "best": {
+       "values": [
+        "4"
+       ],
+       "marks": {}
+      }
+     },
+     "answer": "4"
+    }
+   ],
+   "setup": {
+    "tree": {
+     "nodes": [
+      {
+       "id": 0,
+       "value": 7
+      },
+      {
+       "id": 1,
+       "value": 3
+      },
+      {
+       "id": 2,
+       "value": 8
+      },
+      {
+       "id": 3,
+       "value": 1
+      },
+      {
+       "id": 4,
+       "value": 4
+      },
+      {
+       "id": 6,
+       "value": 9
+      }
+     ],
+     "edges": [
+      {
+       "from": 0,
+       "to": 1,
+       "slot": 0
+      },
+      {
+       "from": 0,
+       "to": 2,
+       "slot": 1
+      },
+      {
+       "from": 1,
+       "to": 3,
+       "slot": 0
+      },
+      {
+       "from": 1,
+       "to": 4,
+       "slot": 1
+      },
+      {
+       "from": 2,
+       "to": 6,
+       "slot": 1
+      }
+     ]
+    }
+   },
+   "sampleInput": "[7,3,8,1,4,null,9]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "root = [2,null,5,3]",
+   "expected": "2",
+   "frames": [
+    {
+     "caption": {
+      "en": "A folder tree of 3 folders. Each call returns its folder's height; best starts at 0 edges.",
+      "ko": "폴더 3개짜리 트리입니다. 각 호출은 자기 폴더의 높이를 돌려주며, best는 간선 0개에서 시작합니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": []
+       },
+       "shade": [],
+       "edgeMarks": {},
+       "tags": []
+      },
+      "best": {
+       "values": [
+        "0"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "2's left side is empty (height 0): find its right child 5's height.",
+      "ko": "2의 왼쪽은 비어 있으므로(높이 0) 오른쪽 자식 5의 높이를 구합니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ],
+       "edgeMarks": {},
+       "tags": []
+      },
+      "best": {
+       "values": [
+        "0"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "5 has children: first find its left child 3's height.",
+      "ko": "5는 자식이 있으므로 먼저 왼쪽 자식 3의 높이를 구합니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         2
+        ]
+       },
+       "shade": [
+        0,
+        2
+       ],
+       "edgeMarks": {},
+       "tags": []
+      },
+      "best": {
+       "values": [
+        "0"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "3 is a leaf: height 1, and no path bends here (0 edges).",
+      "ko": "3은 리프입니다. 높이는 1이고, 여기서 꺾이는 경로는 간선 0개입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "good": [
+         3
+        ]
+       },
+       "shade": [
+        0,
+        2
+       ],
+       "edgeMarks": {},
+       "tags": [
+        [
+         3,
+         {
+          "en": "height 1",
+          "ko": "높이 1"
+         }
+        ]
+       ]
+      },
+      "best": {
+       "values": [
+        "0"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "5: left height 1 + right height 0 = 1 edge bending here, a new best. It returns 1 + 1 = 2.",
+      "ko": "5: 왼쪽 높이 1 + 오른쪽 높이 0 = 간선 1개가 여기서 꺾이며 새 best입니다. 1 + 1 = 2를 돌려줍니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         3
+        ],
+        "good": [
+         2
+        ]
+       },
+       "shade": [
+        0
+       ],
+       "edgeMarks": {},
+       "tags": [
+        [
+         3,
+         {
+          "en": "height 1",
+          "ko": "높이 1"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "height 2",
+          "ko": "높이 2"
+         }
+        ]
+       ]
+      },
+      "best": {
+       "values": [
+        "1"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 3
+       },
+       "to": {
+        "view": "tree",
+        "at": 2
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "tree",
+        "at": 2
+       },
+       "to": {
+        "view": "best",
+        "at": 0
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "2: left height 0 + right height 2 = 2 edges bending here, a new best. It returns 1 + 2 = 3.",
+      "ko": "2: 왼쪽 높이 0 + 오른쪽 높이 2 = 간선 2개가 여기서 꺾이며 새 best입니다. 1 + 2 = 3을 돌려줍니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         3,
+         2
+        ],
+        "good": [
+         0
+        ]
+       },
+       "shade": [],
+       "edgeMarks": {},
+       "tags": [
+        [
+         3,
+         {
+          "en": "height 1",
+          "ko": "높이 1"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "height 2",
+          "ko": "높이 2"
+         }
+        ],
+        [
+         0,
+         {
+          "en": "height 3",
+          "ko": "높이 3"
+         }
+        ]
+       ]
+      },
+      "best": {
+       "values": [
+        "2"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 2
+       },
+       "to": {
+        "view": "tree",
+        "at": 0
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "tree",
+        "at": 0
+       },
+       "to": {
+        "view": "best",
+        "at": 0
+       },
+       "value": "2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The longest path bends at 2: 2 -> 5 -> 3, 2 edges.",
+      "ko": "가장 긴 경로는 2에서 꺾이는 경로 2 -> 5 -> 3, 간선 2개입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "path": [
+         0,
+         2,
+         3
+        ],
+        "dim": []
+       },
+       "shade": [],
+       "edgeMarks": {
+        "path": [
+         [
+          0,
+          2
+         ],
+         [
+          2,
+          3
+         ]
+        ]
+       },
+       "tags": [
+        [
+         3,
+         {
+          "en": "height 1",
+          "ko": "높이 1"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "height 2",
+          "ko": "높이 2"
+         }
+        ],
+        [
+         0,
+         {
+          "en": "height 3",
+          "ko": "높이 3"
+         }
+        ]
+       ]
+      },
+      "best": {
+       "values": [
+        "2"
+       ],
+       "marks": {}
+      }
+     },
+     "answer": "2"
+    }
+   ],
+   "setup": {
+    "tree": {
+     "nodes": [
+      {
+       "id": 0,
+       "value": 2
+      },
+      {
+       "id": 2,
+       "value": 5
+      },
+      {
+       "id": 3,
+       "value": 3
+      }
+     ],
+     "edges": [
+      {
+       "from": 0,
+       "to": 2,
+       "slot": 1
+      },
+      {
+       "from": 2,
+       "to": 3,
+       "slot": 0
+      }
+     ]
+    }
+   },
+   "sampleInput": "[2,null,5,3]"
+  }
+ ]
+}
