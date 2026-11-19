@@ -232,6 +232,23 @@
 .wt-cscall.wt-path { border-color: var(--wt-accent); }
 .wt-cscall.wt-dim { opacity: .4; }
 
+/* stack: cells piled upright in a cup open at the top, the bottom on a fixed base, the top marked beside the cup */
+.wt-stack { display: flex; flex-direction: column; gap: 4px; width: max-content; min-width: 64px; margin-right: 64px; padding: 6px; border: 2px solid var(--wt-lo); border-top: none; border-bottom-width: 3px; border-radius: 0 0 9px 9px; background: var(--wt-bg); }
+.wt-stackitem { position: relative; display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 5px 10px; background: var(--wt-card); border: 2px solid var(--wt-faint); border-radius: 7px; transition: border-color .3s, background .3s, opacity .3s; }
+.wt-stacktag { font: 600 10px/13px var(--wt-mono); color: var(--wt-mid); white-space: nowrap; }
+.wt-stackval { font: 600 14px/18px var(--wt-mono); white-space: nowrap; }
+.wt-stacktop { position: absolute; left: calc(100% + 12px); top: 50%; transform: translateY(-50%); font: 600 11px var(--wt-sans); color: var(--wt-mid); white-space: nowrap; }
+.wt-stackitem.wt-stackspace { visibility: hidden; } /* room kept for a value a later frame pushes */
+.wt-stackitem.wt-stackempty { background: none; border-color: transparent; }
+.wt-stackempty .wt-stackval { font: italic 13px/18px var(--wt-sans); color: var(--wt-lo); }
+.wt-stackitem.wt-lit { border-color: var(--wt-accent); background: var(--wt-accent-soft); }
+.wt-stackitem.wt-good { border-color: var(--wt-good); background: var(--wt-good-soft); }
+.wt-stackitem.wt-good .wt-stacktag { color: var(--wt-good); }
+.wt-stackitem.wt-bad { border-color: var(--wt-bad); background: var(--wt-bad-soft); }
+.wt-stackitem.wt-path { border-color: var(--wt-accent); color: var(--wt-card); background: var(--wt-accent); }
+.wt-stackitem.wt-path .wt-stacktag { color: var(--wt-card); }
+.wt-stackitem.wt-dim { opacity: .35; }
+
 /* table */
 .wt-table { border-collapse: separate; border-spacing: 4px; font-size: 13px; }
 .wt-table th { font-weight: 400; font-size: 11px; color: var(--wt-lo); text-align: center; }

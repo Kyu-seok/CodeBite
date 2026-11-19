@@ -14,7 +14,7 @@
 
 A value going from one place to another is a move, by address (an array or output index, a map key, a set member,
 a queue position from the front, a grid or table [row, col], an intervals [group, index], a graph or tree node id or
-[from, to] edge, a linked-list node id, a call-stack position from the bottom):
+[from, to] edge, a linked-list node id, a call-stack or stack position from the bottom):
 
     from walkthrough_trace import at, move, map_entries, probe, span
     run.frame("4 goes into the map.", xs={"values": nums}, uses={"entries": map_entries(counts)},
@@ -189,6 +189,16 @@ def call(name, note=None, **args):
     if note is not None:
         c["note"] = note
     return c
+
+
+def stack(items, value=None, tag=None):
+    """A `stack` view's state from the solution's own list, bottom first: each item's `value(item)` (the item itself
+    by default) and, with `tag`, `tag(item)` (Text) on its cell, such as the day a reading belongs to when the stack
+    holds days: `"pending": stack(pending, value=lambda d: temps[d], tag=lambda d: f"day {d}")`. Add `marks` to it."""
+    state = {"values": [item if value is None else value(item) for item in items]}
+    if tag is not None:
+        state["tags"] = [[i, tag(item)] for i, item in enumerate(items)]
+    return state
 
 
 def map_entries(mapping):
