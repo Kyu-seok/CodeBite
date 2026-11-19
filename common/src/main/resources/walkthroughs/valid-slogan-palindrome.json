@@ -1,0 +1,1106 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Valid Slogan Palindrome",
+  "ko": "슬로건 회문 검사"
+ },
+ "approach": {
+  "en": "Two pointers walk in from both ends, stepping over anything that isn't a letter or a digit; the phrase is a palindrome when every pair they stop on is the same character once lowercased.",
+  "ko": "두 포인터가 양 끝에서 안쪽으로 오며 알파벳이나 숫자가 아닌 문자는 건너뜁니다. 멈춰 선 쌍마다 소문자로 바꾼 글자가 모두 같으면 회문입니다."
+ },
+ "views": [
+  {
+   "id": "phrase",
+   "type": "array",
+   "title": {
+    "en": "phrase (␣ is a space)",
+    "ko": "phrase (␣는 공백)"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "phrase = \"Step on no pets\"",
+   "expected": "true",
+   "frames": [
+    {
+     "caption": {
+      "en": "The phrase has 15 characters. left starts at 0 and right at 14; each stops only on a letter or a digit.",
+      "ko": "phrase는 문자 15개입니다. left는 0, right는 14에서 시작하며, 알파벳이나 숫자에서만 멈춥니다."
+     },
+     "views": {
+      "phrase": {
+       "values": [
+        "S",
+        "t",
+        "e",
+        "p",
+        "␣",
+        "o",
+        "n",
+        "␣",
+        "n",
+        "o",
+        "␣",
+        "p",
+        "e",
+        "t",
+        "s"
+       ],
+       "spans": {
+        "check": {
+         "from": 0,
+         "to": 14,
+         "label": {
+          "en": "to check 15",
+          "ko": "남은 15칸"
+         },
+         "fade": true
+        }
+       },
+       "tags": [],
+       "pointers": {
+        "left": 0,
+        "right": 14
+       },
+       "marks": {
+        "dim": [],
+        "lit": [],
+        "bad": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "phrase[0] = 'S' and phrase[14] = 's' are the same letter once lowercased: the pair matches, and both pointers step inward.",
+      "ko": "phrase[0] = 'S', phrase[14] = 's': 소문자로 바꾸면 같은 글자라 짝이 맞고, 두 포인터가 한 칸씩 안으로 옵니다."
+     },
+     "views": {
+      "phrase": {
+       "values": [
+        "S",
+        "t",
+        "e",
+        "p",
+        "␣",
+        "o",
+        "n",
+        "␣",
+        "n",
+        "o",
+        "␣",
+        "p",
+        "e",
+        "t",
+        "s"
+       ],
+       "spans": {
+        "check": {
+         "from": 1,
+         "to": 13,
+         "label": {
+          "en": "to check 13",
+          "ko": "남은 13칸"
+         },
+         "fade": true
+        }
+       },
+       "tags": [
+        [
+         0,
+         "s"
+        ],
+        [
+         14,
+         "s"
+        ]
+       ],
+       "pointers": {
+        "left": 1,
+        "right": 13
+       },
+       "marks": {
+        "dim": [],
+        "lit": [
+         0,
+         14
+        ],
+        "bad": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "phrase[1] = 't' and phrase[13] = 't' are the same character: the pair matches, and both pointers step inward.",
+      "ko": "phrase[1] = 't', phrase[13] = 't': 같은 글자라 짝이 맞고, 두 포인터가 한 칸씩 안으로 옵니다."
+     },
+     "views": {
+      "phrase": {
+       "values": [
+        "S",
+        "t",
+        "e",
+        "p",
+        "␣",
+        "o",
+        "n",
+        "␣",
+        "n",
+        "o",
+        "␣",
+        "p",
+        "e",
+        "t",
+        "s"
+       ],
+       "spans": {
+        "check": {
+         "from": 2,
+         "to": 12,
+         "label": {
+          "en": "to check 11",
+          "ko": "남은 11칸"
+         },
+         "fade": true
+        }
+       },
+       "tags": [
+        [
+         0,
+         "s"
+        ],
+        [
+         14,
+         "s"
+        ],
+        [
+         1,
+         "t"
+        ],
+        [
+         13,
+         "t"
+        ]
+       ],
+       "pointers": {
+        "left": 2,
+        "right": 12
+       },
+       "marks": {
+        "dim": [],
+        "lit": [
+         1,
+         13
+        ],
+        "bad": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "phrase[2] = 'e' and phrase[12] = 'e' are the same character: the pair matches, and both pointers step inward.",
+      "ko": "phrase[2] = 'e', phrase[12] = 'e': 같은 글자라 짝이 맞고, 두 포인터가 한 칸씩 안으로 옵니다."
+     },
+     "views": {
+      "phrase": {
+       "values": [
+        "S",
+        "t",
+        "e",
+        "p",
+        "␣",
+        "o",
+        "n",
+        "␣",
+        "n",
+        "o",
+        "␣",
+        "p",
+        "e",
+        "t",
+        "s"
+       ],
+       "spans": {
+        "check": {
+         "from": 3,
+         "to": 11,
+         "label": {
+          "en": "to check 9",
+          "ko": "남은 9칸"
+         },
+         "fade": true
+        }
+       },
+       "tags": [
+        [
+         0,
+         "s"
+        ],
+        [
+         14,
+         "s"
+        ],
+        [
+         1,
+         "t"
+        ],
+        [
+         13,
+         "t"
+        ],
+        [
+         2,
+         "e"
+        ],
+        [
+         12,
+         "e"
+        ]
+       ],
+       "pointers": {
+        "left": 3,
+        "right": 11
+       },
+       "marks": {
+        "dim": [],
+        "lit": [
+         2,
+         12
+        ],
+        "bad": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "phrase[3] = 'p' and phrase[11] = 'p' are the same character: the pair matches, and both pointers step inward.",
+      "ko": "phrase[3] = 'p', phrase[11] = 'p': 같은 글자라 짝이 맞고, 두 포인터가 한 칸씩 안으로 옵니다."
+     },
+     "views": {
+      "phrase": {
+       "values": [
+        "S",
+        "t",
+        "e",
+        "p",
+        "␣",
+        "o",
+        "n",
+        "␣",
+        "n",
+        "o",
+        "␣",
+        "p",
+        "e",
+        "t",
+        "s"
+       ],
+       "spans": {
+        "check": {
+         "from": 4,
+         "to": 10,
+         "label": {
+          "en": "to check 7",
+          "ko": "남은 7칸"
+         },
+         "fade": true
+        }
+       },
+       "tags": [
+        [
+         0,
+         "s"
+        ],
+        [
+         14,
+         "s"
+        ],
+        [
+         1,
+         "t"
+        ],
+        [
+         13,
+         "t"
+        ],
+        [
+         2,
+         "e"
+        ],
+        [
+         12,
+         "e"
+        ],
+        [
+         3,
+         "p"
+        ],
+        [
+         11,
+         "p"
+        ]
+       ],
+       "pointers": {
+        "left": 4,
+        "right": 10
+       },
+       "marks": {
+        "dim": [],
+        "lit": [
+         3,
+         11
+        ],
+        "bad": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "phrase[4] is a space, not a letter or a digit: left skips it and moves to 5.",
+      "ko": "phrase[4]의 공백 문자는 알파벳도 숫자도 아니어서, left가 건너뛰어 5번으로 갑니다."
+     },
+     "views": {
+      "phrase": {
+       "values": [
+        "S",
+        "t",
+        "e",
+        "p",
+        "␣",
+        "o",
+        "n",
+        "␣",
+        "n",
+        "o",
+        "␣",
+        "p",
+        "e",
+        "t",
+        "s"
+       ],
+       "spans": {
+        "check": {
+         "from": 5,
+         "to": 10,
+         "label": {
+          "en": "to check 6",
+          "ko": "남은 6칸"
+         },
+         "fade": true
+        }
+       },
+       "tags": [
+        [
+         0,
+         "s"
+        ],
+        [
+         14,
+         "s"
+        ],
+        [
+         1,
+         "t"
+        ],
+        [
+         13,
+         "t"
+        ],
+        [
+         2,
+         "e"
+        ],
+        [
+         12,
+         "e"
+        ],
+        [
+         3,
+         "p"
+        ],
+        [
+         11,
+         "p"
+        ]
+       ],
+       "pointers": {
+        "left": 5,
+        "right": 10
+       },
+       "marks": {
+        "dim": [
+         4
+        ],
+        "lit": [
+         4
+        ],
+        "bad": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "phrase[10] is a space, not a letter or a digit: right skips it and moves to 9.",
+      "ko": "phrase[10]의 공백 문자는 알파벳도 숫자도 아니어서, right가 건너뛰어 9번으로 갑니다."
+     },
+     "views": {
+      "phrase": {
+       "values": [
+        "S",
+        "t",
+        "e",
+        "p",
+        "␣",
+        "o",
+        "n",
+        "␣",
+        "n",
+        "o",
+        "␣",
+        "p",
+        "e",
+        "t",
+        "s"
+       ],
+       "spans": {
+        "check": {
+         "from": 5,
+         "to": 9,
+         "label": {
+          "en": "to check 5",
+          "ko": "남은 5칸"
+         },
+         "fade": true
+        }
+       },
+       "tags": [
+        [
+         0,
+         "s"
+        ],
+        [
+         14,
+         "s"
+        ],
+        [
+         1,
+         "t"
+        ],
+        [
+         13,
+         "t"
+        ],
+        [
+         2,
+         "e"
+        ],
+        [
+         12,
+         "e"
+        ],
+        [
+         3,
+         "p"
+        ],
+        [
+         11,
+         "p"
+        ]
+       ],
+       "pointers": {
+        "left": 5,
+        "right": 9
+       },
+       "marks": {
+        "dim": [
+         4,
+         10
+        ],
+        "lit": [
+         10
+        ],
+        "bad": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "phrase[5] = 'o' and phrase[9] = 'o' are the same character: the pair matches, and both pointers step inward.",
+      "ko": "phrase[5] = 'o', phrase[9] = 'o': 같은 글자라 짝이 맞고, 두 포인터가 한 칸씩 안으로 옵니다."
+     },
+     "views": {
+      "phrase": {
+       "values": [
+        "S",
+        "t",
+        "e",
+        "p",
+        "␣",
+        "o",
+        "n",
+        "␣",
+        "n",
+        "o",
+        "␣",
+        "p",
+        "e",
+        "t",
+        "s"
+       ],
+       "spans": {
+        "check": {
+         "from": 6,
+         "to": 8,
+         "label": {
+          "en": "to check 3",
+          "ko": "남은 3칸"
+         },
+         "fade": true
+        }
+       },
+       "tags": [
+        [
+         0,
+         "s"
+        ],
+        [
+         14,
+         "s"
+        ],
+        [
+         1,
+         "t"
+        ],
+        [
+         13,
+         "t"
+        ],
+        [
+         2,
+         "e"
+        ],
+        [
+         12,
+         "e"
+        ],
+        [
+         3,
+         "p"
+        ],
+        [
+         11,
+         "p"
+        ],
+        [
+         5,
+         "o"
+        ],
+        [
+         9,
+         "o"
+        ]
+       ],
+       "pointers": {
+        "left": 6,
+        "right": 8
+       },
+       "marks": {
+        "dim": [
+         4,
+         10
+        ],
+        "lit": [
+         5,
+         9
+        ],
+        "bad": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "phrase[6] = 'n' and phrase[8] = 'n' are the same character: the pair matches, and both pointers step inward.",
+      "ko": "phrase[6] = 'n', phrase[8] = 'n': 같은 글자라 짝이 맞고, 두 포인터가 한 칸씩 안으로 옵니다."
+     },
+     "views": {
+      "phrase": {
+       "values": [
+        "S",
+        "t",
+        "e",
+        "p",
+        "␣",
+        "o",
+        "n",
+        "␣",
+        "n",
+        "o",
+        "␣",
+        "p",
+        "e",
+        "t",
+        "s"
+       ],
+       "spans": {
+        "check": {
+         "from": 7,
+         "to": 7,
+         "label": {
+          "en": "to check 1",
+          "ko": "남은 1칸"
+         },
+         "fade": true
+        }
+       },
+       "tags": [
+        [
+         0,
+         "s"
+        ],
+        [
+         14,
+         "s"
+        ],
+        [
+         1,
+         "t"
+        ],
+        [
+         13,
+         "t"
+        ],
+        [
+         2,
+         "e"
+        ],
+        [
+         12,
+         "e"
+        ],
+        [
+         3,
+         "p"
+        ],
+        [
+         11,
+         "p"
+        ],
+        [
+         5,
+         "o"
+        ],
+        [
+         9,
+         "o"
+        ],
+        [
+         6,
+         "n"
+        ],
+        [
+         8,
+         "n"
+        ]
+       ],
+       "pointers": {
+        "left": 7,
+        "right": null
+       },
+       "marks": {
+        "dim": [
+         4,
+         10
+        ],
+        "lit": [
+         6,
+         8
+        ],
+        "bad": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "left and right met with every pair matching (6 pairs), so the phrase reads the same both ways. Answer true.",
+      "ko": "left와 right가 만날 때까지 6쌍이 모두 맞아, 앞뒤로 똑같이 읽힙니다. 답은 true입니다."
+     },
+     "views": {
+      "phrase": {
+       "values": [
+        "S",
+        "t",
+        "e",
+        "p",
+        "␣",
+        "o",
+        "n",
+        "␣",
+        "n",
+        "o",
+        "␣",
+        "p",
+        "e",
+        "t",
+        "s"
+       ],
+       "spans": {},
+       "tags": [
+        [
+         0,
+         "s"
+        ],
+        [
+         14,
+         "s"
+        ],
+        [
+         1,
+         "t"
+        ],
+        [
+         13,
+         "t"
+        ],
+        [
+         2,
+         "e"
+        ],
+        [
+         12,
+         "e"
+        ],
+        [
+         3,
+         "p"
+        ],
+        [
+         11,
+         "p"
+        ],
+        [
+         5,
+         "o"
+        ],
+        [
+         9,
+         "o"
+        ],
+        [
+         6,
+         "n"
+        ],
+        [
+         8,
+         "n"
+        ]
+       ],
+       "pointers": {},
+       "marks": {
+        "dim": [
+         4,
+         10
+        ],
+        "path": [
+         0,
+         14,
+         1,
+         13,
+         2,
+         12,
+         3,
+         11,
+         5,
+         9,
+         6,
+         8
+        ]
+       }
+      }
+     },
+     "answer": "true"
+    }
+   ],
+   "sampleInput": "Step on no pets"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "phrase = \"Shelf 7A not mirrored\"",
+   "expected": "false",
+   "frames": [
+    {
+     "caption": {
+      "en": "The phrase has 21 characters. left starts at 0 and right at 20; each stops only on a letter or a digit.",
+      "ko": "phrase는 문자 21개입니다. left는 0, right는 20에서 시작하며, 알파벳이나 숫자에서만 멈춥니다."
+     },
+     "views": {
+      "phrase": {
+       "values": [
+        "S",
+        "h",
+        "e",
+        "l",
+        "f",
+        "␣",
+        "7",
+        "A",
+        "␣",
+        "n",
+        "o",
+        "t",
+        "␣",
+        "m",
+        "i",
+        "r",
+        "r",
+        "o",
+        "r",
+        "e",
+        "d"
+       ],
+       "spans": {
+        "check": {
+         "from": 0,
+         "to": 20,
+         "label": {
+          "en": "to check 21",
+          "ko": "남은 21칸"
+         },
+         "fade": true
+        }
+       },
+       "tags": [],
+       "pointers": {
+        "left": 0,
+        "right": 20
+       },
+       "marks": {
+        "dim": [],
+        "lit": [],
+        "bad": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "phrase[0] = 'S' and phrase[20] = 'd' differ even lowercased, so the phrase is not a palindrome. Answer false.",
+      "ko": "phrase[0] = 'S', phrase[20] = 'd': 소문자로 바꿔도 다른 글자라 회문이 아닙니다. 답은 false입니다."
+     },
+     "views": {
+      "phrase": {
+       "values": [
+        "S",
+        "h",
+        "e",
+        "l",
+        "f",
+        "␣",
+        "7",
+        "A",
+        "␣",
+        "n",
+        "o",
+        "t",
+        "␣",
+        "m",
+        "i",
+        "r",
+        "r",
+        "o",
+        "r",
+        "e",
+        "d"
+       ],
+       "spans": {},
+       "tags": [],
+       "pointers": {
+        "left": 0,
+        "right": 20
+       },
+       "marks": {
+        "dim": [],
+        "lit": [],
+        "bad": [
+         0,
+         20
+        ]
+       }
+      }
+     },
+     "answer": "false"
+    }
+   ],
+   "sampleInput": "Shelf 7A not mirrored"
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "phrase = \",,,\"",
+   "expected": "true",
+   "frames": [
+    {
+     "caption": {
+      "en": "The phrase has 3 characters. left starts at 0 and right at 2; each stops only on a letter or a digit.",
+      "ko": "phrase는 문자 3개입니다. left는 0, right는 2에서 시작하며, 알파벳이나 숫자에서만 멈춥니다."
+     },
+     "views": {
+      "phrase": {
+       "values": [
+        ",",
+        ",",
+        ","
+       ],
+       "spans": {
+        "check": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "to check 3",
+          "ko": "남은 3칸"
+         },
+         "fade": true
+        }
+       },
+       "tags": [],
+       "pointers": {
+        "left": 0,
+        "right": 2
+       },
+       "marks": {
+        "dim": [],
+        "lit": [],
+        "bad": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "phrase[0] is ',', not a letter or a digit: left skips it and moves to 1.",
+      "ko": "phrase[0]의 ',' 문자는 알파벳도 숫자도 아니어서, left가 건너뛰어 1번으로 갑니다."
+     },
+     "views": {
+      "phrase": {
+       "values": [
+        ",",
+        ",",
+        ","
+       ],
+       "spans": {
+        "check": {
+         "from": 1,
+         "to": 2,
+         "label": {
+          "en": "to check 2",
+          "ko": "남은 2칸"
+         },
+         "fade": true
+        }
+       },
+       "tags": [],
+       "pointers": {
+        "left": 1,
+        "right": 2
+       },
+       "marks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         0
+        ],
+        "bad": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "phrase[1] is ',', not a letter or a digit: left skips it and moves to 2.",
+      "ko": "phrase[1]의 ',' 문자는 알파벳도 숫자도 아니어서, left가 건너뛰어 2번으로 갑니다."
+     },
+     "views": {
+      "phrase": {
+       "values": [
+        ",",
+        ",",
+        ","
+       ],
+       "spans": {
+        "check": {
+         "from": 2,
+         "to": 2,
+         "label": {
+          "en": "to check 1",
+          "ko": "남은 1칸"
+         },
+         "fade": true
+        }
+       },
+       "tags": [],
+       "pointers": {
+        "left": 2,
+        "right": null
+       },
+       "marks": {
+        "dim": [
+         0,
+         1
+        ],
+        "lit": [
+         1
+        ],
+        "bad": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "left and right met without stopping on a single letter or digit: the cleaned phrase is empty, and an empty string is a palindrome. Answer true.",
+      "ko": "left와 right가 알파벳이나 숫자에 한 번도 멈추지 않고 만났습니다. 정리하면 빈 문자열이고, 빈 문자열은 회문이라 답은 true입니다."
+     },
+     "views": {
+      "phrase": {
+       "values": [
+        ",",
+        ",",
+        ","
+       ],
+       "spans": {},
+       "tags": [],
+       "pointers": {},
+       "marks": {
+        "dim": [
+         0,
+         1
+        ],
+        "path": []
+       }
+      }
+     },
+     "answer": "true"
+    }
+   ],
+   "sampleInput": ",,,"
+  }
+ ]
+}
