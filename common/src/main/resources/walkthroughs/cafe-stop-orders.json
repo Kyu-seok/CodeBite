@@ -2248,7 +2248,7 @@
     {
      "caption": {
       "en": "Every call has returned: 6 orders of 3 cafes, 3! = 6, one per leaf of the tree.",
-      "ko": "모든 호출이 끝났습니다. 카페 3곳의 방문 순서는 3! = 6가지로, 트리의 잎 하나가 순서 하나입니다."
+      "ko": "모든 호출이 끝났습니다. 카페 3곳의 방문 순서는 6가지(3!)로, 트리의 잎 하나가 순서 하나입니다."
      },
      "views": {
       "stops": {
@@ -2855,7 +2855,7 @@
     {
      "caption": {
       "en": "Every call has returned: 2 orders of 2 cafes, 2! = 2, one per leaf of the tree.",
-      "ko": "모든 호출이 끝났습니다. 카페 2곳의 방문 순서는 2! = 2가지로, 트리의 잎 하나가 순서 하나입니다."
+      "ko": "모든 호출이 끝났습니다. 카페 2곳의 방문 순서는 2가지(2!)로, 트리의 잎 하나가 순서 하나입니다."
      },
      "views": {
       "stops": {

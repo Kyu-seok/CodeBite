@@ -101,7 +101,7 @@ def solve(stops, run):
     n, k = len(orders), len(stops)
     frame({"en": f"Every call has returned: {n} {plural(n, 'order', 'orders')} of {k} {plural(k, 'cafe', 'cafes')}, "
                  f"{k}! = {n}, one per leaf of the tree.",
-           "ko": f"모든 호출이 끝났습니다. 카페 {k}곳의 방문 순서는 {k}! = {n}가지로, 트리의 잎 하나가 순서 하나입니다."},
+           "ko": f"모든 호출이 끝났습니다. 카페 {k}곳의 방문 순서는 {n}가지({k}!)로, 트리의 잎 하나가 순서 하나입니다."},
           done=True, answer=printed)
     return printed
 

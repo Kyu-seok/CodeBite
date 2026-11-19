@@ -54,7 +54,7 @@
     {
      "caption": {
       "en": "A 4×4 board and 4 words. First, every word goes into a trie, which starts as just its root.",
-      "ko": "4×4 보드와 단어 4개가 있습니다. 먼저 모든 단어를 트라이에 넣습니다. 트라이는 루트만 있는 상태로 시작합니다."
+      "ko": "4×4 보드와 단어 4개가 있습니다. 먼저 루트만 있는 트라이에 모든 단어를 넣습니다."
      },
      "views": {
       "board": {
@@ -4373,7 +4373,7 @@
     {
      "caption": {
       "en": "The scan has passed every cell: 2 words found, [\"chat\",\"code\"] sorted; \"maze\" and \"nail\" never had a path.",
-      "ko": "모든 칸을 훑었습니다. 단어 2개를 찾았고 정렬하면 [\"chat\",\"code\"]입니다. \"maze\", \"nail\" 단어는 경로가 없었습니다."
+      "ko": "모든 칸을 훑어 단어 2개를 찾았고, 정렬하면 [\"chat\",\"code\"]입니다. \"maze\", \"nail\" 단어는 경로가 없었습니다."
      },
      "views": {
       "board": {
@@ -4559,7 +4559,7 @@
     {
      "caption": {
       "en": "A 2×2 board and 1 word. First, every word goes into a trie, which starts as just its root.",
-      "ko": "2×2 보드와 단어 1개가 있습니다. 먼저 모든 단어를 트라이에 넣습니다. 트라이는 루트만 있는 상태로 시작합니다."
+      "ko": "2×2 보드와 단어 1개가 있습니다. 먼저 루트만 있는 트라이에 모든 단어를 넣습니다."
      },
      "views": {
       "board": {

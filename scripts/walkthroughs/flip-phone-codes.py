@@ -95,9 +95,9 @@ def solve(digits, run):
         if picked is None:
             head = {"en": f"build(i=0) starts with no letters; digit {digits[0]} stands for {tries}",
                     "ko": f"build(i=0) 호출은 글자 없이 시작합니다. 숫자 {josa(int(digits[0]), '은는')} {tries} 글자를 "
-                          f"나타냅니다"}
+                          f"나타내"}
             frame({"en": head["en"] + ", so it will add each in turn.",
-                   "ko": head["ko"] + ". 이 글자를 하나씩 붙여 봅니다."}, node, i, None, moves)
+                   "ko": head["ko"] + "므로 하나씩 붙여 봅니다."}, node, i, None, moves)
         else:
             frame({"en": f"Add '{letters[-1]}': build(i={i}) holds \"{''.join(letters)}\" and will add each of {tries} for "
                          f"digit {digits[i]}.",

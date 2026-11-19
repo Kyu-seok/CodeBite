@@ -93,17 +93,17 @@ def solve(pastries, tab, run):
         moves = [move(dst=at("calls", node))] if taken is None else [move(at("prices", taken), at("calls", node))]
         if taken is None:
             head = {"en": f"The first call starts with an empty combo and a tab of {tab}",
-                    "ko": f"첫 호출은 빈 조합과 계산서 금액 {tab}에서 시작합니다"}
+                    "ko": f"첫 호출은 빈 조합과 계산서 금액 {tab}에서 시작하고"}
         else:
             head = {"en": f"Add {prices[taken]} (index {taken}): the call for {driver_list(chosen)} has {remaining} left",
                     "ko": f"{taken}번 칸의 {josa(prices[taken], '을를')} 담습니다. {driver_list(chosen)} 호출에는 "
-                          f"{josa(remaining, '이가')} 남았습니다"}
+                          f"{josa(remaining, '이가')} 남았고"}
         if remaining == 0:
             combos.append(chosen.copy())
             found.append(node)
             moves.append(move(at("calls", node), at("result", len(combos) - 1)))
             frame({"en": head["en"] + f", so {driver_list(chosen)} adds up to exactly {tab}: it goes into the answer.",
-                   "ko": head["ko"] + f". 합이 정확히 {tab}이므로 이 조합을 답에 넣습니다."},
+                   "ko": head["ko"] + f", 합이 정확히 {tab}이므로 이 조합을 답에 넣습니다."},
                   node, start, remaining, moves=moves)
             open_calls.pop()
             return
@@ -111,14 +111,14 @@ def solve(pastries, tab, run):
             dead.append(node)
             frame({"en": head["en"] + (f", and every pastry after it is dearer than {remaining}" if start < len(prices)
                                        else ", and no pastry comes after it") + ": a dead end, it returns.",
-                   "ko": head["ko"] + (f". 뒤의 페이스트리가 모두 {remaining}보다 비싸" if start < len(prices)
-                                       else ". 뒤에 남은 페이스트리가 없어") + " 막다른 길이므로 돌아갑니다."},
+                   "ko": head["ko"] + (f", 뒤의 페이스트리가 모두 {remaining}보다 비싸" if start < len(prices)
+                                       else ", 뒤에 남은 페이스트리가 없어") + " 막다른 길이므로 돌아갑니다."},
                   node, start, remaining, moves=moves)
         else:
             frame({"en": head["en"] + (f"; it will try {listed(tries)} in turn." if len(tries) > 1 else
                                        f"; only {tries[0]} fits, so it tries that."),
-                   "ko": head["ko"] + (f". {listed(tries[:-1])}, {josa(tries[-1], '을를')} 차례로 담아 봅니다."
-                                       if len(tries) > 1 else f". 담을 수 있는 가격은 {tries[0]}뿐이니 그것을 담아 봅니다.")},
+                   "ko": head["ko"] + (f", {listed(tries[:-1])}, {josa(tries[-1], '을를')} 차례로 담아 봅니다."
+                                       if len(tries) > 1 else f", 담을 수 있는 가격은 {tries[0]}뿐이니 그것을 담아 봅니다.")},
                   node, start, remaining, moves=moves)
         skipped = []
 

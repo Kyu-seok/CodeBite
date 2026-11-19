@@ -50,7 +50,7 @@
     {
      "caption": {
       "en": "The first call starts with an empty basket and 9 to spend; it will try 2, 4, 5 in turn.",
-      "ko": "첫 호출은 빈 장바구니와 쓸 금액 9에서 시작합니다. 2, 4, 5를 차례로 담아 봅니다."
+      "ko": "첫 호출은 빈 장바구니와 쓸 금액 9에서 시작하고, 2, 4, 5를 차례로 담아 봅니다."
      },
      "views": {
       "prices": {
@@ -117,7 +117,7 @@
     {
      "caption": {
       "en": "Add 2: the call for [2] has 7 left; it will try 2, 4, 5 in turn.",
-      "ko": "2를 담습니다. [2] 호출에는 7이 남았습니다. 2, 4, 5를 차례로 담아 봅니다."
+      "ko": "2를 담습니다. [2] 호출에는 7이 남았고, 2, 4, 5를 차례로 담아 봅니다."
      },
      "views": {
       "prices": {
@@ -206,7 +206,7 @@
     {
      "caption": {
       "en": "Add 2: the call for [2,2] has 5 left; it will try 2, 4, 5 in turn.",
-      "ko": "2를 담습니다. [2,2] 호출에는 5가 남았습니다. 2, 4, 5를 차례로 담아 봅니다."
+      "ko": "2를 담습니다. [2,2] 호출에는 5가 남았고, 2, 4, 5를 차례로 담아 봅니다."
      },
      "views": {
       "prices": {
@@ -312,7 +312,7 @@
     {
      "caption": {
       "en": "Add 2: the call for [2,2,2] has 3 left; only 2 still fits, so it tries that.",
-      "ko": "2를 담습니다. [2,2,2] 호출에는 3이 남았습니다. 아직 담을 수 있는 가격은 2뿐이니 그것을 담아 봅니다."
+      "ko": "2를 담습니다. [2,2,2] 호출에는 3이 남았고, 아직 담을 수 있는 가격은 2뿐이니 그것을 담아 봅니다."
      },
      "views": {
       "prices": {
@@ -436,7 +436,7 @@
     {
      "caption": {
       "en": "Add 2: the call for [2,2,2,2] has 1 left, and every price it may add is dearer than 1: a dead end, it returns.",
-      "ko": "2를 담습니다. [2,2,2,2] 호출에는 1이 남았습니다. 담을 수 있는 가격이 모두 1보다 비싸 막다른 길이므로 돌아갑니다."
+      "ko": "2를 담습니다. [2,2,2,2] 호출에는 1이 남았고, 담을 수 있는 가격이 모두 1보다 비싸 막다른 길이므로 돌아갑니다."
      },
      "views": {
       "prices": {
@@ -578,7 +578,7 @@
     {
      "caption": {
       "en": "Add 4: the call for [2,2,4] has 1 left, and every price it may add is dearer than 1: a dead end, it returns.",
-      "ko": "4를 담습니다. [2,2,4] 호출에는 1이 남았습니다. 담을 수 있는 가격이 모두 1보다 비싸 막다른 길이므로 돌아갑니다."
+      "ko": "4를 담습니다. [2,2,4] 호출에는 1이 남았고, 담을 수 있는 가격이 모두 1보다 비싸 막다른 길이므로 돌아갑니다."
      },
      "views": {
       "prices": {
@@ -737,7 +737,7 @@
     {
      "caption": {
       "en": "Add 5: the call for [2,2,5] has 0 left, so [2,2,5] adds up to exactly 9: it goes into the answer.",
-      "ko": "5를 담습니다. [2,2,5] 호출에는 0이 남았습니다. 합이 정확히 9이므로 이 장바구니를 답에 넣습니다."
+      "ko": "5를 담습니다. [2,2,5] 호출에는 0이 남았고, 합이 정확히 9이므로 이 장바구니를 답에 넣습니다."
      },
      "views": {
       "prices": {
@@ -921,7 +921,7 @@
     {
      "caption": {
       "en": "Add 4: the call for [2,4] has 3 left, and every price it may add is dearer than 3: a dead end, it returns.",
-      "ko": "4를 담습니다. [2,4] 호출에는 3이 남았습니다. 담을 수 있는 가격이 모두 3보다 비싸 막다른 길이므로 돌아갑니다."
+      "ko": "4를 담습니다. [2,4] 호출에는 3이 남았고, 담을 수 있는 가격이 모두 3보다 비싸 막다른 길이므로 돌아갑니다."
      },
      "views": {
       "prices": {
@@ -1116,7 +1116,7 @@
     {
      "caption": {
       "en": "Add 5: the call for [2,5] has 2 left, and every price it may add is dearer than 2: a dead end, it returns.",
-      "ko": "5를 담습니다. [2,5] 호출에는 2가 남았습니다. 담을 수 있는 가격이 모두 2보다 비싸 막다른 길이므로 돌아갑니다."
+      "ko": "5를 담습니다. [2,5] 호출에는 2가 남았고, 담을 수 있는 가격이 모두 2보다 비싸 막다른 길이므로 돌아갑니다."
      },
      "views": {
       "prices": {
@@ -1328,7 +1328,7 @@
     {
      "caption": {
       "en": "Add 4: the call for [4] has 5 left; it will try 4, 5 in turn.",
-      "ko": "4를 담습니다. [4] 호출에는 5가 남았습니다. 4, 5를 차례로 담아 봅니다."
+      "ko": "4를 담습니다. [4] 호출에는 5가 남았고, 4, 5를 차례로 담아 봅니다."
      },
      "views": {
       "prices": {
@@ -1555,7 +1555,7 @@
     {
      "caption": {
       "en": "Add 4: the call for [4,4] has 1 left, and every price it may add is dearer than 1: a dead end, it returns.",
-      "ko": "4를 담습니다. [4,4] 호출에는 1이 남았습니다. 담을 수 있는 가격이 모두 1보다 비싸 막다른 길이므로 돌아갑니다."
+      "ko": "4를 담습니다. [4,4] 호출에는 1이 남았고, 담을 수 있는 가격이 모두 1보다 비싸 막다른 길이므로 돌아갑니다."
      },
      "views": {
       "prices": {
@@ -1800,7 +1800,7 @@
     {
      "caption": {
       "en": "Add 5: the call for [4,5] has 0 left, so [4,5] adds up to exactly 9: it goes into the answer.",
-      "ko": "5를 담습니다. [4,5] 호출에는 0이 남았습니다. 합이 정확히 9이므로 이 장바구니를 답에 넣습니다."
+      "ko": "5를 담습니다. [4,5] 호출에는 0이 남았고, 합이 정확히 9이므로 이 장바구니를 답에 넣습니다."
      },
      "views": {
       "prices": {
@@ -2068,7 +2068,7 @@
     {
      "caption": {
       "en": "Add 5: the call for [5] has 4 left, and every price it may add is dearer than 4: a dead end, it returns.",
-      "ko": "5를 담습니다. [5] 호출에는 4가 남았습니다. 담을 수 있는 가격이 모두 4보다 비싸 막다른 길이므로 돌아갑니다."
+      "ko": "5를 담습니다. [5] 호출에는 4가 남았고, 담을 수 있는 가격이 모두 4보다 비싸 막다른 길이므로 돌아갑니다."
      },
      "views": {
       "prices": {
@@ -2614,7 +2614,7 @@
     {
      "caption": {
       "en": "The first call starts with an empty basket and 10 to spend; it will try 3, 4, 7 in turn.",
-      "ko": "첫 호출은 빈 장바구니와 쓸 금액 10에서 시작합니다. 3, 4, 7을 차례로 담아 봅니다."
+      "ko": "첫 호출은 빈 장바구니와 쓸 금액 10에서 시작하고, 3, 4, 7을 차례로 담아 봅니다."
      },
      "views": {
       "prices": {
@@ -2681,7 +2681,7 @@
     {
      "caption": {
       "en": "Add 3: the call for [3] has 7 left; it will try 3, 4, 7 in turn.",
-      "ko": "3을 담습니다. [3] 호출에는 7이 남았습니다. 3, 4, 7을 차례로 담아 봅니다."
+      "ko": "3을 담습니다. [3] 호출에는 7이 남았고, 3, 4, 7을 차례로 담아 봅니다."
      },
      "views": {
       "prices": {
@@ -2770,7 +2770,7 @@
     {
      "caption": {
       "en": "Add 3: the call for [3,3] has 4 left; it will try 3, 4 in turn.",
-      "ko": "3을 담습니다. [3,3] 호출에는 4가 남았습니다. 3, 4를 차례로 담아 봅니다."
+      "ko": "3을 담습니다. [3,3] 호출에는 4가 남았고, 3, 4를 차례로 담아 봅니다."
      },
      "views": {
       "prices": {
@@ -2877,7 +2877,7 @@
     {
      "caption": {
       "en": "Add 3: the call for [3,3,3] has 1 left, and every price it may add is dearer than 1: a dead end, it returns.",
-      "ko": "3을 담습니다. [3,3,3] 호출에는 1이 남았습니다. 담을 수 있는 가격이 모두 1보다 비싸 막다른 길이므로 돌아갑니다."
+      "ko": "3을 담습니다. [3,3,3] 호출에는 1이 남았고, 담을 수 있는 가격이 모두 1보다 비싸 막다른 길이므로 돌아갑니다."
      },
      "views": {
       "prices": {
@@ -3002,7 +3002,7 @@
     {
      "caption": {
       "en": "Add 4: the call for [3,3,4] has 0 left, so [3,3,4] adds up to exactly 10: it goes into the answer.",
-      "ko": "4를 담습니다. [3,3,4] 호출에는 0이 남았습니다. 합이 정확히 10이므로 이 장바구니를 답에 넣습니다."
+      "ko": "4를 담습니다. [3,3,4] 호출에는 0이 남았고, 합이 정확히 10이므로 이 장바구니를 답에 넣습니다."
      },
      "views": {
       "prices": {
@@ -3153,7 +3153,7 @@
     {
      "caption": {
       "en": "Add 4: the call for [3,4] has 3 left, and every price it may add is dearer than 3: a dead end, it returns.",
-      "ko": "4를 담습니다. [3,4] 호출에는 3이 남았습니다. 담을 수 있는 가격이 모두 3보다 비싸 막다른 길이므로 돌아갑니다."
+      "ko": "4를 담습니다. [3,4] 호출에는 3이 남았고, 담을 수 있는 가격이 모두 3보다 비싸 막다른 길이므로 돌아갑니다."
      },
      "views": {
       "prices": {
@@ -3315,7 +3315,7 @@
     {
      "caption": {
       "en": "Add 7: the call for [3,7] has 0 left, so [3,7] adds up to exactly 10: it goes into the answer.",
-      "ko": "7을 담습니다. [3,7] 호출에는 0이 남았습니다. 합이 정확히 10이므로 이 장바구니를 답에 넣습니다."
+      "ko": "7을 담습니다. [3,7] 호출에는 0이 남았고, 합이 정확히 10이므로 이 장바구니를 답에 넣습니다."
      },
      "views": {
       "prices": {
@@ -3500,7 +3500,7 @@
     {
      "caption": {
       "en": "Add 4: the call for [4] has 6 left; only 4 still fits, so it tries that.",
-      "ko": "4를 담습니다. [4] 호출에는 6이 남았습니다. 아직 담을 수 있는 가격은 4뿐이니 그것을 담아 봅니다."
+      "ko": "4를 담습니다. [4] 호출에는 6이 남았고, 아직 담을 수 있는 가격은 4뿐이니 그것을 담아 봅니다."
      },
      "views": {
       "prices": {
@@ -3696,7 +3696,7 @@
     {
      "caption": {
       "en": "Add 4: the call for [4,4] has 2 left, and every price it may add is dearer than 2: a dead end, it returns.",
-      "ko": "4를 담습니다. [4,4] 호출에는 2가 남았습니다. 담을 수 있는 가격이 모두 2보다 비싸 막다른 길이므로 돌아갑니다."
+      "ko": "4를 담습니다. [4,4] 호출에는 2가 남았고, 담을 수 있는 가격이 모두 2보다 비싸 막다른 길이므로 돌아갑니다."
      },
      "views": {
       "prices": {
@@ -3909,7 +3909,7 @@
     {
      "caption": {
       "en": "Add 7: the call for [7] has 3 left, and every price it may add is dearer than 3: a dead end, it returns.",
-      "ko": "7을 담습니다. [7] 호출에는 3이 남았습니다. 담을 수 있는 가격이 모두 3보다 비싸 막다른 길이므로 돌아갑니다."
+      "ko": "7을 담습니다. [7] 호출에는 3이 남았고, 담을 수 있는 가격이 모두 3보다 비싸 막다른 길이므로 돌아갑니다."
      },
      "views": {
       "prices": {

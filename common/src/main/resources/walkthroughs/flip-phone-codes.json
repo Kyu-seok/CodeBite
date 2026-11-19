@@ -58,7 +58,7 @@
     {
      "caption": {
       "en": "build(i=0) starts with no letters; digit 4 stands for 'g', 'h', 'i', so it will add each in turn.",
-      "ko": "build(i=0) 호출은 글자 없이 시작합니다. 숫자 4는 'g', 'h', 'i' 글자를 나타냅니다. 이 글자를 하나씩 붙여 봅니다."
+      "ko": "build(i=0) 호출은 글자 없이 시작합니다. 숫자 4는 'g', 'h', 'i' 글자를 나타내므로 하나씩 붙여 봅니다."
      },
      "views": {
       "digits": {
@@ -2287,7 +2287,7 @@
     {
      "caption": {
       "en": "build(i=0) starts with no letters; digit 2 stands for 'a', 'b', 'c', so it will add each in turn.",
-      "ko": "build(i=0) 호출은 글자 없이 시작합니다. 숫자 2는 'a', 'b', 'c' 글자를 나타냅니다. 이 글자를 하나씩 붙여 봅니다."
+      "ko": "build(i=0) 호출은 글자 없이 시작합니다. 숫자 2는 'a', 'b', 'c' 글자를 나타내므로 하나씩 붙여 봅니다."
      },
      "views": {
       "digits": {
@@ -2778,7 +2778,7 @@
     {
      "caption": {
       "en": "build(i=0) starts with no letters; digit 7 stands for 'p', 'q', 'r', 's', so it will add each in turn.",
-      "ko": "build(i=0) 호출은 글자 없이 시작합니다. 숫자 7은 'p', 'q', 'r', 's' 글자를 나타냅니다. 이 글자를 하나씩 붙여 봅니다."
+      "ko": "build(i=0) 호출은 글자 없이 시작합니다. 숫자 7은 'p', 'q', 'r', 's' 글자를 나타내므로 하나씩 붙여 봅니다."
      },
      "views": {
       "digits": {

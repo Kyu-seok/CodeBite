@@ -78,28 +78,28 @@ def solve(prices, voucher, run):
         moves = [move(dst=at("calls", node))] if taken is None else [move(at("prices", taken), at("calls", node))]
         if taken is None:
             head = {"en": f"The first call starts with an empty basket and {voucher} to spend",
-                    "ko": f"첫 호출은 빈 장바구니와 쓸 금액 {voucher}에서 시작합니다"}
+                    "ko": f"첫 호출은 빈 장바구니와 쓸 금액 {voucher}에서 시작하고"}
         else:
             head = {"en": f"Add {prices[taken]}: the call for {driver_list(basket)} has {remaining} left",
                     "ko": f"{josa(prices[taken], '을를')} 담습니다. {driver_list(basket)} 호출에는 {josa(remaining, '이가')} "
-                          f"남았습니다"}
+                          f"남았고"}
         if remaining == 0:
             baskets.append(basket[:])
             marks_by_node["good"].append(node)
             moves.append(move(at("calls", node), at("result", len(baskets) - 1)))
             frame({"en": head["en"] + f", so {driver_list(basket)} adds up to exactly {voucher}: it goes into the answer.",
-                   "ko": head["ko"] + f". 합이 정확히 {voucher}이므로 이 장바구니를 답에 넣습니다."},
+                   "ko": head["ko"] + f", 합이 정확히 {voucher}이므로 이 장바구니를 답에 넣습니다."},
                   node, start, remaining, moves)
         elif not fits:
             marks_by_node["bad"].append(node)
             frame({"en": head["en"] + f", and every price it may add is dearer than {remaining}: a dead end, it returns.",
-                   "ko": head["ko"] + f". 담을 수 있는 가격이 모두 {remaining}보다 비싸 막다른 길이므로 돌아갑니다."},
+                   "ko": head["ko"] + f", 담을 수 있는 가격이 모두 {remaining}보다 비싸 막다른 길이므로 돌아갑니다."},
                   node, start, remaining, moves)
         else:
             frame({"en": head["en"] + (f"; it will try {listed(fits)} in turn." if len(fits) > 1 else
                                        f"; only {fits[0]} still fits, so it tries that."),
-                   "ko": head["ko"] + (f". {listed(fits[:-1])}, {josa(fits[-1], '을를')} 차례로 담아 봅니다." if len(fits) > 1
-                                       else f". 아직 담을 수 있는 가격은 {fits[0]}뿐이니 그것을 담아 봅니다.")},
+                   "ko": head["ko"] + (f", {listed(fits[:-1])}, {josa(fits[-1], '을를')} 차례로 담아 봅니다." if len(fits) > 1
+                                       else f", 아직 담을 수 있는 가격은 {fits[0]}뿐이니 그것을 담아 봅니다.")},
                   node, start, remaining, moves)
         if remaining == 0:
             open_calls.pop()

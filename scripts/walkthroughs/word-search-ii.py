@@ -96,8 +96,7 @@ def solve(board, words, run):
 
     frame({"en": f"A {rows}×{cols} board and {len(words)} {plural(len(words), 'word', 'words')}. First, every word goes "
                  f"into a trie, which starts as just its root.",
-           "ko": f"{rows}×{cols} 보드와 단어 {len(words)}개가 있습니다. 먼저 모든 단어를 트라이에 넣습니다. 트라이는 루트만 있는 "
-                 f"상태로 시작합니다."},
+           "ko": f"{rows}×{cols} 보드와 단어 {len(words)}개가 있습니다. 먼저 루트만 있는 트라이에 모든 단어를 넣습니다."},
           lit_node=ids[id(trie)])
 
     for w, word in enumerate(words):
@@ -222,7 +221,7 @@ def solve(board, words, run):
         frame({"en": f"The scan has passed every cell: {len(found)} {plural(len(found), 'word', 'words')} found, "
                      f"{printed} sorted" + (f"; {listed(chr(34) + w + chr(34) for w in left)} never had a path." if left
                                              else "."),
-               "ko": f"모든 칸을 훑었습니다. 단어 {len(found)}개를 찾았고 정렬하면 {printed}입니다."
+               "ko": f"모든 칸을 훑어 단어 {len(found)}개를 찾았고, 정렬하면 {printed}입니다."
                      + (f" {listed((chr(34) + w + chr(34) for w in left), ko=True)} 단어는 경로가 없었습니다." if left
                         else "")},
               word_marks={"dim": [[i, 0] for i, w in enumerate(words) if w in left]}, done=True, answer=printed)
