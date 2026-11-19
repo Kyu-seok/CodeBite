@@ -68,13 +68,13 @@ def solve(zones, run):
                 why_en, why_ko = "no pellet is down yet", "아직 알갱이가 없으므로"
             else:
                 why_en = f"it starts at {start}, past the last pellet at {last_drop}, so nothing feeds it"
-                why_ko = f"{start}에서 시작해 마지막 알갱이 위치 {last_drop}보다 뒤이므로 먹이를 못 받습니다. 그래서"
+                why_ko = f"{start}에서 시작해 마지막 알갱이 위치 {last_drop}보다 뒤라 먹이를 못 받으므로"
             last_drop = end
             pellets.append((end, [[start, end]]))
             p = len(pellets) - 1
             frame({"en": f"{zone}: {why_en}. Drop pellet {p + 1} at its end, {end}, as late as it can go.",
-                   "ko": f"{zone} 구간: {why_ko} 끝 위치 {end}에 알갱이 {josa(p + 1, '을를')} 둡니다. 가장 늦게 "
-                         "둘 수 있는 자리입니다."},
+                   "ko": f"{zone} 구간: {why_ko} 가장 늦게 둘 수 있는 자리인 끝 위치 {end}에 알갱이 "
+                         f"{josa(p + 1, '을를')} 둡니다."},
                   read=i, done=i, pellet_marks={p: {"good": [0]}},
                   moves=[move(at("line", [0, i]), at("line", [1 + p, 0]))])
         else:

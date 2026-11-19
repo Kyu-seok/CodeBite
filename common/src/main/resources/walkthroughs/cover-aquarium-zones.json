@@ -73,7 +73,7 @@
     {
      "caption": {
       "en": "[3,9]: no pellet is down yet. Drop pellet 1 at its end, 9, as late as it can go.",
-      "ko": "[3,9] 구간: 아직 알갱이가 없으므로 끝 위치 9에 알갱이 1을 둡니다. 가장 늦게 둘 수 있는 자리입니다."
+      "ko": "[3,9] 구간: 아직 알갱이가 없으므로 가장 늦게 둘 수 있는 자리인 끝 위치 9에 알갱이 1을 둡니다."
      },
      "views": {
       "line": {
@@ -363,7 +363,7 @@
     {
      "caption": {
       "en": "[12,18]: it starts at 12, past the last pellet at 9, so nothing feeds it. Drop pellet 2 at its end, 18, as late as it can go.",
-      "ko": "[12,18] 구간: 12에서 시작해 마지막 알갱이 위치 9보다 뒤이므로 먹이를 못 받습니다. 그래서 끝 위치 18에 알갱이 2를 둡니다. 가장 늦게 둘 수 있는 자리입니다."
+      "ko": "[12,18] 구간: 12에서 시작해 마지막 알갱이 위치 9보다 뒤라 먹이를 못 받으므로 가장 늦게 둘 수 있는 자리인 끝 위치 18에 알갱이 2를 둡니다."
      },
      "views": {
       "line": {
@@ -479,7 +479,7 @@
     {
      "caption": {
       "en": "[20,25]: it starts at 20, past the last pellet at 18, so nothing feeds it. Drop pellet 3 at its end, 25, as late as it can go.",
-      "ko": "[20,25] 구간: 20에서 시작해 마지막 알갱이 위치 18보다 뒤이므로 먹이를 못 받습니다. 그래서 끝 위치 25에 알갱이 3을 둡니다. 가장 늦게 둘 수 있는 자리입니다."
+      "ko": "[20,25] 구간: 20에서 시작해 마지막 알갱이 위치 18보다 뒤라 먹이를 못 받으므로 가장 늦게 둘 수 있는 자리인 끝 위치 25에 알갱이 3을 둡니다."
      },
      "views": {
       "line": {
@@ -774,7 +774,7 @@
     {
      "caption": {
       "en": "[1,5]: no pellet is down yet. Drop pellet 1 at its end, 5, as late as it can go.",
-      "ko": "[1,5] 구간: 아직 알갱이가 없으므로 끝 위치 5에 알갱이 1을 둡니다. 가장 늦게 둘 수 있는 자리입니다."
+      "ko": "[1,5] 구간: 아직 알갱이가 없으므로 가장 늦게 둘 수 있는 자리인 끝 위치 5에 알갱이 1을 둡니다."
      },
      "views": {
       "line": {
@@ -857,7 +857,7 @@
     {
      "caption": {
       "en": "[6,10]: it starts at 6, past the last pellet at 5, so nothing feeds it. Drop pellet 2 at its end, 10, as late as it can go.",
-      "ko": "[6,10] 구간: 6에서 시작해 마지막 알갱이 위치 5보다 뒤이므로 먹이를 못 받습니다. 그래서 끝 위치 10에 알갱이 2를 둡니다. 가장 늦게 둘 수 있는 자리입니다."
+      "ko": "[6,10] 구간: 6에서 시작해 마지막 알갱이 위치 5보다 뒤라 먹이를 못 받으므로 가장 늦게 둘 수 있는 자리인 끝 위치 10에 알갱이 2를 둡니다."
      },
      "views": {
       "line": {
@@ -955,7 +955,7 @@
     {
      "caption": {
       "en": "[11,15]: it starts at 11, past the last pellet at 10, so nothing feeds it. Drop pellet 3 at its end, 15, as late as it can go.",
-      "ko": "[11,15] 구간: 11에서 시작해 마지막 알갱이 위치 10보다 뒤이므로 먹이를 못 받습니다. 그래서 끝 위치 15에 알갱이 3을 둡니다. 가장 늦게 둘 수 있는 자리입니다."
+      "ko": "[11,15] 구간: 11에서 시작해 마지막 알갱이 위치 10보다 뒤라 먹이를 못 받으므로 가장 늦게 둘 수 있는 자리인 끝 위치 15에 알갱이 3을 둡니다."
      },
      "views": {
       "line": {
@@ -1216,7 +1216,7 @@
     {
      "caption": {
       "en": "[1,2]: no pellet is down yet. Drop pellet 1 at its end, 2, as late as it can go.",
-      "ko": "[1,2] 구간: 아직 알갱이가 없으므로 끝 위치 2에 알갱이 1을 둡니다. 가장 늦게 둘 수 있는 자리입니다."
+      "ko": "[1,2] 구간: 아직 알갱이가 없으므로 가장 늦게 둘 수 있는 자리인 끝 위치 2에 알갱이 1을 둡니다."
      },
      "views": {
       "line": {
@@ -1396,7 +1396,7 @@
     {
      "caption": {
       "en": "[3,4]: it starts at 3, past the last pellet at 2, so nothing feeds it. Drop pellet 2 at its end, 4, as late as it can go.",
-      "ko": "[3,4] 구간: 3에서 시작해 마지막 알갱이 위치 2보다 뒤이므로 먹이를 못 받습니다. 그래서 끝 위치 4에 알갱이 2를 둡니다. 가장 늦게 둘 수 있는 자리입니다."
+      "ko": "[3,4] 구간: 3에서 시작해 마지막 알갱이 위치 2보다 뒤라 먹이를 못 받으므로 가장 늦게 둘 수 있는 자리인 끝 위치 4에 알갱이 2를 둡니다."
      },
      "views": {
       "line": {

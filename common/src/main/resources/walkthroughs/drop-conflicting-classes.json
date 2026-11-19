@@ -375,7 +375,7 @@
     {
      "caption": {
       "en": "2 classes kept without overlap, 1 dropped: the fewest that can go. Answer: 1.",
-      "ko": "겹치지 않게 수업 2개를 남기고 1개를 뺐습니다. 이보다 적게 뺄 수는 없습니다. 답은 1입니다."
+      "ko": "겹치지 않게 수업 2개를 남기고 1개를 뺐으며, 이보다 적게 뺄 수는 없습니다. 답은 1입니다."
      },
      "views": {
       "line": {
@@ -954,7 +954,7 @@
     {
      "caption": {
       "en": "1 class kept without overlap, 3 dropped: the fewest that can go. Answer: 3.",
-      "ko": "겹치지 않게 수업 1개를 남기고 3개를 뺐습니다. 이보다 적게 뺄 수는 없습니다. 답은 3입니다."
+      "ko": "겹치지 않게 수업 1개를 남기고 3개를 뺐으며, 이보다 적게 뺄 수는 없습니다. 답은 3입니다."
      },
      "views": {
       "line": {

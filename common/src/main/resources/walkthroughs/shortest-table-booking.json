@@ -94,11 +94,13 @@
         },
         {
          "label": {
-          "en": "started (heap), shortest first",
-          "ko": "시작한 예약 (힙, 짧은 순)"
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
          },
          "intervals": [],
-         "marks": {}
+         "marks": {
+          "dim": []
+         }
         }
        ]
       },
@@ -167,11 +169,13 @@
         },
         {
          "label": {
-          "en": "started (heap), shortest first",
-          "ko": "시작한 예약 (힙, 짧은 순)"
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
          },
          "intervals": [],
-         "marks": {}
+         "marks": {
+          "dim": []
+         }
         }
        ],
        "points": [
@@ -255,8 +259,8 @@
         },
         {
          "label": {
-          "en": "started (heap), shortest first",
-          "ko": "시작한 예약 (힙, 짧은 순)"
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
          },
          "intervals": [
           [
@@ -265,6 +269,7 @@
           ]
          ],
          "marks": {
+          "dim": [],
           "good": [
            0
           ]
@@ -371,22 +376,23 @@
         },
         {
          "label": {
-          "en": "started (heap), shortest first",
-          "ko": "시작한 예약 (힙, 짧은 순)"
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
          },
          "intervals": [
           [
-           2,
-           5
-          ],
-          [
            1,
            9
+          ],
+          [
+           2,
+           5
           ]
          ],
          "marks": {
+          "dim": [],
           "good": [
-           0
+           1
           ]
          }
         }
@@ -425,7 +431,7 @@
         "view": "line",
         "at": [
          1,
-         0
+         1
         ]
        }
       }
@@ -490,22 +496,23 @@
         },
         {
          "label": {
-          "en": "started (heap), shortest first",
-          "ko": "시작한 예약 (힙, 짧은 순)"
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
          },
          "intervals": [
           [
-           2,
-           5
-          ],
-          [
            1,
            9
+          ],
+          [
+           2,
+           5
           ]
          ],
          "marks": {
+          "dim": [],
           "path": [
-           0
+           1
           ]
          }
         }
@@ -541,7 +548,7 @@
         "view": "line",
         "at": [
          1,
-         0
+         1
         ]
        },
        "to": {
@@ -611,20 +618,22 @@
         },
         {
          "label": {
-          "en": "started (heap), shortest first",
-          "ko": "시작한 예약 (힙, 짧은 순)"
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
          },
          "intervals": [
           [
-           2,
-           5
-          ],
-          [
            1,
            9
+          ],
+          [
+           2,
+           5
           ]
          ],
-         "marks": {}
+         "marks": {
+          "dim": []
+         }
         }
        ],
        "points": [
@@ -712,10 +721,14 @@
         },
         {
          "label": {
-          "en": "started (heap), shortest first",
-          "ko": "시작한 예약 (힙, 짧은 순)"
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
          },
          "intervals": [
+          [
+           1,
+           9
+          ],
           [
            2,
            5
@@ -723,15 +736,12 @@
           [
            4,
            7
-          ],
-          [
-           1,
-           9
           ]
          ],
          "marks": {
+          "dim": [],
           "good": [
-           1
+           2
           ]
          }
         }
@@ -770,7 +780,7 @@
         "view": "line",
         "at": [
          1,
-         1
+         2
         ]
        }
       }
@@ -840,10 +850,14 @@
         },
         {
          "label": {
-          "en": "started (heap), shortest first",
-          "ko": "시작한 예약 (힙, 짧은 순)"
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
          },
          "intervals": [
+          [
+           1,
+           9
+          ],
           [
            2,
            5
@@ -855,15 +869,12 @@
           [
            6,
            10
-          ],
-          [
-           1,
-           9
           ]
          ],
          "marks": {
+          "dim": [],
           "good": [
-           2
+           3
           ]
          }
         }
@@ -902,7 +913,7 @@
         "view": "line",
         "at": [
          1,
-         2
+         3
         ]
        }
       }
@@ -969,10 +980,14 @@
         },
         {
          "label": {
-          "en": "started (heap), shortest first",
-          "ko": "시작한 예약 (힙, 짧은 순)"
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
          },
          "intervals": [
+          [
+           1,
+           9
+          ],
           [
            2,
            5
@@ -984,15 +999,12 @@
           [
            6,
            10
-          ],
-          [
-           1,
-           9
           ]
          ],
          "marks": {
+          "dim": [],
           "bad": [
-           0
+           1
           ]
          }
         }
@@ -1024,7 +1036,7 @@
         "view": "line",
         "at": [
          1,
-         0
+         1
         ]
        },
        "mark": "bad"
@@ -1093,10 +1105,18 @@
         },
         {
          "label": {
-          "en": "started (heap), shortest first",
-          "ko": "시작한 예약 (힙, 짧은 순)"
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
          },
          "intervals": [
+          [
+           1,
+           9
+          ],
+          [
+           2,
+           5
+          ],
           [
            4,
            7
@@ -1104,15 +1124,14 @@
           [
            6,
            10
-          ],
-          [
-           1,
-           9
           ]
          ],
          "marks": {
+          "dim": [
+           1
+          ],
           "path": [
-           0
+           2
           ]
          }
         }
@@ -1148,7 +1167,7 @@
         "view": "line",
         "at": [
          1,
-         0
+         2
         ]
        },
        "to": {
@@ -1221,10 +1240,18 @@
         },
         {
          "label": {
-          "en": "started (heap), shortest first",
-          "ko": "시작한 예약 (힙, 짧은 순)"
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
          },
          "intervals": [
+          [
+           1,
+           9
+          ],
+          [
+           2,
+           5
+          ],
           [
            4,
            7
@@ -1232,13 +1259,13 @@
           [
            6,
            10
-          ],
-          [
-           1,
-           9
           ]
          ],
-         "marks": {}
+         "marks": {
+          "dim": [
+           1
+          ]
+         }
         }
        ],
        "points": [
@@ -1325,10 +1352,18 @@
         },
         {
          "label": {
-          "en": "started (heap), shortest first",
-          "ko": "시작한 예약 (힙, 짧은 순)"
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
          },
          "intervals": [
+          [
+           1,
+           9
+          ],
+          [
+           2,
+           5
+          ],
           [
            4,
            7
@@ -1336,15 +1371,14 @@
           [
            6,
            10
-          ],
-          [
-           1,
-           9
           ]
          ],
          "marks": {
+          "dim": [
+           1
+          ],
           "bad": [
-           0
+           2
           ]
          }
         }
@@ -1376,7 +1410,7 @@
         "view": "line",
         "at": [
          1,
-         0
+         2
         ]
        },
        "mark": "bad"
@@ -1446,22 +1480,34 @@
         },
         {
          "label": {
-          "en": "started (heap), shortest first",
-          "ko": "시작한 예약 (힙, 짧은 순)"
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
          },
          "intervals": [
           [
-           6,
-           10
-          ],
-          [
            1,
            9
+          ],
+          [
+           2,
+           5
+          ],
+          [
+           4,
+           7
+          ],
+          [
+           6,
+           10
           ]
          ],
          "marks": {
+          "dim": [
+           1,
+           2
+          ],
           "path": [
-           0
+           3
           ]
          }
         }
@@ -1497,7 +1543,7 @@
         "view": "line",
         "at": [
          1,
-         0
+         3
         ]
        },
        "to": {
@@ -1571,20 +1617,33 @@
         },
         {
          "label": {
-          "en": "started (heap), shortest first",
-          "ko": "시작한 예약 (힙, 짧은 순)"
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
          },
          "intervals": [
           [
-           6,
-           10
-          ],
-          [
            1,
            9
+          ],
+          [
+           2,
+           5
+          ],
+          [
+           4,
+           7
+          ],
+          [
+           6,
+           10
           ]
          ],
-         "marks": {}
+         "marks": {
+          "dim": [
+           1,
+           2
+          ]
+         }
         }
        ],
        "points": [
@@ -1672,22 +1731,34 @@
         },
         {
          "label": {
-          "en": "started (heap), shortest first",
-          "ko": "시작한 예약 (힙, 짧은 순)"
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
          },
          "intervals": [
           [
-           6,
-           10
-          ],
-          [
            1,
            9
+          ],
+          [
+           2,
+           5
+          ],
+          [
+           4,
+           7
+          ],
+          [
+           6,
+           10
           ]
          ],
          "marks": {
+          "dim": [
+           1,
+           2
+          ],
           "bad": [
-           0
+           3
           ]
          }
         }
@@ -1719,7 +1790,7 @@
         "view": "line",
         "at": [
          1,
-         0
+         3
         ]
        },
        "mark": "bad"
@@ -1789,16 +1860,33 @@
         },
         {
          "label": {
-          "en": "started (heap), shortest first",
-          "ko": "시작한 예약 (힙, 짧은 순)"
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
          },
          "intervals": [
           [
            1,
            9
+          ],
+          [
+           2,
+           5
+          ],
+          [
+           4,
+           7
+          ],
+          [
+           6,
+           10
           ]
          ],
          "marks": {
+          "dim": [
+           1,
+           2,
+           3
+          ],
           "bad": [
            0
           ]
@@ -1903,11 +1991,35 @@
         },
         {
          "label": {
-          "en": "started (heap), shortest first",
-          "ko": "시작한 예약 (힙, 짧은 순)"
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
          },
-         "intervals": [],
-         "marks": {}
+         "intervals": [
+          [
+           1,
+           9
+          ],
+          [
+           2,
+           5
+          ],
+          [
+           4,
+           7
+          ],
+          [
+           6,
+           10
+          ]
+         ],
+         "marks": {
+          "dim": [
+           1,
+           2,
+           3,
+           0
+          ]
+         }
         }
        ],
        "points": [
@@ -1997,11 +2109,35 @@
         },
         {
          "label": {
-          "en": "started (heap), shortest first",
-          "ko": "시작한 예약 (힙, 짧은 순)"
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
          },
-         "intervals": [],
-         "marks": {}
+         "intervals": [
+          [
+           1,
+           9
+          ],
+          [
+           2,
+           5
+          ],
+          [
+           4,
+           7
+          ],
+          [
+           6,
+           10
+          ]
+         ],
+         "marks": {
+          "dim": [
+           1,
+           2,
+           3,
+           0
+          ]
+         }
         }
        ]
       },
@@ -2085,11 +2221,13 @@
         },
         {
          "label": {
-          "en": "started (heap), shortest first",
-          "ko": "시작한 예약 (힙, 짧은 순)"
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
          },
          "intervals": [],
-         "marks": {}
+         "marks": {
+          "dim": []
+         }
         }
        ]
       },
@@ -2148,11 +2286,13 @@
         },
         {
          "label": {
-          "en": "started (heap), shortest first",
-          "ko": "시작한 예약 (힙, 짧은 순)"
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
          },
          "intervals": [],
-         "marks": {}
+         "marks": {
+          "dim": []
+         }
         }
        ],
        "points": [
@@ -2226,8 +2366,8 @@
         },
         {
          "label": {
-          "en": "started (heap), shortest first",
-          "ko": "시작한 예약 (힙, 짧은 순)"
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
          },
          "intervals": [
           [
@@ -2236,6 +2376,7 @@
           ]
          ],
          "marks": {
+          "dim": [],
           "good": [
            0
           ]
@@ -2330,8 +2471,8 @@
         },
         {
          "label": {
-          "en": "started (heap), shortest first",
-          "ko": "시작한 예약 (힙, 짧은 순)"
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
          },
          "intervals": [
           [
@@ -2340,6 +2481,7 @@
           ]
          ],
          "marks": {
+          "dim": [],
           "path": [
            0
           ]
@@ -2436,8 +2578,8 @@
         },
         {
          "label": {
-          "en": "started (heap), shortest first",
-          "ko": "시작한 예약 (힙, 짧은 순)"
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
          },
          "intervals": [
           [
@@ -2445,7 +2587,9 @@
            20
           ]
          ],
-         "marks": {}
+         "marks": {
+          "dim": []
+         }
         }
        ],
        "points": [
@@ -2522,22 +2666,23 @@
         },
         {
          "label": {
-          "en": "started (heap), shortest first",
-          "ko": "시작한 예약 (힙, 짧은 순)"
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
          },
          "intervals": [
           [
-           10,
-           12
-          ],
-          [
            8,
            20
+          ],
+          [
+           10,
+           12
           ]
          ],
          "marks": {
+          "dim": [],
           "good": [
-           0
+           1
           ]
          }
         }
@@ -2575,7 +2720,7 @@
         "view": "line",
         "at": [
          1,
-         0
+         1
         ]
        }
       }
@@ -2632,22 +2777,23 @@
         },
         {
          "label": {
-          "en": "started (heap), shortest first",
-          "ko": "시작한 예약 (힙, 짧은 순)"
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
          },
          "intervals": [
           [
-           10,
-           12
-          ],
-          [
            8,
            20
+          ],
+          [
+           10,
+           12
           ]
          ],
          "marks": {
+          "dim": [],
           "path": [
-           0
+           1
           ]
          }
         }
@@ -2682,7 +2828,7 @@
         "view": "line",
         "at": [
          1,
-         0
+         1
         ]
        },
        "to": {
@@ -2744,20 +2890,22 @@
         },
         {
          "label": {
-          "en": "started (heap), shortest first",
-          "ko": "시작한 예약 (힙, 짧은 순)"
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
          },
          "intervals": [
           [
-           10,
-           12
-          ],
-          [
            8,
            20
+          ],
+          [
+           10,
+           12
           ]
          ],
-         "marks": {}
+         "marks": {
+          "dim": []
+         }
         }
        ],
        "points": [
@@ -2832,22 +2980,23 @@
         },
         {
          "label": {
-          "en": "started (heap), shortest first",
-          "ko": "시작한 예약 (힙, 짧은 순)"
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
          },
          "intervals": [
           [
-           10,
-           12
-          ],
-          [
            8,
            20
+          ],
+          [
+           10,
+           12
           ]
          ],
          "marks": {
+          "dim": [],
           "bad": [
-           0
+           1
           ]
          }
         }
@@ -2878,7 +3027,7 @@
         "view": "line",
         "at": [
          1,
-         0
+         1
         ]
        },
        "mark": "bad"
@@ -2936,16 +3085,23 @@
         },
         {
          "label": {
-          "en": "started (heap), shortest first",
-          "ko": "시작한 예약 (힙, 짧은 순)"
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
          },
          "intervals": [
           [
            8,
            20
+          ],
+          [
+           10,
+           12
           ]
          ],
          "marks": {
+          "dim": [
+           1
+          ],
           "bad": [
            0
           ]
@@ -3037,11 +3193,25 @@
         },
         {
          "label": {
-          "en": "started (heap), shortest first",
-          "ko": "시작한 예약 (힙, 짧은 순)"
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
          },
-         "intervals": [],
-         "marks": {}
+         "intervals": [
+          [
+           8,
+           20
+          ],
+          [
+           10,
+           12
+          ]
+         ],
+         "marks": {
+          "dim": [
+           1,
+           0
+          ]
+         }
         }
        ],
        "points": [
@@ -3118,11 +3288,25 @@
         },
         {
          "label": {
-          "en": "started (heap), shortest first",
-          "ko": "시작한 예약 (힙, 짧은 순)"
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
          },
-         "intervals": [],
-         "marks": {}
+         "intervals": [
+          [
+           8,
+           20
+          ],
+          [
+           10,
+           12
+          ]
+         ],
+         "marks": {
+          "dim": [
+           1,
+           0
+          ]
+         }
         }
        ]
       },
@@ -3199,11 +3383,13 @@
         },
         {
          "label": {
-          "en": "started (heap), shortest first",
-          "ko": "시작한 예약 (힙, 짧은 순)"
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
          },
          "intervals": [],
-         "marks": {}
+         "marks": {
+          "dim": []
+         }
         }
        ]
       },
@@ -3256,11 +3442,13 @@
         },
         {
          "label": {
-          "en": "started (heap), shortest first",
-          "ko": "시작한 예약 (힙, 짧은 순)"
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
          },
          "intervals": [],
-         "marks": {}
+         "marks": {
+          "dim": []
+         }
         }
        ],
        "points": [
@@ -3328,8 +3516,8 @@
         },
         {
          "label": {
-          "en": "started (heap), shortest first",
-          "ko": "시작한 예약 (힙, 짧은 순)"
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
          },
          "intervals": [
           [
@@ -3338,6 +3526,7 @@
           ]
          ],
          "marks": {
+          "dim": [],
           "good": [
            0
           ]
@@ -3426,8 +3615,8 @@
         },
         {
          "label": {
-          "en": "started (heap), shortest first",
-          "ko": "시작한 예약 (힙, 짧은 순)"
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
          },
          "intervals": [
           [
@@ -3436,6 +3625,7 @@
           ]
          ],
          "marks": {
+          "dim": [],
           "path": [
            0
           ]
@@ -3526,8 +3716,8 @@
         },
         {
          "label": {
-          "en": "started (heap), shortest first",
-          "ko": "시작한 예약 (힙, 짧은 순)"
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
          },
          "intervals": [
           [
@@ -3535,7 +3725,9 @@
            4
           ]
          ],
-         "marks": {}
+         "marks": {
+          "dim": []
+         }
         }
        ],
        "points": [
@@ -3602,8 +3794,8 @@
         },
         {
          "label": {
-          "en": "started (heap), shortest first",
-          "ko": "시작한 예약 (힙, 짧은 순)"
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
          },
          "intervals": [
           [
@@ -3612,6 +3804,7 @@
           ]
          ],
          "marks": {
+          "dim": [],
           "bad": [
            0
           ]
@@ -3695,11 +3888,20 @@
         },
         {
          "label": {
-          "en": "started (heap), shortest first",
-          "ko": "시작한 예약 (힙, 짧은 순)"
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
          },
-         "intervals": [],
-         "marks": {}
+         "intervals": [
+          [
+           4,
+           4
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0
+          ]
+         }
         }
        ],
        "points": [
@@ -3768,11 +3970,20 @@
         },
         {
          "label": {
-          "en": "started (heap), shortest first",
-          "ko": "시작한 예약 (힙, 짧은 순)"
+          "en": "started (heap; popped ones faded)",
+          "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"
          },
-         "intervals": [],
-         "marks": {}
+         "intervals": [
+          [
+           4,
+           4
+          ]
+         ],
+         "marks": {
+          "dim": [
+           0
+          ]
+         }
         }
        ]
       },

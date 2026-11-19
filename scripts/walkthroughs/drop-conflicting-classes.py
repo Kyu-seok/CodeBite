@@ -93,7 +93,7 @@ def solve(classes, run):
     else:
         caption = {"en": f"{k} {plural(k, 'class', 'classes')} kept without overlap, {d} dropped: the fewest that can "
                          f"go. Answer: {d}.",
-                   "ko": f"겹치지 않게 수업 {k}개를 남기고 {d}개를 뺐습니다. 이보다 적게 뺄 수는 "
+                   "ko": f"겹치지 않게 수업 {k}개를 남기고 {d}개를 뺐으며, 이보다 적게 뺄 수는 "
                          f"없습니다. 답은 {d}입니다."}
         marks = ({"dim": list(range(len(ordered)))}, {"dim": list(range(k))}, {"path": list(range(d))})
     frame(caption, marks=marks, answer=str(d))

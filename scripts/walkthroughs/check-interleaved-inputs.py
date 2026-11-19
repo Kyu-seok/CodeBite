@@ -132,10 +132,10 @@ def solve(a_text, b_text, merged, run):
     taken.reverse()
     if taken:
         order = ", ".join(f"{ch} ({side})" for side, ch in taken)
-        caption = {"en": f"The corner is ✓. Walking back along the ✓ cells gives the order the letters were taken: "
-                         f"{order}. Answer: true.",
-                   "ko": f"오른쪽 아래 칸이 ✓입니다. ✓ 칸을 거슬러 가면 글자를 가져온 순서가 나옵니다: {order}. "
-                         "답은 true입니다."}
+        caption = {"en": f"The corner is ✓, so the answer is true. Walking back along the ✓ cells gives the order the "
+                         f"letters were taken: {order}.",
+                   "ko": f"오른쪽 아래 칸이 ✓이므로 답은 true입니다. ✓ 칸을 거슬러 가면 글자를 가져온 순서가 "
+                         f"나옵니다: {order}."}
     else:
         caption = {"en": "All three strings are empty, and two empty inputs weave into an empty merge. Answer: true.",
                    "ko": "세 문자열이 모두 비어 있고, 빈 입력 둘은 빈 병합 기록을 만듭니다. 답은 true입니다."}

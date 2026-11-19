@@ -4,8 +4,8 @@ an offline sweep that answers the probes in time order, pushing each booking ont
 has started and popping the top while it is already over, recording one frame per probe picked, booking pushed,
 booking popped and answer written, on each sample Test Case.
 
-The bookings by start and the heap are two groups on one number line: the heap is drawn as its pop order, shortest
-first, so its top is the first row and an over booking leaves from there. The probe minute is the one point on the
+The bookings by start and the heap are two groups on one number line: the heap's bookings in the order they were
+pushed, its top (the shortest) lit, and a booking popped staying in its row, faded, so no row shifts. The probe minute is the one point on the
 axis; the probes and the answers aligned with them are arrays, the answer moving in from the heap's top.
 
     CODEBITE_DB=<database> scripts/walkthroughs/shortest-table-booking.py
@@ -26,7 +26,7 @@ SLUG = "shortest-table-booking"
 BOOKINGS, STARTED = 0, 1
 PROBE = {"en": "probe", "ko": "조회 시점"}
 LABELS = [{"en": "bookings, by start", "ko": "시작 순으로 정렬한 예약"},
-          {"en": "started (heap), shortest first", "ko": "시작한 예약 (힙, 짧은 순)"}]
+          {"en": "started (heap; popped ones faded)", "ko": "시작한 예약 (힙, 꺼낸 것은 흐리게)"}]
 
 wt = Walkthrough(
     {"en": "Shortest Table Booking", "ko": "가장 짧은 예약 찾기"},
@@ -48,7 +48,11 @@ def solve(intervals, queries, run):
     bookings = sorted(intervals)
     answers = [-1] * len(queries)
     started = []  # the solution's heap of (length, end)
-    drawn = []    # the heap as drawn: (length, end, start) in pop order
+    drawn = []    # the heap as drawn: (length, end, start) in push order
+    popped = []   # indexes of drawn already popped
+
+    def top():
+        return min((i for i in range(len(drawn)) if i not in popped), key=lambda i: drawn[i])
     next_booking = 0
     done = []     # probe indexes answered
 
@@ -59,7 +63,7 @@ def solve(intervals, queries, run):
         line = {"groups": [{"label": LABELS[BOOKINGS], "intervals": bookings,
                             "marks": {"dim": list(range(next_booking)), **(b_marks or {})}},
                            {"label": LABELS[STARTED], "intervals": [[s, e] for _, e, s in drawn],
-                            "marks": s_marks or {}}]}
+                            "marks": {"dim": list(popped), **(s_marks or {})}}]}
         if minute is not None:
             line["points"] = [{"at": minute, "label": PROBE, "mark": "lit"}]
         run.frame(caption, probes={"values": queries, "pointers": {"now": now}, "marks": p_marks}, line=line,
@@ -78,8 +82,7 @@ def solve(intervals, queries, run):
             length = end - start + 1
             heapq.heappush(started, (length, end))
             drawn.append((length, end, start))
-            drawn.sort()
-            pos = drawn.index((length, end, start))
+            pos = len(drawn) - 1
             b = next_booking
             next_booking += 1
             frame({"en": f"{driver_list([start, end])} starts at {start} ≤ {minute}: push it onto the heap with its "
@@ -90,25 +93,27 @@ def solve(intervals, queries, run):
                   moves=[move(at("line", [BOOKINGS, b]), at("line", [STARTED, pos]))])
         while started and started[0][1] < minute:
             length, end = heapq.heappop(started)
-            start = drawn[0][2]
+            t = top()
+            start = drawn[t][2]
             frame({"en": f"The shortest on the heap, {driver_list([start, end])}, ended at {end} < {minute}: it can't "
                          "cover this probe or any later one, so pop it.",
                    "ko": f"힙에서 가장 짧은 {driver_list([start, end])} 예약은 {end}분에 끝나 {minute}분보다 앞이므로 "
                          "이 시점도, 이후 시점도 포함할 수 없습니다. 힙에서 꺼냅니다."},
-                  now=index, minute=minute, s_marks={"bad": [0]},
-                  moves=[move(at("line", [STARTED, 0]), mark="bad")])
-            drawn.pop(0)
+                  now=index, minute=minute, s_marks={"bad": [t]},
+                  moves=[move(at("line", [STARTED, t]), mark="bad")])
+            popped.append(t)
         if started:
             length, end = started[0]
-            start = drawn[0][2]
+            t = top()
+            start = drawn[t][2]
             answers[index] = length
             done.append(index)
             frame({"en": f"The top, {driver_list([start, end])}, has started and isn't over, so it covers minute "
                          f"{minute} and nothing on the heap is shorter: answer {length}.",
                    "ko": f"맨 위의 {driver_list([start, end])} 예약은 시작했고 아직 끝나지 않았으므로 {minute}분을 "
                          f"포함하며, 힙에 이보다 짧은 예약은 없습니다. 답은 {length}입니다."},
-                  now=index, minute=minute, s_marks={"path": [0]}, a_marks={"good": [index]},
-                  moves=[move(at("line", [STARTED, 0]), at("answers", index), value=str(length))])
+                  now=index, minute=minute, s_marks={"path": [t]}, a_marks={"good": [index]},
+                  moves=[move(at("line", [STARTED, t]), at("answers", index), value=str(length))])
         else:
             done.append(index)
             frame({"en": f"The heap is empty: no booking that has started is still going at minute {minute}, so the "

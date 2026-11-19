@@ -102,7 +102,7 @@ def solve(prices, run):
                           value=str(resting if rest_src == REST else fmt(sold)))])
         holding, sold, resting = new_hold, new_sold, new_rest
     answer = max(sold, resting)
-    end = (SOLD if sold >= resting else REST, n + 1)
+    end = (SOLD if sold > resting else REST, n + 1)
     # walk back along the choices: a hold taken from rest is a buy, a sale taken from hold is a sell
     path, trades, here = [list(end)], [], end
     while here[1] > 1:
@@ -117,14 +117,14 @@ def solve(prices, run):
     if trades:
         steps_en = ", ".join(f"{kind} on day {d} at {prices[d]}" for kind, d in trades)
         steps_ko = ", ".join(f"{d}일 {prices[d]}{'에 사기' if kind == 'buy' else '에 팔기'}" for kind, d in trades)
-        caption = {"en": f"The best last-day profit is max(sold {sold}, rest {resting}) = {answer}. Walking back: "
-                         f"{steps_en}. Answer: {answer}.",
+        caption = {"en": f"The answer is the best last-day profit, max(sold {sold}, rest {resting}) = {answer}. "
+                         f"Walking back: {steps_en}.",
                    "ko": f"마지막 날 최대 이익은 max(sold {sold}, rest {resting}) = {answer}입니다. 거슬러 가면 "
                          f"{steps_ko}이고, 답은 {answer}입니다."}
     else:
         caption = {"en": f"The best last-day profit is max(sold {sold}, rest {resting}) = {answer}: no trade makes "
                          "money, so never buy. Answer: 0.",
-                   "ko": f"마지막 날 최대 이익은 max(sold {sold}, rest {resting}) = {answer}입니다. 이익이 나는 거래가 "
+                   "ko": f"마지막 날 최대 이익은 max(sold {sold}, rest {resting}) = {answer}이고, 이익이 나는 거래가 "
                          "없으니 사지 않습니다. 답은 0입니다."}
     frame(caption, marks={"path": path}, answer=str(answer))
 

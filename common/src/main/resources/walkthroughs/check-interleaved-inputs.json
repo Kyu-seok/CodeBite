@@ -1820,8 +1820,8 @@
     },
     {
      "caption": {
-      "en": "The corner is ✓. Walking back along the ✓ cells gives the order the letters were taken: c (A), d (B), o (B), a (A), g (B), t (A). Answer: true.",
-      "ko": "오른쪽 아래 칸이 ✓입니다. ✓ 칸을 거슬러 가면 글자를 가져온 순서가 나옵니다: c (A), d (B), o (B), a (A), g (B), t (A). 답은 true입니다."
+      "en": "The corner is ✓, so the answer is true. Walking back along the ✓ cells gives the order the letters were taken: c (A), d (B), o (B), a (A), g (B), t (A).",
+      "ko": "오른쪽 아래 칸이 ✓이므로 답은 true입니다. ✓ 칸을 거슬러 가면 글자를 가져온 순서가 나옵니다: c (A), d (B), o (B), a (A), g (B), t (A)."
      },
      "views": {
       "table": {
