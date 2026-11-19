@@ -6,7 +6,7 @@
  },
  "approach": {
   "en": "answer[i] is the product of everything left of i times the product of everything right of i: one pass left to right writes the left products, one pass right to left multiplies in the right ones.",
-  "ko": "answer[i]는 i 왼쪽 원소들의 곱 × i 오른쪽 원소들의 곱입니다. 왼쪽에서 오른쪽으로 한 번 훑으며 왼쪽 곱을 적고, 오른쪽에서 왼쪽으로 한 번 더 훑으며 오른쪽 곱을 곱해 넣습니다."
+  "ko": "answer[i] 값은 i 왼쪽 원소들의 곱 × i 오른쪽 원소들의 곱입니다. 왼쪽에서 오른쪽으로 한 번 훑으며 왼쪽 곱을 적고, 오른쪽에서 왼쪽으로 한 번 더 훑으며 오른쪽 곱을 곱해 넣습니다."
  },
  "views": [
   {
@@ -38,7 +38,7 @@
     {
      "caption": {
       "en": "Without division, answer[i] is (product of everything left of i) × (product of everything right of i). First pass: walk left to right, carrying the left product in prefix, which starts at 1.",
-      "ko": "나눗셈 없이, answer[i]는 (i 왼쪽 원소들의 곱) × (i 오른쪽 원소들의 곱)입니다. 첫 번째 단계는 왼쪽에서 오른쪽으로 훑으며 왼쪽 곱을 prefix에 들고 가는데, prefix는 1에서 시작합니다."
+      "ko": "나눗셈 없이, answer[i] 값은 (i 왼쪽 원소들의 곱) × (i 오른쪽 원소들의 곱)입니다. 첫 번째 단계는 왼쪽에서 오른쪽으로 훑으며 왼쪽 곱을 prefix에 들고 가는데, prefix는 1에서 시작합니다."
      },
      "views": {
       "nums": {
@@ -554,7 +554,7 @@
     {
      "caption": {
       "en": "Both passes are done: each answer[i] is its left product times its right product, with nums[i] itself never multiplied in. Answer [60,40,24,30].",
-      "ko": "두 단계가 끝나 각 answer[i]는 왼쪽 곱 × 오른쪽 곱이고, nums[i] 자신은 한 번도 곱해지지 않았습니다. 답은 [60,40,24,30]입니다."
+      "ko": "두 단계가 끝나 각 answer[i] 값은 왼쪽 곱 × 오른쪽 곱이고, nums[i] 자신은 한 번도 곱해지지 않았습니다. 답은 [60,40,24,30]입니다."
      },
      "views": {
       "nums": {
@@ -606,7 +606,7 @@
     {
      "caption": {
       "en": "Without division, answer[i] is (product of everything left of i) × (product of everything right of i). First pass: walk left to right, carrying the left product in prefix, which starts at 1.",
-      "ko": "나눗셈 없이, answer[i]는 (i 왼쪽 원소들의 곱) × (i 오른쪽 원소들의 곱)입니다. 첫 번째 단계는 왼쪽에서 오른쪽으로 훑으며 왼쪽 곱을 prefix에 들고 가는데, prefix는 1에서 시작합니다."
+      "ko": "나눗셈 없이, answer[i] 값은 (i 왼쪽 원소들의 곱) × (i 오른쪽 원소들의 곱)입니다. 첫 번째 단계는 왼쪽에서 오른쪽으로 훑으며 왼쪽 곱을 prefix에 들고 가는데, prefix는 1에서 시작합니다."
      },
      "views": {
       "nums": {
@@ -1264,7 +1264,7 @@
     {
      "caption": {
       "en": "Both passes are done: each answer[i] is its left product times its right product, with nums[i] itself never multiplied in. Answer [0,0,8,0,0].",
-      "ko": "두 단계가 끝나 각 answer[i]는 왼쪽 곱 × 오른쪽 곱이고, nums[i] 자신은 한 번도 곱해지지 않았습니다. 답은 [0,0,8,0,0]입니다."
+      "ko": "두 단계가 끝나 각 answer[i] 값은 왼쪽 곱 × 오른쪽 곱이고, nums[i] 자신은 한 번도 곱해지지 않았습니다. 답은 [0,0,8,0,0]입니다."
      },
      "views": {
       "nums": {

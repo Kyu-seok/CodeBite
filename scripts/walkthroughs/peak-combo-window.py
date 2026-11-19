@@ -108,7 +108,7 @@ def solve(combo, k, run):
             lo = i - k + 1
             frame({"en": f"The window combo[{lo}..{i}] is full: its peak is the deque's front, beat {window[0]} "
                          f"with {combo[window[0]]}.",
-                   "ko": f"윈도 combo[{lo}..{i}]가 찼습니다. 최댓값은 덱의 맨 앞, {window[0]}번 비트의 "
+                   "ko": f"combo[{lo}..{i}] 윈도가 찼습니다. 최댓값은 덱의 맨 앞, {window[0]}번 비트의 "
                          f"{combo[window[0]]}입니다."},
                   dq_lit=[0], combo_lit=[window[0]], peak_good=True,
                   moves=[move(at("dq", 0), at("peaks", len(peaks) - 1))])

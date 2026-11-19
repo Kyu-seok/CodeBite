@@ -112,7 +112,7 @@
     {
      "caption": {
       "en": "2 ≤ 3, so 2 from runA is next: tail.next = 2, and runA steps to 5.",
-      "ko": "2 ≤ 3이므로 runA의 2가 다음입니다. tail.next = 2이고, runA는 5로 갑니다."
+      "ko": "2 ≤ 3이므로 runA의 2가 다음입니다. tail.next = 2이고, runA 포인터는 5로 갑니다."
      },
      "views": {
       "runs": {
@@ -250,7 +250,7 @@
     {
      "caption": {
       "en": "5 > 3, so 3 from runB is next: tail.next = 3, and runB steps to 4.",
-      "ko": "5 > 3이므로 runB의 3이 다음입니다. tail.next = 3이고, runB는 4로 갑니다."
+      "ko": "5 > 3이므로 runB의 3이 다음입니다. tail.next = 3이고, runB 포인터는 4로 갑니다."
      },
      "views": {
       "runs": {
@@ -391,7 +391,7 @@
     {
      "caption": {
       "en": "5 > 4, so 4 from runB is next: tail.next = 4, and runB steps to 7.",
-      "ko": "5 > 4이므로 runB의 4가 다음입니다. tail.next = 4이고, runB는 7로 갑니다."
+      "ko": "5 > 4이므로 runB의 4가 다음입니다. tail.next = 4이고, runB 포인터는 7로 갑니다."
      },
      "views": {
       "runs": {
@@ -529,7 +529,7 @@
     {
      "caption": {
       "en": "5 ≤ 7, so 5 from runA is next: tail.next = 5, and runA steps to 9.",
-      "ko": "5 ≤ 7이므로 runA의 5가 다음입니다. tail.next = 5이고, runA는 9로 갑니다."
+      "ko": "5 ≤ 7이므로 runA의 5가 다음입니다. tail.next = 5이고, runA 포인터는 9로 갑니다."
      },
      "views": {
       "runs": {
@@ -670,7 +670,7 @@
     {
      "caption": {
       "en": "9 > 7, so 7 from runB is next: tail.next = 7, and runB steps off its end to null.",
-      "ko": "9 > 7이므로 runB의 7이 다음입니다. tail.next = 7이고, runB는 끝을 지나 null이 됩니다."
+      "ko": "9 > 7이므로 runB의 7이 다음입니다. tail.next = 7이고, runB 포인터는 끝을 지나 null이 됩니다."
      },
      "views": {
       "runs": {
@@ -811,7 +811,7 @@
     {
      "caption": {
       "en": "runB is null, so tail.next = runA: 7 now points to 9, and the rest of runA follows as it is.",
-      "ko": "runB가 null이므로 tail.next = runA입니다. 이제 7의 화살표가 9를 가리키고, runA의 나머지가 그대로 이어집니다."
+      "ko": "runB 포인터가 null이므로 tail.next = runA입니다. 이제 7의 화살표가 9를 가리키고, runA의 나머지가 그대로 이어집니다."
      },
      "views": {
       "runs": {
@@ -1045,7 +1045,7 @@
     {
      "caption": {
       "en": "runA is empty (null) and runB holds [2,4,6]. tail starts at a new dummy node, whose arrow is null.",
-      "ko": "runA는 비어 있고(null) runB = [2,4,6]입니다. tail은 화살표가 null인 새 dummy 노드에서 시작합니다."
+      "ko": "runA 리스트는 비어 있고(null) runB = [2,4,6]입니다. tail은 화살표가 null인 새 dummy 노드에서 시작합니다."
      },
      "views": {
       "runs": {
@@ -1096,7 +1096,7 @@
     {
      "caption": {
       "en": "runA is null, so tail.next = runB: dummy now points to 2, and the rest of runB follows as it is.",
-      "ko": "runA가 null이므로 tail.next = runB입니다. 이제 dummy의 화살표가 2를 가리키고, runB의 나머지가 그대로 이어집니다."
+      "ko": "runA 포인터가 null이므로 tail.next = runB입니다. 이제 dummy의 화살표가 2를 가리키고, runB의 나머지가 그대로 이어집니다."
      },
      "views": {
       "runs": {
@@ -1261,7 +1261,7 @@
     {
      "caption": {
       "en": "runA is empty (null) and runB holds [3]. tail starts at a new dummy node, whose arrow is null.",
-      "ko": "runA는 비어 있고(null) runB = [3]입니다. tail은 화살표가 null인 새 dummy 노드에서 시작합니다."
+      "ko": "runA 리스트는 비어 있고(null) runB = [3]입니다. tail은 화살표가 null인 새 dummy 노드에서 시작합니다."
      },
      "views": {
       "runs": {
@@ -1302,7 +1302,7 @@
     {
      "caption": {
       "en": "runA is null, so tail.next = runB: dummy now points to 3, and the rest of runB follows as it is.",
-      "ko": "runA가 null이므로 tail.next = runB입니다. 이제 dummy의 화살표가 3을 가리키고, runB의 나머지가 그대로 이어집니다."
+      "ko": "runA 포인터가 null이므로 tail.next = runB입니다. 이제 dummy의 화살표가 3을 가리키고, runB의 나머지가 그대로 이어집니다."
      },
      "views": {
       "runs": {

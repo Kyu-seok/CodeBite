@@ -646,7 +646,7 @@
     {
      "caption": {
       "en": "record(75) returns the root, 75: the k-th highest score so far.",
-      "ko": "record(75)는 루트 75를 반환합니다. 지금까지 2번째로 높은 점수입니다."
+      "ko": "record(75) 호출은 루트 75를 반환합니다. 지금까지 2번째로 높은 점수입니다."
      },
      "views": {
       "calls": {
@@ -1071,7 +1071,7 @@
     {
      "caption": {
       "en": "record(120) returns the root, 100: the k-th highest score so far.",
-      "ko": "record(120)는 루트 100을 반환합니다. 지금까지 2번째로 높은 점수입니다."
+      "ko": "record(120) 호출은 루트 100을 반환합니다. 지금까지 2번째로 높은 점수입니다."
      },
      "views": {
       "calls": {
@@ -1353,7 +1353,7 @@
     {
      "caption": {
       "en": "record(60) returns the root, 100: the k-th highest score so far.",
-      "ko": "record(60)는 루트 100을 반환합니다. 지금까지 2번째로 높은 점수입니다."
+      "ko": "record(60) 호출은 루트 100을 반환합니다. 지금까지 2번째로 높은 점수입니다."
      },
      "views": {
       "calls": {

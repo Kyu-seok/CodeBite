@@ -71,11 +71,11 @@ def solve(lockers, run):
         else:
             shorter, side = right, "right"
         tie_en = " (a tie: right moves)" if a == b else ""
-        tie_ko = "(높이가 같으면 right)" if a == b else ""
+        tie_ko = " (높이가 같으면 right 쪽)" if a == b else ""
         frame({"en": f"Lockers {left} and {right}: height min({a}, {b}) = {h}, width {w}, area {area}, {verdict['en']}. "
                      f"Locker {shorter}{tie_en} is the limit, and a nearer partner can't make it taller, so {side} moves in.",
                "ko": f"{left}번과 {right}번 사물함: 높이 min({a}, {b}) = {h}, 너비 {w}, 넓이 {area}, {verdict['ko']}. "
-                     f"{shorter}번 사물함{tie_ko}이 높이를 막고, 더 가까운 짝으로는 높아지지 않으니 {side}를 안으로 옮깁니다."},
+                     f"{shorter}번 사물함이{tie_ko} 높이를 막고, 더 가까운 짝으로는 높아지지 않으니 {side} 포인터를 안으로 옮깁니다."},
               lit=[left + right - shorter], bad=[shorter], poster=(h, w), beaten=beaten)
         if a < b:
             left += 1

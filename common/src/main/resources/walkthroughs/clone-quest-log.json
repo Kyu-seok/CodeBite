@@ -463,7 +463,7 @@
     {
      "caption": {
       "en": "Node 0's next reaches node 1, so copy 0's next is copies[node 1], the copy at position 1, never the original.",
-      "ko": "0번 노드의 next가 1번 노드를 가리키므로, 0번 사본의 next는 원본이 아니라 같은 위치의 사본 copies[1번 노드]입니다."
+      "ko": "0번 노드의 next 포인터가 1번 노드를 가리키므로, 0번 사본의 next 포인터는 원본이 아니라 같은 위치의 사본 copies[1번 노드]입니다."
      },
      "views": {
       "log": {
@@ -558,7 +558,7 @@
     {
      "caption": {
       "en": "Node 0's related reaches node 2, so copy 0's related is copies[node 2], the copy at position 2, never the original.",
-      "ko": "0번 노드의 related가 2번 노드를 가리키므로, 0번 사본의 related는 원본이 아니라 같은 위치의 사본 copies[2번 노드]입니다."
+      "ko": "0번 노드의 related 포인터가 2번 노드를 가리키므로, 0번 사본의 related 포인터는 원본이 아니라 같은 위치의 사본 copies[2번 노드]입니다."
      },
      "views": {
       "log": {
@@ -661,7 +661,7 @@
     {
      "caption": {
       "en": "Node 1's next reaches node 2, so copy 1's next is copies[node 2], the copy at position 2, never the original.",
-      "ko": "1번 노드의 next가 2번 노드를 가리키므로, 1번 사본의 next는 원본이 아니라 같은 위치의 사본 copies[2번 노드]입니다."
+      "ko": "1번 노드의 next 포인터가 2번 노드를 가리키므로, 1번 사본의 next 포인터는 원본이 아니라 같은 위치의 사본 copies[2번 노드]입니다."
      },
      "views": {
       "log": {
@@ -759,7 +759,7 @@
     {
      "caption": {
       "en": "Node 1's related is null, and copies.get(null) is null, so copy 1's related is null too.",
-      "ko": "1번 노드의 related가 null이고 copies.get(null)도 null이므로, 1번 사본의 related도 null입니다."
+      "ko": "1번 노드의 related 포인터가 null이고 copies.get(null)도 null이므로, 1번 사본의 related 포인터도 null입니다."
      },
      "views": {
       "log": {
@@ -859,7 +859,7 @@
     {
      "caption": {
       "en": "Node 2's next reaches node 3, so copy 2's next is copies[node 3], the copy at position 3, never the original.",
-      "ko": "2번 노드의 next가 3번 노드를 가리키므로, 2번 사본의 next는 원본이 아니라 같은 위치의 사본 copies[3번 노드]입니다."
+      "ko": "2번 노드의 next 포인터가 3번 노드를 가리키므로, 2번 사본의 next 포인터는 원본이 아니라 같은 위치의 사본 copies[3번 노드]입니다."
      },
      "views": {
       "log": {
@@ -959,7 +959,7 @@
     {
      "caption": {
       "en": "Node 2's related reaches node 0, so copy 2's related is copies[node 0], the copy at position 0, never the original.",
-      "ko": "2번 노드의 related가 0번 노드를 가리키므로, 2번 사본의 related는 원본이 아니라 같은 위치의 사본 copies[0번 노드]입니다."
+      "ko": "2번 노드의 related 포인터가 0번 노드를 가리키므로, 2번 사본의 related 포인터는 원본이 아니라 같은 위치의 사본 copies[0번 노드]입니다."
      },
      "views": {
       "log": {
@@ -1066,7 +1066,7 @@
     {
      "caption": {
       "en": "Node 3's next is null, and copies.get(null) is null, so copy 3's next is null too.",
-      "ko": "3번 노드의 next가 null이고 copies.get(null)도 null이므로, 3번 사본의 next도 null입니다."
+      "ko": "3번 노드의 next 포인터가 null이고 copies.get(null)도 null이므로, 3번 사본의 next 포인터도 null입니다."
      },
      "views": {
       "log": {
@@ -1163,7 +1163,7 @@
     {
      "caption": {
       "en": "Node 3's related reaches node 1, so copy 3's related is copies[node 1], the copy at position 1, never the original.",
-      "ko": "3번 노드의 related가 1번 노드를 가리키므로, 3번 사본의 related는 원본이 아니라 같은 위치의 사본 copies[1번 노드]입니다."
+      "ko": "3번 노드의 related 포인터가 1번 노드를 가리키므로, 3번 사본의 related 포인터는 원본이 아니라 같은 위치의 사본 copies[1번 노드]입니다."
      },
      "views": {
       "log": {
@@ -1541,7 +1541,7 @@
     {
      "caption": {
       "en": "Node 0's next is null, and copies.get(null) is null, so copy 0's next is null too.",
-      "ko": "0번 노드의 next가 null이고 copies.get(null)도 null이므로, 0번 사본의 next도 null입니다."
+      "ko": "0번 노드의 next 포인터가 null이고 copies.get(null)도 null이므로, 0번 사본의 next 포인터도 null입니다."
      },
      "views": {
       "log": {
@@ -1601,7 +1601,7 @@
     {
      "caption": {
       "en": "Node 0's related reaches itself, so copy 0's related is copies[node 0], the copy at position 0, never the original.",
-      "ko": "0번 노드의 related가 자기 자신을 가리키므로, 0번 사본의 related는 원본이 아니라 같은 위치의 사본 copies[0번 노드]입니다."
+      "ko": "0번 노드의 related 포인터가 자기 자신을 가리키므로, 0번 사본의 related 포인터는 원본이 아니라 같은 위치의 사본 copies[0번 노드]입니다."
      },
      "views": {
       "log": {
@@ -1943,7 +1943,7 @@
     {
      "caption": {
       "en": "Node 0's next reaches node 1, so copy 0's next is copies[node 1], the copy at position 1, never the original.",
-      "ko": "0번 노드의 next가 1번 노드를 가리키므로, 0번 사본의 next는 원본이 아니라 같은 위치의 사본 copies[1번 노드]입니다."
+      "ko": "0번 노드의 next 포인터가 1번 노드를 가리키므로, 0번 사본의 next 포인터는 원본이 아니라 같은 위치의 사본 copies[1번 노드]입니다."
      },
      "views": {
       "log": {
@@ -2018,7 +2018,7 @@
     {
      "caption": {
       "en": "Node 0's related is null, and copies.get(null) is null, so copy 0's related is null too.",
-      "ko": "0번 노드의 related가 null이고 copies.get(null)도 null이므로, 0번 사본의 related도 null입니다."
+      "ko": "0번 노드의 related 포인터가 null이고 copies.get(null)도 null이므로, 0번 사본의 related 포인터도 null입니다."
      },
      "views": {
       "log": {
@@ -2096,7 +2096,7 @@
     {
      "caption": {
       "en": "Node 1's next is null, and copies.get(null) is null, so copy 1's next is null too.",
-      "ko": "1번 노드의 next가 null이고 copies.get(null)도 null이므로, 1번 사본의 next도 null입니다."
+      "ko": "1번 노드의 next 포인터가 null이고 copies.get(null)도 null이므로, 1번 사본의 next 포인터도 null입니다."
      },
      "views": {
       "log": {
@@ -2169,7 +2169,7 @@
     {
      "caption": {
       "en": "Node 1's related is null, and copies.get(null) is null, so copy 1's related is null too.",
-      "ko": "1번 노드의 related가 null이고 copies.get(null)도 null이므로, 1번 사본의 related도 null입니다."
+      "ko": "1번 노드의 related 포인터가 null이고 copies.get(null)도 null이므로, 1번 사본의 related 포인터도 null입니다."
      },
      "views": {
       "log": {

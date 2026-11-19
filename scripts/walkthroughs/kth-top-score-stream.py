@@ -171,7 +171,7 @@ def solve(ops, args, run):
                              f"{heap[0]} 이상인 점수가 {k}개 있으므로 건너뜁니다."},
                       marks={"lit": [0]}, moves=[move(at("calls", [row, 1]), mark="bad")])
             returns_root({"en": f"record({val}) returns the root, {heap[0]}: the k-th highest score so far.",
-                          "ko": f"record({val})는 루트 {josa(heap[0], '을를')} 반환합니다. 지금까지 {k}번째로 높은 "
+                          "ko": f"record({val}) 호출은 루트 {josa(heap[0], '을를')} 반환합니다. 지금까지 {k}번째로 높은 "
                                 f"점수입니다."})
 
     printed = "[" + ",".join(result) + "]"

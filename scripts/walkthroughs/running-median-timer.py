@@ -176,7 +176,7 @@ def solve(cmds, args, run):
         state["row"] = row
         if cmd == "StreamMedian":
             frame({"en": "StreamMedian() starts with both halves empty and returns null.",
-                   "ko": "StreamMedian()은 두 절반이 모두 빈 채로 시작하고 null을 반환합니다."}, moves=answer(None))
+                   "ko": "생성자 StreamMedian() 호출은 두 절반이 모두 빈 채로 시작하고 null을 반환합니다."}, moves=answer(None))
         elif cmd == "record":
             num = arg[0]
             push("low", num, at("calls", [row, 1]),
@@ -193,7 +193,7 @@ def solve(cmds, args, run):
             low, high = heaps["low"], heaps["high"]
             frame({"en": f"record({num}) returns null. low holds {len(low)} and high {len(high)}, and every number "
                          f"in low is at most every number in high.",
-                   "ko": f"record({num})는 null을 반환합니다. low에 {len(low)}개, high에 {len(high)}개가 있고, low의 "
+                   "ko": f"record({num}) 호출은 null을 반환합니다. low에 {len(low)}개, high에 {len(high)}개가 있고, low의 "
                          f"모든 수는 high의 어떤 수보다 크지 않습니다."},
                   moves=answer(None))
         else:

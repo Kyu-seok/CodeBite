@@ -23,8 +23,8 @@ wt = Walkthrough(
     {"en": "Capture Enclosed Tiles", "ko": "갇힌 영역 점령"},
     {"en": "Work from the border in: every 'O' on the border is safe, and so is every 'O' a safe tile touches. Mark "
            "them 'S' with a stack, then every 'O' left is captured and the 'S' tiles turn back into 'O'.",
-     "ko": "테두리에서 안쪽으로 찾습니다. 테두리의 'O'는 살아남고, 살아남은 타일에 맞닿은 'O'도 살아남습니다. 스택으로 "
-           "그런 타일을 'S'로 표시하고 나면, 남은 'O'는 모두 점령되고 'S' 타일은 다시 'O'가 됩니다."},
+     "ko": "테두리에서 안쪽으로 찾습니다. 테두리의 'O' 타일은 살아남고, 살아남은 타일에 맞닿은 'O' 타일도 살아남습니다. 스택으로 "
+           "그런 타일에 'S' 표시를 하고 나면, 남은 'O' 타일은 모두 점령되고 'S' 타일은 다시 'O' 타일이 됩니다."},
     views=[
         {"id": "board", "type": "grid", "title": {"en": "board", "ko": "board (보드)"},
          "values": {"X": {"label": {"en": "your tile", "ko": "내 타일"}, "tone": "plain"},
@@ -120,7 +120,7 @@ def solve(board, run):
         frame({"en": f"Pop ({name((r, c))}): {listed(added)} {plural(n, 'is an', 'are')} 'O' next to a safe tile, "
                      f"so {plural(n, 'it is', 'they are')} safe too.",
                "ko": f"({name((r, c))}) 칸을 꺼냅니다. 맞닿은 'O' 타일 {listed(added)} 칸도 안전한 타일과 이어져 "
-                     f"있으므로 'S'로 표시합니다."},
+                     f"있으므로 'S' 표시를 합니다."},
               lit=[(r, c)], good=added, stack_marks={"lit": [top]},
               moves=[move(at("stack", top), at("board", list(p)), value="S") for p in added])
         leaving.clear()
@@ -138,16 +138,16 @@ def solve(board, run):
         frame({"en": f"Now sweep the board. {plural(k, 'The one', 'The')} 'O' still unmarked, {listed(captured)}, "
                      f"cannot reach the border: {plural(k, 'it is', 'they are')} captured and become 'X'.",
                "ko": f"이제 보드를 훑습니다. 표시되지 않은 'O' 타일 {listed(captured)} 칸은 테두리에 닿을 수 없어 "
-                     f"점령되고 'X'가 됩니다."},
+                     f"점령되어 'X' 타일이 됩니다."},
               bad=captured, moves=[move(None, at("board", list(p)), value="X", mark="bad") for p in captured])
     safe = [(r, c) for r in range(rows) for c in range(cols) if board[r][c] == "S"]
     for r, c in safe:
         board[r][c] = "O"
     result = driver_list(board)
-    none = {"en": "No 'O' was captured, and the ", "ko": "점령된 'O'는 없고, "} if not captured else \
+    none = {"en": "No 'O' was captured, and the ", "ko": "점령된 'O' 타일은 없고, "} if not captured else \
         {"en": "The ", "ko": ""}
     frame({"en": f"{none['en']}safe tiles turn back into 'O'. Answer: {result}.",
-           "ko": f"{none['ko']}안전한 'S' 타일은 다시 'O'가 됩니다. 답은 {result}입니다."},
+           "ko": f"{none['ko']}안전한 'S' 타일은 다시 'O' 타일이 됩니다. 답은 {result}입니다."},
           path=safe, moves=[move(None, at("board", list(p)), value="O") for p in safe], answer=result)
 
 

@@ -85,7 +85,7 @@ def solve(cmds, args, run):
         if cmd == "WildcardLexicon":
             ids[id(root)] = tree.add(None)
             frame({"en": "WildcardLexicon() makes an empty trie, just the root, and returns null.",
-                   "ko": "WildcardLexicon()은 루트만 있는 빈 트라이를 만들고 null을 반환합니다."},
+                   "ko": "생성자 WildcardLexicon() 호출은 루트만 있는 빈 트라이를 만들고 null을 반환합니다."},
                   row, lit=[ids[id(root)]])
             answer(row, None, {"en": "", "ko": ""})
             continue

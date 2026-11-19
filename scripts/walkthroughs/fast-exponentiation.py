@@ -25,7 +25,7 @@ wt = Walkthrough(
     {"en": "Fast Exponentiation", "ko": "빠른 거듭제곱"},
     {"en": "Write the exponent in binary: bit k stands for base^(2^k), which squaring the base k times gives. "
            "Multiply the result by the squares whose bit is 1, so the loop runs once per bit, not once per unit.",
-     "ko": "지수를 이진수로 쓰면 k번 비트는 base^(2^k)를 뜻하고, 이 값은 base를 k번 제곱하면 나옵니다. "
+     "ko": "지수를 이진수로 쓰면 k번 비트는 base^(2^k) 값을 뜻하고, 이 값은 base를 k번 제곱하면 나옵니다. "
            "비트가 1인 자리의 제곱만 result에 곱하므로, 반복은 지수의 크기만큼이 아니라 비트 수만큼 돕니다."},
     views=[
         {"id": "bits", "type": "array",

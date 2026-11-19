@@ -36,7 +36,7 @@ wt = Walkthrough(
     views=[
         {"id": "table", "type": "grid",
          "title": {"en": "A prefix (rows) × B prefix (columns) weave into merged?",
-                   "ko": "A 앞부분(행) × B 앞부분(열)로 merged를 만들 수 있는가"},
+                   "ko": "A 앞부분(행) × B 앞부분(열)으로 merged를 만들 수 있는가"},
          "values": {**{ch: LETTER for ch in string.ascii_lowercase}, EMPTY: LETTER,
                     YES: {"glyph": "✓", "tone": "c"}, NO: {"glyph": "✗", "tone": "plain"},
                     CORNER: {"glyph": "", "tone": "plain"}, UNSET: {"glyph": "", "tone": "empty"}}},

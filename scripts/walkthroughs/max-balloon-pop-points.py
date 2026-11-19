@@ -41,7 +41,7 @@ wt = Walkthrough(
     views=[
         {"id": "table", "type": "grid",
          "title": {"en": "best points between left (rows) and right (columns)",
-                   "ko": "left(행)와 right(열) 사이의 최대 점수"},
+                   "ko": "행(left)과 열(right) 사이의 최대 점수"},
          "values": {**{head(v): {"tone": "a", "glyph": str(v)} for v in VALUES},
                     CORNER: {"glyph": "", "tone": "plain"}, UNSET: {"glyph": "", "tone": "empty"},
                     UNUSED: {"glyph": "", "tone": "plain"}}},

@@ -146,7 +146,7 @@ def solve(begin, end, word_list, run):
                 queue.append((h, length + 1))
             frame({"en": f"{plural(n, 'It leaves', 'They leave')} unvisited and {plural(n, 'joins', 'join')} the "
                          f"back of the queue with length {length + 1}.",
-                   "ko": f"새로 닿은 단어 {n}개가 방문 전 집합에서 빠져 길이 {length + 1}로 큐 뒤에 들어갑니다."},
+                   "ko": f"새로 닿은 단어 {n}개가 방문 전 집합에서 빠져 길이 {josa(length + 1, '(으)로')} 큐 뒤에 들어갑니다."},
                   good=hits, queue_marks={"good": list(range(back, len(queue)))},
                   moves=[move(at("words", h), at("queue", back + j), value=h) for j, h in enumerate(hits)])
         if found_end:

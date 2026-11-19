@@ -78,7 +78,7 @@ def solve(drifts, run):
             caption = {"en": f"{why_en}, so the {side} end is further from 0: {sq} = {v * v} is the biggest square "
                              f"left and takes slot {slot}. {side} moves in.",
                        "ko": f"{why_ko}, {side} 쪽이 0에서 더 멉니다. {sq} = {josa(v * v, '이가')} 남은 제곱 중 가장 커서 "
-                             f"{slot}번 칸에 들어가고, {side}가 안으로 옵니다."}
+                             f"{slot}번 칸에 들어가고, {side} 포인터가 안으로 옵니다."}
         frame(caption, lit=[left, right] if not same else [i], good=[slot],
               moves=[move(at("drifts", i), at("result", slot), value=f"{v * v}")])
         if i == left:

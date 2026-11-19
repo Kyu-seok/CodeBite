@@ -6,7 +6,7 @@
  },
  "approach": {
   "en": "mask & (mask − 1) is mask with its lowest 1 bit cleared, so count how many times that runs before the mask is 0: one per friend online.",
-  "ko": "mask & (mask − 1)은 mask에서 가장 낮은 1 비트를 끈 값이므로, mask가 0이 될 때까지 이 연산을 몇 번 하는지 세면 접속 중인 친구 수입니다."
+  "ko": "mask & (mask − 1) 값은 mask에서 가장 낮은 1 비트를 끈 값이므로, mask가 0이 될 때까지 이 연산을 몇 번 하는지 세면 접속 중인 친구 수입니다."
  },
  "views": [
   {

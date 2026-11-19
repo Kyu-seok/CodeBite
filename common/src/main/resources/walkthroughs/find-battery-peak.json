@@ -6,7 +6,7 @@
  },
  "approach": {
   "en": "Binary search over indices: compare readings[mid] with its right neighbour. If the neighbour is higher, climbing right must reach a peak before the −∞ past the end, so keep the right; if not, mid itself or something left of it is a peak.",
-  "ko": "인덱스 위의 이분 탐색입니다. readings[mid]를 오른쪽 이웃과 비교합니다. 이웃이 더 높으면 오른쪽으로 오르다 배열 끝의 −∞에 닿기 전에 반드시 정점을 만나므로 오른쪽을 남기고, 아니면 mid 자신이나 그 왼쪽에 정점이 있습니다."
+  "ko": "인덱스 위의 이분 탐색입니다. readings[mid] 값을 오른쪽 이웃과 비교합니다. 이웃이 더 높으면 오른쪽으로 오르다 배열 끝의 −∞에 닿기 전에 반드시 정점을 만나므로 오른쪽을 남기고, 아니면 mid 자신이나 그 왼쪽에 정점이 있습니다."
  },
  "views": [
   {
