@@ -1,0 +1,3804 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Versioned Cell Array",
+  "ko": "버전 관리 셀"
+ },
+ "approach": {
+  "en": "Never copy the row: each cell keeps a history of (snapshot id, value) entries, one per snapshot it changed in, and readAt binary-searches that history for the last entry at or before the snapshot asked for.",
+  "ko": "행을 통째로 복사하지 않습니다. 셀마다 (스냅샷 id, 값) 항목의 기록을 두되 바뀐 스냅샷마다 하나씩만 두고, readAt은 그 기록에서 요청한 스냅샷 이하인 마지막 항목을 이진 탐색으로 찾습니다."
+ },
+ "views": [
+  {
+   "id": "calls",
+   "type": "table",
+   "title": {
+    "en": "calls",
+    "ko": "호출"
+   }
+  },
+  {
+   "id": "history",
+   "type": "table",
+   "title": {
+    "en": "history per cell (snapshot id, value)",
+    "ko": "셀별 기록 (스냅샷 id, 값)"
+   }
+  },
+  {
+   "id": "state",
+   "type": "vars"
+  },
+  {
+   "id": "result",
+   "type": "output",
+   "title": {
+    "en": "returned",
+    "ko": "반환값"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "[\"VersionedCells\",\"set\",\"commit\",\"set\",\"readAt\"]\n[[3],[0,5],[],[0,6],[0,0]]",
+   "expected": "[null,null,0,null,5]",
+   "frames": [
+    {
+     "caption": {
+      "en": "VersionedCells(3): each of the 3 cells starts with one entry, (-1, 0): value 0 from before any snapshot. snap_id = 0 is the id the first commit will freeze. It returns null.",
+      "ko": "VersionedCells(3): 셀 3개가 모두 항목 (-1, 0) 하나로 시작합니다. 어떤 스냅샷보다 앞선 값 0이라는 뜻입니다. snap_id = 0은 첫 commit이 동결할 id입니다. null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "VersionedCells",
+          "3"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "set",
+          "0, 5"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "commit",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "set",
+          "0, 6"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "readAt",
+          "0, 0"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      },
+      "history": {
+       "rows": [
+        {
+         "label": {
+          "en": "cell 0",
+          "ko": "셀 0"
+         },
+         "cells": [
+          "(-1, 0)",
+          "",
+          ""
+         ]
+        },
+        {
+         "label": {
+          "en": "cell 1",
+          "ko": "셀 1"
+         },
+         "cells": [
+          "(-1, 0)",
+          "",
+          ""
+         ]
+        },
+        {
+         "label": {
+          "en": "cell 2",
+          "ko": "셀 2"
+         },
+         "cells": [
+          "(-1, 0)",
+          "",
+          ""
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "snap_id",
+         "value": 0
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "null"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "set(0, 5): cell 0's last entry (-1, 0) is from before snapshot 0, so a new entry (0, 5) is appended, leaving the frozen one as it was. It returns null.",
+      "ko": "set(0, 5): 셀 0의 마지막 항목 (-1, 0): 스냅샷 0보다 앞의 항목이므로 그대로 두고 (0, 5) 항목을 새로 붙입니다. null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "VersionedCells",
+          "3"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "set",
+          "0, 5"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "commit",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "set",
+          "0, 6"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "readAt",
+          "0, 0"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "history": {
+       "rows": [
+        {
+         "label": {
+          "en": "cell 0",
+          "ko": "셀 0"
+         },
+         "cells": [
+          "(-1, 0)",
+          "(0, 5)",
+          ""
+         ]
+        },
+        {
+         "label": {
+          "en": "cell 1",
+          "ko": "셀 1"
+         },
+         "cells": [
+          "(-1, 0)",
+          "",
+          ""
+         ]
+        },
+        {
+         "label": {
+          "en": "cell 2",
+          "ko": "셀 2"
+         },
+         "cells": [
+          "(-1, 0)",
+          "",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          0
+         ]
+        ],
+        "good": [
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "snap_id",
+         "value": 0
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "history",
+        "at": [
+         0,
+         1
+        ]
+       },
+       "value": "(0, 5)"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "commit(): snap_id goes from 0 to 1, which freezes every entry with id 0: nothing is copied. It returns 0, the frozen snapshot's id.",
+      "ko": "commit(): snap_id가 0에서 1로 올라 id가 0인 항목이 모두 동결됩니다. 아무것도 복사하지 않고, 동결된 스냅샷의 id 0을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "VersionedCells",
+          "3"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "set",
+          "0, 5"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "commit",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "set",
+          "0, 6"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "readAt",
+          "0, 0"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "history": {
+       "rows": [
+        {
+         "label": {
+          "en": "cell 0",
+          "ko": "셀 0"
+         },
+         "cells": [
+          "(-1, 0)",
+          "(0, 5)",
+          ""
+         ]
+        },
+        {
+         "label": {
+          "en": "cell 1",
+          "ko": "셀 1"
+         },
+         "cells": [
+          "(-1, 0)",
+          "",
+          ""
+         ]
+        },
+        {
+         "label": {
+          "en": "cell 2",
+          "ko": "셀 2"
+         },
+         "cells": [
+          "(-1, 0)",
+          "",
+          ""
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "snap_id",
+         "value": 1
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "0"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         2,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "set(0, 6): cell 0's last entry (0, 5) is from before snapshot 1, so a new entry (1, 6) is appended, leaving the frozen one as it was. It returns null.",
+      "ko": "set(0, 6): 셀 0의 마지막 항목 (0, 5): 스냅샷 1보다 앞의 항목이므로 그대로 두고 (1, 6) 항목을 새로 붙입니다. null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "VersionedCells",
+          "3"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "set",
+          "0, 5"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "commit",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "set",
+          "0, 6"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "readAt",
+          "0, 0"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "history": {
+       "rows": [
+        {
+         "label": {
+          "en": "cell 0",
+          "ko": "셀 0"
+         },
+         "cells": [
+          "(-1, 0)",
+          "(0, 5)",
+          "(1, 6)"
+         ]
+        },
+        {
+         "label": {
+          "en": "cell 1",
+          "ko": "셀 1"
+         },
+         "cells": [
+          "(-1, 0)",
+          "",
+          ""
+         ]
+        },
+        {
+         "label": {
+          "en": "cell 2",
+          "ko": "셀 2"
+         },
+         "cells": [
+          "(-1, 0)",
+          "",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          1
+         ]
+        ],
+        "good": [
+         [
+          0,
+          2
+         ]
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "snap_id",
+         "value": 1
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "0",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         3,
+         1
+        ]
+       },
+       "to": {
+        "view": "history",
+        "at": [
+         0,
+         2
+        ]
+       },
+       "value": "(1, 6)"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         3,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "readAt(0, 0): bisect finds the last entry in cell 0's history with id at most 0, (0, 5); (1, 6) came later. It returns 5.",
+      "ko": "readAt(0, 0): 셀 0의 기록에서 id가 0 이하인 마지막 항목을 이진 탐색으로 찾으면 (0, 5) 항목입니다 ((1, 6) 항목은 그 뒤의 것). 5를 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "VersionedCells",
+          "3"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "set",
+          "0, 5"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "commit",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "set",
+          "0, 6"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "readAt",
+          "0, 0"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "history": {
+       "rows": [
+        {
+         "label": {
+          "en": "cell 0",
+          "ko": "셀 0"
+         },
+         "cells": [
+          "(-1, 0)",
+          "(0, 5)",
+          "(1, 6)"
+         ]
+        },
+        {
+         "label": {
+          "en": "cell 1",
+          "ko": "셀 1"
+         },
+         "cells": [
+          "(-1, 0)",
+          "",
+          ""
+         ]
+        },
+        {
+         "label": {
+          "en": "cell 2",
+          "ko": "셀 2"
+         },
+         "cells": [
+          "(-1, 0)",
+          "",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          1
+         ]
+        ],
+        "dim": [
+         [
+          0,
+          2
+         ]
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "snap_id",
+         "value": 1
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "0",
+        "null",
+        "5"
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "history",
+        "at": [
+         0,
+         1
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       },
+       "value": "5"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every call is answered, in order: answer [null,null,0,null,5].",
+      "ko": "모든 호출의 반환값을 차례로 모았습니다. 답은 [null,null,0,null,5]입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "VersionedCells",
+          "3"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "set",
+          "0, 5"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "commit",
+          ""
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "set",
+          "0, 6"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "readAt",
+          "0, 0"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "history": {
+       "rows": [
+        {
+         "label": {
+          "en": "cell 0",
+          "ko": "셀 0"
+         },
+         "cells": [
+          "(-1, 0)",
+          "(0, 5)",
+          "(1, 6)"
+         ]
+        },
+        {
+         "label": {
+          "en": "cell 1",
+          "ko": "셀 1"
+         },
+         "cells": [
+          "(-1, 0)",
+          "",
+          ""
+         ]
+        },
+        {
+         "label": {
+          "en": "cell 2",
+          "ko": "셀 2"
+         },
+         "cells": [
+          "(-1, 0)",
+          "",
+          ""
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "snap_id",
+         "value": 1
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "0",
+        "null",
+        "5"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      }
+     },
+     "answer": "[null,null,0,null,5]"
+    }
+   ],
+   "sampleInput": "[\"VersionedCells\",\"set\",\"commit\",\"set\",\"readAt\"]\n[[3],[0,5],[],[0,6],[0,0]]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "[\"VersionedCells\",\"set\",\"set\",\"commit\",\"set\",\"commit\",\"readAt\",\"readAt\"]\n[[2],[0,10],[1,20],[],[0,30],[],[0,0],[0,1]]",
+   "expected": "[null,null,null,0,null,1,10,30]",
+   "frames": [
+    {
+     "caption": {
+      "en": "VersionedCells(2): each of the 2 cells starts with one entry, (-1, 0): value 0 from before any snapshot. snap_id = 0 is the id the first commit will freeze. It returns null.",
+      "ko": "VersionedCells(2): 셀 2개가 모두 항목 (-1, 0) 하나로 시작합니다. 어떤 스냅샷보다 앞선 값 0이라는 뜻입니다. snap_id = 0은 첫 commit이 동결할 id입니다. null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "VersionedCells",
+          "2"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "set",
+          "0, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "set",
+          "1, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "commit",
+          ""
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "set",
+          "0, 30"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "commit",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "readAt",
+          "0, 0"
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "readAt",
+          "0, 1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      },
+      "history": {
+       "rows": [
+        {
+         "label": {
+          "en": "cell 0",
+          "ko": "셀 0"
+         },
+         "cells": [
+          "(-1, 0)",
+          "",
+          ""
+         ]
+        },
+        {
+         "label": {
+          "en": "cell 1",
+          "ko": "셀 1"
+         },
+         "cells": [
+          "(-1, 0)",
+          "",
+          ""
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "snap_id",
+         "value": 0
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "null"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "set(0, 10): cell 0's last entry (-1, 0) is from before snapshot 0, so a new entry (0, 10) is appended, leaving the frozen one as it was. It returns null.",
+      "ko": "set(0, 10): 셀 0의 마지막 항목 (-1, 0): 스냅샷 0보다 앞의 항목이므로 그대로 두고 (0, 10) 항목을 새로 붙입니다. null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "VersionedCells",
+          "2"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "set",
+          "0, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "set",
+          "1, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "commit",
+          ""
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "set",
+          "0, 30"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "commit",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "readAt",
+          "0, 0"
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "readAt",
+          "0, 1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "history": {
+       "rows": [
+        {
+         "label": {
+          "en": "cell 0",
+          "ko": "셀 0"
+         },
+         "cells": [
+          "(-1, 0)",
+          "(0, 10)",
+          ""
+         ]
+        },
+        {
+         "label": {
+          "en": "cell 1",
+          "ko": "셀 1"
+         },
+         "cells": [
+          "(-1, 0)",
+          "",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          0
+         ]
+        ],
+        "good": [
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "snap_id",
+         "value": 0
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "history",
+        "at": [
+         0,
+         1
+        ]
+       },
+       "value": "(0, 10)"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "set(1, 20): cell 1's last entry (-1, 0) is from before snapshot 0, so a new entry (0, 20) is appended, leaving the frozen one as it was. It returns null.",
+      "ko": "set(1, 20): 셀 1의 마지막 항목 (-1, 0): 스냅샷 0보다 앞의 항목이므로 그대로 두고 (0, 20) 항목을 새로 붙입니다. null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "VersionedCells",
+          "2"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "set",
+          "0, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "set",
+          "1, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "commit",
+          ""
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "set",
+          "0, 30"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "commit",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "readAt",
+          "0, 0"
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "readAt",
+          "0, 1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "history": {
+       "rows": [
+        {
+         "label": {
+          "en": "cell 0",
+          "ko": "셀 0"
+         },
+         "cells": [
+          "(-1, 0)",
+          "(0, 10)",
+          ""
+         ]
+        },
+        {
+         "label": {
+          "en": "cell 1",
+          "ko": "셀 1"
+         },
+         "cells": [
+          "(-1, 0)",
+          "(0, 20)",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          1,
+          0
+         ]
+        ],
+        "good": [
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "snap_id",
+         "value": 0
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         2,
+         1
+        ]
+       },
+       "to": {
+        "view": "history",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "value": "(0, 20)"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         2,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "commit(): snap_id goes from 0 to 1, which freezes every entry with id 0: nothing is copied. It returns 0, the frozen snapshot's id.",
+      "ko": "commit(): snap_id가 0에서 1로 올라 id가 0인 항목이 모두 동결됩니다. 아무것도 복사하지 않고, 동결된 스냅샷의 id 0을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "VersionedCells",
+          "2"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "set",
+          "0, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "set",
+          "1, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "commit",
+          ""
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "set",
+          "0, 30"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "commit",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "readAt",
+          "0, 0"
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "readAt",
+          "0, 1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "history": {
+       "rows": [
+        {
+         "label": {
+          "en": "cell 0",
+          "ko": "셀 0"
+         },
+         "cells": [
+          "(-1, 0)",
+          "(0, 10)",
+          ""
+         ]
+        },
+        {
+         "label": {
+          "en": "cell 1",
+          "ko": "셀 1"
+         },
+         "cells": [
+          "(-1, 0)",
+          "(0, 20)",
+          ""
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "snap_id",
+         "value": 1
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "0"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         3,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "set(0, 30): cell 0's last entry (0, 10) is from before snapshot 1, so a new entry (1, 30) is appended, leaving the frozen one as it was. It returns null.",
+      "ko": "set(0, 30): 셀 0의 마지막 항목 (0, 10): 스냅샷 1보다 앞의 항목이므로 그대로 두고 (1, 30) 항목을 새로 붙입니다. null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "VersionedCells",
+          "2"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "set",
+          "0, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "set",
+          "1, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "commit",
+          ""
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "set",
+          "0, 30"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "commit",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "readAt",
+          "0, 0"
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "readAt",
+          "0, 1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "history": {
+       "rows": [
+        {
+         "label": {
+          "en": "cell 0",
+          "ko": "셀 0"
+         },
+         "cells": [
+          "(-1, 0)",
+          "(0, 10)",
+          "(1, 30)"
+         ]
+        },
+        {
+         "label": {
+          "en": "cell 1",
+          "ko": "셀 1"
+         },
+         "cells": [
+          "(-1, 0)",
+          "(0, 20)",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          1
+         ]
+        ],
+        "good": [
+         [
+          0,
+          2
+         ]
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "snap_id",
+         "value": 1
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "0",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         4,
+         1
+        ]
+       },
+       "to": {
+        "view": "history",
+        "at": [
+         0,
+         2
+        ]
+       },
+       "value": "(1, 30)"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         4,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "commit(): snap_id goes from 1 to 2, which freezes every entry with id 1: nothing is copied. It returns 1, the frozen snapshot's id.",
+      "ko": "commit(): snap_id가 1에서 2로 올라 id가 1인 항목이 모두 동결됩니다. 아무것도 복사하지 않고, 동결된 스냅샷의 id 1을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "VersionedCells",
+          "2"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "set",
+          "0, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "set",
+          "1, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "commit",
+          ""
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "set",
+          "0, 30"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "commit",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "readAt",
+          "0, 0"
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "readAt",
+          "0, 1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ]
+        ]
+       }
+      },
+      "history": {
+       "rows": [
+        {
+         "label": {
+          "en": "cell 0",
+          "ko": "셀 0"
+         },
+         "cells": [
+          "(-1, 0)",
+          "(0, 10)",
+          "(1, 30)"
+         ]
+        },
+        {
+         "label": {
+          "en": "cell 1",
+          "ko": "셀 1"
+         },
+         "cells": [
+          "(-1, 0)",
+          "(0, 20)",
+          ""
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "snap_id",
+         "value": 2
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "0",
+        "null",
+        "1"
+       ],
+       "marks": {
+        "good": [
+         5
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         5,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 5
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "readAt(0, 0): bisect finds the last entry in cell 0's history with id at most 0, (0, 10); (1, 30) came later. It returns 10.",
+      "ko": "readAt(0, 0): 셀 0의 기록에서 id가 0 이하인 마지막 항목을 이진 탐색으로 찾으면 (0, 10) 항목입니다 ((1, 30) 항목은 그 뒤의 것). 10을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "VersionedCells",
+          "2"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "set",
+          "0, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "set",
+          "1, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "commit",
+          ""
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "set",
+          "0, 30"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "commit",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "readAt",
+          "0, 0"
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "readAt",
+          "0, 1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ],
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          6,
+          0
+         ],
+         [
+          6,
+          1
+         ]
+        ]
+       }
+      },
+      "history": {
+       "rows": [
+        {
+         "label": {
+          "en": "cell 0",
+          "ko": "셀 0"
+         },
+         "cells": [
+          "(-1, 0)",
+          "(0, 10)",
+          "(1, 30)"
+         ]
+        },
+        {
+         "label": {
+          "en": "cell 1",
+          "ko": "셀 1"
+         },
+         "cells": [
+          "(-1, 0)",
+          "(0, 20)",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          1
+         ]
+        ],
+        "dim": [
+         [
+          0,
+          2
+         ]
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "snap_id",
+         "value": 2
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "0",
+        "null",
+        "1",
+        "10"
+       ],
+       "marks": {
+        "good": [
+         6
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "history",
+        "at": [
+         0,
+         1
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 6
+       },
+       "value": "10"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "readAt(0, 1): bisect finds the last entry in cell 0's history with id at most 1, (1, 30). It returns 30.",
+      "ko": "readAt(0, 1): 셀 0의 기록에서 id가 1 이하인 마지막 항목을 이진 탐색으로 찾으면 (1, 30) 항목입니다. 30을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "VersionedCells",
+          "2"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "set",
+          "0, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "set",
+          "1, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "commit",
+          ""
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "set",
+          "0, 30"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "commit",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "readAt",
+          "0, 0"
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "readAt",
+          "0, 1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ],
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ],
+         [
+          6,
+          0
+         ],
+         [
+          6,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          7,
+          0
+         ],
+         [
+          7,
+          1
+         ]
+        ]
+       }
+      },
+      "history": {
+       "rows": [
+        {
+         "label": {
+          "en": "cell 0",
+          "ko": "셀 0"
+         },
+         "cells": [
+          "(-1, 0)",
+          "(0, 10)",
+          "(1, 30)"
+         ]
+        },
+        {
+         "label": {
+          "en": "cell 1",
+          "ko": "셀 1"
+         },
+         "cells": [
+          "(-1, 0)",
+          "(0, 20)",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          2
+         ]
+        ],
+        "dim": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "snap_id",
+         "value": 2
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "0",
+        "null",
+        "1",
+        "10",
+        "30"
+       ],
+       "marks": {
+        "good": [
+         7
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "history",
+        "at": [
+         0,
+         2
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 7
+       },
+       "value": "30"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every call is answered, in order: answer [null,null,null,0,null,1,10,30].",
+      "ko": "모든 호출의 반환값을 차례로 모았습니다. 답은 [null,null,null,0,null,1,10,30]입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "VersionedCells",
+          "2"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "set",
+          "0, 10"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "set",
+          "1, 20"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "commit",
+          ""
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "set",
+          "0, 30"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "commit",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "readAt",
+          "0, 0"
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "readAt",
+          "0, 1"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "history": {
+       "rows": [
+        {
+         "label": {
+          "en": "cell 0",
+          "ko": "셀 0"
+         },
+         "cells": [
+          "(-1, 0)",
+          "(0, 10)",
+          "(1, 30)"
+         ]
+        },
+        {
+         "label": {
+          "en": "cell 1",
+          "ko": "셀 1"
+         },
+         "cells": [
+          "(-1, 0)",
+          "(0, 20)",
+          ""
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "snap_id",
+         "value": 2
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "0",
+        "null",
+        "1",
+        "10",
+        "30"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7
+        ]
+       }
+      }
+     },
+     "answer": "[null,null,null,0,null,1,10,30]"
+    }
+   ],
+   "sampleInput": "[\"VersionedCells\",\"set\",\"set\",\"commit\",\"set\",\"commit\",\"readAt\",\"readAt\"]\n[[2],[0,10],[1,20],[],[0,30],[],[0,0],[0,1]]"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "[\"VersionedCells\",\"commit\",\"readAt\",\"set\",\"commit\",\"readAt\"]\n[[1],[],[0,0],[0,7],[],[0,1]]",
+   "expected": "[null,0,0,null,1,7]",
+   "frames": [
+    {
+     "caption": {
+      "en": "VersionedCells(1): each of the 1 cell starts with one entry, (-1, 0): value 0 from before any snapshot. snap_id = 0 is the id the first commit will freeze. It returns null.",
+      "ko": "VersionedCells(1): 셀 1개가 모두 항목 (-1, 0) 하나로 시작합니다. 어떤 스냅샷보다 앞선 값 0이라는 뜻입니다. snap_id = 0은 첫 commit이 동결할 id입니다. null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "VersionedCells",
+          "1"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "commit",
+          ""
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "readAt",
+          "0, 0"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "set",
+          "0, 7"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "commit",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "readAt",
+          "0, 1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      },
+      "history": {
+       "rows": [
+        {
+         "label": {
+          "en": "cell 0",
+          "ko": "셀 0"
+         },
+         "cells": [
+          "(-1, 0)",
+          ""
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "snap_id",
+         "value": 0
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "null"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "commit(): snap_id goes from 0 to 1, which freezes every entry with id 0: nothing is copied. It returns 0, the frozen snapshot's id.",
+      "ko": "commit(): snap_id가 0에서 1로 올라 id가 0인 항목이 모두 동결됩니다. 아무것도 복사하지 않고, 동결된 스냅샷의 id 0을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "VersionedCells",
+          "1"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "commit",
+          ""
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "readAt",
+          "0, 0"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "set",
+          "0, 7"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "commit",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "readAt",
+          "0, 1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "history": {
+       "rows": [
+        {
+         "label": {
+          "en": "cell 0",
+          "ko": "셀 0"
+         },
+         "cells": [
+          "(-1, 0)",
+          ""
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "snap_id",
+         "value": 1
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "null",
+        "0"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "readAt(0, 0): bisect finds the last entry in cell 0's history with id at most 0, (-1, 0). It returns 0.",
+      "ko": "readAt(0, 0): 셀 0의 기록에서 id가 0 이하인 마지막 항목을 이진 탐색으로 찾으면 (-1, 0) 항목입니다. 0을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "VersionedCells",
+          "1"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "commit",
+          ""
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "readAt",
+          "0, 0"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "set",
+          "0, 7"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "commit",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "readAt",
+          "0, 1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "history": {
+       "rows": [
+        {
+         "label": {
+          "en": "cell 0",
+          "ko": "셀 0"
+         },
+         "cells": [
+          "(-1, 0)",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          0
+         ]
+        ],
+        "dim": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "snap_id",
+         "value": 1
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "null",
+        "0",
+        "0"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "history",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       },
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "set(0, 7): cell 0's last entry (-1, 0) is from before snapshot 1, so a new entry (1, 7) is appended, leaving the frozen one as it was. It returns null.",
+      "ko": "set(0, 7): 셀 0의 마지막 항목 (-1, 0): 스냅샷 1보다 앞의 항목이므로 그대로 두고 (1, 7) 항목을 새로 붙입니다. null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "VersionedCells",
+          "1"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "commit",
+          ""
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "readAt",
+          "0, 0"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "set",
+          "0, 7"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "commit",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "readAt",
+          "0, 1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "history": {
+       "rows": [
+        {
+         "label": {
+          "en": "cell 0",
+          "ko": "셀 0"
+         },
+         "cells": [
+          "(-1, 0)",
+          "(1, 7)"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          0
+         ]
+        ],
+        "good": [
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "snap_id",
+         "value": 1
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "null",
+        "0",
+        "0",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         3,
+         1
+        ]
+       },
+       "to": {
+        "view": "history",
+        "at": [
+         0,
+         1
+        ]
+       },
+       "value": "(1, 7)"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         3,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "commit(): snap_id goes from 1 to 2, which freezes every entry with id 1: nothing is copied. It returns 1, the frozen snapshot's id.",
+      "ko": "commit(): snap_id가 1에서 2로 올라 id가 1인 항목이 모두 동결됩니다. 아무것도 복사하지 않고, 동결된 스냅샷의 id 1을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "VersionedCells",
+          "1"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "commit",
+          ""
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "readAt",
+          "0, 0"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "set",
+          "0, 7"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "commit",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "readAt",
+          "0, 1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "history": {
+       "rows": [
+        {
+         "label": {
+          "en": "cell 0",
+          "ko": "셀 0"
+         },
+         "cells": [
+          "(-1, 0)",
+          "(1, 7)"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "snap_id",
+         "value": 2
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "null",
+        "0",
+        "0",
+        "null",
+        "1"
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         4,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "readAt(0, 1): bisect finds the last entry in cell 0's history with id at most 1, (1, 7). It returns 7.",
+      "ko": "readAt(0, 1): 셀 0의 기록에서 id가 1 이하인 마지막 항목을 이진 탐색으로 찾으면 (1, 7) 항목입니다. 7을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "VersionedCells",
+          "1"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "commit",
+          ""
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "readAt",
+          "0, 0"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "set",
+          "0, 7"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "commit",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "readAt",
+          "0, 1"
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ]
+        ]
+       }
+      },
+      "history": {
+       "rows": [
+        {
+         "label": {
+          "en": "cell 0",
+          "ko": "셀 0"
+         },
+         "cells": [
+          "(-1, 0)",
+          "(1, 7)"
+         ]
+        }
+       ],
+       "marks": {
+        "lit": [
+         [
+          0,
+          1
+         ]
+        ],
+        "dim": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "snap_id",
+         "value": 2
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "null",
+        "0",
+        "0",
+        "null",
+        "1",
+        "7"
+       ],
+       "marks": {
+        "good": [
+         5
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "history",
+        "at": [
+         0,
+         1
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 5
+       },
+       "value": "7"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every call is answered, in order: answer [null,0,0,null,1,7].",
+      "ko": "모든 호출의 반환값을 차례로 모았습니다. 답은 [null,0,0,null,1,7]입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "arguments",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "VersionedCells",
+          "1"
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "commit",
+          ""
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "readAt",
+          "0, 0"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "set",
+          "0, 7"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "commit",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "readAt",
+          "0, 1"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "history": {
+       "rows": [
+        {
+         "label": {
+          "en": "cell 0",
+          "ko": "셀 0"
+         },
+         "cells": [
+          "(-1, 0)",
+          "(1, 7)"
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "snap_id",
+         "value": 2
+        }
+       ]
+      },
+      "result": {
+       "values": [
+        "null",
+        "0",
+        "0",
+        "null",
+        "1",
+        "7"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      }
+     },
+     "answer": "[null,0,0,null,1,7]"
+    }
+   ],
+   "sampleInput": "[\"VersionedCells\",\"commit\",\"readAt\",\"set\",\"commit\",\"readAt\"]\n[[1],[],[0,0],[0,7],[],[0,1]]"
+  }
+ ]
+}

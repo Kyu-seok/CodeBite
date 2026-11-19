@@ -1,0 +1,3232 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Random Pick Bag",
+  "ko": "무작위로 뽑는 가방"
+ },
+ "approach": {
+  "en": "Keep the cards in a list, for a uniform draw by index, and a map from each card to its index, for constant-time lookup. A remove fills the removed card's slot with the last card, so the list never has a gap.",
+  "ko": "카드를 리스트에 두어 인덱스로 고르게 뽑고, 카드마다 리스트 인덱스를 맵에 두어 상수 시간에 찾습니다. 제거할 때는 마지막 카드로 빈 자리를 채워, 리스트에 구멍이 생기지 않게 합니다."
+ },
+ "views": [
+  {
+   "id": "calls",
+   "type": "table",
+   "title": {
+    "en": "calls",
+    "ko": "호출"
+   }
+  },
+  {
+   "id": "cards",
+   "type": "array",
+   "title": {
+    "en": "cards (list)",
+    "ko": "cards (리스트)"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  },
+  {
+   "id": "where",
+   "type": "map",
+   "title": {
+    "en": "where (card → index)",
+    "ko": "where (카드 → 인덱스)"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  },
+  {
+   "id": "result",
+   "type": "output",
+   "title": {
+    "en": "returned",
+    "ko": "반환값"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "[\"RandomBag\",\"insert\",\"insert\",\"remove\",\"drawRandom\"]\n[[],[1],[2],[1],[]]",
+   "expected": "[null,true,true,true,2]",
+   "frames": [
+    {
+     "caption": {
+      "en": "RandomBag() starts with an empty list of cards and an empty map from card to index. It returns null.",
+      "ko": "RandomBag(): 빈 카드 리스트와 카드 → 인덱스의 빈 맵으로 시작합니다. null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "RandomBag",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "insert",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "insert",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "remove",
+          "1"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "drawRandom",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      },
+      "cards": {
+       "values": [],
+       "marks": {}
+      },
+      "where": {
+       "entries": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "insert(1): 1 isn't in where, so it goes on the end of the list at index 0, and where records 1 → 0. It returns true.",
+      "ko": "insert(1): where에 카드 1번이 없으므로 리스트 끝 인덱스 0 자리에 넣고, where에 1 → 0 항목을 적습니다. true를 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "RandomBag",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "insert",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "insert",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "remove",
+          "1"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "drawRandom",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "cards": {
+       "values": [
+        1
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "where": {
+       "entries": [
+        {
+         "key": 1,
+         "value": "i=0"
+        }
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       },
+       "probe": {
+        "key": 1,
+        "hit": false
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "true"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "cards",
+        "at": 0
+       },
+       "value": "1"
+      },
+      {
+       "from": {
+        "view": "cards",
+        "at": 0
+       },
+       "to": {
+        "view": "where",
+        "at": 1
+       },
+       "value": "i=0"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": "true"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "insert(2): 2 isn't in where, so it goes on the end of the list at index 1, and where records 2 → 1. It returns true.",
+      "ko": "insert(2): where에 카드 2번이 없으므로 리스트 끝 인덱스 1 자리에 넣고, where에 2 → 1 항목을 적습니다. true를 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "RandomBag",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "insert",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "insert",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "remove",
+          "1"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "drawRandom",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "cards": {
+       "values": [
+        1,
+        2
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "where": {
+       "entries": [
+        {
+         "key": 1,
+         "value": "i=0"
+        },
+        {
+         "key": 2,
+         "value": "i=1"
+        }
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       },
+       "probe": {
+        "key": 2,
+        "hit": false
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "true",
+        "true"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         2,
+         1
+        ]
+       },
+       "to": {
+        "view": "cards",
+        "at": 1
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "cards",
+        "at": 1
+       },
+       "to": {
+        "view": "where",
+        "at": 2
+       },
+       "value": "i=1"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         2,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       },
+       "value": "true"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "remove(1): where gives index 0. The last card, 2, moves into slot 0 over 1, its index becomes 0, and the last slot is popped off. It returns true.",
+      "ko": "remove(1): where에서 인덱스 0을 얻습니다. 마지막 카드 2번이 0번 자리의 1번 위로 옮겨 오고 인덱스가 0으로 바뀌며, 마지막 자리는 리스트에서 뺍니다. true를 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "RandomBag",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "insert",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "insert",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "remove",
+          "1"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "drawRandom",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "cards": {
+       "values": [
+        2,
+        2
+       ],
+       "marks": {
+        "good": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "where": {
+       "entries": [
+        {
+         "key": 1,
+         "value": "i=0"
+        },
+        {
+         "key": 2,
+         "value": "i=0"
+        }
+       ],
+       "marks": {
+        "bad": [
+         1
+        ],
+        "good": [
+         2
+        ]
+       },
+       "struck": [
+        1
+       ],
+       "probe": {
+        "key": 1
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "true",
+        "true",
+        "true"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "cards",
+        "at": 1
+       },
+       "to": {
+        "view": "cards",
+        "at": 0
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "cards",
+        "at": 0
+       },
+       "to": {
+        "view": "where",
+        "at": 2
+       },
+       "value": "i=0"
+      },
+      {
+       "from": {
+        "view": "where",
+        "at": 1
+       },
+       "mark": "bad"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         3,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       },
+       "value": "true"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "drawRandom(): random.choice picks an index from 0 to 0; the bag holds one card, so it can only return 2.",
+      "ko": "drawRandom(): random.choice가 0부터 0까지의 인덱스 하나를 고릅니다. 가방에 카드가 한 장뿐이므로 2번만 나올 수 있습니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "RandomBag",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "insert",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "insert",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "remove",
+          "1"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "drawRandom",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "cards": {
+       "values": [
+        2
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "where": {
+       "entries": [
+        {
+         "key": 2,
+         "value": "i=0"
+        }
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "true",
+        "true",
+        "true",
+        "2"
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "cards",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every call is answered, in order: answer [null,true,true,true,2].",
+      "ko": "모든 호출의 반환값을 차례로 모았습니다. 답은 [null,true,true,true,2]입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "RandomBag",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "insert",
+          "1"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "insert",
+          "2"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "remove",
+          "1"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "drawRandom",
+          ""
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "cards": {
+       "values": [
+        2
+       ],
+       "marks": {}
+      },
+      "where": {
+       "entries": [
+        {
+         "key": 2,
+         "value": "i=0"
+        }
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "true",
+        "true",
+        "true",
+        "2"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      }
+     },
+     "answer": "[null,true,true,true,2]"
+    }
+   ],
+   "sampleInput": "[\"RandomBag\",\"insert\",\"insert\",\"remove\",\"drawRandom\"]\n[[],[1],[2],[1],[]]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "[\"RandomBag\",\"insert\",\"insert\",\"remove\",\"insert\",\"remove\",\"drawRandom\"]\n[[],[5],[5],[5],[5],[10],[]]",
+   "expected": "[null,true,false,true,true,false,5]",
+   "frames": [
+    {
+     "caption": {
+      "en": "RandomBag() starts with an empty list of cards and an empty map from card to index. It returns null.",
+      "ko": "RandomBag(): 빈 카드 리스트와 카드 → 인덱스의 빈 맵으로 시작합니다. null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "RandomBag",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "insert",
+          "5"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "insert",
+          "5"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "remove",
+          "5"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "insert",
+          "5"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "remove",
+          "10"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "drawRandom",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      },
+      "cards": {
+       "values": [],
+       "marks": {}
+      },
+      "where": {
+       "entries": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "insert(5): 5 isn't in where, so it goes on the end of the list at index 0, and where records 5 → 0. It returns true.",
+      "ko": "insert(5): where에 카드 5번이 없으므로 리스트 끝 인덱스 0 자리에 넣고, where에 5 → 0 항목을 적습니다. true를 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "RandomBag",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "insert",
+          "5"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "insert",
+          "5"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "remove",
+          "5"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "insert",
+          "5"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "remove",
+          "10"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "drawRandom",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "cards": {
+       "values": [
+        5
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "where": {
+       "entries": [
+        {
+         "key": 5,
+         "value": "i=0"
+        }
+       ],
+       "marks": {
+        "good": [
+         5
+        ]
+       },
+       "probe": {
+        "key": 5,
+        "hit": false
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "true"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "cards",
+        "at": 0
+       },
+       "value": "5"
+      },
+      {
+       "from": {
+        "view": "cards",
+        "at": 0
+       },
+       "to": {
+        "view": "where",
+        "at": 5
+       },
+       "value": "i=0"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": "true"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "insert(5): 5 is already in where, so nothing changes and it returns false.",
+      "ko": "insert(5): where에 카드 5번이 이미 있으므로 아무것도 바꾸지 않고 false를 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "RandomBag",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "insert",
+          "5"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "insert",
+          "5"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "remove",
+          "5"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "insert",
+          "5"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "remove",
+          "10"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "drawRandom",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "cards": {
+       "values": [
+        5
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "where": {
+       "entries": [
+        {
+         "key": 5,
+         "value": "i=0"
+        }
+       ],
+       "marks": {},
+       "probe": {
+        "key": 5
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "true",
+        "false"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         2,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       },
+       "value": "false"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "remove(5): where gives index 0, the last slot, so the card is simply popped off the end. It returns true.",
+      "ko": "remove(5): where에서 얻은 인덱스 0이 마지막 자리이므로 카드를 리스트 끝에서 그냥 뺍니다. true를 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "RandomBag",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "insert",
+          "5"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "insert",
+          "5"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "remove",
+          "5"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "insert",
+          "5"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "remove",
+          "10"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "drawRandom",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "cards": {
+       "values": [
+        5
+       ],
+       "marks": {
+        "bad": [
+         0
+        ]
+       }
+      },
+      "where": {
+       "entries": [
+        {
+         "key": 5,
+         "value": "i=0"
+        }
+       ],
+       "marks": {
+        "bad": [
+         5
+        ]
+       },
+       "struck": [
+        5
+       ],
+       "probe": {
+        "key": 5
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "true",
+        "false",
+        "true"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "cards",
+        "at": 0
+       },
+       "mark": "bad"
+      },
+      {
+       "from": {
+        "view": "where",
+        "at": 5
+       },
+       "mark": "bad"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         3,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       },
+       "value": "true"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "insert(5): 5 isn't in where, so it goes on the end of the list at index 0, and where records 5 → 0. It returns true.",
+      "ko": "insert(5): where에 카드 5번이 없으므로 리스트 끝 인덱스 0 자리에 넣고, where에 5 → 0 항목을 적습니다. true를 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "RandomBag",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "insert",
+          "5"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "insert",
+          "5"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "remove",
+          "5"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "insert",
+          "5"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "remove",
+          "10"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "drawRandom",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "cards": {
+       "values": [
+        5
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "where": {
+       "entries": [
+        {
+         "key": 5,
+         "value": "i=0"
+        }
+       ],
+       "marks": {
+        "good": [
+         5
+        ]
+       },
+       "probe": {
+        "key": 5,
+        "hit": false
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "true",
+        "false",
+        "true",
+        "true"
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         4,
+         1
+        ]
+       },
+       "to": {
+        "view": "cards",
+        "at": 0
+       },
+       "value": "5"
+      },
+      {
+       "from": {
+        "view": "cards",
+        "at": 0
+       },
+       "to": {
+        "view": "where",
+        "at": 5
+       },
+       "value": "i=0"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         4,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       },
+       "value": "true"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "remove(10): 10 isn't in where, so nothing changes and it returns false.",
+      "ko": "remove(10): where에 카드 10번이 없으므로 아무것도 바꾸지 않고 false를 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "RandomBag",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "insert",
+          "5"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "insert",
+          "5"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "remove",
+          "5"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "insert",
+          "5"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "remove",
+          "10"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "drawRandom",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ]
+        ]
+       }
+      },
+      "cards": {
+       "values": [
+        5
+       ],
+       "marks": {}
+      },
+      "where": {
+       "entries": [
+        {
+         "key": 5,
+         "value": "i=0"
+        }
+       ],
+       "marks": {},
+       "probe": {
+        "key": 10
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "true",
+        "false",
+        "true",
+        "true",
+        "false"
+       ],
+       "marks": {
+        "good": [
+         5
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         5,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 5
+       },
+       "value": "false"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "drawRandom(): random.choice picks an index from 0 to 0; the bag holds one card, so it can only return 5.",
+      "ko": "drawRandom(): random.choice가 0부터 0까지의 인덱스 하나를 고릅니다. 가방에 카드가 한 장뿐이므로 5번만 나올 수 있습니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "RandomBag",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "insert",
+          "5"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "insert",
+          "5"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "remove",
+          "5"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "insert",
+          "5"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "remove",
+          "10"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "drawRandom",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ],
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          6,
+          0
+         ],
+         [
+          6,
+          1
+         ]
+        ]
+       }
+      },
+      "cards": {
+       "values": [
+        5
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "where": {
+       "entries": [
+        {
+         "key": 5,
+         "value": "i=0"
+        }
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "true",
+        "false",
+        "true",
+        "true",
+        "false",
+        "5"
+       ],
+       "marks": {
+        "good": [
+         6
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "cards",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 6
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every call is answered, in order: answer [null,true,false,true,true,false,5].",
+      "ko": "모든 호출의 반환값을 차례로 모았습니다. 답은 [null,true,false,true,true,false,5]입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "RandomBag",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "insert",
+          "5"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "insert",
+          "5"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "remove",
+          "5"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "insert",
+          "5"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "remove",
+          "10"
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "drawRandom",
+          ""
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "cards": {
+       "values": [
+        5
+       ],
+       "marks": {}
+      },
+      "where": {
+       "entries": [
+        {
+         "key": 5,
+         "value": "i=0"
+        }
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "true",
+        "false",
+        "true",
+        "true",
+        "false",
+        "5"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6
+        ]
+       }
+      }
+     },
+     "answer": "[null,true,false,true,true,false,5]"
+    }
+   ],
+   "sampleInput": "[\"RandomBag\",\"insert\",\"insert\",\"remove\",\"insert\",\"remove\",\"drawRandom\"]\n[[],[5],[5],[5],[5],[10],[]]"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "[\"RandomBag\",\"insert\",\"remove\",\"remove\",\"insert\",\"drawRandom\"]\n[[],[7],[7],[7],[7],[]]",
+   "expected": "[null,true,true,false,true,7]",
+   "frames": [
+    {
+     "caption": {
+      "en": "RandomBag() starts with an empty list of cards and an empty map from card to index. It returns null.",
+      "ko": "RandomBag(): 빈 카드 리스트와 카드 → 인덱스의 빈 맵으로 시작합니다. null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "RandomBag",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "insert",
+          "7"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "remove",
+          "7"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "remove",
+          "7"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "insert",
+          "7"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "drawRandom",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      },
+      "cards": {
+       "values": [],
+       "marks": {}
+      },
+      "where": {
+       "entries": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "insert(7): 7 isn't in where, so it goes on the end of the list at index 0, and where records 7 → 0. It returns true.",
+      "ko": "insert(7): where에 카드 7번이 없으므로 리스트 끝 인덱스 0 자리에 넣고, where에 7 → 0 항목을 적습니다. true를 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "RandomBag",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "insert",
+          "7"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "remove",
+          "7"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "remove",
+          "7"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "insert",
+          "7"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "drawRandom",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "cards": {
+       "values": [
+        7
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "where": {
+       "entries": [
+        {
+         "key": 7,
+         "value": "i=0"
+        }
+       ],
+       "marks": {
+        "good": [
+         7
+        ]
+       },
+       "probe": {
+        "key": 7,
+        "hit": false
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "true"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "cards",
+        "at": 0
+       },
+       "value": "7"
+      },
+      {
+       "from": {
+        "view": "cards",
+        "at": 0
+       },
+       "to": {
+        "view": "where",
+        "at": 7
+       },
+       "value": "i=0"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": "true"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "remove(7): where gives index 0, the last slot, so the card is simply popped off the end. It returns true.",
+      "ko": "remove(7): where에서 얻은 인덱스 0이 마지막 자리이므로 카드를 리스트 끝에서 그냥 뺍니다. true를 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "RandomBag",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "insert",
+          "7"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "remove",
+          "7"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "remove",
+          "7"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "insert",
+          "7"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "drawRandom",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "cards": {
+       "values": [
+        7
+       ],
+       "marks": {
+        "bad": [
+         0
+        ]
+       }
+      },
+      "where": {
+       "entries": [
+        {
+         "key": 7,
+         "value": "i=0"
+        }
+       ],
+       "marks": {
+        "bad": [
+         7
+        ]
+       },
+       "struck": [
+        7
+       ],
+       "probe": {
+        "key": 7
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "true",
+        "true"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "cards",
+        "at": 0
+       },
+       "mark": "bad"
+      },
+      {
+       "from": {
+        "view": "where",
+        "at": 7
+       },
+       "mark": "bad"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         2,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       },
+       "value": "true"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "remove(7): 7 isn't in where, so nothing changes and it returns false.",
+      "ko": "remove(7): where에 카드 7번이 없으므로 아무것도 바꾸지 않고 false를 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "RandomBag",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "insert",
+          "7"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "remove",
+          "7"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "remove",
+          "7"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "insert",
+          "7"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "drawRandom",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "cards": {
+       "values": [],
+       "marks": {}
+      },
+      "where": {
+       "entries": [],
+       "marks": {},
+       "probe": {
+        "key": 7
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "true",
+        "true",
+        "false"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         3,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       },
+       "value": "false"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "insert(7): 7 isn't in where, so it goes on the end of the list at index 0, and where records 7 → 0. It returns true.",
+      "ko": "insert(7): where에 카드 7번이 없으므로 리스트 끝 인덱스 0 자리에 넣고, where에 7 → 0 항목을 적습니다. true를 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "RandomBag",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "insert",
+          "7"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "remove",
+          "7"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "remove",
+          "7"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "insert",
+          "7"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "drawRandom",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "cards": {
+       "values": [
+        7
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "where": {
+       "entries": [
+        {
+         "key": 7,
+         "value": "i=0"
+        }
+       ],
+       "marks": {
+        "good": [
+         7
+        ]
+       },
+       "probe": {
+        "key": 7,
+        "hit": false
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "true",
+        "true",
+        "false",
+        "true"
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         4,
+         1
+        ]
+       },
+       "to": {
+        "view": "cards",
+        "at": 0
+       },
+       "value": "7"
+      },
+      {
+       "from": {
+        "view": "cards",
+        "at": 0
+       },
+       "to": {
+        "view": "where",
+        "at": 7
+       },
+       "value": "i=0"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         4,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       },
+       "value": "true"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "drawRandom(): random.choice picks an index from 0 to 0; the bag holds one card, so it can only return 7.",
+      "ko": "drawRandom(): random.choice가 0부터 0까지의 인덱스 하나를 고릅니다. 가방에 카드가 한 장뿐이므로 7번만 나올 수 있습니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "RandomBag",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "insert",
+          "7"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "remove",
+          "7"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "remove",
+          "7"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "insert",
+          "7"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "drawRandom",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ]
+        ]
+       }
+      },
+      "cards": {
+       "values": [
+        7
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "where": {
+       "entries": [
+        {
+         "key": 7,
+         "value": "i=0"
+        }
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "true",
+        "true",
+        "false",
+        "true",
+        "7"
+       ],
+       "marks": {
+        "good": [
+         5
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "cards",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 5
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every call is answered, in order: answer [null,true,true,false,true,7].",
+      "ko": "모든 호출의 반환값을 차례로 모았습니다. 답은 [null,true,true,false,true,7]입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "argument",
+         "ko": "인자"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "RandomBag",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "insert",
+          "7"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "remove",
+          "7"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "remove",
+          "7"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "insert",
+          "7"
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "drawRandom",
+          ""
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "cards": {
+       "values": [
+        7
+       ],
+       "marks": {}
+      },
+      "where": {
+       "entries": [
+        {
+         "key": 7,
+         "value": "i=0"
+        }
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "true",
+        "true",
+        "false",
+        "true",
+        "7"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      }
+     },
+     "answer": "[null,true,true,false,true,7]"
+    }
+   ],
+   "sampleInput": "[\"RandomBag\",\"insert\",\"remove\",\"remove\",\"insert\",\"drawRandom\"]\n[[],[7],[7],[7],[7],[]]"
+  }
+ ]
+}
