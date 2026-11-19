@@ -1832,8 +1832,8 @@
     },
     {
      "caption": {
-      "en": "From stop 3 the battery never went below 0 to the end of the road. The stops before it run 2 short, and the 5 left at the end of the road covers that (the totals said it would), so the loop closes. Answer: 3.",
-      "ko": "휴게소 3부터 끝까지 배터리가 0 미만이 된 적이 없습니다. 그 앞의 휴게소들에서는 2만큼 모자라지만, 도로 끝에 남은 5가 그만큼을 메우므로(전체 합이 보장합니다) 한 바퀴를 돕니다. 답은 3입니다."
+      "en": "From stop 3 the battery never went below 0 to the end of the road, and the 5 left there covers the 2 the stops before it run short (the totals said it would). Answer: 3.",
+      "ko": "휴게소 3부터 도로 끝까지 배터리가 0 미만이 된 적이 없고, 끝에 남은 5가 앞 휴게소들에서 모자란 2를 메웁니다(전체 합이 보장합니다). 답은 3입니다."
      },
      "views": {
       "energy": {

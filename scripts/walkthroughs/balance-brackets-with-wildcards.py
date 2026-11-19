@@ -83,8 +83,10 @@ def solve(brackets, run):
         rows.append([low, high])
         moves = [move(at("brackets", i), at("open", [0, i]), value=char)]
         if high < 0:
-            frame({"en": f"{en} Even the most ( possible leaves {-high} ')' with nothing to close. Answer: false.",
-                   "ko": f"{ko} ( 개수가 가장 많은 경우에도 닫을 것이 없는 ')' 괄호가 {-high}개 남습니다. 답은 false입니다."},
+            frame({"en": f"{en[:-1]}, so even the most ( possible leaves {-high} ')' with nothing to close. "
+                         "Answer: false.",
+                   "ko": f"{ko[:-len('됩니다.')]}되므로, ( 개수가 가장 많아도 닫을 것이 없는 ')' 괄호가 {-high}개 "
+                         "남습니다. 답은 false입니다."},
                   i=i, rows_marks={"bad": [i]}, zero_mark="bad", chars_marks={"bad": [i]}, moves=moves, answer="false")
             return
         frame({"en": en, "ko": ko}, i=i, rows_marks={"good": [i]}, moves=moves)
@@ -94,20 +96,20 @@ def solve(brackets, run):
             rows[i] = [low, high]
             frame({"en": f"A count of open ( can't be {neg}: those choices closed a ( "
                          f"that was never opened. Cut the range at 0: [0, {high}].",
-                   "ko": f"열린 ( 개수가 {josa(neg, '이가')} 될 수는 없습니다. 열리지 않은 ( 괄호를 닫는 선택이기 "
-                         f"때문입니다. 범위를 0에서 잘라 [0, {high}] 범위로 둡니다."},
+                   "ko": f"열리지 않은 ( 괄호를 닫는 선택이라 열린 ( 개수가 {josa(neg, '이가')} 될 수는 없으므로, "
+                         f"범위를 0에서 잘라 [0, {high}] 범위로 둡니다."},
                   i=i, rows_marks={"good": [i]}, zero_mark="lit",
                   moves=[move(None, at("open", [0, i]), value="max(low, 0)")])
     if low == 0:
         frame({"en": f"Every character read and the range is [{low}, {high}]: 0 is in it, so some choice of the "
                      "wildcards closes every (. Answer: true.",
-               "ko": f"모든 글자를 읽었고 범위는 [{low}, {high}]입니다. 0이 범위에 들어 있으므로 와일드카드를 잘 정하면 "
+               "ko": f"모든 글자를 읽었고 범위 [{low}, {high}] 안에 0이 들어 있으므로, 와일드카드를 잘 정하면 "
                      "모든 ( 괄호가 닫힙니다. 답은 true입니다."},
               rows_marks={"path": [n - 1]}, zero_mark="path", chars_marks={"path": list(range(n))}, answer="true")
     else:
         frame({"en": f"Every character read and the range is [{low}, {high}]: at least {low} ( stay open whatever the "
                      "wildcards are. Answer: false.",
-               "ko": f"모든 글자를 읽었고 범위는 [{low}, {high}]입니다. 와일드카드를 어떻게 정해도 ( 괄호가 {low}개 이상 "
+               "ko": f"모든 글자를 읽었고 범위가 [{low}, {high}] 범위라서, 와일드카드를 어떻게 정해도 ( 괄호가 {low}개 이상 "
                      "열린 채로 남습니다. 답은 false입니다."},
               rows_marks={"bad": [n - 1]}, zero_mark="bad", answer="false")
 

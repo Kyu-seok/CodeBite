@@ -96,15 +96,15 @@ def solve(nums, run):
             frame({"en": f"{how_en} The best stays {best}.", "ko": f"{how_ko} 최고 합은 {best} 그대로입니다."},
                   i=i, lit=[i], moves=moves)
     window = nums[best_from:best_to + 1]
-    frame({"en": f"Every note read. The best streak is notes {best_from} to {best_to}, "
+    frame({"en": f"Every note read: the best streak is notes {best_from} to {best_to}, "
                  f"{json.dumps(window, separators=(',', ':'))}, with sum {best}. Answer: {best}."
            if best_from != best_to else
-           f"Every note read. The best streak is note {best_from} alone, [{nums[best_from]}], with sum {best}. "
+           f"Every note read: the best streak is note {best_from} alone, [{nums[best_from]}], with sum {best}. "
            f"Answer: {best}.",
-           "ko": f"모든 노트를 읽었습니다. 가장 좋은 구간은 노트 {best_from}부터 {best_to}까지의 "
+           "ko": f"모든 노트를 읽었고, 가장 좋은 구간은 노트 {best_from}부터 {best_to}까지의 "
                  f"{json.dumps(window, separators=(',', ':'))} 구간으로 합이 {best}입니다. 답은 {best}입니다."
            if best_from != best_to else
-           f"모든 노트를 읽었습니다. 가장 좋은 구간은 노트 {best_from} 하나뿐인 [{nums[best_from]}] 구간으로 "
+           f"모든 노트를 읽었고, 가장 좋은 구간은 노트 {best_from} 하나뿐인 [{nums[best_from]}] 구간으로 "
            f"합이 {best}입니다. 답은 {best}입니다."},
           path=range(best_from, best_to + 1), best_mark="path", show_streak=False, answer=str(best))
 

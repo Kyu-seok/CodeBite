@@ -3,8 +3,8 @@
 the players sorted tallest first (ties by k), then each inserted into the line at index k, recording one frame for
 the sort and one per insert on each sample Test Case.
 
-A player is drawn as their height in an `array` cell with `k=…` as its tag, in three arrays: the players as given,
-sorted, and the line being built. The sort moves each player from the input to their sorted place; an insert moves
+A player is drawn as `h,k` in an `array` cell (equal heights must stay apart: an insert's moves are checked by
+value), in three arrays: the players as given, sorted, and the line being built. The sort moves each player from the input to their sorted place; an insert moves
 the player from the sorted array into index k of the line, and each player behind it moves one place back.
 
     CODEBITE_DB=<database> scripts/walkthroughs/rebuild-tournament-line.py
@@ -29,7 +29,7 @@ wt = Walkthrough(
      "ko": "키가 큰 사람부터 세웁니다. 더 작은 사람은 누구의 k도 바꾸지 않고, 한 사람을 세울 때 이미 줄에 선 사람은 "
            "모두 키가 그 이상이므로 그중 정확히 k명이 앞에 있어야 합니다. 그래서 인덱스 k에 끼워 넣습니다."},
     views=[
-        {"id": "players", "type": "array", "title": {"en": "players: height, k above", "ko": "players (참가자): 키, 위 태그는 k"}},
+        {"id": "players", "type": "array", "title": {"en": "players: h,k", "ko": "players (참가자): 키 h, k"}},
         {"id": "order", "type": "array",
          "title": {"en": "sorted: tallest first, then smaller k", "ko": "정렬: 키 큰 순, 같으면 k 작은 순"},
          "empty": {"en": "not sorted yet", "ko": "아직 정렬 전"}},
@@ -39,8 +39,8 @@ wt = Walkthrough(
 )
 
 
-def k_tags(people):
-    return [[i, f"k={p[1]}"] for i, p in enumerate(people)]
+def cells(people):
+    return [f"{h},{k}" for h, k in people]
 
 
 def text(p):
@@ -57,9 +57,9 @@ def solve(players, run):
         om = {"dim": list(range(done))}
         om.update(order_marks or {})
         run.frame(caption,
-                  players={"values": [p[0] for p in players], "tags": k_tags(players)},
-                  order={"values": [p[0] for p in order], "tags": k_tags(order), "pointers": {"p": j}, "marks": om},
-                  line={"values": [p[0] for p in line], "tags": k_tags(line), "marks": line_marks or {}},
+                  players={"values": cells(players)},
+                  order={"values": cells(order), "pointers": {"p": j}, "marks": om},
+                  line={"values": cells(line), "marks": line_marks or {}},
                   moves=moves, **answer)
 
     frame({"en": f"{n} players, scrambled. Each is a height h with k, the number of players at least h tall who stand "
@@ -71,7 +71,7 @@ def solve(players, run):
     for j, p in enumerate(order):
         i = next(x for x in range(n) if not taken[x] and players[x] == p)
         taken[i] = True
-        moves.append(move(at("players", i), at("order", j), value=p[0]))
+        moves.append(move(at("players", i), at("order", j)))
     listed = ", ".join(text(p) for p in order)
     frame({"en": f"Sort tallest first, and among equal heights the smaller k first: {listed}.",
            "ko": f"키가 큰 순으로, 키가 같으면 k가 작은 순으로 정렬합니다: {listed}."},
@@ -79,8 +79,8 @@ def solve(players, run):
     for j, p in enumerate(order):
         h, k = p
         line.insert(k, p)
-        moves = [move(at("order", j), at("line", k), value=h)]
-        moves += [move(at("line", m - 1), at("line", m), value=line[m][0]) for m in range(k + 1, len(line))]
+        moves = [move(at("order", j), at("line", k))]
+        moves += [move(at("line", m - 1), at("line", m), value=cells([line[m]])[0]) for m in range(k + 1, len(line))]
         seated = len(line) - 1
         if seated == 0:
             en = f"{text(p)} goes first into the empty line, at index {k}."
@@ -89,17 +89,17 @@ def solve(players, run):
             behind = len(line) - 1 - k
             back_en = ("" if not behind else "; the player behind steps back" if behind == 1 else
                        f"; the {behind} behind step back")
-            back_ko = (f" 뒤의 {behind}명은 한 칸씩 물러납니다." if behind else "")
+            back_ko = (f"고, 뒤의 {behind}명은 한 칸씩 물러납니다" if behind else "습니다")
             who = "the one player already in line is" if seated == 1 else f"all {seated} already in line are"
             en = (f"{text(p)}: {who} at least {h} tall, so {k} of them must be ahead. Insert "
                   f"at index {k}{back_en}.")
             ko = (f"{text(p)} 참가자: 줄에 선 {seated}명은 {'' if seated == 1 else '모두 '}키가 {h} 이상이므로 그중 {k}명이 앞에 있어야 합니다. "
-                  f"인덱스 {k}에 끼워 넣습니다.{back_ko}")
+                  f"인덱스 {k}에 끼워 넣{back_ko}.")
         frame({"en": en, "ko": ko}, j=j, done=j, order_marks={"lit": [j]}, line_marks={"good": [k]}, moves=moves)
     answer = driver_list(line)
-    frame({"en": f"Every player is seated: {answer}. Each later, shorter player went in without changing anyone's "
-                 f"count ahead. Answer: {answer}.",
-           "ko": f"모든 참가자가 섰습니다: {answer}. 나중에 들어온 작은 사람은 누구의 앞사람 수도 바꾸지 않았습니다. "
+    frame({"en": f"Every player is seated, and no later, shorter player changed anyone's count ahead. "
+                 f"Answer: {answer}.",
+           "ko": f"모든 참가자가 섰고, 나중에 들어온 작은 사람은 누구의 앞사람 수도 바꾸지 않았습니다. "
                  f"답은 {answer}입니다."},
           done=n, line_marks={"path": list(range(n))}, answer=answer)
 

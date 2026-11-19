@@ -141,7 +141,7 @@ def solve(cards, size, run):
     k = len(groups)
     frame({"en": f"Every card went into a group: {k} {plural(k, 'group', 'groups')} of {size}, "
                  f"{', '.join(groups)}. Answer: true.",
-           "ko": f"모든 카드가 묶음에 들어갔습니다. {size}장짜리 묶음 {k}개, {', '.join(groups)}입니다. 답은 true입니다."},
+           "ko": f"모든 카드가 {size}장짜리 묶음 {k}개에 들어갔습니다({', '.join(groups)}). 답은 true입니다."},
           group_marks={"path": list(range(k))}, answer="true")
 
 

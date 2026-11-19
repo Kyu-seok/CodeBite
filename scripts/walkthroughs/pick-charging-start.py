@@ -114,16 +114,16 @@ def solve(energy, drain, run):
                   i=i, drive_to=i, good=[i], moves=moves)
     deficit = sum(energy[:start]) - sum(drain[:start])
     if start:
-        tail_en = (f" The stops before it run {-deficit} short, and the {tank} left at the end of the road covers that "
-                   f"(the totals said it would), so the loop closes.")
-        tail_ko = (f" 그 앞의 휴게소들에서는 {-deficit}만큼 모자라지만, 도로 끝에 남은 {josa(tank, '이가')} 그만큼을 "
-                   "메우므로(전체 합이 보장합니다) 한 바퀴를 돕니다.")
+        tail_en = (f", and the {tank} left there covers the {-deficit} the stops before it run short (the totals "
+                   "said it would)")
+        tail_ko = (f", 끝에 남은 {josa(tank, '이가')} 앞 휴게소들에서 모자란 {josa(-deficit, '을를')} 메웁니다(전체 "
+                   "합이 보장합니다)")
     else:
         tail_en = tail_ko = ""
-    frame({"en": f"From stop {start} the battery never went below 0 to the end of the road.{tail_en} Answer: {start}."
+    frame({"en": f"From stop {start} the battery never went below 0 to the end of the road{tail_en}. Answer: {start}."
            if start else
            f"From stop 0 the battery never went below 0 around the whole loop. Answer: 0.",
-           "ko": f"휴게소 {start}부터 끝까지 배터리가 0 미만이 된 적이 없습니다.{tail_ko} 답은 {start}입니다."
+           "ko": f"휴게소 {start}부터 도로 끝까지 배터리가 0 미만이 된 적이 없고{tail_ko}. 답은 {start}입니다."
            if start else "휴게소 0에서 출발해 한 바퀴를 도는 동안 배터리가 0 미만이 된 적이 없습니다. 답은 0입니다."},
           drive_to=n - 1, drive_mark="path", path=range(start, n), answer=str(start))
 

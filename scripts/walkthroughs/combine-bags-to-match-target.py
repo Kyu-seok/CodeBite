@@ -100,7 +100,7 @@ def solve(bags, target, run):
         names = ", ".join(str(u) for u in users)
         frame({"en": f"Every position is reached: combining the usable bags gives exactly {t} (bags {names} alone "
                      "already do). Answer: true.",
-               "ko": f"모든 자리에 닿았습니다. 쓸 수 있는 봉투를 합치면 정확히 target {t} 값이 됩니다(봉투 {names}만으로도 "
+               "ko": f"모든 자리에 닿았으므로 쓸 수 있는 봉투를 합치면 정확히 target {t} 값이 됩니다(봉투 {names}만으로도 "
                      "됩니다). 답은 true입니다."},
               cells={"path": [[first_hit[c], c] for c in range(3)]}, target_marks={"path": [0, 1, 2]},
               reached_marks={"path": [0, 1, 2]}, answer="true")

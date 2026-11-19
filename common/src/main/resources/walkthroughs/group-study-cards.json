@@ -2176,7 +2176,7 @@
     {
      "caption": {
       "en": "Every card went into a group: 4 groups of 2, [1,2], [3,4], [5,6], [7,8]. Answer: true.",
-      "ko": "모든 카드가 묶음에 들어갔습니다. 2장짜리 묶음 4개, [1,2], [3,4], [5,6], [7,8]입니다. 답은 true입니다."
+      "ko": "모든 카드가 2장짜리 묶음 4개에 들어갔습니다([1,2], [3,4], [5,6], [7,8]). 답은 true입니다."
      },
      "views": {
       "cards": {
@@ -2763,7 +2763,7 @@
     {
      "caption": {
       "en": "Every card went into a group: 2 groups of 1, [1], [5]. Answer: true.",
-      "ko": "모든 카드가 묶음에 들어갔습니다. 1장짜리 묶음 2개, [1], [5]입니다. 답은 true입니다."
+      "ko": "모든 카드가 1장짜리 묶음 2개에 들어갔습니다([1], [5]). 답은 true입니다."
      },
      "views": {
       "cards": {

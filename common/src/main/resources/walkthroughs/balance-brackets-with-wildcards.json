@@ -397,7 +397,7 @@
     {
      "caption": {
       "en": "Every character read and the range is [0, 2]: 0 is in it, so some choice of the wildcards closes every (. Answer: true.",
-      "ko": "모든 글자를 읽었고 범위는 [0, 2]입니다. 0이 범위에 들어 있으므로 와일드카드를 잘 정하면 모든 ( 괄호가 닫힙니다. 답은 true입니다."
+      "ko": "모든 글자를 읽었고 범위 [0, 2] 안에 0이 들어 있으므로, 와일드카드를 잘 정하면 모든 ( 괄호가 닫힙니다. 답은 true입니다."
      },
      "views": {
       "brackets": {
@@ -672,7 +672,7 @@
     {
      "caption": {
       "en": "Every character read and the range is [2, 2]: at least 2 ( stay open whatever the wildcards are. Answer: false.",
-      "ko": "모든 글자를 읽었고 범위는 [2, 2]입니다. 와일드카드를 어떻게 정해도 ( 괄호가 2개 이상 열린 채로 남습니다. 답은 false입니다."
+      "ko": "모든 글자를 읽었고 범위가 [2, 2] 범위라서, 와일드카드를 어떻게 정해도 ( 괄호가 2개 이상 열린 채로 남습니다. 답은 false입니다."
      },
      "views": {
       "brackets": {
@@ -785,8 +785,8 @@
     },
     {
      "caption": {
-      "en": "')' closes one: [0, 0] becomes [-1, -1]. Even the most ( possible leaves 1 ')' with nothing to close. Answer: false.",
-      "ko": "')' 괄호는 하나를 닫습니다: [0, 0] 범위가 [-1, -1] 범위가 됩니다. ( 개수가 가장 많은 경우에도 닫을 것이 없는 ')' 괄호가 1개 남습니다. 답은 false입니다."
+      "en": "')' closes one: [0, 0] becomes [-1, -1], so even the most ( possible leaves 1 ')' with nothing to close. Answer: false.",
+      "ko": "')' 괄호는 하나를 닫습니다: [0, 0] 범위가 [-1, -1] 범위가 되므로, ( 개수가 가장 많아도 닫을 것이 없는 ')' 괄호가 1개 남습니다. 답은 false입니다."
      },
      "views": {
       "brackets": {
@@ -1154,7 +1154,7 @@
     {
      "caption": {
       "en": "A count of open ( can't be -1: those choices closed a ( that was never opened. Cut the range at 0: [0, 1].",
-      "ko": "열린 ( 개수가 -1이 될 수는 없습니다. 열리지 않은 ( 괄호를 닫는 선택이기 때문입니다. 범위를 0에서 잘라 [0, 1] 범위로 둡니다."
+      "ko": "열리지 않은 ( 괄호를 닫는 선택이라 열린 ( 개수가 -1이 될 수는 없으므로, 범위를 0에서 잘라 [0, 1] 범위로 둡니다."
      },
      "views": {
       "brackets": {
@@ -1315,7 +1315,7 @@
     {
      "caption": {
       "en": "A count of open ( can't be -1: those choices closed a ( that was never opened. Cut the range at 0: [0, 0].",
-      "ko": "열린 ( 개수가 -1이 될 수는 없습니다. 열리지 않은 ( 괄호를 닫는 선택이기 때문입니다. 범위를 0에서 잘라 [0, 0] 범위로 둡니다."
+      "ko": "열리지 않은 ( 괄호를 닫는 선택이라 열린 ( 개수가 -1이 될 수는 없으므로, 범위를 0에서 잘라 [0, 0] 범위로 둡니다."
      },
      "views": {
       "brackets": {
@@ -1395,7 +1395,7 @@
     {
      "caption": {
       "en": "Every character read and the range is [0, 0]: 0 is in it, so some choice of the wildcards closes every (. Answer: true.",
-      "ko": "모든 글자를 읽었고 범위는 [0, 0]입니다. 0이 범위에 들어 있으므로 와일드카드를 잘 정하면 모든 ( 괄호가 닫힙니다. 답은 true입니다."
+      "ko": "모든 글자를 읽었고 범위 [0, 0] 안에 0이 들어 있으므로, 와일드카드를 잘 정하면 모든 ( 괄호가 닫힙니다. 답은 true입니다."
      },
      "views": {
       "brackets": {

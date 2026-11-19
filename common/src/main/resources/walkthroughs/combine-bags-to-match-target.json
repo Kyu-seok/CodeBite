@@ -585,7 +585,7 @@
     {
      "caption": {
       "en": "Every position is reached: combining the usable bags gives exactly [4,5,4] (bags 1, 2, 3 alone already do). Answer: true.",
-      "ko": "모든 자리에 닿았습니다. 쓸 수 있는 봉투를 합치면 정확히 target [4,5,4] 값이 됩니다(봉투 1, 2, 3만으로도 됩니다). 답은 true입니다."
+      "ko": "모든 자리에 닿았으므로 쓸 수 있는 봉투를 합치면 정확히 target [4,5,4] 값이 됩니다(봉투 1, 2, 3만으로도 됩니다). 답은 true입니다."
      },
      "views": {
       "bags": {
@@ -1551,7 +1551,7 @@
     {
      "caption": {
       "en": "Every position is reached: combining the usable bags gives exactly [3,3,3] (bags 0, 1, 2 alone already do). Answer: true.",
-      "ko": "모든 자리에 닿았습니다. 쓸 수 있는 봉투를 합치면 정확히 target [3,3,3] 값이 됩니다(봉투 0, 1, 2만으로도 됩니다). 답은 true입니다."
+      "ko": "모든 자리에 닿았으므로 쓸 수 있는 봉투를 합치면 정확히 target [3,3,3] 값이 됩니다(봉투 0, 1, 2만으로도 됩니다). 답은 true입니다."
      },
      "views": {
       "bags": {
