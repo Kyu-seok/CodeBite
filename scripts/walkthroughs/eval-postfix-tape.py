@@ -2,7 +2,7 @@
 """eval-postfix-tape's Walkthrough: the reference solution
 (scripts/replay-solutions/eval-postfix-tape.py), an operand stack fed by the tokens left to right,
 recording one frame per number pushed and two per operator (the two numbers it pops, then its result
-pushed) on each sample Test Case. The stack is an array, top on the right: a number moves from its token
+pushed) on each sample Test Case. The stack is drawn upright on a fixed base: a number moves from its token
 onto the top, and an operator's result moves from the operator's token into the place a held.
 
     CODEBITE_DB=<database> scripts/walkthroughs/eval-postfix-tape.py
@@ -30,7 +30,7 @@ wt = Walkthrough(
            "a op b를 넣습니다. 먼저 넣은 수가 왼쪽 피연산자입니다."},
     views=[
         {"id": "tokens", "type": "array", "title": {"en": "tokens", "ko": "tokens (토큰)"}},
-        {"id": "stack", "type": "array", "title": {"en": "stack (top on the right)", "ko": "스택 (오른쪽이 맨 위)"},
+        {"id": "stack", "type": "stack", "title": {"en": "stack", "ko": "스택"},
          "empty": {"en": "empty", "ko": "비어 있음"}},
     ],
 )

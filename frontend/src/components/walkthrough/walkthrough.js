@@ -941,6 +941,45 @@ VIEWS.callstack = (host, config, ctx) => {
   };
 };
 
+// A stack of values, drawn upright as a solver pictures one: cells piled on a fixed base, the top at the top with a
+// "top" marker beside it, so a push appears on top and a pop leaves from it. The column keeps room for the run's
+// tallest stack, so the base never moves. `tags` label cells (the day a reading belongs to, an index) inside the cell,
+// above its value. Address: a position from the bottom (0 is the bottom).
+VIEWS.stack = (host, config, ctx) => {
+  host.innerHTML = '';
+  const box = html('div', 'wt-stack', host);
+  let cells = [], tallest = 0, tagged = false;
+  const cell = (cls, tag, value) => {
+    const c = html('div', 'wt-stackitem' + cls, box);
+    if (tagged) html('span', 'wt-stacktag', c, tag || ' ');
+    html('span', 'wt-stackval', c, value);
+    return c;
+  };
+  return {
+    locate: at => (Number.isInteger(at) && cells[at]) || null,
+    prepare(states) {
+      tallest = Math.max(1, ...states.map(st => (st.values || []).length));
+      tagged = states.some(st => (st.tags || []).length);
+    },
+    update(s) {
+      const m = markMap(s.marks), values = s.values || [];
+      const tags = new Map((s.tags || []).map(([i, t]) => [i, t]));
+      box.innerHTML = '';
+      // drawn top first: the room kept for later pushes, then the cells from the top down to the base
+      for (let i = tallest - 1; i >= Math.max(values.length, 1); i--) cell(' wt-stackspace', '', ' ');
+      // an empty stack says so on its bottom cell's room, so the base holds still when the first value lands
+      if (!values.length) cell(' wt-stackempty', '', config.empty != null ? textOf(config.empty, ctx.lang) : ctx.ui.empty);
+      cells = [];
+      for (let i = values.length - 1; i >= 0; i--) {
+        const c = cell(markClass(m, i), textOf(tags.get(i), ctx.lang), fmt(values[i]));
+        c.dataset.token = fmt(values[i]);
+        if (i === values.length - 1) html('span', 'wt-stacktop', c, ctx.ui.top);
+        cells[i] = c;
+      }
+    },
+  };
+};
+
 VIEWS.table = (host, config, ctx) => {
   host.innerHTML = '';
   const table = html('table', 'wt-table', host);
@@ -1083,8 +1122,8 @@ function createMoves(layer, stage, ctx, viewById) {
 
 // ---------- the player ----------
 const UI = {
-  en: { front: 'front', back: 'back', empty: 'empty', expected: 'expected', extra: 'extra input', step: 'Step', first: 'First step', prev: 'Previous step', next: 'Next step', play: 'Play', pause: 'Pause', hint: '← → step · space plays' },
-  ko: { front: '앞', back: '뒤', empty: '비어 있음', expected: '기대값', extra: '추가 입력', step: '단계', first: '처음', prev: '이전 단계', next: '다음 단계', play: '재생', pause: '일시정지', hint: '← → 단계 이동 · 스페이스 재생' },
+  en: { front: 'front', back: 'back', top: '← top', empty: 'empty', expected: 'expected', extra: 'extra input', step: 'Step', first: 'First step', prev: 'Previous step', next: 'Next step', play: 'Play', pause: 'Pause', hint: '← → step · space plays' },
+  ko: { front: '앞', back: '뒤', top: '← 맨 위', empty: '비어 있음', expected: '기대값', extra: '추가 입력', step: '단계', first: '처음', prev: '이전 단계', next: '다음 단계', play: '재생', pause: '일시정지', hint: '← → 단계 이동 · 스페이스 재생' },
 };
 let uidSeq = 0;
 

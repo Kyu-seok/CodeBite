@@ -1,0 +1,529 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Find Locker Number",
+  "ko": "사물함 위치 찾기"
+ },
+ "approach": {
+  "en": "Binary search over indices: the lockers are sorted, so comparing the middle number with target says which side of mid target must be on, and each probe throws away half the range.",
+  "ko": "인덱스 위의 이분 탐색입니다. 사물함 번호가 정렬되어 있으므로 가운데 번호를 target과 비교하면 target이 mid의 어느 쪽에 있어야 하는지 알 수 있고, 한 번 볼 때마다 범위가 절반으로 줄어듭니다."
+ },
+ "views": [
+  {
+   "id": "lockers",
+   "type": "array",
+   "title": {
+    "en": "lockers",
+    "ko": "lockers (사물함 번호)"
+   }
+  },
+  {
+   "id": "state",
+   "type": "vars"
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "lockers = [102,145,201,247,318,402,510,633], target = 318",
+   "expected": "4",
+   "frames": [
+    {
+     "caption": {
+      "en": "Look for locker 318 among 8 lockers: the range starts as the whole array, low = 0 and high = 7.",
+      "ko": "사물함 8개에서 318번을 찾습니다. 범위는 처음에 배열 전체입니다: low = 0, high = 7."
+     },
+     "views": {
+      "lockers": {
+       "values": [
+        102,
+        145,
+        201,
+        247,
+        318,
+        402,
+        510,
+        633
+       ],
+       "pointers": {
+        "low": 0,
+        "mid": null,
+        "high": 7
+       },
+       "spans": {
+        "range": {
+         "from": 0,
+         "to": 7,
+         "label": {
+          "en": "range 8",
+          "ko": "범위 8"
+         },
+         "fade": true
+        }
+       },
+       "marks": {
+        "path": [],
+        "lit": [],
+        "dim": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "target",
+         "value": 318
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "mid = (0 + 7) // 2 = 3: 247 < 318, so target can only be right of mid: low = 4.",
+      "ko": "mid = (0 + 7) // 2 = 3: 247 < 318, 그러니 target은 mid의 오른쪽에만 있을 수 있습니다. low = 4."
+     },
+     "views": {
+      "lockers": {
+       "values": [
+        102,
+        145,
+        201,
+        247,
+        318,
+        402,
+        510,
+        633
+       ],
+       "pointers": {
+        "low": 0,
+        "mid": 3,
+        "high": 7
+       },
+       "spans": {
+        "range": {
+         "from": 0,
+         "to": 7,
+         "label": {
+          "en": "range 8",
+          "ko": "범위 8"
+         },
+         "fade": true
+        },
+        "kept": {
+         "from": 4,
+         "to": 7,
+         "label": {
+          "en": "kept",
+          "ko": "남김"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "marks": {
+        "path": [],
+        "lit": [
+         3
+        ],
+        "dim": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "target",
+         "value": 318
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "mid = (4 + 7) // 2 = 5: 402 > 318, so target can only be left of mid: high = 4.",
+      "ko": "mid = (4 + 7) // 2 = 5: 402 > 318, 그러니 target은 mid의 왼쪽에만 있을 수 있습니다. high = 4."
+     },
+     "views": {
+      "lockers": {
+       "values": [
+        102,
+        145,
+        201,
+        247,
+        318,
+        402,
+        510,
+        633
+       ],
+       "pointers": {
+        "low": 4,
+        "mid": 5,
+        "high": 7
+       },
+       "spans": {
+        "range": {
+         "from": 4,
+         "to": 7,
+         "label": {
+          "en": "range 4",
+          "ko": "범위 4"
+         },
+         "fade": true
+        },
+        "kept": {
+         "from": 4,
+         "to": 4,
+         "label": {
+          "en": "kept",
+          "ko": "남김"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "marks": {
+        "path": [],
+        "lit": [
+         5
+        ],
+        "dim": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "target",
+         "value": 318
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "mid = (4 + 4) // 2 = 4, and lockers[4] = 318 is target: the answer is position 4.",
+      "ko": "mid = (4 + 4) // 2 = 4, lockers[4] = 318: target과 같습니다. 답은 4번 위치입니다."
+     },
+     "views": {
+      "lockers": {
+       "values": [
+        102,
+        145,
+        201,
+        247,
+        318,
+        402,
+        510,
+        633
+       ],
+       "pointers": {},
+       "spans": {},
+       "marks": {
+        "path": [
+         4
+        ],
+        "lit": [],
+        "dim": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "target",
+         "value": 318
+        }
+       ]
+      }
+     },
+     "answer": "4"
+    }
+   ],
+   "sampleInput": "[102,145,201,247,318,402,510,633]\n318"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "lockers = [102,145,201,247,318,402,510,633], target = 200",
+   "expected": "-1",
+   "frames": [
+    {
+     "caption": {
+      "en": "Look for locker 200 among 8 lockers: the range starts as the whole array, low = 0 and high = 7.",
+      "ko": "사물함 8개에서 200번을 찾습니다. 범위는 처음에 배열 전체입니다: low = 0, high = 7."
+     },
+     "views": {
+      "lockers": {
+       "values": [
+        102,
+        145,
+        201,
+        247,
+        318,
+        402,
+        510,
+        633
+       ],
+       "pointers": {
+        "low": 0,
+        "mid": null,
+        "high": 7
+       },
+       "spans": {
+        "range": {
+         "from": 0,
+         "to": 7,
+         "label": {
+          "en": "range 8",
+          "ko": "범위 8"
+         },
+         "fade": true
+        }
+       },
+       "marks": {
+        "path": [],
+        "lit": [],
+        "dim": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "target",
+         "value": 200
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "mid = (0 + 7) // 2 = 3: 247 > 200, so target can only be left of mid: high = 2.",
+      "ko": "mid = (0 + 7) // 2 = 3: 247 > 200, 그러니 target은 mid의 왼쪽에만 있을 수 있습니다. high = 2."
+     },
+     "views": {
+      "lockers": {
+       "values": [
+        102,
+        145,
+        201,
+        247,
+        318,
+        402,
+        510,
+        633
+       ],
+       "pointers": {
+        "low": 0,
+        "mid": 3,
+        "high": 7
+       },
+       "spans": {
+        "range": {
+         "from": 0,
+         "to": 7,
+         "label": {
+          "en": "range 8",
+          "ko": "범위 8"
+         },
+         "fade": true
+        },
+        "kept": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "kept",
+          "ko": "남김"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "marks": {
+        "path": [],
+        "lit": [
+         3
+        ],
+        "dim": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "target",
+         "value": 200
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "mid = (0 + 2) // 2 = 1: 145 < 200, so target can only be right of mid: low = 2.",
+      "ko": "mid = (0 + 2) // 2 = 1: 145 < 200, 그러니 target은 mid의 오른쪽에만 있을 수 있습니다. low = 2."
+     },
+     "views": {
+      "lockers": {
+       "values": [
+        102,
+        145,
+        201,
+        247,
+        318,
+        402,
+        510,
+        633
+       ],
+       "pointers": {
+        "low": 0,
+        "mid": 1,
+        "high": 2
+       },
+       "spans": {
+        "range": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "range 3",
+          "ko": "범위 3"
+         },
+         "fade": true
+        },
+        "kept": {
+         "from": 2,
+         "to": 2,
+         "label": {
+          "en": "kept",
+          "ko": "남김"
+         },
+         "mark": "good",
+         "below": true
+        }
+       },
+       "marks": {
+        "path": [],
+        "lit": [
+         1
+        ],
+        "dim": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "target",
+         "value": 200
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "mid = (2 + 2) // 2 = 2: 201 > 200, so target can only be left of mid: high = 1.",
+      "ko": "mid = (2 + 2) // 2 = 2: 201 > 200, 그러니 target은 mid의 왼쪽에만 있을 수 있습니다. high = 1."
+     },
+     "views": {
+      "lockers": {
+       "values": [
+        102,
+        145,
+        201,
+        247,
+        318,
+        402,
+        510,
+        633
+       ],
+       "pointers": {
+        "low": 2,
+        "mid": 2,
+        "high": 2
+       },
+       "spans": {
+        "range": {
+         "from": 2,
+         "to": 2,
+         "label": {
+          "en": "range 1",
+          "ko": "범위 1"
+         },
+         "fade": true
+        }
+       },
+       "marks": {
+        "path": [],
+        "lit": [
+         2
+        ],
+        "dim": []
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "target",
+         "value": 200
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "low = 2 passed high = 1, so the range is empty: no locker is numbered 200 (it would sit between lockers[1] = 145 and lockers[2] = 201). The answer is -1.",
+      "ko": "low = 2, high = 1: low가 high를 지나쳐 범위가 비었습니다. 200번 사물함은 없으니(있다면 lockers[1] = 145, lockers[2] = 201 사이에 옵니다) 답은 -1입니다."
+     },
+     "views": {
+      "lockers": {
+       "values": [
+        102,
+        145,
+        201,
+        247,
+        318,
+        402,
+        510,
+        633
+       ],
+       "pointers": {
+        "high": 1,
+        "low": 2
+       },
+       "spans": {},
+       "marks": {
+        "path": [],
+        "lit": [
+         1,
+         2
+        ],
+        "dim": [
+         0,
+         3,
+         4,
+         5,
+         6,
+         7
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "target",
+         "value": 200
+        }
+       ]
+      }
+     },
+     "answer": "-1"
+    }
+   ],
+   "sampleInput": "[102,145,201,247,318,402,510,633]\n200"
+  }
+ ]
+}
