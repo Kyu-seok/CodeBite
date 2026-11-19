@@ -1,0 +1,1228 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Populating Next Right Pointers",
+  "ko": "다음 오른쪽 포인터 연결"
+ },
+ "approach": {
+  "en": "A level already linked is a list: walk it along next, and each node links the level below it, its left child to its right child, and its right child across to the left child of the node its next reaches.",
+  "ko": "이미 연결된 레벨은 리스트입니다. next를 따라 걸으며 각 노드가 아래 레벨을 잇습니다. 왼쪽 자식은 오른쪽 자식으로, 오른쪽 자식은 next가 가리키는 노드의 왼쪽 자식으로 잇습니다."
+ },
+ "views": [
+  {
+   "id": "tree",
+   "type": "tree",
+   "arity": 2,
+   "title": {
+    "en": "root: next along each level",
+    "ko": "root: 레벨마다 next"
+   },
+   "empty": {
+    "en": "empty tree",
+    "ko": "빈 트리"
+   }
+  },
+  {
+   "id": "result",
+   "type": "output",
+   "title": {
+    "en": "answer, read along next",
+    "ko": "답 (next를 따라 읽기)"
+   },
+   "empty": {
+    "en": "not read yet",
+    "ko": "아직 없음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "root = [10,20,30,40,50,60,70]",
+   "expected": "[10,#,20,30,#,40,50,60,70,#]",
+   "frames": [
+    {
+     "caption": {
+      "en": "A perfect tree of 7 nodes, every next null. Level 0 is just the root 10, so its next stays null: that level is linked already.",
+      "ko": "노드 7개짜리 포화 이진 트리이고, 모든 next가 null입니다. 레벨 0에는 root 10뿐이므로 next는 null로 남고, 이 레벨은 이미 연결됐습니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         0
+        ],
+        "good": []
+       },
+       "tags": [],
+       "links": {
+        "next": {
+         "0": null
+        }
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Walk level 0 from its leftmost node 10 to link level 1 below it.",
+      "ko": "레벨 0의 가장 왼쪽 노드 10부터 걸으며 그 아래 레벨 1의 노드들을 잇습니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         0
+        ],
+        "good": []
+       },
+       "tags": [
+        [
+         0,
+         "node"
+        ]
+       ],
+       "links": {
+        "next": {
+         "0": null
+        }
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Inside 10: its left child 20 points at its right child 30. 20.next = 30.",
+      "ko": "10의 두 자식끼리 잇습니다. 왼쪽 자식의 next를 오른쪽 자식으로 정합니다: 20.next = 30."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         0
+        ],
+        "good": [
+         1,
+         2
+        ]
+       },
+       "tags": [
+        [
+         0,
+         "node"
+        ]
+       ],
+       "links": {
+        "next": {
+         "0": null,
+         "1": 2
+        }
+       },
+       "linkMarks": {
+        "good": [
+         [
+          "next",
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "10.next is null: 10 ends level 0, so its right child 30 ends level 1 and keeps next = null.",
+      "ko": "10.next가 null이므로 10의 오른쪽 자식 30도 아래 레벨의 마지막 노드입니다. 그 next는 null로 남습니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         0
+        ],
+        "good": [
+         2
+        ]
+       },
+       "tags": [
+        [
+         0,
+         "node"
+        ]
+       ],
+       "links": {
+        "next": {
+         "0": null,
+         "1": 2,
+         "2": null
+        }
+       },
+       "linkMarks": {
+        "good": [
+         [
+          "next",
+          2
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Walk level 1 from its leftmost node 20 to link level 2 below it.",
+      "ko": "레벨 1의 가장 왼쪽 노드 20부터 걸으며 그 아래 레벨 2의 노드들을 잇습니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         1
+        ],
+        "good": []
+       },
+       "tags": [
+        [
+         1,
+         "node"
+        ]
+       ],
+       "links": {
+        "next": {
+         "0": null,
+         "1": 2,
+         "2": null
+        }
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Inside 20: its left child 40 points at its right child 50. 40.next = 50.",
+      "ko": "20의 두 자식끼리 잇습니다. 왼쪽 자식의 next를 오른쪽 자식으로 정합니다: 40.next = 50."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         1
+        ],
+        "good": [
+         3,
+         4
+        ]
+       },
+       "tags": [
+        [
+         1,
+         "node"
+        ]
+       ],
+       "links": {
+        "next": {
+         "0": null,
+         "1": 2,
+         "2": null,
+         "3": 4
+        }
+       },
+       "linkMarks": {
+        "good": [
+         [
+          "next",
+          3
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "20.next is 30, so 20's right child 50 points across at 30's left child 60.",
+      "ko": "20.next가 노드 30이므로, 20의 오른쪽 자식 50의 next를 그 노드의 왼쪽 자식으로 정합니다: 50.next = 60."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         1,
+         2
+        ],
+        "good": [
+         4,
+         5
+        ]
+       },
+       "tags": [
+        [
+         1,
+         "node"
+        ]
+       ],
+       "links": {
+        "next": {
+         "0": null,
+         "1": 2,
+         "2": null,
+         "3": 4,
+         "4": 5
+        }
+       },
+       "linkMarks": {
+        "lit": [
+         [
+          "next",
+          1
+         ]
+        ],
+        "good": [
+         [
+          "next",
+          4
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "node follows 20.next to 30.",
+      "ko": "node가 20.next를 따라 다음 노드 30에 갑니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         2
+        ],
+        "good": []
+       },
+       "tags": [
+        [
+         2,
+         "node"
+        ]
+       ],
+       "links": {
+        "next": {
+         "0": null,
+         "1": 2,
+         "2": null,
+         "3": 4,
+         "4": 5
+        }
+       },
+       "linkMarks": {
+        "lit": [
+         [
+          "next",
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 1
+       },
+       "to": {
+        "view": "tree",
+        "at": 2
+       },
+       "value": "node"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Inside 30: its left child 60 points at its right child 70. 60.next = 70.",
+      "ko": "30의 두 자식끼리 잇습니다. 왼쪽 자식의 next를 오른쪽 자식으로 정합니다: 60.next = 70."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         2
+        ],
+        "good": [
+         5,
+         6
+        ]
+       },
+       "tags": [
+        [
+         2,
+         "node"
+        ]
+       ],
+       "links": {
+        "next": {
+         "0": null,
+         "1": 2,
+         "2": null,
+         "3": 4,
+         "4": 5,
+         "5": 6
+        }
+       },
+       "linkMarks": {
+        "good": [
+         [
+          "next",
+          5
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "30.next is null: 30 ends level 1, so its right child 70 ends level 2 and keeps next = null.",
+      "ko": "30.next가 null이므로 30의 오른쪽 자식 70도 아래 레벨의 마지막 노드입니다. 그 next는 null로 남습니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         2
+        ],
+        "good": [
+         6
+        ]
+       },
+       "tags": [
+        [
+         2,
+         "node"
+        ]
+       ],
+       "links": {
+        "next": {
+         "0": null,
+         "1": 2,
+         "2": null,
+         "3": 4,
+         "4": 5,
+         "5": 6,
+         "6": null
+        }
+       },
+       "linkMarks": {
+        "good": [
+         [
+          "next",
+          6
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Level 2 is linked, and its nodes have no children: every next is set.",
+      "ko": "레벨 2가 다 이어졌고, 그 노드들에는 자식이 없습니다. 모든 next가 정해졌습니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         1,
+         2
+        ],
+        "lit": [
+         3,
+         4,
+         5,
+         6
+        ],
+        "good": []
+       },
+       "tags": [],
+       "links": {
+        "next": {
+         "0": null,
+         "1": 2,
+         "2": null,
+         "3": 4,
+         "4": 5,
+         "5": 6,
+         "6": null
+        }
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Read each level along next from its leftmost node, a # where next is null: [10,#,20,30,#,40,50,60,70,#].",
+      "ko": "각 레벨을 가장 왼쪽 노드부터 next를 따라 읽고, next가 null인 곳에 # 표시를 적으면 답은 [10,#,20,30,#,40,50,60,70,#]입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6
+        ]
+       },
+       "tags": [],
+       "links": {
+        "next": {
+         "0": null,
+         "1": 2,
+         "2": null,
+         "3": 4,
+         "4": 5,
+         "5": 6,
+         "6": null
+        }
+       }
+      },
+      "result": {
+       "values": [
+        10,
+        "#",
+        20,
+        30,
+        "#",
+        40,
+        50,
+        60,
+        70,
+        "#"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7,
+         8,
+         9
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      },
+      {
+       "from": {
+        "view": "tree",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": "#"
+      },
+      {
+       "from": {
+        "view": "tree",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "tree",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       }
+      },
+      {
+       "from": {
+        "view": "tree",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       },
+       "value": "#"
+      },
+      {
+       "from": {
+        "view": "tree",
+        "at": 3
+       },
+       "to": {
+        "view": "result",
+        "at": 5
+       }
+      },
+      {
+       "from": {
+        "view": "tree",
+        "at": 4
+       },
+       "to": {
+        "view": "result",
+        "at": 6
+       }
+      },
+      {
+       "from": {
+        "view": "tree",
+        "at": 5
+       },
+       "to": {
+        "view": "result",
+        "at": 7
+       }
+      },
+      {
+       "from": {
+        "view": "tree",
+        "at": 6
+       },
+       "to": {
+        "view": "result",
+        "at": 8
+       }
+      },
+      {
+       "from": {
+        "view": "tree",
+        "at": 6
+       },
+       "to": {
+        "view": "result",
+        "at": 9
+       },
+       "value": "#"
+      }
+     ],
+     "answer": "[10,#,20,30,#,40,50,60,70,#]"
+    }
+   ],
+   "setup": {
+    "tree": {
+     "nodes": [
+      {
+       "id": 0,
+       "value": 10
+      },
+      {
+       "id": 1,
+       "value": 20
+      },
+      {
+       "id": 2,
+       "value": 30
+      },
+      {
+       "id": 3,
+       "value": 40
+      },
+      {
+       "id": 4,
+       "value": 50
+      },
+      {
+       "id": 5,
+       "value": 60
+      },
+      {
+       "id": 6,
+       "value": 70
+      }
+     ],
+     "edges": [
+      {
+       "from": 0,
+       "to": 1,
+       "slot": 0
+      },
+      {
+       "from": 0,
+       "to": 2,
+       "slot": 1
+      },
+      {
+       "from": 1,
+       "to": 3,
+       "slot": 0
+      },
+      {
+       "from": 1,
+       "to": 4,
+       "slot": 1
+      },
+      {
+       "from": 2,
+       "to": 5,
+       "slot": 0
+      },
+      {
+       "from": 2,
+       "to": 6,
+       "slot": 1
+      }
+     ]
+    }
+   },
+   "sampleInput": "[10,20,30,40,50,60,70]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "root = [9]",
+   "expected": "[9,#]",
+   "frames": [
+    {
+     "caption": {
+      "en": "A perfect tree of 1 node, every next null. Level 0 is just the root 9, so its next stays null: that level is linked already.",
+      "ko": "노드 1개짜리 포화 이진 트리이고, 모든 next가 null입니다. 레벨 0에는 root 9뿐이므로 next는 null로 남고, 이 레벨은 이미 연결됐습니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         0
+        ],
+        "good": []
+       },
+       "tags": [],
+       "links": {
+        "next": {
+         "0": null
+        }
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Read each level along next from its leftmost node, a # where next is null: [9,#].",
+      "ko": "각 레벨을 가장 왼쪽 노드부터 next를 따라 읽고, next가 null인 곳에 # 표시를 적으면 답은 [9,#]입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "path": [
+         0
+        ]
+       },
+       "tags": [],
+       "links": {
+        "next": {
+         "0": null
+        }
+       }
+      },
+      "result": {
+       "values": [
+        9,
+        "#"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      },
+      {
+       "from": {
+        "view": "tree",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": "#"
+      }
+     ],
+     "answer": "[9,#]"
+    }
+   ],
+   "setup": {
+    "tree": {
+     "nodes": [
+      {
+       "id": 0,
+       "value": 9
+      }
+     ],
+     "edges": []
+    }
+   },
+   "sampleInput": "[9]"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "root = [5,6,7]",
+   "expected": "[5,#,6,7,#]",
+   "frames": [
+    {
+     "caption": {
+      "en": "A perfect tree of 3 nodes, every next null. Level 0 is just the root 5, so its next stays null: that level is linked already.",
+      "ko": "노드 3개짜리 포화 이진 트리이고, 모든 next가 null입니다. 레벨 0에는 root 5뿐이므로 next는 null로 남고, 이 레벨은 이미 연결됐습니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         0
+        ],
+        "good": []
+       },
+       "tags": [],
+       "links": {
+        "next": {
+         "0": null
+        }
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Walk level 0 from its leftmost node 5 to link level 1 below it.",
+      "ko": "레벨 0의 가장 왼쪽 노드 5부터 걸으며 그 아래 레벨 1의 노드들을 잇습니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         0
+        ],
+        "good": []
+       },
+       "tags": [
+        [
+         0,
+         "node"
+        ]
+       ],
+       "links": {
+        "next": {
+         "0": null
+        }
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Inside 5: its left child 6 points at its right child 7. 6.next = 7.",
+      "ko": "5의 두 자식끼리 잇습니다. 왼쪽 자식의 next를 오른쪽 자식으로 정합니다: 6.next = 7."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         0
+        ],
+        "good": [
+         1,
+         2
+        ]
+       },
+       "tags": [
+        [
+         0,
+         "node"
+        ]
+       ],
+       "links": {
+        "next": {
+         "0": null,
+         "1": 2
+        }
+       },
+       "linkMarks": {
+        "good": [
+         [
+          "next",
+          1
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "5.next is null: 5 ends level 0, so its right child 7 ends level 1 and keeps next = null.",
+      "ko": "5.next가 null이므로 5의 오른쪽 자식 7도 아래 레벨의 마지막 노드입니다. 그 next는 null로 남습니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         0
+        ],
+        "good": [
+         2
+        ]
+       },
+       "tags": [
+        [
+         0,
+         "node"
+        ]
+       ],
+       "links": {
+        "next": {
+         "0": null,
+         "1": 2,
+         "2": null
+        }
+       },
+       "linkMarks": {
+        "good": [
+         [
+          "next",
+          2
+         ]
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Level 1 is linked, and its nodes have no children: every next is set.",
+      "ko": "레벨 1이 다 이어졌고, 그 노드들에는 자식이 없습니다. 모든 next가 정해졌습니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         0
+        ],
+        "lit": [
+         1,
+         2
+        ],
+        "good": []
+       },
+       "tags": [],
+       "links": {
+        "next": {
+         "0": null,
+         "1": 2,
+         "2": null
+        }
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "path": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Read each level along next from its leftmost node, a # where next is null: [5,#,6,7,#].",
+      "ko": "각 레벨을 가장 왼쪽 노드부터 next를 따라 읽고, next가 null인 곳에 # 표시를 적으면 답은 [5,#,6,7,#]입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "path": [
+         0,
+         1,
+         2
+        ]
+       },
+       "tags": [],
+       "links": {
+        "next": {
+         "0": null,
+         "1": 2,
+         "2": null
+        }
+       }
+      },
+      "result": {
+       "values": [
+        5,
+        "#",
+        6,
+        7,
+        "#"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      },
+      {
+       "from": {
+        "view": "tree",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": "#"
+      },
+      {
+       "from": {
+        "view": "tree",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "tree",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       }
+      },
+      {
+       "from": {
+        "view": "tree",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       },
+       "value": "#"
+      }
+     ],
+     "answer": "[5,#,6,7,#]"
+    }
+   ],
+   "setup": {
+    "tree": {
+     "nodes": [
+      {
+       "id": 0,
+       "value": 5
+      },
+      {
+       "id": 1,
+       "value": 6
+      },
+      {
+       "id": 2,
+       "value": 7
+      }
+     ],
+     "edges": [
+      {
+       "from": 0,
+       "to": 1,
+       "slot": 0
+      },
+      {
+       "from": 0,
+       "to": 2,
+       "slot": 1
+      }
+     ]
+    }
+   },
+   "sampleInput": "[5,6,7]"
+  }
+ ]
+}
