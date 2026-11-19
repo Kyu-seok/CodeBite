@@ -38,6 +38,15 @@ The kit's `tree`, `linkedlist` and `callstack` views (the public skill's `refere
 - **A call stack plus the current path** (`callstack` beside the data) when the call tree doesn't fit: `n-queens` draws the board with the queens placed so far and the attacked squares in `shade`, and the call stack beside it.
 - **No drawing of its own** when the recursion walks a data tree (`valid-score-bst`): the input `tree` is the drawing, the current call's node `lit`, the nodes still on the stack `shade`, and each visited node tagged with what its call carries (its bounds `(30, 70)`, a depth, a count).
 
+### Trees (#370)
+
+- **A value returned up the tree** (a depth, a height, a gain) is a node tag set the frame its call returns, `good` on that node, with a move from each child into it carrying the child's value (`value=str(depth)`). A node with children gets a frame when its call starts (`lit`, asking its first child) and one when it returns; a leaf gets only the return frame. A running record beside it (the best path so far) is an `output` of one chip that each new record moves into from its node, `-∞` before the first; the last frame marks the record's path, nodes and edges, `path` (`deepest-skill-chain`, `longest-folder-path`, `best-skill-tree-path`).
+- **A tree built from another** (a mirror) is a second `tree` beside the input, grown with `Tree()` using the input node's id (`add(value, parent=..., slot=..., id=node.id)`), each node moving across from its input node; the two side by side match a Diagram with `after:` (`mirror-menu-tree`). A tree built from arrays grows the same way, each value moving in from its array cell, with the call's range a faded span over the array and its two halves `below` spans (`rebuild-tree-from-traversals`).
+- **Two trees compared in step** are two `tree` views, the pair compared `lit` in both and the open pairs `shade`; a missing child is shown on its parent, `bad`, with the caption naming the side (`same-skill-trees`).
+- **A walk written out as tokens** (a preorder serialization with `#` for a missing child) is an `array` padded with `""` to its full length (2n + 1), each token moving in from its node, a `#` from the parent missing the child; an `output` draws only `good` and `dim` on its chips, not `lit`, `bad` or `path`. The search over it is a span: the match `path`, or the closest stretch `bad` with the first token that differs (`find-submap`).
+- **An explicit in-order stack** is a `stack` view beside the tree: each push moves in from its node, each pop leaves to its node, which takes a tag with its place in the order (`1st`, `2nd`) (`nth-lowest-score`). A walk down a BST is the node compared `lit`, the way down `shade`, and the targets tagged `p`/`q` (`lca-bst`). A level list rebuilt each round is an `array` whose cells move in from their nodes (`right-side-skill-view`).
+- `tree_values(root)` in `codebite.py` turns a built tree back into the Level-Order Array the Driver prints.
+
 ## Marks, tags and ids
 
 - `lit` wins over `good` on the same item: mark a changed cell `good` only.
