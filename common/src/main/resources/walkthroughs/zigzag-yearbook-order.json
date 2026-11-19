@@ -1,0 +1,872 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Zigzag Yearbook Order",
+  "ko": "지그재그 졸업앨범 순서"
+ },
+ "approach": {
+  "en": "Read the tree one level at a time, each level listed left to right as its nodes' children always are; the zigzag is only in how each row is written: as listed on rows 0, 2, 4…, reversed on rows 1, 3, 5….",
+  "ko": "트리를 한 층씩 읽으며 각 층은 언제나 자식 순서대로 왼쪽부터 나열합니다. 지그재그는 행을 적는 방법에만 있습니다. 0, 2, 4…번 행은 나열한 그대로, 1, 3, 5…번 행은 뒤집어 적습니다."
+ },
+ "views": [
+  {
+   "id": "tree",
+   "type": "tree",
+   "arity": 2,
+   "title": {
+    "en": "root",
+    "ko": "root (트리)"
+   },
+   "empty": {
+    "en": "empty tree",
+    "ko": "빈 트리"
+   }
+  },
+  {
+   "id": "level",
+   "type": "array",
+   "title": {
+    "en": "level, left to right (tag: place in the row)",
+    "ko": "level (현재 층, 왼쪽부터; 태그: 행 안의 자리)"
+   }
+  },
+  {
+   "id": "result",
+   "type": "output",
+   "title": {
+    "en": "rows",
+    "ko": "rows (행 목록)"
+   },
+   "empty": {
+    "en": "none yet",
+    "ko": "아직 없음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "root = [5,3,7,2,9,6,8]",
+   "expected": "[[5],[7,3],[2,9,6,8]]",
+   "frames": [
+    {
+     "caption": {
+      "en": "A tree of 7 nodes. Level 0 is just the root 5.",
+      "ko": "노드 7개짜리 트리입니다. 0층은 root 5뿐입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "good": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ]
+      },
+      "level": {
+       "values": [
+        5
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       },
+       "tags": []
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 0
+       },
+       "to": {
+        "view": "level",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Row 0 is even, so level 0, [5], is written as listed: [5].",
+      "ko": "0번 행은 짝수 행이므로 0층 [5] 목록을 그대로 [5] 행으로 적습니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": []
+       },
+       "shade": [
+        0
+       ]
+      },
+      "level": {
+       "values": [
+        5
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       },
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ]
+      },
+      "result": {
+       "values": [
+        "[5]"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "level",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Level 1 is their children, left to right: 3, 7.",
+      "ko": "1층은 그 자식들을 왼쪽부터 나열한 3, 7입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         0
+        ],
+        "good": [
+         1,
+         2
+        ]
+       },
+       "shade": [
+        1,
+        2
+       ]
+      },
+      "level": {
+       "values": [
+        3,
+        7
+       ],
+       "marks": {
+        "good": [
+         0,
+         1
+        ]
+       },
+       "tags": []
+      },
+      "result": {
+       "values": [
+        "[5]"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 1
+       },
+       "to": {
+        "view": "level",
+        "at": 0
+       }
+      },
+      {
+       "from": {
+        "view": "tree",
+        "at": 2
+       },
+       "to": {
+        "view": "level",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Row 1 is odd, so level 1, [3,7], is written reversed: [7,3].",
+      "ko": "1번 행은 홀수 행이므로 1층 [3,7] 목록을 뒤집어 [7,3] 행으로 적습니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         0
+        ]
+       },
+       "shade": [
+        1,
+        2
+       ]
+      },
+      "level": {
+       "values": [
+        3,
+        7
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1
+        ]
+       },
+       "tags": [
+        [
+         0,
+         "[1]"
+        ],
+        [
+         1,
+         "[0]"
+        ]
+       ]
+      },
+      "result": {
+       "values": [
+        "[5]",
+        "[7,3]"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "level",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       }
+      },
+      {
+       "from": {
+        "view": "level",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Level 2 is their children, left to right: 2, 9, 6, 8.",
+      "ko": "2층은 그 자식들을 왼쪽부터 나열한 2, 9, 6, 8입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         1,
+         2
+        ],
+        "good": [
+         3,
+         4,
+         5,
+         6
+        ]
+       },
+       "shade": [
+        3,
+        4,
+        5,
+        6
+       ]
+      },
+      "level": {
+       "values": [
+        2,
+        9,
+        6,
+        8
+       ],
+       "marks": {
+        "good": [
+         0,
+         1,
+         2,
+         3
+        ]
+       },
+       "tags": []
+      },
+      "result": {
+       "values": [
+        "[5]",
+        "[7,3]"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 3
+       },
+       "to": {
+        "view": "level",
+        "at": 0
+       }
+      },
+      {
+       "from": {
+        "view": "tree",
+        "at": 4
+       },
+       "to": {
+        "view": "level",
+        "at": 1
+       }
+      },
+      {
+       "from": {
+        "view": "tree",
+        "at": 5
+       },
+       "to": {
+        "view": "level",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "tree",
+        "at": 6
+       },
+       "to": {
+        "view": "level",
+        "at": 3
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Row 2 is even, so level 2, [2,9,6,8], is written as listed: [2,9,6,8].",
+      "ko": "2번 행은 짝수 행이므로 2층 [2,9,6,8] 목록을 그대로 [2,9,6,8] 행으로 적습니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         1,
+         2
+        ]
+       },
+       "shade": [
+        3,
+        4,
+        5,
+        6
+       ]
+      },
+      "level": {
+       "values": [
+        2,
+        9,
+        6,
+        8
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2,
+         3
+        ]
+       },
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ],
+        [
+         3,
+         "[3]"
+        ]
+       ]
+      },
+      "result": {
+       "values": [
+        "[5]",
+        "[7,3]",
+        "[2,9,6,8]"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "level",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "level",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "level",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "level",
+        "at": 3
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "No node on level 2 has children, so the next level is empty and the walk stops.",
+      "ko": "2층의 노드에 자식이 없으므로 다음 층이 비어 순회를 마칩니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6
+        ]
+       },
+       "shade": []
+      },
+      "level": {
+       "values": [],
+       "marks": {},
+       "tags": []
+      },
+      "result": {
+       "values": [
+        "[5]",
+        "[7,3]",
+        "[2,9,6,8]"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Every level gave one row, every other one reversed: [[5],[7,3],[2,9,6,8]].",
+      "ko": "모든 층이 한 행씩, 한 행 걸러 뒤집혀 들어갔습니다. 답은 [[5],[7,3],[2,9,6,8]]입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6
+        ]
+       },
+       "shade": []
+      },
+      "level": {
+       "values": [],
+       "marks": {},
+       "tags": []
+      },
+      "result": {
+       "values": [
+        "[5]",
+        "[7,3]",
+        "[2,9,6,8]"
+       ],
+       "marks": {}
+      }
+     },
+     "answer": "[[5],[7,3],[2,9,6,8]]"
+    }
+   ],
+   "setup": {
+    "tree": {
+     "nodes": [
+      {
+       "id": 0,
+       "value": 5
+      },
+      {
+       "id": 1,
+       "value": 3
+      },
+      {
+       "id": 2,
+       "value": 7
+      },
+      {
+       "id": 3,
+       "value": 2
+      },
+      {
+       "id": 4,
+       "value": 9
+      },
+      {
+       "id": 5,
+       "value": 6
+      },
+      {
+       "id": 6,
+       "value": 8
+      }
+     ],
+     "edges": [
+      {
+       "from": 0,
+       "to": 1,
+       "slot": 0
+      },
+      {
+       "from": 0,
+       "to": 2,
+       "slot": 1
+      },
+      {
+       "from": 1,
+       "to": 3,
+       "slot": 0
+      },
+      {
+       "from": 1,
+       "to": 4,
+       "slot": 1
+      },
+      {
+       "from": 2,
+       "to": 5,
+       "slot": 0
+      },
+      {
+       "from": 2,
+       "to": 6,
+       "slot": 1
+      }
+     ]
+    }
+   },
+   "sampleInput": "[5,3,7,2,9,6,8]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "root = [4]",
+   "expected": "[[4]]",
+   "frames": [
+    {
+     "caption": {
+      "en": "A tree of 1 node. Level 0 is just the root 4.",
+      "ko": "노드 1개짜리 트리입니다. 0층은 root 4뿐입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "good": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ]
+      },
+      "level": {
+       "values": [
+        4
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       },
+       "tags": []
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 0
+       },
+       "to": {
+        "view": "level",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Row 0 is even, so level 0, [4], is written as listed: [4].",
+      "ko": "0번 행은 짝수 행이므로 0층 [4] 목록을 그대로 [4] 행으로 적습니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": []
+       },
+       "shade": [
+        0
+       ]
+      },
+      "level": {
+       "values": [
+        4
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       },
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ]
+      },
+      "result": {
+       "values": [
+        "[4]"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "level",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "No node on level 0 has children, so the next level is empty and the walk stops.",
+      "ko": "0층의 노드에 자식이 없으므로 다음 층이 비어 순회를 마칩니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         0
+        ]
+       },
+       "shade": []
+      },
+      "level": {
+       "values": [],
+       "marks": {},
+       "tags": []
+      },
+      "result": {
+       "values": [
+        "[4]"
+       ],
+       "marks": {
+        "good": []
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Every level gave one row, every other one reversed: [[4]].",
+      "ko": "모든 층이 한 행씩, 한 행 걸러 뒤집혀 들어갔습니다. 답은 [[4]]입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "path": [
+         0
+        ]
+       },
+       "shade": []
+      },
+      "level": {
+       "values": [],
+       "marks": {},
+       "tags": []
+      },
+      "result": {
+       "values": [
+        "[4]"
+       ],
+       "marks": {}
+      }
+     },
+     "answer": "[[4]]"
+    }
+   ],
+   "setup": {
+    "tree": {
+     "nodes": [
+      {
+       "id": 0,
+       "value": 4
+      }
+     ],
+     "edges": []
+    }
+   },
+   "sampleInput": "[4]"
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "root = []",
+   "expected": "[]",
+   "frames": [
+    {
+     "caption": {
+      "en": "The tree is empty, so it has no levels: the answer is [].",
+      "ko": "트리가 비어 있어 층이 없으므로 답은 []입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": []
+       },
+       "shade": []
+      },
+      "level": {
+       "values": [],
+       "marks": {},
+       "tags": []
+      },
+      "result": {
+       "values": [],
+       "marks": {
+        "good": []
+       }
+      }
+     },
+     "answer": "[]"
+    }
+   ],
+   "setup": {
+    "tree": {
+     "nodes": [],
+     "edges": []
+    }
+   },
+   "sampleInput": "[]"
+  }
+ ]
+}

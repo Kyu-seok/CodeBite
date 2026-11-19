@@ -11,12 +11,17 @@ class TreeNode:
 class Solution:
     def sumNumbers(self, root: Optional[TreeNode]) -> int:
         total = 0
-        stack = [(root, root.val)] if root else []
-        while stack:
-            node, number = stack.pop()
+
+        # Each call carries the number spelled from the root down to its node; a leaf adds its number to the total.
+        def walk(node: TreeNode, number: int) -> None:
+            nonlocal total
+            number = number * 10 + node.val
             if not node.left and not node.right:
                 total += number
             for child in (node.left, node.right):
                 if child:
-                    stack.append((child, number * 10 + child.val))
+                    walk(child, number)
+
+        if root:
+            walk(root, 0)
         return total

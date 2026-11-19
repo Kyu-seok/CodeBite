@@ -1,0 +1,1073 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Balanced Hamster Tree",
+  "ko": "햄스터 가계도 균형 검사"
+ },
+ "approach": {
+  "en": "Each call returns its subtree's height, 1 + the taller side, after checking that its two sides differ by at most 1; once one node fails, every call above it returns the failure (✗) without looking further.",
+  "ko": "각 호출은 두 쪽 높이 차가 1 이하인지 확인한 뒤 서브트리의 높이(1 + 더 높은 쪽)를 돌려줍니다. 한 노드에서 실패하면 그 위의 호출은 더 보지 않고 실패(✗)를 그대로 돌려줍니다."
+ },
+ "views": [
+  {
+   "id": "tree",
+   "type": "tree",
+   "arity": 2,
+   "title": {
+    "en": "root (under each node: the height it returns)",
+    "ko": "root (노드 아래: 돌려주는 높이)"
+   },
+   "empty": {
+    "en": "empty tree",
+    "ko": "빈 트리"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "root = [5,2,8,1,null,null,11]",
+   "expected": "true",
+   "frames": [
+    {
+     "caption": {
+      "en": "A family tree of 5 hamsters with root 5. Ask the root for its height: it must ask its children first.",
+      "ko": "root가 5인 햄스터 5마리의 가계도입니다. root에게 높이를 묻는데, root는 먼저 자식들에게 물어야 합니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": []
+       },
+       "shade": [],
+       "tags": []
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "5 has children, so it asks its left child 2 first.",
+      "ko": "5는 자식이 있으므로 먼저 왼쪽 자식 2에게 묻습니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ],
+       "tags": []
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "2 has children, so it asks its left child 1 first.",
+      "ko": "2는 자식이 있으므로 먼저 왼쪽 자식 1에게 묻습니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         1
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ],
+       "tags": []
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "1 is a leaf: both sides are empty (0), so it returns 1 + 0 = 1.",
+      "ko": "1은 리프입니다. 양쪽이 비어 있으므로(0) 1 + 0 = 1을 돌려줍니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "good": [
+         3
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        3
+       ],
+       "tags": [
+        [
+         3,
+         {
+          "en": "h 1",
+          "ko": "높이 1"
+         }
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "2's sides have heights 1 and 0 (none), at most 1 apart: it returns 1 + 1 = 2.",
+      "ko": "2의 두 쪽 높이는 1, 0(없음)입니다. 차이가 1 이하이므로 1 + 1 = 2를 돌려줍니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         3
+        ],
+        "good": [
+         1
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ],
+       "tags": [
+        [
+         3,
+         {
+          "en": "h 1",
+          "ko": "높이 1"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "h 2",
+          "ko": "높이 2"
+         }
+        ]
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 3
+       },
+       "to": {
+        "view": "tree",
+        "at": 1
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "8's left side is empty (height 0), so it asks its right child 11.",
+      "ko": "8의 왼쪽은 비어 있으므로(높이 0) 오른쪽 자식 11에게 묻습니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         3,
+         1
+        ],
+        "lit": [
+         2
+        ]
+       },
+       "shade": [
+        0,
+        2
+       ],
+       "tags": [
+        [
+         3,
+         {
+          "en": "h 1",
+          "ko": "높이 1"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "h 2",
+          "ko": "높이 2"
+         }
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "11 is a leaf: both sides are empty (0), so it returns 1 + 0 = 1.",
+      "ko": "11은 리프입니다. 양쪽이 비어 있으므로(0) 1 + 0 = 1을 돌려줍니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         3,
+         1
+        ],
+        "good": [
+         6
+        ]
+       },
+       "shade": [
+        0,
+        2,
+        6
+       ],
+       "tags": [
+        [
+         3,
+         {
+          "en": "h 1",
+          "ko": "높이 1"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "h 2",
+          "ko": "높이 2"
+         }
+        ],
+        [
+         6,
+         {
+          "en": "h 1",
+          "ko": "높이 1"
+         }
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "8's sides have heights 0 (none) and 1, at most 1 apart: it returns 1 + 1 = 2.",
+      "ko": "8의 두 쪽 높이는 0(없음), 1입니다. 차이가 1 이하이므로 1 + 1 = 2를 돌려줍니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         3,
+         1,
+         6
+        ],
+        "good": [
+         2
+        ]
+       },
+       "shade": [
+        0,
+        2
+       ],
+       "tags": [
+        [
+         3,
+         {
+          "en": "h 1",
+          "ko": "높이 1"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "h 2",
+          "ko": "높이 2"
+         }
+        ],
+        [
+         6,
+         {
+          "en": "h 1",
+          "ko": "높이 1"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "h 2",
+          "ko": "높이 2"
+         }
+        ]
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 6
+       },
+       "to": {
+        "view": "tree",
+        "at": 2
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "5's sides have heights 2 and 2, at most 1 apart: it returns 1 + 2 = 3.",
+      "ko": "5의 두 쪽 높이는 2, 2입니다. 차이가 1 이하이므로 1 + 2 = 3을 돌려줍니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         3,
+         1,
+         6,
+         2
+        ],
+        "good": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ],
+       "tags": [
+        [
+         3,
+         {
+          "en": "h 1",
+          "ko": "높이 1"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "h 2",
+          "ko": "높이 2"
+         }
+        ],
+        [
+         6,
+         {
+          "en": "h 1",
+          "ko": "높이 1"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "h 2",
+          "ko": "높이 2"
+         }
+        ],
+        [
+         0,
+         {
+          "en": "h 3",
+          "ko": "높이 3"
+         }
+        ]
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 1
+       },
+       "to": {
+        "view": "tree",
+        "at": 0
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "tree",
+        "at": 2
+       },
+       "to": {
+        "view": "tree",
+        "at": 0
+       },
+       "value": "2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The root returns height 3, not ✗: every node's sides differ by at most 1, so the tree is balanced: true.",
+      "ko": "root가 ✗ 표시가 아닌 높이 3을 돌려줍니다. 모든 노드의 두 쪽 높이 차가 1 이하이므로 균형 잡혀 있어 답은 true입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         6
+        ]
+       },
+       "shade": [],
+       "tags": [
+        [
+         3,
+         {
+          "en": "h 1",
+          "ko": "높이 1"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "h 2",
+          "ko": "높이 2"
+         }
+        ],
+        [
+         6,
+         {
+          "en": "h 1",
+          "ko": "높이 1"
+         }
+        ],
+        [
+         2,
+         {
+          "en": "h 2",
+          "ko": "높이 2"
+         }
+        ],
+        [
+         0,
+         {
+          "en": "h 3",
+          "ko": "높이 3"
+         }
+        ]
+       ]
+      }
+     },
+     "answer": "true"
+    }
+   ],
+   "setup": {
+    "tree": {
+     "nodes": [
+      {
+       "id": 0,
+       "value": 5
+      },
+      {
+       "id": 1,
+       "value": 2
+      },
+      {
+       "id": 2,
+       "value": 8
+      },
+      {
+       "id": 3,
+       "value": 1
+      },
+      {
+       "id": 6,
+       "value": 11
+      }
+     ],
+     "edges": [
+      {
+       "from": 0,
+       "to": 1,
+       "slot": 0
+      },
+      {
+       "from": 0,
+       "to": 2,
+       "slot": 1
+      },
+      {
+       "from": 1,
+       "to": 3,
+       "slot": 0
+      },
+      {
+       "from": 2,
+       "to": 6,
+       "slot": 1
+      }
+     ]
+    }
+   },
+   "sampleInput": "[5,2,8,1,null,null,11]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "root = [1,2,null,3,null,4]",
+   "expected": "false",
+   "frames": [
+    {
+     "caption": {
+      "en": "A family tree of 4 hamsters with root 1. Ask the root for its height: it must ask its children first.",
+      "ko": "root가 1인 햄스터 4마리의 가계도입니다. root에게 높이를 묻는데, root는 먼저 자식들에게 물어야 합니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": []
+       },
+       "shade": [],
+       "tags": []
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "1 has children, so it asks its left child 2 first.",
+      "ko": "1은 자식이 있으므로 먼저 왼쪽 자식 2에게 묻습니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ],
+       "tags": []
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "2 has children, so it asks its left child 3 first.",
+      "ko": "2는 자식이 있으므로 먼저 왼쪽 자식 3에게 묻습니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         1
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ],
+       "tags": []
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "3 has children, so it asks its left child 4 first.",
+      "ko": "3은 자식이 있으므로 먼저 왼쪽 자식 4에게 묻습니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         3
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        3
+       ],
+       "tags": []
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "4 is a leaf: both sides are empty (0), so it returns 1 + 0 = 1.",
+      "ko": "4는 리프입니다. 양쪽이 비어 있으므로(0) 1 + 0 = 1을 돌려줍니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "good": [
+         5
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        3,
+        5
+       ],
+       "tags": [
+        [
+         5,
+         {
+          "en": "h 1",
+          "ko": "높이 1"
+         }
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "3's sides have heights 1 and 0 (none), at most 1 apart: it returns 1 + 1 = 2.",
+      "ko": "3의 두 쪽 높이는 1, 0(없음)입니다. 차이가 1 이하이므로 1 + 1 = 2를 돌려줍니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         5
+        ],
+        "good": [
+         3
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        3
+       ],
+       "tags": [
+        [
+         5,
+         {
+          "en": "h 1",
+          "ko": "높이 1"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "h 2",
+          "ko": "높이 2"
+         }
+        ]
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 5
+       },
+       "to": {
+        "view": "tree",
+        "at": 3
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "2's sides have heights 2 and 0 (none): they differ by 2, more than 1, so 2 is unbalanced and returns ✗.",
+      "ko": "2의 두 쪽 높이는 2, 0(없음)입니다. 차이가 2로 1보다 커서 균형이 깨졌으므로 ✗ 표시를 돌려줍니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         5,
+         3
+        ],
+        "bad": [
+         1
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ],
+       "tags": [
+        [
+         5,
+         {
+          "en": "h 1",
+          "ko": "높이 1"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "h 2",
+          "ko": "높이 2"
+         }
+        ],
+        [
+         1,
+         "✗"
+        ]
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 3
+       },
+       "to": {
+        "view": "tree",
+        "at": 1
+       },
+       "value": "2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "1's left side returned ✗: some node below is unbalanced, so 1 returns ✗ too without asking its right side.",
+      "ko": "1의 왼쪽이 ✗ 표시를 돌려줬습니다. 아래 어딘가가 균형이 깨졌으므로 오른쪽은 묻지 않고 ✗ 표시를 그대로 돌려줍니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         5,
+         3,
+         1
+        ],
+        "bad": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ],
+       "tags": [
+        [
+         5,
+         {
+          "en": "h 1",
+          "ko": "높이 1"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "h 2",
+          "ko": "높이 2"
+         }
+        ],
+        [
+         1,
+         "✗"
+        ],
+        [
+         0,
+         "✗"
+        ]
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 1
+       },
+       "to": {
+        "view": "tree",
+        "at": 0
+       },
+       "value": "✗"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The root returns ✗: 2's sides differ by more than 1, so the tree is not balanced: false.",
+      "ko": "root가 ✗ 표시를 돌려줍니다. 2의 두 쪽 높이 차가 1보다 크므로 균형이 깨져 답은 false입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "bad": [
+         1,
+         0
+        ],
+        "dim": [
+         3,
+         5
+        ]
+       },
+       "shade": [],
+       "tags": [
+        [
+         5,
+         {
+          "en": "h 1",
+          "ko": "높이 1"
+         }
+        ],
+        [
+         3,
+         {
+          "en": "h 2",
+          "ko": "높이 2"
+         }
+        ],
+        [
+         1,
+         "✗"
+        ],
+        [
+         0,
+         "✗"
+        ]
+       ]
+      }
+     },
+     "answer": "false"
+    }
+   ],
+   "setup": {
+    "tree": {
+     "nodes": [
+      {
+       "id": 0,
+       "value": 1
+      },
+      {
+       "id": 1,
+       "value": 2
+      },
+      {
+       "id": 3,
+       "value": 3
+      },
+      {
+       "id": 5,
+       "value": 4
+      }
+     ],
+     "edges": [
+      {
+       "from": 0,
+       "to": 1,
+       "slot": 0
+      },
+      {
+       "from": 1,
+       "to": 3,
+       "slot": 0
+      },
+      {
+       "from": 3,
+       "to": 5,
+       "slot": 0
+      }
+     ]
+    }
+   },
+   "sampleInput": "[1,2,null,3,null,4]"
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "root = [1,2]",
+   "expected": "true",
+   "frames": [
+    {
+     "caption": {
+      "en": "A family tree of 2 hamsters with root 1. Ask the root for its height: it must ask its children first.",
+      "ko": "root가 1인 햄스터 2마리의 가계도입니다. root에게 높이를 묻는데, root는 먼저 자식들에게 물어야 합니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": []
+       },
+       "shade": [],
+       "tags": []
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "1 has children, so it asks its left child 2 first.",
+      "ko": "1은 자식이 있으므로 먼저 왼쪽 자식 2에게 묻습니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ],
+       "tags": []
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "2 is a leaf: both sides are empty (0), so it returns 1 + 0 = 1.",
+      "ko": "2는 리프입니다. 양쪽이 비어 있으므로(0) 1 + 0 = 1을 돌려줍니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "good": [
+         1
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ],
+       "tags": [
+        [
+         1,
+         {
+          "en": "h 1",
+          "ko": "높이 1"
+         }
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "1's sides have heights 1 and 0 (none), at most 1 apart: it returns 1 + 1 = 2.",
+      "ko": "1의 두 쪽 높이는 1, 0(없음)입니다. 차이가 1 이하이므로 1 + 1 = 2를 돌려줍니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         1
+        ],
+        "good": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ],
+       "tags": [
+        [
+         1,
+         {
+          "en": "h 1",
+          "ko": "높이 1"
+         }
+        ],
+        [
+         0,
+         {
+          "en": "h 2",
+          "ko": "높이 2"
+         }
+        ]
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 1
+       },
+       "to": {
+        "view": "tree",
+        "at": 0
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The root returns height 2, not ✗: every node's sides differ by at most 1, so the tree is balanced: true.",
+      "ko": "root가 ✗ 표시가 아닌 높이 2를 돌려줍니다. 모든 노드의 두 쪽 높이 차가 1 이하이므로 균형 잡혀 있어 답은 true입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "path": [
+         0,
+         1
+        ]
+       },
+       "shade": [],
+       "tags": [
+        [
+         1,
+         {
+          "en": "h 1",
+          "ko": "높이 1"
+         }
+        ],
+        [
+         0,
+         {
+          "en": "h 2",
+          "ko": "높이 2"
+         }
+        ]
+       ]
+      }
+     },
+     "answer": "true"
+    }
+   ],
+   "setup": {
+    "tree": {
+     "nodes": [
+      {
+       "id": 0,
+       "value": 1
+      },
+      {
+       "id": 1,
+       "value": 2
+      }
+     ],
+     "edges": [
+      {
+       "from": 0,
+       "to": 1,
+       "slot": 0
+      }
+     ]
+    }
+   },
+   "sampleInput": "[1,2]"
+  }
+ ]
+}
