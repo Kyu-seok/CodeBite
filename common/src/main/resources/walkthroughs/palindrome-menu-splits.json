@@ -1,0 +1,2324 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Palindrome Menu Splits",
+  "ko": "팰린드롬 조각으로 쪼개기"
+ },
+ "approach": {
+  "en": "Cut one piece per call: from where the last piece ended, try each length; a piece that reads the same backwards is kept and the rest of the string is split by the next call. Reaching the end is one full split.",
+  "ko": "호출마다 조각을 하나 자릅니다. 앞 조각이 끝난 곳부터 길이를 하나씩 늘려 보고, 거꾸로 읽어도 같은 조각이면 남기고 나머지 문자열은 다음 호출이 나눕니다. 끝까지 닿으면 분할 하나가 완성됩니다."
+ },
+ "views": [
+  {
+   "id": "menu",
+   "type": "array",
+   "title": {
+    "en": "menu",
+    "ko": "menu (문자열)"
+   }
+  },
+  {
+   "id": "calls",
+   "type": "tree",
+   "title": {
+    "en": "calls (text left to split; ✓: none)",
+    "ko": "호출 (나눌 남은 문자열, ✓: 없음)"
+   }
+  },
+  {
+   "id": "result",
+   "type": "output",
+   "title": {
+    "en": "splits",
+    "ko": "분할"
+   },
+   "empty": {
+    "en": "none yet",
+    "ko": "아직 없음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "menu = \"dbbc\"",
+   "expected": "[[\"d\",\"b\",\"b\",\"c\"],[\"d\",\"bb\",\"c\"]]",
+   "frames": [
+    {
+     "caption": {
+      "en": "split_from(0) has all of \"dbbc\" to split; it tries pieces from index 0, shortest first.",
+      "ko": "split_from(0) 호출은 \"dbbc\" 전체를 나눠야 하므로 0번 칸부터 짧은 조각 순으로 시도합니다."
+     },
+     "views": {
+      "menu": {
+       "values": [
+        "d",
+        "b",
+        "b",
+        "c"
+       ],
+       "marks": {
+        "dim": []
+       },
+       "pointers": {
+        "start": 0
+       },
+       "spans": {}
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "dbbc"
+        }
+       ],
+       "edges": [],
+       "nodeMarks": {
+        "good": [],
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "calls",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "\"d\" is a palindrome, so take it: split_from(1) has \"bbc\" left.",
+      "ko": "\"d\" 조각은 팰린드롬이니 자릅니다. split_from(1) 호출에는 \"bbc\" 문자열이 남았습니다."
+     },
+     "views": {
+      "menu": {
+       "values": [
+        "d",
+        "b",
+        "b",
+        "c"
+       ],
+       "marks": {
+        "dim": [
+         0
+        ],
+        "good": [
+         0
+        ]
+       },
+       "pointers": {
+        "start": 1
+       },
+       "spans": {
+        "piece": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "piece",
+          "ko": "조각"
+         },
+         "mark": "good"
+        }
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "dbbc"
+        },
+        {
+         "id": 1,
+         "value": "bbc"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "d"
+        }
+       ],
+       "nodeMarks": {
+        "good": [],
+        "lit": [
+         1
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "menu",
+        "at": 0
+       },
+       "to": {
+        "view": "calls",
+        "at": 1
+       },
+       "value": "d"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "\"b\" is a palindrome, so take it: split_from(2) has \"bc\" left.",
+      "ko": "\"b\" 조각은 팰린드롬이니 자릅니다. split_from(2) 호출에는 \"bc\" 문자열이 남았습니다."
+     },
+     "views": {
+      "menu": {
+       "values": [
+        "d",
+        "b",
+        "b",
+        "c"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1
+        ],
+        "good": [
+         1
+        ]
+       },
+       "pointers": {
+        "start": 2
+       },
+       "spans": {
+        "piece": {
+         "from": 1,
+         "to": 1,
+         "label": {
+          "en": "piece",
+          "ko": "조각"
+         },
+         "mark": "good"
+        }
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "dbbc"
+        },
+        {
+         "id": 1,
+         "value": "bbc"
+        },
+        {
+         "id": 2,
+         "value": "bc"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "d"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "b"
+        }
+       ],
+       "nodeMarks": {
+        "good": [],
+        "lit": [
+         2
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        2
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "menu",
+        "at": 1
+       },
+       "to": {
+        "view": "calls",
+        "at": 2
+       },
+       "value": "b"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "\"b\" is a palindrome, so take it: split_from(3) has \"c\" left.",
+      "ko": "\"b\" 조각은 팰린드롬이니 자릅니다. split_from(3) 호출에는 \"c\" 문자열이 남았습니다."
+     },
+     "views": {
+      "menu": {
+       "values": [
+        "d",
+        "b",
+        "b",
+        "c"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2
+        ],
+        "good": [
+         2
+        ]
+       },
+       "pointers": {
+        "start": 3
+       },
+       "spans": {
+        "piece": {
+         "from": 2,
+         "to": 2,
+         "label": {
+          "en": "piece",
+          "ko": "조각"
+         },
+         "mark": "good"
+        }
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "dbbc"
+        },
+        {
+         "id": 1,
+         "value": "bbc"
+        },
+        {
+         "id": 2,
+         "value": "bc"
+        },
+        {
+         "id": 3,
+         "value": "c"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "d"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "b"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "b"
+        }
+       ],
+       "nodeMarks": {
+        "good": [],
+        "lit": [
+         3
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        2,
+        3
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "menu",
+        "at": 2
+       },
+       "to": {
+        "view": "calls",
+        "at": 3
+       },
+       "value": "b"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "\"c\" is a palindrome, so take it: split_from(4) is at the end, so [\"d\",\"b\",\"b\",\"c\"] is a full split: it goes into the answer.",
+      "ko": "\"c\" 조각은 팰린드롬이니 자릅니다. split_from(4) 호출에는 남은 글자가 없으므로 분할 [\"d\",\"b\",\"b\",\"c\"] 완성, 답에 넣습니다."
+     },
+     "views": {
+      "menu": {
+       "values": [
+        "d",
+        "b",
+        "b",
+        "c"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3
+        ],
+        "good": [
+         3
+        ]
+       },
+       "pointers": {},
+       "spans": {
+        "piece": {
+         "from": 3,
+         "to": 3,
+         "label": {
+          "en": "piece",
+          "ko": "조각"
+         },
+         "mark": "good"
+        }
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "dbbc"
+        },
+        {
+         "id": 1,
+         "value": "bbc"
+        },
+        {
+         "id": 2,
+         "value": "bc"
+        },
+        {
+         "id": 3,
+         "value": "c"
+        },
+        {
+         "id": 4,
+         "value": "✓"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "d"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "b"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "b"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "c"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         4
+        ],
+        "lit": [
+         4
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ]
+      },
+      "result": {
+       "values": [
+        "[\"d\",\"b\",\"b\",\"c\"]"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "menu",
+        "at": 3
+       },
+       "to": {
+        "view": "calls",
+        "at": 4
+       },
+       "value": "c"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Back in split_from(2): \"bc\" is not a palindrome, and no longer piece is left, so the call returns.",
+      "ko": "split_from(2) 호출로 돌아왔습니다. \"bc\" 조각은 팰린드롬이 아니고 더 긴 조각이 없으므로 돌아갑니다."
+     },
+     "views": {
+      "menu": {
+       "values": [
+        "d",
+        "b",
+        "b",
+        "c"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1
+        ],
+        "bad": [
+         2,
+         3
+        ]
+       },
+       "pointers": {
+        "start": 2
+       },
+       "spans": {
+        "piece": {
+         "from": 2,
+         "to": 3,
+         "label": {
+          "en": "piece",
+          "ko": "조각"
+         },
+         "mark": "bad"
+        }
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "dbbc"
+        },
+        {
+         "id": 1,
+         "value": "bbc"
+        },
+        {
+         "id": 2,
+         "value": "bc"
+        },
+        {
+         "id": 3,
+         "value": "c"
+        },
+        {
+         "id": 4,
+         "value": "✓"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "d"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "b"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "b"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "c"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         4
+        ],
+        "lit": [
+         2
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        2
+       ]
+      },
+      "result": {
+       "values": [
+        "[\"d\",\"b\",\"b\",\"c\"]"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "\"bb\" is a palindrome, so take it: split_from(3) has \"c\" left.",
+      "ko": "\"bb\" 조각은 팰린드롬이니 자릅니다. split_from(3) 호출에는 \"c\" 문자열이 남았습니다."
+     },
+     "views": {
+      "menu": {
+       "values": [
+        "d",
+        "b",
+        "b",
+        "c"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2
+        ],
+        "good": [
+         1,
+         2
+        ]
+       },
+       "pointers": {
+        "start": 3
+       },
+       "spans": {
+        "piece": {
+         "from": 1,
+         "to": 2,
+         "label": {
+          "en": "piece",
+          "ko": "조각"
+         },
+         "mark": "good"
+        }
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "dbbc"
+        },
+        {
+         "id": 1,
+         "value": "bbc"
+        },
+        {
+         "id": 2,
+         "value": "bc"
+        },
+        {
+         "id": 3,
+         "value": "c"
+        },
+        {
+         "id": 4,
+         "value": "✓"
+        },
+        {
+         "id": 5,
+         "value": "c"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "d"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "b"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "b"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "c"
+        },
+        {
+         "from": 1,
+         "to": 5,
+         "label": "bb"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         4
+        ],
+        "lit": [
+         5
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        5
+       ]
+      },
+      "result": {
+       "values": [
+        "[\"d\",\"b\",\"b\",\"c\"]"
+       ],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "menu",
+        "at": 1
+       },
+       "to": {
+        "view": "calls",
+        "at": 5
+       },
+       "value": "bb"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "\"c\" is a palindrome, so take it: split_from(4) is at the end, so [\"d\",\"bb\",\"c\"] is a full split: it goes into the answer.",
+      "ko": "\"c\" 조각은 팰린드롬이니 자릅니다. split_from(4) 호출에는 남은 글자가 없으므로 분할 [\"d\",\"bb\",\"c\"] 완성, 답에 넣습니다."
+     },
+     "views": {
+      "menu": {
+       "values": [
+        "d",
+        "b",
+        "b",
+        "c"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3
+        ],
+        "good": [
+         3
+        ]
+       },
+       "pointers": {},
+       "spans": {
+        "piece": {
+         "from": 3,
+         "to": 3,
+         "label": {
+          "en": "piece",
+          "ko": "조각"
+         },
+         "mark": "good"
+        }
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "dbbc"
+        },
+        {
+         "id": 1,
+         "value": "bbc"
+        },
+        {
+         "id": 2,
+         "value": "bc"
+        },
+        {
+         "id": 3,
+         "value": "c"
+        },
+        {
+         "id": 4,
+         "value": "✓"
+        },
+        {
+         "id": 5,
+         "value": "c"
+        },
+        {
+         "id": 6,
+         "value": "✓"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "d"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "b"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "b"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "c"
+        },
+        {
+         "from": 1,
+         "to": 5,
+         "label": "bb"
+        },
+        {
+         "from": 5,
+         "to": 6,
+         "label": "c"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         4,
+         6
+        ],
+        "lit": [
+         6
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        5,
+        6
+       ]
+      },
+      "result": {
+       "values": [
+        "[\"d\",\"b\",\"b\",\"c\"]",
+        "[\"d\",\"bb\",\"c\"]"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "menu",
+        "at": 3
+       },
+       "to": {
+        "view": "calls",
+        "at": 6
+       },
+       "value": "c"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 6
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Back in split_from(1): \"bbc\" is not a palindrome, and no longer piece is left, so the call returns.",
+      "ko": "split_from(1) 호출로 돌아왔습니다. \"bbc\" 조각은 팰린드롬이 아니고 더 긴 조각이 없으므로 돌아갑니다."
+     },
+     "views": {
+      "menu": {
+       "values": [
+        "d",
+        "b",
+        "b",
+        "c"
+       ],
+       "marks": {
+        "dim": [
+         0
+        ],
+        "bad": [
+         1,
+         2,
+         3
+        ]
+       },
+       "pointers": {
+        "start": 1
+       },
+       "spans": {
+        "piece": {
+         "from": 1,
+         "to": 3,
+         "label": {
+          "en": "piece",
+          "ko": "조각"
+         },
+         "mark": "bad"
+        }
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "dbbc"
+        },
+        {
+         "id": 1,
+         "value": "bbc"
+        },
+        {
+         "id": 2,
+         "value": "bc"
+        },
+        {
+         "id": 3,
+         "value": "c"
+        },
+        {
+         "id": 4,
+         "value": "✓"
+        },
+        {
+         "id": 5,
+         "value": "c"
+        },
+        {
+         "id": 6,
+         "value": "✓"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "d"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "b"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "b"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "c"
+        },
+        {
+         "from": 1,
+         "to": 5,
+         "label": "bb"
+        },
+        {
+         "from": 5,
+         "to": 6,
+         "label": "c"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         4,
+         6
+        ],
+        "lit": [
+         1
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ]
+      },
+      "result": {
+       "values": [
+        "[\"d\",\"b\",\"b\",\"c\"]",
+        "[\"d\",\"bb\",\"c\"]"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Back in split_from(0): \"db\", \"dbb\", \"dbbc\" are not palindromes, and no longer piece is left, so the call returns.",
+      "ko": "split_from(0) 호출로 돌아왔습니다. \"db\", \"dbb\", \"dbbc\" 조각은 팰린드롬이 아니고 더 긴 조각이 없으므로 돌아갑니다."
+     },
+     "views": {
+      "menu": {
+       "values": [
+        "d",
+        "b",
+        "b",
+        "c"
+       ],
+       "marks": {
+        "dim": [],
+        "bad": [
+         0,
+         1,
+         2,
+         3
+        ]
+       },
+       "pointers": {
+        "start": 0
+       },
+       "spans": {
+        "piece": {
+         "from": 0,
+         "to": 3,
+         "label": {
+          "en": "piece",
+          "ko": "조각"
+         },
+         "mark": "bad"
+        }
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "dbbc"
+        },
+        {
+         "id": 1,
+         "value": "bbc"
+        },
+        {
+         "id": 2,
+         "value": "bc"
+        },
+        {
+         "id": 3,
+         "value": "c"
+        },
+        {
+         "id": 4,
+         "value": "✓"
+        },
+        {
+         "id": 5,
+         "value": "c"
+        },
+        {
+         "id": 6,
+         "value": "✓"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "d"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "b"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "b"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "c"
+        },
+        {
+         "from": 1,
+         "to": 5,
+         "label": "bb"
+        },
+        {
+         "from": 5,
+         "to": 6,
+         "label": "c"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         4,
+         6
+        ],
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ]
+      },
+      "result": {
+       "values": [
+        "[\"d\",\"b\",\"b\",\"c\"]",
+        "[\"d\",\"bb\",\"c\"]"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Every call has returned: 2 splits of \"dbbc\" into palindromes, one per ✓ in the tree.",
+      "ko": "모든 호출이 끝났습니다. \"dbbc\" 문자열을 팰린드롬으로 나누는 분할은 2가지이고, 트리의 ✓ 하나가 분할 하나입니다."
+     },
+     "views": {
+      "menu": {
+       "values": [
+        "d",
+        "b",
+        "b",
+        "c"
+       ],
+       "marks": {},
+       "pointers": {},
+       "spans": {}
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "dbbc"
+        },
+        {
+         "id": 1,
+         "value": "bbc"
+        },
+        {
+         "id": 2,
+         "value": "bc"
+        },
+        {
+         "id": 3,
+         "value": "c"
+        },
+        {
+         "id": 4,
+         "value": "✓"
+        },
+        {
+         "id": 5,
+         "value": "c"
+        },
+        {
+         "id": 6,
+         "value": "✓"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "d"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "b"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "b"
+        },
+        {
+         "from": 3,
+         "to": 4,
+         "label": "c"
+        },
+        {
+         "from": 1,
+         "to": 5,
+         "label": "bb"
+        },
+        {
+         "from": 5,
+         "to": 6,
+         "label": "c"
+        }
+       ],
+       "nodeMarks": {
+        "path": [
+         4,
+         6
+        ]
+       },
+       "shade": []
+      },
+      "result": {
+       "values": [
+        "[\"d\",\"b\",\"b\",\"c\"]",
+        "[\"d\",\"bb\",\"c\"]"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "answer": "[[\"d\",\"b\",\"b\",\"c\"],[\"d\",\"bb\",\"c\"]]"
+    }
+   ],
+   "sampleInput": "dbbc"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "menu = \"ef\"",
+   "expected": "[[\"e\",\"f\"]]",
+   "frames": [
+    {
+     "caption": {
+      "en": "split_from(0) has all of \"ef\" to split; it tries pieces from index 0, shortest first.",
+      "ko": "split_from(0) 호출은 \"ef\" 전체를 나눠야 하므로 0번 칸부터 짧은 조각 순으로 시도합니다."
+     },
+     "views": {
+      "menu": {
+       "values": [
+        "e",
+        "f"
+       ],
+       "marks": {
+        "dim": []
+       },
+       "pointers": {
+        "start": 0
+       },
+       "spans": {}
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "ef"
+        }
+       ],
+       "edges": [],
+       "nodeMarks": {
+        "good": [],
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "calls",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "\"e\" is a palindrome, so take it: split_from(1) has \"f\" left.",
+      "ko": "\"e\" 조각은 팰린드롬이니 자릅니다. split_from(1) 호출에는 \"f\" 문자열이 남았습니다."
+     },
+     "views": {
+      "menu": {
+       "values": [
+        "e",
+        "f"
+       ],
+       "marks": {
+        "dim": [
+         0
+        ],
+        "good": [
+         0
+        ]
+       },
+       "pointers": {
+        "start": 1
+       },
+       "spans": {
+        "piece": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "piece",
+          "ko": "조각"
+         },
+         "mark": "good"
+        }
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "ef"
+        },
+        {
+         "id": 1,
+         "value": "f"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "e"
+        }
+       ],
+       "nodeMarks": {
+        "good": [],
+        "lit": [
+         1
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "menu",
+        "at": 0
+       },
+       "to": {
+        "view": "calls",
+        "at": 1
+       },
+       "value": "e"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "\"f\" is a palindrome, so take it: split_from(2) is at the end, so [\"e\",\"f\"] is a full split: it goes into the answer.",
+      "ko": "\"f\" 조각은 팰린드롬이니 자릅니다. split_from(2) 호출에는 남은 글자가 없으므로 분할 [\"e\",\"f\"] 완성, 답에 넣습니다."
+     },
+     "views": {
+      "menu": {
+       "values": [
+        "e",
+        "f"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1
+        ],
+        "good": [
+         1
+        ]
+       },
+       "pointers": {},
+       "spans": {
+        "piece": {
+         "from": 1,
+         "to": 1,
+         "label": {
+          "en": "piece",
+          "ko": "조각"
+         },
+         "mark": "good"
+        }
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "ef"
+        },
+        {
+         "id": 1,
+         "value": "f"
+        },
+        {
+         "id": 2,
+         "value": "✓"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "e"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "f"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         2
+        ],
+        "lit": [
+         2
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        2
+       ]
+      },
+      "result": {
+       "values": [
+        "[\"e\",\"f\"]"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "menu",
+        "at": 1
+       },
+       "to": {
+        "view": "calls",
+        "at": 2
+       },
+       "value": "f"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Back in split_from(0): \"ef\" is not a palindrome, and no longer piece is left, so the call returns.",
+      "ko": "split_from(0) 호출로 돌아왔습니다. \"ef\" 조각은 팰린드롬이 아니고 더 긴 조각이 없으므로 돌아갑니다."
+     },
+     "views": {
+      "menu": {
+       "values": [
+        "e",
+        "f"
+       ],
+       "marks": {
+        "dim": [],
+        "bad": [
+         0,
+         1
+        ]
+       },
+       "pointers": {
+        "start": 0
+       },
+       "spans": {
+        "piece": {
+         "from": 0,
+         "to": 1,
+         "label": {
+          "en": "piece",
+          "ko": "조각"
+         },
+         "mark": "bad"
+        }
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "ef"
+        },
+        {
+         "id": 1,
+         "value": "f"
+        },
+        {
+         "id": 2,
+         "value": "✓"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "e"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "f"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         2
+        ],
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ]
+      },
+      "result": {
+       "values": [
+        "[\"e\",\"f\"]"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Every call has returned: 1 split of \"ef\" into palindromes, one per ✓ in the tree.",
+      "ko": "모든 호출이 끝났습니다. \"ef\" 문자열을 팰린드롬으로 나누는 분할은 1가지이고, 트리의 ✓ 하나가 분할 하나입니다."
+     },
+     "views": {
+      "menu": {
+       "values": [
+        "e",
+        "f"
+       ],
+       "marks": {},
+       "pointers": {},
+       "spans": {}
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "ef"
+        },
+        {
+         "id": 1,
+         "value": "f"
+        },
+        {
+         "id": 2,
+         "value": "✓"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "e"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "f"
+        }
+       ],
+       "nodeMarks": {
+        "path": [
+         2
+        ]
+       },
+       "shade": []
+      },
+      "result": {
+       "values": [
+        "[\"e\",\"f\"]"
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      }
+     },
+     "answer": "[[\"e\",\"f\"]]"
+    }
+   ],
+   "sampleInput": "ef"
+  },
+  {
+   "label": {
+    "en": "Case 3",
+    "ko": "케이스 3"
+   },
+   "input": "menu = \"aba\"",
+   "expected": "[[\"a\",\"b\",\"a\"],[\"aba\"]]",
+   "frames": [
+    {
+     "caption": {
+      "en": "split_from(0) has all of \"aba\" to split; it tries pieces from index 0, shortest first.",
+      "ko": "split_from(0) 호출은 \"aba\" 전체를 나눠야 하므로 0번 칸부터 짧은 조각 순으로 시도합니다."
+     },
+     "views": {
+      "menu": {
+       "values": [
+        "a",
+        "b",
+        "a"
+       ],
+       "marks": {
+        "dim": []
+       },
+       "pointers": {
+        "start": 0
+       },
+       "spans": {}
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "aba"
+        }
+       ],
+       "edges": [],
+       "nodeMarks": {
+        "good": [],
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "calls",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "\"a\" is a palindrome, so take it: split_from(1) has \"ba\" left.",
+      "ko": "\"a\" 조각은 팰린드롬이니 자릅니다. split_from(1) 호출에는 \"ba\" 문자열이 남았습니다."
+     },
+     "views": {
+      "menu": {
+       "values": [
+        "a",
+        "b",
+        "a"
+       ],
+       "marks": {
+        "dim": [
+         0
+        ],
+        "good": [
+         0
+        ]
+       },
+       "pointers": {
+        "start": 1
+       },
+       "spans": {
+        "piece": {
+         "from": 0,
+         "to": 0,
+         "label": {
+          "en": "piece",
+          "ko": "조각"
+         },
+         "mark": "good"
+        }
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "aba"
+        },
+        {
+         "id": 1,
+         "value": "ba"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "a"
+        }
+       ],
+       "nodeMarks": {
+        "good": [],
+        "lit": [
+         1
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "menu",
+        "at": 0
+       },
+       "to": {
+        "view": "calls",
+        "at": 1
+       },
+       "value": "a"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "\"b\" is a palindrome, so take it: split_from(2) has \"a\" left.",
+      "ko": "\"b\" 조각은 팰린드롬이니 자릅니다. split_from(2) 호출에는 \"a\" 문자열이 남았습니다."
+     },
+     "views": {
+      "menu": {
+       "values": [
+        "a",
+        "b",
+        "a"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1
+        ],
+        "good": [
+         1
+        ]
+       },
+       "pointers": {
+        "start": 2
+       },
+       "spans": {
+        "piece": {
+         "from": 1,
+         "to": 1,
+         "label": {
+          "en": "piece",
+          "ko": "조각"
+         },
+         "mark": "good"
+        }
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "aba"
+        },
+        {
+         "id": 1,
+         "value": "ba"
+        },
+        {
+         "id": 2,
+         "value": "a"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "a"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "b"
+        }
+       ],
+       "nodeMarks": {
+        "good": [],
+        "lit": [
+         2
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        2
+       ]
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "menu",
+        "at": 1
+       },
+       "to": {
+        "view": "calls",
+        "at": 2
+       },
+       "value": "b"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "\"a\" is a palindrome, so take it: split_from(3) is at the end, so [\"a\",\"b\",\"a\"] is a full split: it goes into the answer.",
+      "ko": "\"a\" 조각은 팰린드롬이니 자릅니다. split_from(3) 호출에는 남은 글자가 없으므로 분할 [\"a\",\"b\",\"a\"] 완성, 답에 넣습니다."
+     },
+     "views": {
+      "menu": {
+       "values": [
+        "a",
+        "b",
+        "a"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2
+        ],
+        "good": [
+         2
+        ]
+       },
+       "pointers": {},
+       "spans": {
+        "piece": {
+         "from": 2,
+         "to": 2,
+         "label": {
+          "en": "piece",
+          "ko": "조각"
+         },
+         "mark": "good"
+        }
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "aba"
+        },
+        {
+         "id": 1,
+         "value": "ba"
+        },
+        {
+         "id": 2,
+         "value": "a"
+        },
+        {
+         "id": 3,
+         "value": "✓"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "a"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "b"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "a"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         3
+        ],
+        "lit": [
+         3
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        2,
+        3
+       ]
+      },
+      "result": {
+       "values": [
+        "[\"a\",\"b\",\"a\"]"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "menu",
+        "at": 2
+       },
+       "to": {
+        "view": "calls",
+        "at": 3
+       },
+       "value": "a"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 3
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Back in split_from(1): \"ba\" is not a palindrome, and no longer piece is left, so the call returns.",
+      "ko": "split_from(1) 호출로 돌아왔습니다. \"ba\" 조각은 팰린드롬이 아니고 더 긴 조각이 없으므로 돌아갑니다."
+     },
+     "views": {
+      "menu": {
+       "values": [
+        "a",
+        "b",
+        "a"
+       ],
+       "marks": {
+        "dim": [
+         0
+        ],
+        "bad": [
+         1,
+         2
+        ]
+       },
+       "pointers": {
+        "start": 1
+       },
+       "spans": {
+        "piece": {
+         "from": 1,
+         "to": 2,
+         "label": {
+          "en": "piece",
+          "ko": "조각"
+         },
+         "mark": "bad"
+        }
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "aba"
+        },
+        {
+         "id": 1,
+         "value": "ba"
+        },
+        {
+         "id": 2,
+         "value": "a"
+        },
+        {
+         "id": 3,
+         "value": "✓"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "a"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "b"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "a"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         3
+        ],
+        "lit": [
+         1
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ]
+      },
+      "result": {
+       "values": [
+        "[\"a\",\"b\",\"a\"]"
+       ],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "\"ab\" is not a palindrome; \"aba\" is, so take it: split_from(3) is at the end, so [\"aba\"] is a full split: it goes into the answer.",
+      "ko": "\"ab\" 조각은 팰린드롬이 아니고, \"aba\" 조각은 팰린드롬이니 자릅니다. split_from(3) 호출에는 남은 글자가 없으므로 분할 [\"aba\"] 완성, 답에 넣습니다."
+     },
+     "views": {
+      "menu": {
+       "values": [
+        "a",
+        "b",
+        "a"
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2
+        ],
+        "good": [
+         0,
+         1,
+         2
+        ]
+       },
+       "pointers": {},
+       "spans": {
+        "piece": {
+         "from": 0,
+         "to": 2,
+         "label": {
+          "en": "piece",
+          "ko": "조각"
+         },
+         "mark": "good"
+        }
+       }
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "aba"
+        },
+        {
+         "id": 1,
+         "value": "ba"
+        },
+        {
+         "id": 2,
+         "value": "a"
+        },
+        {
+         "id": 3,
+         "value": "✓"
+        },
+        {
+         "id": 4,
+         "value": "✓"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "a"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "b"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "a"
+        },
+        {
+         "from": 0,
+         "to": 4,
+         "label": "aba"
+        }
+       ],
+       "nodeMarks": {
+        "good": [
+         3,
+         4
+        ],
+        "lit": [
+         4
+        ]
+       },
+       "shade": [
+        0,
+        4
+       ]
+      },
+      "result": {
+       "values": [
+        "[\"a\",\"b\",\"a\"]",
+        "[\"aba\"]"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "menu",
+        "at": 0
+       },
+       "to": {
+        "view": "calls",
+        "at": 4
+       },
+       "value": "aba"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every call has returned: 2 splits of \"aba\" into palindromes, one per ✓ in the tree.",
+      "ko": "모든 호출이 끝났습니다. \"aba\" 문자열을 팰린드롬으로 나누는 분할은 2가지이고, 트리의 ✓ 하나가 분할 하나입니다."
+     },
+     "views": {
+      "menu": {
+       "values": [
+        "a",
+        "b",
+        "a"
+       ],
+       "marks": {},
+       "pointers": {},
+       "spans": {}
+      },
+      "calls": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": "aba"
+        },
+        {
+         "id": 1,
+         "value": "ba"
+        },
+        {
+         "id": 2,
+         "value": "a"
+        },
+        {
+         "id": 3,
+         "value": "✓"
+        },
+        {
+         "id": 4,
+         "value": "✓"
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "label": "a"
+        },
+        {
+         "from": 1,
+         "to": 2,
+         "label": "b"
+        },
+        {
+         "from": 2,
+         "to": 3,
+         "label": "a"
+        },
+        {
+         "from": 0,
+         "to": 4,
+         "label": "aba"
+        }
+       ],
+       "nodeMarks": {
+        "path": [
+         3,
+         4
+        ]
+       },
+       "shade": []
+      },
+      "result": {
+       "values": [
+        "[\"a\",\"b\",\"a\"]",
+        "[\"aba\"]"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1
+        ]
+       }
+      }
+     },
+     "answer": "[[\"a\",\"b\",\"a\"],[\"aba\"]]"
+    }
+   ],
+   "sampleInput": "aba"
+  }
+ ]
+}
