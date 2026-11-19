@@ -1,0 +1,1479 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Balance Brackets with Wildcards",
+  "ko": "와일드카드가 있는 괄호 균형 맞추기"
+ },
+ "approach": {
+  "en": "Keep the range of how many ( can be open so far: ( moves both ends up, ) both down, and * widens it, since it could close one or open one. Fail when even the top goes below 0; never let the bottom go below 0; at the end, 0 must be in the range.",
+  "ko": "지금까지 열려 있을 수 있는 ( 개수의 범위를 기억합니다. ( 괄호는 양 끝을 올리고, ) 괄호는 양 끝을 내리고, * 와일드카드는 하나를 닫을 수도 열 수도 있으니 범위를 넓힙니다. 위쪽 끝까지 0 아래로 내려가면 실패이고, 아래쪽 끝은 0 아래로 내려가지 않게 하며, 끝에서 범위에 0이 들어 있어야 합니다."
+ },
+ "views": [
+  {
+   "id": "brackets",
+   "type": "array",
+   "title": {
+    "en": "brackets",
+    "ko": "brackets (괄호)"
+   }
+  },
+  {
+   "id": "open",
+   "type": "intervals",
+   "title": {
+    "en": "how many ( can be open, after each character",
+    "ko": "글자마다 열려 있을 수 있는 ( 개수"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "brackets = \"((*)\"",
+   "expected": "true",
+   "frames": [
+    {
+     "caption": {
+      "en": "\"((*)\" has 4 characters. Before any of them, exactly 0 ( are open.",
+      "ko": "\"((*)\"에는 글자가 4개 있습니다. 아무것도 읽기 전에는 열린 ( 괄호가 정확히 0개입니다."
+     },
+     "views": {
+      "brackets": {
+       "values": [
+        "(",
+        "(",
+        "*",
+        ")"
+       ],
+       "pointers": {
+        "i": null
+       },
+       "unread": [],
+       "marks": {}
+      },
+      "open": {
+       "groups": [
+        {
+         "label": {
+          "en": "[low, high]",
+          "ko": "[low, high] (최소, 최대)"
+         },
+         "intervals": [],
+         "marks": {}
+        }
+       ],
+       "points": [
+        {
+         "at": 0,
+         "label": {
+          "en": "floor",
+          "ko": "바닥"
+         }
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "'(' opens one more: [0, 0] becomes [1, 1].",
+      "ko": "'(' 괄호는 하나를 더 엽니다: [0, 0] 범위가 [1, 1] 범위가 됩니다."
+     },
+     "views": {
+      "brackets": {
+       "values": [
+        "(",
+        "(",
+        "*",
+        ")"
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "unread": [
+        1,
+        2,
+        3
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "open": {
+       "groups": [
+        {
+         "label": {
+          "en": "[low, high]",
+          "ko": "[low, high] (최소, 최대)"
+         },
+         "intervals": [
+          [
+           1,
+           1
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 0,
+         "label": {
+          "en": "floor",
+          "ko": "바닥"
+         }
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "brackets",
+        "at": 0
+       },
+       "to": {
+        "view": "open",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "value": "("
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "'(' opens one more: [1, 1] becomes [2, 2].",
+      "ko": "'(' 괄호는 하나를 더 엽니다: [1, 1] 범위가 [2, 2] 범위가 됩니다."
+     },
+     "views": {
+      "brackets": {
+       "values": [
+        "(",
+        "(",
+        "*",
+        ")"
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "unread": [
+        2,
+        3
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "open": {
+       "groups": [
+        {
+         "label": {
+          "en": "[low, high]",
+          "ko": "[low, high] (최소, 최대)"
+         },
+         "intervals": [
+          [
+           1,
+           1
+          ],
+          [
+           2,
+           2
+          ]
+         ],
+         "marks": {
+          "good": [
+           1
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 0,
+         "label": {
+          "en": "floor",
+          "ko": "바닥"
+         }
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "brackets",
+        "at": 1
+       },
+       "to": {
+        "view": "open",
+        "at": [
+         0,
+         1
+        ]
+       },
+       "value": "("
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "'*' could close one or open one, so the range widens both ways: [2, 2] becomes [1, 3].",
+      "ko": "'*' 와일드카드는 하나를 닫을 수도 열 수도 있어 범위가 양쪽으로 넓어집니다: [2, 2] 범위가 [1, 3] 범위가 됩니다."
+     },
+     "views": {
+      "brackets": {
+       "values": [
+        "(",
+        "(",
+        "*",
+        ")"
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "unread": [
+        3
+       ],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "open": {
+       "groups": [
+        {
+         "label": {
+          "en": "[low, high]",
+          "ko": "[low, high] (최소, 최대)"
+         },
+         "intervals": [
+          [
+           1,
+           1
+          ],
+          [
+           2,
+           2
+          ],
+          [
+           1,
+           3
+          ]
+         ],
+         "marks": {
+          "good": [
+           2
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 0,
+         "label": {
+          "en": "floor",
+          "ko": "바닥"
+         }
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "brackets",
+        "at": 2
+       },
+       "to": {
+        "view": "open",
+        "at": [
+         0,
+         2
+        ]
+       },
+       "value": "*"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "')' closes one: [1, 3] becomes [0, 2].",
+      "ko": "')' 괄호는 하나를 닫습니다: [1, 3] 범위가 [0, 2] 범위가 됩니다."
+     },
+     "views": {
+      "brackets": {
+       "values": [
+        "(",
+        "(",
+        "*",
+        ")"
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "unread": [],
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "open": {
+       "groups": [
+        {
+         "label": {
+          "en": "[low, high]",
+          "ko": "[low, high] (최소, 최대)"
+         },
+         "intervals": [
+          [
+           1,
+           1
+          ],
+          [
+           2,
+           2
+          ],
+          [
+           1,
+           3
+          ],
+          [
+           0,
+           2
+          ]
+         ],
+         "marks": {
+          "good": [
+           3
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 0,
+         "label": {
+          "en": "floor",
+          "ko": "바닥"
+         }
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "brackets",
+        "at": 3
+       },
+       "to": {
+        "view": "open",
+        "at": [
+         0,
+         3
+        ]
+       },
+       "value": ")"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every character read and the range is [0, 2]: 0 is in it, so some choice of the wildcards closes every (. Answer: true.",
+      "ko": "모든 글자를 읽었고 범위는 [0, 2]입니다. 0이 범위에 들어 있으므로 와일드카드를 잘 정하면 모든 ( 괄호가 닫힙니다. 답은 true입니다."
+     },
+     "views": {
+      "brackets": {
+       "values": [
+        "(",
+        "(",
+        "*",
+        ")"
+       ],
+       "pointers": {
+        "i": null
+       },
+       "unread": [],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "open": {
+       "groups": [
+        {
+         "label": {
+          "en": "[low, high]",
+          "ko": "[low, high] (최소, 최대)"
+         },
+         "intervals": [
+          [
+           1,
+           1
+          ],
+          [
+           2,
+           2
+          ],
+          [
+           1,
+           3
+          ],
+          [
+           0,
+           2
+          ]
+         ],
+         "marks": {
+          "path": [
+           3
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 0,
+         "label": {
+          "en": "floor",
+          "ko": "바닥"
+         },
+         "mark": "path"
+        }
+       ]
+      }
+     },
+     "answer": "true"
+    }
+   ],
+   "setup": {
+    "open": {
+     "domain": [
+      0,
+      3
+     ]
+    }
+   },
+   "sampleInput": "((*)"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "brackets = \"((\"",
+   "expected": "false",
+   "frames": [
+    {
+     "caption": {
+      "en": "\"((\" has 2 characters. Before any of them, exactly 0 ( are open.",
+      "ko": "\"((\"에는 글자가 2개 있습니다. 아무것도 읽기 전에는 열린 ( 괄호가 정확히 0개입니다."
+     },
+     "views": {
+      "brackets": {
+       "values": [
+        "(",
+        "("
+       ],
+       "pointers": {
+        "i": null
+       },
+       "unread": [],
+       "marks": {}
+      },
+      "open": {
+       "groups": [
+        {
+         "label": {
+          "en": "[low, high]",
+          "ko": "[low, high] (최소, 최대)"
+         },
+         "intervals": [],
+         "marks": {}
+        }
+       ],
+       "points": [
+        {
+         "at": 0,
+         "label": {
+          "en": "floor",
+          "ko": "바닥"
+         }
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "'(' opens one more: [0, 0] becomes [1, 1].",
+      "ko": "'(' 괄호는 하나를 더 엽니다: [0, 0] 범위가 [1, 1] 범위가 됩니다."
+     },
+     "views": {
+      "brackets": {
+       "values": [
+        "(",
+        "("
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "unread": [
+        1
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "open": {
+       "groups": [
+        {
+         "label": {
+          "en": "[low, high]",
+          "ko": "[low, high] (최소, 최대)"
+         },
+         "intervals": [
+          [
+           1,
+           1
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 0,
+         "label": {
+          "en": "floor",
+          "ko": "바닥"
+         }
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "brackets",
+        "at": 0
+       },
+       "to": {
+        "view": "open",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "value": "("
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "'(' opens one more: [1, 1] becomes [2, 2].",
+      "ko": "'(' 괄호는 하나를 더 엽니다: [1, 1] 범위가 [2, 2] 범위가 됩니다."
+     },
+     "views": {
+      "brackets": {
+       "values": [
+        "(",
+        "("
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "unread": [],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "open": {
+       "groups": [
+        {
+         "label": {
+          "en": "[low, high]",
+          "ko": "[low, high] (최소, 최대)"
+         },
+         "intervals": [
+          [
+           1,
+           1
+          ],
+          [
+           2,
+           2
+          ]
+         ],
+         "marks": {
+          "good": [
+           1
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 0,
+         "label": {
+          "en": "floor",
+          "ko": "바닥"
+         }
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "brackets",
+        "at": 1
+       },
+       "to": {
+        "view": "open",
+        "at": [
+         0,
+         1
+        ]
+       },
+       "value": "("
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every character read and the range is [2, 2]: at least 2 ( stay open whatever the wildcards are. Answer: false.",
+      "ko": "모든 글자를 읽었고 범위는 [2, 2]입니다. 와일드카드를 어떻게 정해도 ( 괄호가 2개 이상 열린 채로 남습니다. 답은 false입니다."
+     },
+     "views": {
+      "brackets": {
+       "values": [
+        "(",
+        "("
+       ],
+       "pointers": {
+        "i": null
+       },
+       "unread": [],
+       "marks": {}
+      },
+      "open": {
+       "groups": [
+        {
+         "label": {
+          "en": "[low, high]",
+          "ko": "[low, high] (최소, 최대)"
+         },
+         "intervals": [
+          [
+           1,
+           1
+          ],
+          [
+           2,
+           2
+          ]
+         ],
+         "marks": {
+          "bad": [
+           1
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 0,
+         "label": {
+          "en": "floor",
+          "ko": "바닥"
+         },
+         "mark": "bad"
+        }
+       ]
+      }
+     },
+     "answer": "false"
+    }
+   ],
+   "setup": {
+    "open": {
+     "domain": [
+      0,
+      2
+     ]
+    }
+   },
+   "sampleInput": "(("
+  },
+  {
+   "label": {
+    "en": "Example 3",
+    "ko": "예시 3"
+   },
+   "input": "brackets = \")(\"",
+   "expected": "false",
+   "frames": [
+    {
+     "caption": {
+      "en": "\")(\" has 2 characters. Before any of them, exactly 0 ( are open.",
+      "ko": "\")(\"에는 글자가 2개 있습니다. 아무것도 읽기 전에는 열린 ( 괄호가 정확히 0개입니다."
+     },
+     "views": {
+      "brackets": {
+       "values": [
+        ")",
+        "("
+       ],
+       "pointers": {
+        "i": null
+       },
+       "unread": [],
+       "marks": {}
+      },
+      "open": {
+       "groups": [
+        {
+         "label": {
+          "en": "[low, high]",
+          "ko": "[low, high] (최소, 최대)"
+         },
+         "intervals": [],
+         "marks": {}
+        }
+       ],
+       "points": [
+        {
+         "at": 0,
+         "label": {
+          "en": "floor",
+          "ko": "바닥"
+         }
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "')' closes one: [0, 0] becomes [-1, -1]. Even the most ( possible leaves 1 ')' with nothing to close. Answer: false.",
+      "ko": "')' 괄호는 하나를 닫습니다: [0, 0] 범위가 [-1, -1] 범위가 됩니다. ( 개수가 가장 많은 경우에도 닫을 것이 없는 ')' 괄호가 1개 남습니다. 답은 false입니다."
+     },
+     "views": {
+      "brackets": {
+       "values": [
+        ")",
+        "("
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "unread": [
+        1
+       ],
+       "marks": {
+        "bad": [
+         0
+        ]
+       }
+      },
+      "open": {
+       "groups": [
+        {
+         "label": {
+          "en": "[low, high]",
+          "ko": "[low, high] (최소, 최대)"
+         },
+         "intervals": [
+          [
+           -1,
+           -1
+          ]
+         ],
+         "marks": {
+          "bad": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 0,
+         "label": {
+          "en": "floor",
+          "ko": "바닥"
+         },
+         "mark": "bad"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "brackets",
+        "at": 0
+       },
+       "to": {
+        "view": "open",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "value": ")"
+      }
+     ],
+     "answer": "false"
+    }
+   ],
+   "setup": {
+    "open": {
+     "domain": [
+      -1,
+      1
+     ]
+    }
+   },
+   "sampleInput": ")("
+  },
+  {
+   "label": {
+    "en": "Extra: the range is cut at 0",
+    "ko": "추가: 범위를 0에서 자름"
+   },
+   "input": "brackets = \"(*))\"",
+   "expected": "true",
+   "frames": [
+    {
+     "caption": {
+      "en": "\"(*))\" has 4 characters. Before any of them, exactly 0 ( are open.",
+      "ko": "\"(*))\"에는 글자가 4개 있습니다. 아무것도 읽기 전에는 열린 ( 괄호가 정확히 0개입니다."
+     },
+     "views": {
+      "brackets": {
+       "values": [
+        "(",
+        "*",
+        ")",
+        ")"
+       ],
+       "pointers": {
+        "i": null
+       },
+       "unread": [],
+       "marks": {}
+      },
+      "open": {
+       "groups": [
+        {
+         "label": {
+          "en": "[low, high]",
+          "ko": "[low, high] (최소, 최대)"
+         },
+         "intervals": [],
+         "marks": {}
+        }
+       ],
+       "points": [
+        {
+         "at": 0,
+         "label": {
+          "en": "floor",
+          "ko": "바닥"
+         }
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "'(' opens one more: [0, 0] becomes [1, 1].",
+      "ko": "'(' 괄호는 하나를 더 엽니다: [0, 0] 범위가 [1, 1] 범위가 됩니다."
+     },
+     "views": {
+      "brackets": {
+       "values": [
+        "(",
+        "*",
+        ")",
+        ")"
+       ],
+       "pointers": {
+        "i": 0
+       },
+       "unread": [
+        1,
+        2,
+        3
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "open": {
+       "groups": [
+        {
+         "label": {
+          "en": "[low, high]",
+          "ko": "[low, high] (최소, 최대)"
+         },
+         "intervals": [
+          [
+           1,
+           1
+          ]
+         ],
+         "marks": {
+          "good": [
+           0
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 0,
+         "label": {
+          "en": "floor",
+          "ko": "바닥"
+         }
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "brackets",
+        "at": 0
+       },
+       "to": {
+        "view": "open",
+        "at": [
+         0,
+         0
+        ]
+       },
+       "value": "("
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "'*' could close one or open one, so the range widens both ways: [1, 1] becomes [0, 2].",
+      "ko": "'*' 와일드카드는 하나를 닫을 수도 열 수도 있어 범위가 양쪽으로 넓어집니다: [1, 1] 범위가 [0, 2] 범위가 됩니다."
+     },
+     "views": {
+      "brackets": {
+       "values": [
+        "(",
+        "*",
+        ")",
+        ")"
+       ],
+       "pointers": {
+        "i": 1
+       },
+       "unread": [
+        2,
+        3
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "open": {
+       "groups": [
+        {
+         "label": {
+          "en": "[low, high]",
+          "ko": "[low, high] (최소, 최대)"
+         },
+         "intervals": [
+          [
+           1,
+           1
+          ],
+          [
+           0,
+           2
+          ]
+         ],
+         "marks": {
+          "good": [
+           1
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 0,
+         "label": {
+          "en": "floor",
+          "ko": "바닥"
+         }
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "brackets",
+        "at": 1
+       },
+       "to": {
+        "view": "open",
+        "at": [
+         0,
+         1
+        ]
+       },
+       "value": "*"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "')' closes one: [0, 2] becomes [-1, 1].",
+      "ko": "')' 괄호는 하나를 닫습니다: [0, 2] 범위가 [-1, 1] 범위가 됩니다."
+     },
+     "views": {
+      "brackets": {
+       "values": [
+        "(",
+        "*",
+        ")",
+        ")"
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "unread": [
+        3
+       ],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "open": {
+       "groups": [
+        {
+         "label": {
+          "en": "[low, high]",
+          "ko": "[low, high] (최소, 최대)"
+         },
+         "intervals": [
+          [
+           1,
+           1
+          ],
+          [
+           0,
+           2
+          ],
+          [
+           -1,
+           1
+          ]
+         ],
+         "marks": {
+          "good": [
+           2
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 0,
+         "label": {
+          "en": "floor",
+          "ko": "바닥"
+         }
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "brackets",
+        "at": 2
+       },
+       "to": {
+        "view": "open",
+        "at": [
+         0,
+         2
+        ]
+       },
+       "value": ")"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "A count of open ( can't be -1: those choices closed a ( that was never opened. Cut the range at 0: [0, 1].",
+      "ko": "열린 ( 개수가 -1이 될 수는 없습니다. 열리지 않은 ( 괄호를 닫는 선택이기 때문입니다. 범위를 0에서 잘라 [0, 1] 범위로 둡니다."
+     },
+     "views": {
+      "brackets": {
+       "values": [
+        "(",
+        "*",
+        ")",
+        ")"
+       ],
+       "pointers": {
+        "i": 2
+       },
+       "unread": [
+        3
+       ],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "open": {
+       "groups": [
+        {
+         "label": {
+          "en": "[low, high]",
+          "ko": "[low, high] (최소, 최대)"
+         },
+         "intervals": [
+          [
+           1,
+           1
+          ],
+          [
+           0,
+           2
+          ],
+          [
+           0,
+           1
+          ]
+         ],
+         "marks": {
+          "good": [
+           2
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 0,
+         "label": {
+          "en": "floor",
+          "ko": "바닥"
+         },
+         "mark": "lit"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "open",
+        "at": [
+         0,
+         2
+        ]
+       },
+       "value": "max(low, 0)"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "')' closes one: [0, 1] becomes [-1, 0].",
+      "ko": "')' 괄호는 하나를 닫습니다: [0, 1] 범위가 [-1, 0] 범위가 됩니다."
+     },
+     "views": {
+      "brackets": {
+       "values": [
+        "(",
+        "*",
+        ")",
+        ")"
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "unread": [],
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "open": {
+       "groups": [
+        {
+         "label": {
+          "en": "[low, high]",
+          "ko": "[low, high] (최소, 최대)"
+         },
+         "intervals": [
+          [
+           1,
+           1
+          ],
+          [
+           0,
+           2
+          ],
+          [
+           0,
+           1
+          ],
+          [
+           -1,
+           0
+          ]
+         ],
+         "marks": {
+          "good": [
+           3
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 0,
+         "label": {
+          "en": "floor",
+          "ko": "바닥"
+         }
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "brackets",
+        "at": 3
+       },
+       "to": {
+        "view": "open",
+        "at": [
+         0,
+         3
+        ]
+       },
+       "value": ")"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "A count of open ( can't be -1: those choices closed a ( that was never opened. Cut the range at 0: [0, 0].",
+      "ko": "열린 ( 개수가 -1이 될 수는 없습니다. 열리지 않은 ( 괄호를 닫는 선택이기 때문입니다. 범위를 0에서 잘라 [0, 0] 범위로 둡니다."
+     },
+     "views": {
+      "brackets": {
+       "values": [
+        "(",
+        "*",
+        ")",
+        ")"
+       ],
+       "pointers": {
+        "i": 3
+       },
+       "unread": [],
+       "marks": {
+        "lit": [
+         3
+        ]
+       }
+      },
+      "open": {
+       "groups": [
+        {
+         "label": {
+          "en": "[low, high]",
+          "ko": "[low, high] (최소, 최대)"
+         },
+         "intervals": [
+          [
+           1,
+           1
+          ],
+          [
+           0,
+           2
+          ],
+          [
+           0,
+           1
+          ],
+          [
+           0,
+           0
+          ]
+         ],
+         "marks": {
+          "good": [
+           3
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 0,
+         "label": {
+          "en": "floor",
+          "ko": "바닥"
+         },
+         "mark": "lit"
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "to": {
+        "view": "open",
+        "at": [
+         0,
+         3
+        ]
+       },
+       "value": "max(low, 0)"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every character read and the range is [0, 0]: 0 is in it, so some choice of the wildcards closes every (. Answer: true.",
+      "ko": "모든 글자를 읽었고 범위는 [0, 0]입니다. 0이 범위에 들어 있으므로 와일드카드를 잘 정하면 모든 ( 괄호가 닫힙니다. 답은 true입니다."
+     },
+     "views": {
+      "brackets": {
+       "values": [
+        "(",
+        "*",
+        ")",
+        ")"
+       ],
+       "pointers": {
+        "i": null
+       },
+       "unread": [],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3
+        ]
+       }
+      },
+      "open": {
+       "groups": [
+        {
+         "label": {
+          "en": "[low, high]",
+          "ko": "[low, high] (최소, 최대)"
+         },
+         "intervals": [
+          [
+           1,
+           1
+          ],
+          [
+           0,
+           2
+          ],
+          [
+           0,
+           1
+          ],
+          [
+           0,
+           0
+          ]
+         ],
+         "marks": {
+          "path": [
+           3
+          ]
+         }
+        }
+       ],
+       "points": [
+        {
+         "at": 0,
+         "label": {
+          "en": "floor",
+          "ko": "바닥"
+         },
+         "mark": "path"
+        }
+       ]
+      }
+     },
+     "answer": "true"
+    }
+   ],
+   "extra": true,
+   "setup": {
+    "open": {
+     "domain": [
+      -1,
+      2
+     ]
+    }
+   }
+  }
+ ]
+}
