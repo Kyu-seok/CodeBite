@@ -549,15 +549,16 @@ class WalkthroughsMatchSamplesTest {
     }
 
     /**
-     * One run of a tree {@code t} (0 with children 1 and 2), a linked list {@code l} (1 → 2) with a pointer {@code p}
-     * and a call stack {@code s} of two calls, read twice with nothing changed.
+     * One run of a tree {@code t} (0 with children 1 and 2), a linked list {@code l} (1 → 2, each related reaching 2,
+     * the one out of 1 just re-pointed from 1) with a pointer {@code p} and a call stack {@code s} of two calls, read twice with nothing changed.
      */
     private static ObjectNode recursionFixture() throws Exception {
         String state = """
                 {'t': {'nodes': [{'id': 0, 'value': 5}, {'id': 1, 'value': 3}, {'id': 2, 'value': 8}],
                        'edges': [{'from': 0, 'to': 1}, {'from': 0, 'to': 2}], 'edgeMarks': {'lit': [[0, 1]]}},
                  'l': {'nodes': [{'id': 1, 'value': 1}, {'id': 2, 'value': 2}], 'next': {'1': 2, '2': null},
-                       'pointers': {'p': 1}},
+                       'links': {'related': {'1': 2, '2': 2}}, 'pointers': {'p': 1}, 'linkMarks': {'good': [1, ['related', 2]]},
+                       'linkCuts': {'related': {'1': 1}}},
                  's': {'calls': [{'name': 'f', 'args': {'n': 2}}, {'name': 'f', 'args': {'n': 1}}], 'marks': {'lit': [1]}}}""";
         return walkthrough("[{'id': 't', 'type': 'tree'}, {'id': 'l', 'type': 'linkedlist'}, {'id': 's', 'type': 'callstack'}]",
                 "[{'views': " + state + "}, {'views': " + state + "}]");
@@ -571,6 +572,12 @@ class WalkthroughsMatchSamplesTest {
             "linked list next not a node id       | view \"l\": next of 2 is 9, not a node id",
             "linked list pointer naming no node   | view \"l\": pointer p = 9 is not a node id",
             "linked list cut naming no node       | view \"l\": cut 1 → 9 names a node that doesn't exist",
+            "second link naming no node           | view \"l\": related of 1 is 9, not a node id",
+            "second link from no node             | view \"l\": related names 9, not a node id",
+            "a third kind of link                 | view \"l\": links holds 2 kinds: a node draws one link besides next",
+            "second link mark naming no arrow     | view \"l\": mark \"good\" names [\"prev\",1], not a node with a next or a [link, node] with that link",
+            "second link cut naming no link       | view \"l\": linkCuts names prev, not a link in links",
+            "second link cut naming no node       | view \"l\": linkCuts related 1 → 9 names a node that doesn't exist",
             "callstack calls not a list           | view \"s\": calls must be a list",
             "call with no name                    | view \"s\": call 1 has no name",
             "callstack mark out of range          | view \"s\": mark \"lit\" names 2, not a call position",
@@ -586,6 +593,12 @@ class WalkthroughsMatchSamplesTest {
             case "linked list next not a node id" -> ((ObjectNode) list.get("next")).put("2", 9);
             case "linked list pointer naming no node" -> ((ObjectNode) list.get("pointers")).put("p", 9);
             case "linked list cut naming no node" -> list.putObject("cut").put("1", 9);
+            case "second link naming no node" -> ((ObjectNode) list.get("links").get("related")).put("1", 9);
+            case "second link from no node" -> ((ObjectNode) list.get("links").get("related")).put("9", 1);
+            case "a third kind of link" -> ((ObjectNode) list.get("links")).putObject("prev").put("2", 1);
+            case "second link mark naming no arrow" -> ((ArrayNode) list.get("linkMarks").get("good")).addArray().add("prev").add(1);
+            case "second link cut naming no link" -> ((ObjectNode) list.get("linkCuts")).putObject("prev").put("2", 1);
+            case "second link cut naming no node" -> ((ObjectNode) list.get("linkCuts").get("related")).put("1", 9);
             case "callstack calls not a list" -> stack.put("calls", "f(2)");
             case "call with no name" -> ((ObjectNode) stack.get("calls").get(1)).remove("name");
             case "callstack mark out of range" -> ((ObjectNode) stack.get("marks")).putArray("lit").add(2);
@@ -1652,8 +1665,23 @@ class WalkthroughsMatchSamplesTest {
                 s.path("cut").fields().forEachRemaining(e -> {
                     if (!ids.contains(e.getKey()) || !node.test(e.getValue())) p.add("cut " + e.getKey() + " → " + e.getValue() + " names a node that doesn't exist");
                 });
+                // a second link per node (a copy's related, a doubly linked list's prev): one kind besides next
+                JsonNode links = s.path("links");
+                if (links.size() > 1) p.add("links holds " + links.size() + " kinds: a node draws one link besides next");
+                links.fields().forEachRemaining(link -> link.getValue().fields().forEachRemaining(e -> {
+                    if (!ids.contains(e.getKey())) p.add(link.getKey() + " names " + e.getKey() + ", not a node id");
+                    else if (!e.getValue().isNull() && !node.test(e.getValue())) p.add(link.getKey() + " of " + e.getKey() + " is " + e.getValue() + ", not a node id");
+                }));
+                s.path("linkCuts").fields().forEachRemaining(cut -> {
+                    if (!links.has(cut.getKey())) p.add("linkCuts names " + cut.getKey() + ", not a link in links");
+                    else cut.getValue().fields().forEachRemaining(e -> {
+                        if (!ids.contains(e.getKey()) || !node.test(e.getValue())) p.add("linkCuts " + cut.getKey() + " " + e.getKey() + " → " + e.getValue() + " names a node that doesn't exist");
+                    });
+                });
                 p.addAll(marks(s.get("marks"), node, "node id"));
-                p.addAll(marks(s.get("linkMarks"), k -> node.test(k) && s.path("next").has(k.asText()), "node with a next"));
+                p.addAll(marks(s.get("linkMarks"), k -> k.isArray()
+                        ? k.size() == 2 && k.get(0).isTextual() && links.path(k.get(0).asText()).has(k.get(1).asText()) && node.test(k.get(1))
+                        : node.test(k) && s.path("next").has(k.asText()), "node with a next or a [link, node] with that link"));
                 yield p;
             }
             case "callstack" -> {

@@ -75,11 +75,15 @@ export interface TreeState {
   /** the nodes on the current path (the calls still open), drawn on a soft band under any mark */ shade?: Key[];
 }
 /** A linked list: nodes in a row in `nodes` order, each `next` an arrow (`null`: to ∅; missing: none). `pointers`
- *  name nodes under them (`null` hides one); `linkMarks` mark the arrow out of a node; `cut` draws an arrow this step
- *  removed, faded. Address: a node id. */
+ *  name nodes under them (`null` hides one); `linkMarks` mark the arrow out of a node (a node id: its next; a
+ *  [link, node id]: its second link); `cut` draws an arrow this step removed, faded. `links` holds one second link per
+ *  node by its name (`{ random: { 0: 2, 1: null } }`), drawn under the row, and `linkCuts` its removed arrows.
+ *  Address: a node id. */
 export interface LinkedListState {
   nodes: { id: Key; value: unknown }[]; next: Record<string, Key | null>;
-  pointers?: Record<string, Key | null>; marks?: Marks<Key>; linkMarks?: Marks<Key>; cut?: Record<string, Key>;
+  pointers?: Record<string, Key | null>; marks?: Marks<Key>; linkMarks?: Marks<Key | [string, Key]>;
+  cut?: Record<string, Key>; links?: Record<string, Record<string, Key | null>>;
+  linkCuts?: Record<string, Record<string, Key>>;
 }
 /** A call stack: one card per open call, bottom first, drawn top first. Address: a position from the bottom. */
 export interface CallStackState {

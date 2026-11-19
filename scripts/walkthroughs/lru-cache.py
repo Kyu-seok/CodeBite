@@ -6,9 +6,9 @@ unlinked (its neighbour's arrow skips it), a node appended before tail, and the 
 
 The call-list pattern (add-walkthrough views.md): the calls are a table, one row per call, the current one lit and
 those before it faded; each call's return value moves into an `output` (the Driver's printed list), and the map and
-the list change underneath. The list view draws each node's next arrow; every node's prev is the same arrow turned
-back (each frame ends between list operations, where they always agree), so the captions name prev only where a step
-sets it. Nodes stand in the order they were made, so an arrow over or under the row is a node moved to the end.
+the list change underneath. The list view draws each node's next above the row and its prev under it (the linked-list
+view's second link), each re-pointed arrow marked and the arrow it replaced drawn faded. Nodes stand in the order they
+were made, so a next arrow over the row, or a long prev arc under it, is a node moved to the end.
 
     CODEBITE_DB=<database> scripts/walkthroughs/lru-cache.py
 
@@ -35,7 +35,7 @@ wt = Walkthrough(
            "제거합니다."},
     views=[
         {"id": "list", "type": "linkedlist",
-         "title": {"en": "nodes as key=value, head to tail by next", "ko": "key=value 노드, next를 따라 head부터 tail까지"}},
+         "title": {"en": "key=value nodes: next above, prev below", "ko": "key=value 노드: 위는 next, 아래는 prev"}},
         {"id": "map", "type": "map", "title": {"en": "nodes: key → node's value", "ko": "nodes: 키 → 노드의 값"},
          "empty": {"en": "empty", "ko": "비어 있음"}},
         {"id": "calls", "type": "table", "title": {"en": "calls", "ko": "호출"}},
@@ -65,19 +65,22 @@ def solve(ops, args, run):
     def nid(node):
         return "head" if node is head else "tail" if node is tail else node.key
 
-    def frame(caption, list_marks=None, link=(), cut=None, map_marks=None, probe=None, struck=(), moves=None,
-              done=False, **answer):
+    def frame(caption, list_marks=None, link=(), cut=None, back=(), back_cut=None, map_marks=None, probe=None,
+              struck=(), moves=None, done=False, **answer):
         r = st["row"]
         fresh = list(range(st["drawn"], len(result)))
         st["drawn"] = len(result)
         order = [head] + made + [tail]
         lst = {"nodes": [{"id": nid(n), "value": "" if n in (head, tail) else f"{n.key}={n.value}"} for n in order],
                "next": {nid(n): nid(n.next) for n in order if n.next is not None},
+               "links": {"prev": {nid(n): None if n.prev is None else nid(n.prev) for n in order}},
                "pointers": {"head": "head", "tail": "tail"}, "marks": list_marks or {}}
-        if link:
-            lst["linkMarks"] = {"good": [nid(n) for n in link]}
+        if link or back:
+            lst["linkMarks"] = {"good": [nid(n) for n in link] + [["prev", nid(n)] for n in back]}
         if cut:
             lst["cut"] = {nid(a): nid(b) for a, b in cut}
+        if back_cut:
+            lst["linkCuts"] = {"prev": {nid(a): nid(b) for a, b in back_cut}}
         mp = {"entries": [{"key": k, "value": str(n.value)} for k, n in nodes.items()], "marks": map_marks or {}}
         if struck:
             mp["struck"] = list(struck)
@@ -111,12 +114,12 @@ def solve(ops, args, run):
                      f"prev comes back to {name(before)}.",
                "ko": f"{why['ko']} 이 노드를 떼어 내면 {name(before)}의 next는 이 노드를 건너 {name(after)} 노드를, "
                      f"{name(after)}의 prev는 {name(before)} 노드를 가리킵니다."},
-              list_marks={"lit": [nid(node)]}, link=[before], cut=[(before, node)], moves=moves, map_marks=map_marks,
-              probe=probe)
+              list_marks={"lit": [nid(node)]}, link=[before], cut=[(before, node)], back=[after],
+              back_cut=[(after, node)], moves=moves, map_marks=map_marks, probe=probe)
 
     def append(node, why, moves=None):
         last = tail.prev
-        old_next = node.next
+        old_next, old_prev = node.next, node.prev
         last.next = node
         node.prev = last
         node.next = tail
@@ -124,11 +127,15 @@ def solve(ops, args, run):
         cut = [(last, tail)]
         if old_next is not None and old_next is not tail:
             cut.append((node, old_next))
+        back_cut = [(tail, last)]
+        if old_prev is not None and old_prev is not last:
+            back_cut.append((node, old_prev))
         frame({"en": f"{why['en']} Append {name(node)} before tail: {name(last)}'s next is now this node and its next "
-                     f"is tail, so it is the most recently used.",
-               "ko": f"{why['ko']} {name(node)} 노드를 tail 앞에 붙입니다. {name(last)}의 next가 이 노드, 이 노드의 "
-                     f"next가 tail이 되어 가장 최근에 사용한 노드가 됩니다."},
-              list_marks={"good": [nid(node)]}, link=[last, node], cut=cut, moves=moves)
+                     f"is tail; its prev is {name(last)} and tail's prev is this node, so it is the most recently used.",
+               "ko": f"{why['ko']} {name(node)} 노드를 tail 앞에 붙입니다. {name(last)}의 next와 tail의 prev가 이 노드, "
+                     f"이 노드의 next가 tail, prev가 {name(last)} 노드가 되어 가장 최근에 사용한 노드가 됩니다."},
+              list_marks={"good": [nid(node)]}, link=[last, node], cut=cut, back=[tail, node], back_cut=back_cut,
+              moves=moves)
 
     for row, (op, arg) in enumerate(zip(ops, args)):
         st["row"] = row
@@ -191,7 +198,8 @@ def solve(ops, args, run):
                        "ko": f"맵의 키가 {len(nodes)}개로 용량 {josa(capacity, '을를')} 넘으므로, 가장 오래 사용하지 "
                              f"않은 head.next의 {name(lru)} 노드를 떼어 내고 맵에서 키 {josa(lru.key, '을를')} "
                              f"지웁니다. null을 반환합니다."},
-                      list_marks={"bad": [nid(lru)]}, link=[head], cut=[(head, lru)], map_marks={"bad": [lru.key]},
+                      list_marks={"bad": [nid(lru)]}, link=[head], cut=[(head, lru)], back=[lru.next],
+                      back_cut=[(lru.next, lru)], map_marks={"bad": [lru.key]},
                       struck=[lru.key],
                       moves=[move(at("map", lru.key), mark="bad"), move(at("list", nid(lru)), mark="bad")]
                       + ret(None, None))
