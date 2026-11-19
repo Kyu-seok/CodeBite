@@ -46,7 +46,7 @@
     {
      "caption": {
       "en": "runA holds [2,5,9] and runB holds [3,4,7]. tail starts at a new dummy node, whose arrow is null.",
-      "ko": "runA = [2,5,9]입니다. runB = [3,4,7]입니다. tail은 화살표가 null인 새 dummy 노드에서 시작합니다."
+      "ko": "runA = [2,5,9], runB = [3,4,7]입니다. tail은 화살표가 null인 새 dummy 노드에서 시작합니다."
      },
      "views": {
       "runs": {
@@ -1045,7 +1045,7 @@
     {
      "caption": {
       "en": "runA is empty (null) and runB holds [2,4,6]. tail starts at a new dummy node, whose arrow is null.",
-      "ko": "runA는 비어 있습니다(null). runB = [2,4,6]입니다. tail은 화살표가 null인 새 dummy 노드에서 시작합니다."
+      "ko": "runA는 비어 있고(null) runB = [2,4,6]입니다. tail은 화살표가 null인 새 dummy 노드에서 시작합니다."
      },
      "views": {
       "runs": {
@@ -1261,7 +1261,7 @@
     {
      "caption": {
       "en": "runA is empty (null) and runB holds [3]. tail starts at a new dummy node, whose arrow is null.",
-      "ko": "runA는 비어 있습니다(null). runB = [3]입니다. tail은 화살표가 null인 새 dummy 노드에서 시작합니다."
+      "ko": "runA는 비어 있고(null) runB = [3]입니다. tail은 화살표가 null인 새 dummy 노드에서 시작합니다."
      },
      "views": {
       "runs": {

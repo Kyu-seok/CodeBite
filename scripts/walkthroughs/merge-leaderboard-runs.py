@@ -70,16 +70,16 @@ def solve(a_values, b_values, run):
 
     def describe(name, nodes):
         if not nodes:
-            return {"en": f"{name} is empty (null)", "ko": f"{name}는 비어 있습니다(null)."}
+            return {"en": f"{name} is empty (null)", "ko": f"{name}는 비어 있고(null)"}
         return {"en": f"{name} holds {driver_list([n.val for n in nodes])}",
-                "ko": f"{name} = {driver_list([n.val for n in nodes])}입니다."}
+                "ko": f"{name} = {driver_list([n.val for n in nodes])}"}
 
     def name(node):
         return "dummy" if node is dummy else str(node.val)
 
     da, db = describe("runA", a_nodes), describe("runB", b_nodes)
     frame({"en": f"{da['en']} and {db['en']}. tail starts at a new dummy node, whose arrow is null.",
-           "ko": f"{da['ko']} {db['ko']} tail은 화살표가 null인 새 dummy 노드에서 시작합니다."},
+           "ko": f"{da['ko']}{'' if not a_nodes else ','} {db['ko']}입니다. tail은 화살표가 null인 새 dummy 노드에서 시작합니다."},
           {"lit": [0]})
     while run_a and run_b:
         old = tail.next

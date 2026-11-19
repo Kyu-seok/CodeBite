@@ -66,7 +66,9 @@ def solve(v1, v2, run):
             total["linkMarks"] = {"good": [node_id(out, link)]}
         run.frame(caption, score1=side(n1, s1, "score1", lit1), score2=side(n2, s2, "score2", lit2), sum=total,
                   result={"values": list(result), "marks": {"path": list(range(len(result)))}},
-                  state={"items": [{"label": {"en": "carry", "ko": "carry (올림)"}, "value": carry}]},
+                  state={"items": [{"label": {"en": "carry", "ko": "carry (올림)"}, "value": carry,
+                                     "why": "carry is the column's carry, which has no node; a pointer's id equals "
+                                            "it only by chance"}]},
                   moves=moves, **answer)
 
     a, b = number(v1), number(v2)
