@@ -77,11 +77,11 @@ def solve(ops, args, run):
         return len(result) - 1
 
     returned(None)
-    frame({"en": f"VersionedCells({length}): each of the {length} {'cell' if length == 1 else 'cells'} starts with one "
-                 "entry, (-1, 0): value 0 from before any snapshot. snap_id = 0 is the id the first commit will "
-                 "freeze. It returns null.",
-           "ko": f"VersionedCells({length}): 셀 {length}개가 모두 항목 (-1, 0) 하나로 시작합니다. 어떤 스냅샷보다 앞선 "
-                 "값 0이라는 뜻입니다. snap_id = 0은 첫 commit이 동결할 id입니다. null을 반환합니다."})
+    cells = "the cell starts" if length == 1 else f"each of the {length} cells starts"
+    frame({"en": f"VersionedCells({length}): {cells} with one entry, (-1, 0), value 0 from before any snapshot. "
+                 "snap_id = 0 is the id the first commit will freeze; it returns null.",
+           "ko": f"VersionedCells({length}): 셀 {length}개가 모두 어떤 스냅샷보다 앞선 값 0을 뜻하는 (-1, 0) 항목 하나로 "
+                 "시작하고, null을 반환합니다. snap_id = 0은 첫 commit이 동결할 id입니다."})
     for i in range(1, n):
         op, a = ops[i], args[i]
         if op == "set":

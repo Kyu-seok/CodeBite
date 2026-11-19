@@ -479,8 +479,8 @@
     },
     {
      "caption": {
-      "en": "remove(1): where gives index 0. The last card, 2, moves into slot 0 over 1, its index becomes 0, and the last slot is popped off. It returns true.",
-      "ko": "remove(1): where에서 인덱스 0을 얻습니다. 마지막 카드 2번이 0번 자리의 1번 위로 옮겨 오고 인덱스가 0으로 바뀌며, 마지막 자리는 리스트에서 뺍니다. true를 반환합니다."
+      "en": "remove(1): where gives index 0; the last card, 2, moves into slot 0 over 1, its index becomes 0, and the last slot is popped off. It returns true.",
+      "ko": "remove(1): where에서 인덱스 0을 얻고, 마지막 카드 2번이 0번 자리의 1번 위로 옮겨 오고 인덱스가 0으로 바뀌며, 마지막 자리는 리스트에서 뺍니다. true를 반환합니다."
      },
      "views": {
       "calls": {

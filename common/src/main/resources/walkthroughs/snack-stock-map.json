@@ -21,8 +21,8 @@
    "id": "buckets",
    "type": "table",
    "title": {
-    "en": "buckets the calls touch (of 2069; entry key: value)",
-    "ko": "호출이 쓰는 버킷 (2069개 중; 항목 key: value)"
+    "en": "buckets used, of 2069 (key: value)",
+    "ko": "쓰는 버킷, 2069개 중 (key: value)"
    }
   },
   {
@@ -46,7 +46,7 @@
     {
      "caption": {
       "en": "ChainedMap() makes 2069 empty buckets; only the ones this run's keys land in are drawn. It returns null.",
-      "ko": "ChainedMap(): 빈 버킷 2069개를 만듭니다. 이 실행의 키가 들어가는 버킷만 그립니다. null을 반환합니다."
+      "ko": "ChainedMap(): 빈 버킷 2069개를 만들고 null을 반환합니다. 이 실행의 키가 들어가는 버킷만 그립니다."
      },
      "views": {
       "calls": {
@@ -1392,7 +1392,7 @@
     {
      "caption": {
       "en": "erase(2): bucket 2 % 2069 = 2 holds key 2, the last entry of its chain, and pops it out. It returns null.",
-      "ko": "erase(2): 2 % 2069 = 2번 버킷에서 키 2 항목을 찾아 뺍니다. 체인의 마지막 항목이라 다른 항목은 그대로입니다. null을 반환합니다."
+      "ko": "erase(2): 2 % 2069 = 2번 버킷에서 키 2 항목을 찾아 뺍니다(체인의 마지막 항목이라 다른 항목은 그대로). null을 반환합니다."
      },
      "views": {
       "calls": {
@@ -2013,7 +2013,7 @@
     {
      "caption": {
       "en": "ChainedMap() makes 2069 empty buckets; only the ones this run's keys land in are drawn. It returns null.",
-      "ko": "ChainedMap(): 빈 버킷 2069개를 만듭니다. 이 실행의 키가 들어가는 버킷만 그립니다. null을 반환합니다."
+      "ko": "ChainedMap(): 빈 버킷 2069개를 만들고 null을 반환합니다. 이 실행의 키가 들어가는 버킷만 그립니다."
      },
      "views": {
       "calls": {
@@ -3396,7 +3396,7 @@
     {
      "caption": {
       "en": "ChainedMap() makes 2069 empty buckets; only the ones this run's keys land in are drawn. It returns null.",
-      "ko": "ChainedMap(): 빈 버킷 2069개를 만듭니다. 이 실행의 키가 들어가는 버킷만 그립니다. null을 반환합니다."
+      "ko": "ChainedMap(): 빈 버킷 2069개를 만들고 null을 반환합니다. 이 실행의 키가 들어가는 버킷만 그립니다."
      },
      "views": {
       "calls": {
@@ -3978,7 +3978,7 @@
     {
      "caption": {
       "en": "ChainedMap() makes 2069 empty buckets; only the ones this run's keys land in are drawn. It returns null.",
-      "ko": "ChainedMap(): 빈 버킷 2069개를 만듭니다. 이 실행의 키가 들어가는 버킷만 그립니다. null을 반환합니다."
+      "ko": "ChainedMap(): 빈 버킷 2069개를 만들고 null을 반환합니다. 이 실행의 키가 들어가는 버킷만 그립니다."
      },
      "views": {
       "calls": {
@@ -4585,7 +4585,7 @@
     {
      "caption": {
       "en": "erase(2070): bucket 2070 % 2069 = 1 holds key 2070, after 1: 10, the last entry of its chain, and pops it out. It returns null.",
-      "ko": "erase(2070): 2070 % 2069 = 1번 버킷에서 1: 10 항목 다음의 키 2070 항목을 찾아 뺍니다. 체인의 마지막 항목이라 다른 항목은 그대로입니다. null을 반환합니다."
+      "ko": "erase(2070): 2070 % 2069 = 1번 버킷에서 1: 10 항목 다음의 키 2070 항목을 찾아 뺍니다(체인의 마지막 항목이라 다른 항목은 그대로). null을 반환합니다."
      },
      "views": {
       "calls": {

@@ -49,8 +49,8 @@
    "frames": [
     {
      "caption": {
-      "en": "VersionedCells(3): each of the 3 cells starts with one entry, (-1, 0): value 0 from before any snapshot. snap_id = 0 is the id the first commit will freeze. It returns null.",
-      "ko": "VersionedCells(3): 셀 3개가 모두 항목 (-1, 0) 하나로 시작합니다. 어떤 스냅샷보다 앞선 값 0이라는 뜻입니다. snap_id = 0은 첫 commit이 동결할 id입니다. null을 반환합니다."
+      "en": "VersionedCells(3): each of the 3 cells starts with one entry, (-1, 0), value 0 from before any snapshot. snap_id = 0 is the id the first commit will freeze; it returns null.",
+      "ko": "VersionedCells(3): 셀 3개가 모두 어떤 스냅샷보다 앞선 값 0을 뜻하는 (-1, 0) 항목 하나로 시작하고, null을 반환합니다. snap_id = 0은 첫 commit이 동결할 id입니다."
      },
      "views": {
       "calls": {
@@ -1044,8 +1044,8 @@
    "frames": [
     {
      "caption": {
-      "en": "VersionedCells(2): each of the 2 cells starts with one entry, (-1, 0): value 0 from before any snapshot. snap_id = 0 is the id the first commit will freeze. It returns null.",
-      "ko": "VersionedCells(2): 셀 2개가 모두 항목 (-1, 0) 하나로 시작합니다. 어떤 스냅샷보다 앞선 값 0이라는 뜻입니다. snap_id = 0은 첫 commit이 동결할 id입니다. null을 반환합니다."
+      "en": "VersionedCells(2): each of the 2 cells starts with one entry, (-1, 0), value 0 from before any snapshot. snap_id = 0 is the id the first commit will freeze; it returns null.",
+      "ko": "VersionedCells(2): 셀 2개가 모두 어떤 스냅샷보다 앞선 값 0을 뜻하는 (-1, 0) 항목 하나로 시작하고, null을 반환합니다. snap_id = 0은 첫 commit이 동결할 id입니다."
      },
      "views": {
       "calls": {
@@ -2764,8 +2764,8 @@
    "frames": [
     {
      "caption": {
-      "en": "VersionedCells(1): each of the 1 cell starts with one entry, (-1, 0): value 0 from before any snapshot. snap_id = 0 is the id the first commit will freeze. It returns null.",
-      "ko": "VersionedCells(1): 셀 1개가 모두 항목 (-1, 0) 하나로 시작합니다. 어떤 스냅샷보다 앞선 값 0이라는 뜻입니다. snap_id = 0은 첫 commit이 동결할 id입니다. null을 반환합니다."
+      "en": "VersionedCells(1): the cell starts with one entry, (-1, 0), value 0 from before any snapshot. snap_id = 0 is the id the first commit will freeze; it returns null.",
+      "ko": "VersionedCells(1): 셀 1개가 모두 어떤 스냅샷보다 앞선 값 0을 뜻하는 (-1, 0) 항목 하나로 시작하고, null을 반환합니다. snap_id = 0은 첫 commit이 동결할 id입니다."
      },
      "views": {
       "calls": {

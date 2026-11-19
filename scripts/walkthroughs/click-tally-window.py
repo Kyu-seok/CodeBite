@@ -74,8 +74,8 @@ def solve(ops, args, run):
             clicks.append(t)
             frame({"en": f"record({t}): the click joins the back of the queue; times never go down, so the queue "
                          "stays oldest first. It returns null.",
-                   "ko": f"record({t}): 클릭을 큐 뒤에 넣습니다. 시각은 줄지 않으므로 큐는 계속 오래된 순입니다. "
-                         "null을 반환합니다."},
+                   "ko": f"record({t}): 클릭을 큐 뒤에 넣고 null을 반환합니다. 시각은 줄지 않으므로 큐는 계속 오래된 "
+                         "순입니다."},
                   queue_marks={"good": [len(clicks) - 1]},
                   moves=[move(at("calls", [i, 1]), at("clicks", len(clicks) - 1), value=str(t)),
                          move(at("calls", [i, 0]), at("result", returned(None)), value="null")])

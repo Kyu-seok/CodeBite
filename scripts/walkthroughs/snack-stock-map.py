@@ -88,7 +88,7 @@ def solve(ops, args, run):
     returned(None)
     frame({"en": f"ChainedMap() makes {BUCKETS} empty buckets; only the ones this run's keys land in are drawn. "
                  "It returns null.",
-           "ko": f"ChainedMap(): 빈 버킷 {BUCKETS}개를 만듭니다. 이 실행의 키가 들어가는 버킷만 그립니다. null을 반환합니다."})
+           "ko": f"ChainedMap(): 빈 버킷 {BUCKETS}개를 만들고 null을 반환합니다. 이 실행의 키가 들어가는 버킷만 그립니다."})
     for i in range(1, n):
         op, a = ops[i], args[i]
         key = a[0]
@@ -147,7 +147,7 @@ def solve(ops, args, run):
                 left = chain.pop(found)
                 frame({"en": f"erase({key}): {hit['en']}, the last entry of its chain, and pops it out. "
                              "It returns null.",
-                       "ko": f"erase({key}): {hit['ko']} 뺍니다. 체인의 마지막 항목이라 다른 항목은 그대로입니다. "
+                       "ko": f"erase({key}): {hit['ko']} 뺍니다(체인의 마지막 항목이라 다른 항목은 그대로). "
                              "null을 반환합니다."},
                       cell_marks={"lit": [[r, j] for j in read if j != found], "bad": [[r, found]]},
                       moves=[move(at("buckets", [r, found]), value=entry(left)), null()])

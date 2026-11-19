@@ -117,9 +117,9 @@ def solve(ops, args, run):
                 where[last] = j
                 held[last] = j
                 # mid-step: the last slot still holds `last` as it leaves, and slot j already holds it
-                frame({"en": f"remove({val}): where gives index {j}. The last card, {last}, moves into slot {j} over "
+                frame({"en": f"remove({val}): where gives index {j}; the last card, {last}, moves into slot {j} over "
                              f"{val}, its index becomes {j}, and the last slot is popped off. It returns true.",
-                       "ko": f"remove({val}): where에서 인덱스 {josa(j, '을를')} 얻습니다. 마지막 카드 {last}번이 {j}번 자리의 "
+                       "ko": f"remove({val}): where에서 인덱스 {josa(j, '을를')} 얻고, 마지막 카드 {last}번이 {j}번 자리의 "
                              f"{val}번 위로 옮겨 오고 인덱스가 {josa(j, '(으)로')} 바뀌며, 마지막 자리는 리스트에서 뺍니다. "
                              "true를 반환합니다."},
                       shown=cards + [last], held=held, leaving=val, card_marks={"good": [j], "lit": [last_at]},
