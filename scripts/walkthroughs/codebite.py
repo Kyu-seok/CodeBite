@@ -8,7 +8,8 @@ sample runs pinned to them (docs/adr/0011).
     run.frame(..., answer=driver_list(result))         # a list, printed as the Driver prints one
 
 Captions share driver_list, driver_value, plural (English) and josa (a Korean particle after a number).
-The solution's own node classes are shared too: TreeNode with build_tree (a Level-Order Array), and ListNode.
+The solution's own node classes are shared too: TreeNode with build_tree (a Level-Order Array) and tree_values
+(back to one), and ListNode.
     wt.write(walkthrough_path("rotting-donuts"))
 
 The samples come through scripts/db-sql.sh, so the local database (or CODEBITE_DB's) must be at this
@@ -93,6 +94,20 @@ def build_tree(values):
     for e in tree["edges"]:
         setattr(nodes[e["from"]], "right" if e["slot"] else "left", nodes[e["to"]])
     return tree, nodes.get(0)
+
+
+def tree_values(root):
+    """A tree of TreeNodes as the Drivers print one: its Level-Order Array, None for a missing child and trailing
+    Nones left out, so driver_list(tree_values(root)) is the printed answer."""
+    out, queue = [], [root] if root else []
+    while queue:
+        node = queue.pop(0)
+        out.append(None if node is None else node.val)
+        if node is not None:
+            queue += [node.left, node.right]
+    while out and out[-1] is None:
+        out.pop()
+    return out
 
 
 class ListNode:

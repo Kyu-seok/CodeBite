@@ -1,0 +1,1259 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Nth Lowest Score",
+  "ko": "N번째 낮은 점수"
+ },
+ "approach": {
+  "en": "An in-order walk visits a BST's scores from lowest to highest: keep the nodes still waiting on a stack, go left as far as possible, pop the lowest waiting node and count it, then go to its right child. The k-th node popped is the k-th lowest score.",
+  "ko": "중위 순회는 BST의 점수를 낮은 것부터 차례로 방문합니다. 아직 기다리는 노드를 스택에 두고, 왼쪽으로 끝까지 내려간 뒤, 기다리는 가장 낮은 노드를 꺼내 세고 그 오른쪽 자식으로 갑니다. k번째로 꺼낸 노드가 k번째로 낮은 점수입니다."
+ },
+ "views": [
+  {
+   "id": "tree",
+   "type": "tree",
+   "arity": 2,
+   "title": {
+    "en": "root (under each node: its place in order)",
+    "ko": "root (노드 아래: 낮은 순서)"
+   }
+  },
+  {
+   "id": "waiting",
+   "type": "stack",
+   "title": {
+    "en": "stack",
+    "ko": "stack (스택)"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  },
+  {
+   "id": "state",
+   "type": "vars"
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "root = [8,4,12,2,6,10,14], k = 4",
+   "expected": "8",
+   "frames": [
+    {
+     "caption": {
+      "en": "Find the 4th lowest score. Start at the root 8 and go left as far as possible, keeping each node on the stack.",
+      "ko": "4번째로 낮은 점수를 찾습니다. root 8부터 왼쪽으로 끝까지 내려가며 지나는 노드를 스택에 쌓습니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": []
+       },
+       "shade": [],
+       "tags": []
+      },
+      "waiting": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 4
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Push 8: it waits until everything left of it is counted. Go left to 4.",
+      "ko": "8을 스택에 넣고 왼쪽이 모두 세어질 때까지 기다립니다. 왼쪽의 4로 갑니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ],
+       "tags": []
+      },
+      "waiting": {
+       "values": [
+        8
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 4
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 0
+       },
+       "to": {
+        "view": "waiting",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Push 4: it waits until everything left of it is counted. Go left to 2.",
+      "ko": "4를 스택에 넣고 왼쪽이 모두 세어질 때까지 기다립니다. 왼쪽의 2로 갑니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         1
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ],
+       "tags": []
+      },
+      "waiting": {
+       "values": [
+        8,
+        4
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 4
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 1
+       },
+       "to": {
+        "view": "waiting",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Push 2: it waits until everything left of it is counted. It has no left child, so stop going left.",
+      "ko": "2를 스택에 넣고 왼쪽이 모두 세어질 때까지 기다립니다. 왼쪽 자식이 없으므로 더 내려가지 않습니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         3
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        3
+       ],
+       "tags": []
+      },
+      "waiting": {
+       "values": [
+        8,
+        4,
+        2
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 4
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 3
+       },
+       "to": {
+        "view": "waiting",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop 2: nothing lower is left, so it is the 1st lowest. It has no right child, so the next node waiting comes off the stack.",
+      "ko": "2를 꺼냅니다. 더 낮은 점수가 남지 않았으므로 1번째로 낮은 점수이며, 오른쪽 자식이 없으므로 다음은 스택에서 기다리는 노드입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         3
+        ],
+        "good": [
+         3
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        3
+       ],
+       "tags": [
+        [
+         3,
+         {
+          "en": "1st",
+          "ko": "1번째"
+         }
+        ]
+       ]
+      },
+      "waiting": {
+       "values": [
+        8,
+        4,
+        2
+       ],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 4
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "waiting",
+        "at": 2
+       },
+       "to": {
+        "view": "tree",
+        "at": 3
+       },
+       "value": "#1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop 4: nothing lower is left, so it is the 2nd lowest. Next, its right child 6.",
+      "ko": "4를 꺼냅니다. 더 낮은 점수가 남지 않았으므로 2번째로 낮은 점수이며, 다음은 오른쪽 자식 6입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         3,
+         1
+        ],
+        "good": [
+         1
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ],
+       "tags": [
+        [
+         3,
+         {
+          "en": "1st",
+          "ko": "1번째"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "2nd",
+          "ko": "2번째"
+         }
+        ]
+       ]
+      },
+      "waiting": {
+       "values": [
+        8,
+        4
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 4
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "waiting",
+        "at": 1
+       },
+       "to": {
+        "view": "tree",
+        "at": 1
+       },
+       "value": "#2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Push 6: it waits until everything left of it is counted. It has no left child, so stop going left.",
+      "ko": "6을 스택에 넣고 왼쪽이 모두 세어질 때까지 기다립니다. 왼쪽 자식이 없으므로 더 내려가지 않습니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         3,
+         1
+        ],
+        "lit": [
+         4
+        ]
+       },
+       "shade": [
+        0,
+        4
+       ],
+       "tags": [
+        [
+         3,
+         {
+          "en": "1st",
+          "ko": "1번째"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "2nd",
+          "ko": "2번째"
+         }
+        ]
+       ]
+      },
+      "waiting": {
+       "values": [
+        8,
+        6
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 4
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 4
+       },
+       "to": {
+        "view": "waiting",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop 6: nothing lower is left, so it is the 3rd lowest. It has no right child, so the next node waiting comes off the stack.",
+      "ko": "6을 꺼냅니다. 더 낮은 점수가 남지 않았으므로 3번째로 낮은 점수이며, 오른쪽 자식이 없으므로 다음은 스택에서 기다리는 노드입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         3,
+         1,
+         4
+        ],
+        "good": [
+         4
+        ]
+       },
+       "shade": [
+        0,
+        4
+       ],
+       "tags": [
+        [
+         3,
+         {
+          "en": "1st",
+          "ko": "1번째"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "2nd",
+          "ko": "2번째"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "3rd",
+          "ko": "3번째"
+         }
+        ]
+       ]
+      },
+      "waiting": {
+       "values": [
+        8,
+        6
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 4
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "waiting",
+        "at": 1
+       },
+       "to": {
+        "view": "tree",
+        "at": 4
+       },
+       "value": "#3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop 8: it is the 4th lowest score, and k = 4.",
+      "ko": "8을 꺼냅니다. 4번째로 낮은 점수이고 k = 4입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         3,
+         1,
+         4,
+         0
+        ],
+        "good": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ],
+       "tags": [
+        [
+         3,
+         {
+          "en": "1st",
+          "ko": "1번째"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "2nd",
+          "ko": "2번째"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "3rd",
+          "ko": "3번째"
+         }
+        ],
+        [
+         0,
+         {
+          "en": "4th",
+          "ko": "4번째"
+         }
+        ]
+       ]
+      },
+      "waiting": {
+       "values": [
+        8
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 4
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "waiting",
+        "at": 0
+       },
+       "to": {
+        "view": "tree",
+        "at": 0
+       },
+       "value": "#4"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The 4th node the in-order walk counts is 8, so the 4th lowest score is 8.",
+      "ko": "중위 순회가 4번째로 센 노드가 8이므로 4번째로 낮은 점수는 8입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         3,
+         1,
+         4
+        ],
+        "path": [
+         0
+        ]
+       },
+       "shade": [],
+       "tags": [
+        [
+         3,
+         {
+          "en": "1st",
+          "ko": "1번째"
+         }
+        ],
+        [
+         1,
+         {
+          "en": "2nd",
+          "ko": "2번째"
+         }
+        ],
+        [
+         4,
+         {
+          "en": "3rd",
+          "ko": "3번째"
+         }
+        ],
+        [
+         0,
+         {
+          "en": "4th",
+          "ko": "4번째"
+         }
+        ]
+       ]
+      },
+      "waiting": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 4
+        }
+       ]
+      }
+     },
+     "answer": "8"
+    }
+   ],
+   "setup": {
+    "tree": {
+     "nodes": [
+      {
+       "id": 0,
+       "value": 8
+      },
+      {
+       "id": 1,
+       "value": 4
+      },
+      {
+       "id": 2,
+       "value": 12
+      },
+      {
+       "id": 3,
+       "value": 2
+      },
+      {
+       "id": 4,
+       "value": 6
+      },
+      {
+       "id": 5,
+       "value": 10
+      },
+      {
+       "id": 6,
+       "value": 14
+      }
+     ],
+     "edges": [
+      {
+       "from": 0,
+       "to": 1,
+       "slot": 0
+      },
+      {
+       "from": 0,
+       "to": 2,
+       "slot": 1
+      },
+      {
+       "from": 1,
+       "to": 3,
+       "slot": 0
+      },
+      {
+       "from": 1,
+       "to": 4,
+       "slot": 1
+      },
+      {
+       "from": 2,
+       "to": 5,
+       "slot": 0
+      },
+      {
+       "from": 2,
+       "to": 6,
+       "slot": 1
+      }
+     ]
+    }
+   },
+   "sampleInput": "[8,4,12,2,6,10,14]\n4"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "root = [20,10,30,5,15,25,35,null,7], k = 2",
+   "expected": "7",
+   "frames": [
+    {
+     "caption": {
+      "en": "Find the 2nd lowest score. Start at the root 20 and go left as far as possible, keeping each node on the stack.",
+      "ko": "2번째로 낮은 점수를 찾습니다. root 20부터 왼쪽으로 끝까지 내려가며 지나는 노드를 스택에 쌓습니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": []
+       },
+       "shade": [],
+       "tags": []
+      },
+      "waiting": {
+       "values": [],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        }
+       ]
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "Push 20: it waits until everything left of it is counted. Go left to 10.",
+      "ko": "20을 스택에 넣고 왼쪽이 모두 세어질 때까지 기다립니다. 왼쪽의 10으로 갑니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         0
+        ]
+       },
+       "shade": [
+        0
+       ],
+       "tags": []
+      },
+      "waiting": {
+       "values": [
+        20
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 0
+       },
+       "to": {
+        "view": "waiting",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Push 10: it waits until everything left of it is counted. Go left to 5.",
+      "ko": "10을 스택에 넣고 왼쪽이 모두 세어질 때까지 기다립니다. 왼쪽의 5로 갑니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         1
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ],
+       "tags": []
+      },
+      "waiting": {
+       "values": [
+        20,
+        10
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 1
+       },
+       "to": {
+        "view": "waiting",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Push 5: it waits until everything left of it is counted. It has no left child, so stop going left.",
+      "ko": "5를 스택에 넣고 왼쪽이 모두 세어질 때까지 기다립니다. 왼쪽 자식이 없으므로 더 내려가지 않습니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [],
+        "lit": [
+         3
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        3
+       ],
+       "tags": []
+      },
+      "waiting": {
+       "values": [
+        20,
+        10,
+        5
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 3
+       },
+       "to": {
+        "view": "waiting",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop 5: nothing lower is left, so it is the 1st lowest. Next, its right child 7.",
+      "ko": "5를 꺼냅니다. 더 낮은 점수가 남지 않았으므로 1번째로 낮은 점수이며, 다음은 오른쪽 자식 7입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         3
+        ],
+        "good": [
+         3
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        3
+       ],
+       "tags": [
+        [
+         3,
+         {
+          "en": "1st",
+          "ko": "1번째"
+         }
+        ]
+       ]
+      },
+      "waiting": {
+       "values": [
+        20,
+        10,
+        5
+       ],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "waiting",
+        "at": 2
+       },
+       "to": {
+        "view": "tree",
+        "at": 3
+       },
+       "value": "#1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Push 7: it waits until everything left of it is counted. It has no left child, so stop going left.",
+      "ko": "7을 스택에 넣고 왼쪽이 모두 세어질 때까지 기다립니다. 왼쪽 자식이 없으므로 더 내려가지 않습니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         3
+        ],
+        "lit": [
+         8
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        8
+       ],
+       "tags": [
+        [
+         3,
+         {
+          "en": "1st",
+          "ko": "1번째"
+         }
+        ]
+       ]
+      },
+      "waiting": {
+       "values": [
+        20,
+        10,
+        7
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "tree",
+        "at": 8
+       },
+       "to": {
+        "view": "waiting",
+        "at": 2
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Pop 7: it is the 2nd lowest score, and k = 2.",
+      "ko": "7을 꺼냅니다. 2번째로 낮은 점수이고 k = 2입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         3,
+         8
+        ],
+        "good": [
+         8
+        ]
+       },
+       "shade": [
+        0,
+        1,
+        8
+       ],
+       "tags": [
+        [
+         3,
+         {
+          "en": "1st",
+          "ko": "1번째"
+         }
+        ],
+        [
+         8,
+         {
+          "en": "2nd",
+          "ko": "2번째"
+         }
+        ]
+       ]
+      },
+      "waiting": {
+       "values": [
+        20,
+        10,
+        7
+       ],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        }
+       ]
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "waiting",
+        "at": 2
+       },
+       "to": {
+        "view": "tree",
+        "at": 8
+       },
+       "value": "#2"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "The 2nd node the in-order walk counts is 7, so the 2nd lowest score is 7.",
+      "ko": "중위 순회가 2번째로 센 노드가 7이므로 2번째로 낮은 점수는 7입니다."
+     },
+     "views": {
+      "tree": {
+       "nodeMarks": {
+        "dim": [
+         3
+        ],
+        "path": [
+         8
+        ]
+       },
+       "shade": [
+        0,
+        1
+       ],
+       "tags": [
+        [
+         3,
+         {
+          "en": "1st",
+          "ko": "1번째"
+         }
+        ],
+        [
+         8,
+         {
+          "en": "2nd",
+          "ko": "2번째"
+         }
+        ]
+       ]
+      },
+      "waiting": {
+       "values": [
+        20,
+        10
+       ],
+       "marks": {}
+      },
+      "state": {
+       "items": [
+        {
+         "label": "k",
+         "value": 2
+        }
+       ]
+      }
+     },
+     "answer": "7"
+    }
+   ],
+   "setup": {
+    "tree": {
+     "nodes": [
+      {
+       "id": 0,
+       "value": 20
+      },
+      {
+       "id": 1,
+       "value": 10
+      },
+      {
+       "id": 2,
+       "value": 30
+      },
+      {
+       "id": 3,
+       "value": 5
+      },
+      {
+       "id": 4,
+       "value": 15
+      },
+      {
+       "id": 5,
+       "value": 25
+      },
+      {
+       "id": 6,
+       "value": 35
+      },
+      {
+       "id": 8,
+       "value": 7
+      }
+     ],
+     "edges": [
+      {
+       "from": 0,
+       "to": 1,
+       "slot": 0
+      },
+      {
+       "from": 0,
+       "to": 2,
+       "slot": 1
+      },
+      {
+       "from": 1,
+       "to": 3,
+       "slot": 0
+      },
+      {
+       "from": 1,
+       "to": 4,
+       "slot": 1
+      },
+      {
+       "from": 2,
+       "to": 5,
+       "slot": 0
+      },
+      {
+       "from": 2,
+       "to": 6,
+       "slot": 1
+      },
+      {
+       "from": 3,
+       "to": 8,
+       "slot": 1
+      }
+     ]
+    }
+   },
+   "sampleInput": "[20,10,30,5,15,25,35,null,7]\n2"
+  }
+ ]
+}

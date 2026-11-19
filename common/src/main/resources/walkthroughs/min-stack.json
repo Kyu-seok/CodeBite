@@ -1,0 +1,1612 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Min Stack",
+  "ko": "최솟값 스택"
+ },
+ "approach": {
+  "en": "Beside the stack of values keep a second stack, lows, whose entry at each level is the smallest value at or below it. push adds to both, pop removes from both, and getMin reads the top of lows.",
+  "ko": "값의 스택 옆에 두 번째 스택 lows를 두고, 각 층에 그 층과 그 아래에서 가장 작은 값을 둡니다. push는 둘 다에 넣고 pop은 둘 다에서 빼며, getMin은 lows의 맨 위를 읽습니다."
+ },
+ "views": [
+  {
+   "id": "values",
+   "type": "stack",
+   "title": {
+    "en": "values (stack)",
+    "ko": "values (스택)"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  },
+  {
+   "id": "lows",
+   "type": "stack",
+   "title": {
+    "en": "lows (min so far)",
+    "ko": "lows (지금까지 최솟값)"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  },
+  {
+   "id": "calls",
+   "type": "table",
+   "title": {
+    "en": "calls",
+    "ko": "호출"
+   }
+  },
+  {
+   "id": "result",
+   "type": "output",
+   "title": {
+    "en": "returned",
+    "ko": "반환값"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "[\"LowTrackStack\",\"push\",\"push\",\"push\",\"getMin\",\"pop\",\"top\",\"getMin\"]\n[[],[12],[6],[-2],[],[],[],[]]",
+   "expected": "[null,null,null,null,-2,null,6,6]",
+   "frames": [
+    {
+     "caption": {
+      "en": "LowTrackStack() starts with two empty stacks, values and lows, and returns null.",
+      "ko": "LowTrackStack(): 빈 스택 values와 lows 두 개로 시작하고 null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "val",
+         "ko": "val"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LowTrackStack",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "12"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "6"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "push",
+          "-2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "getMin",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "top",
+          ""
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "getMin",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [],
+        "lit": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ]
+       }
+      },
+      "values": {
+       "values": [],
+       "marks": {}
+      },
+      "lows": {
+       "values": [],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null"
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "push(12): 12 goes on top of values; the stack was empty, so 12 is also the smallest so far. push returns null.",
+      "ko": "push(12): values 맨 위에 12를 넣고, 스택이 비어 있었으므로 12가 지금까지의 최솟값입니다. null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "val",
+         "ko": "val"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LowTrackStack",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "12"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "6"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "push",
+          "-2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "getMin",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "top",
+          ""
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "getMin",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ]
+       }
+      },
+      "values": {
+       "values": [
+        12
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "lows": {
+       "values": [
+        12
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "values",
+        "at": 0
+       },
+       "value": "12"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         1
+        ]
+       },
+       "to": {
+        "view": "lows",
+        "at": 0
+       },
+       "value": "12"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         1,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 1
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "push(6): 6 goes on top of values; 6 is smaller than the low below it, 12, so lows gets 6. push returns null.",
+      "ko": "push(6): values 맨 위에 6을 넣고, 6이 아래층의 최솟값 12보다 작으므로 lows에 6을 넣습니다. null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "val",
+         "ko": "val"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LowTrackStack",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "12"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "6"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "push",
+          "-2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "getMin",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "top",
+          ""
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "getMin",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ]
+       }
+      },
+      "values": {
+       "values": [
+        12,
+        6
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "lows": {
+       "values": [
+        12,
+        6
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         2,
+         1
+        ]
+       },
+       "to": {
+        "view": "values",
+        "at": 1
+       },
+       "value": "6"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         2,
+         1
+        ]
+       },
+       "to": {
+        "view": "lows",
+        "at": 1
+       },
+       "value": "6"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         2,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 2
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "push(-2): -2 goes on top of values; -2 is smaller than the low below it, 6, so lows gets -2. push returns null.",
+      "ko": "push(-2): values 맨 위에 -2를 넣고, -2가 아래층의 최솟값 6보다 작으므로 lows에 -2를 넣습니다. null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "val",
+         "ko": "val"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LowTrackStack",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "12"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "6"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "push",
+          "-2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "getMin",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "top",
+          ""
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "getMin",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ]
+       }
+      },
+      "values": {
+       "values": [
+        12,
+        6,
+        -2
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "lows": {
+       "values": [
+        12,
+        6,
+        -2
+       ],
+       "marks": {
+        "good": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         3
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         3,
+         1
+        ]
+       },
+       "to": {
+        "view": "values",
+        "at": 2
+       },
+       "value": "-2"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         3,
+         1
+        ]
+       },
+       "to": {
+        "view": "lows",
+        "at": 2
+       },
+       "value": "-2"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         3,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 3
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "getMin(): the top of lows, -2, is the smallest value in the stack; it returns it without searching.",
+      "ko": "getMin(): lows의 맨 위 -2가 스택에서 가장 작은 값이므로 찾아볼 필요 없이 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "val",
+         "ko": "val"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LowTrackStack",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "12"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "6"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "push",
+          "-2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "getMin",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "top",
+          ""
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "getMin",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ]
+       }
+      },
+      "values": {
+       "values": [
+        12,
+        6,
+        -2
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2
+        ]
+       }
+      },
+      "lows": {
+       "values": [
+        12,
+        6,
+        -2
+       ],
+       "marks": {
+        "lit": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null",
+        "-2"
+       ],
+       "marks": {
+        "good": [
+         4
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "lows",
+        "at": 2
+       },
+       "to": {
+        "view": "result",
+        "at": 4
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "pop(): -2 leaves the top of values and -2 the top of lows, so the level below is on top again. pop returns null.",
+      "ko": "pop(): values 맨 위의 -2, lows 맨 위의 -2가 함께 빠져 아래층이 다시 맨 위가 됩니다. null을 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "val",
+         "ko": "val"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LowTrackStack",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "12"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "6"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "push",
+          "-2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "getMin",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "top",
+          ""
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "getMin",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ]
+        ]
+       }
+      },
+      "values": {
+       "values": [
+        12,
+        6,
+        -2
+       ],
+       "marks": {
+        "bad": [
+         2
+        ]
+       }
+      },
+      "lows": {
+       "values": [
+        12,
+        6,
+        -2
+       ],
+       "marks": {
+        "bad": [
+         2
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null",
+        "-2",
+        "null"
+       ],
+       "marks": {
+        "good": [
+         5
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "values",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "lows",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": [
+         5,
+         0
+        ]
+       },
+       "to": {
+        "view": "result",
+        "at": 5
+       },
+       "value": "null"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "top(): the top of values is 6; it returns it and the stack stays.",
+      "ko": "top(): values의 맨 위 값 6을 반환하고 스택은 그대로 둡니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "val",
+         "ko": "val"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LowTrackStack",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "12"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "6"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "push",
+          "-2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "getMin",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "top",
+          ""
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "getMin",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ],
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          6,
+          0
+         ],
+         [
+          6,
+          1
+         ]
+        ]
+       }
+      },
+      "values": {
+       "values": [
+        12,
+        6
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "lows": {
+       "values": [
+        12,
+        6
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null",
+        "-2",
+        "null",
+        "6"
+       ],
+       "marks": {
+        "good": [
+         6
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "values",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 6
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "getMin(): the top of lows, 6, is the smallest value in the stack; it returns it without searching.",
+      "ko": "getMin(): lows의 맨 위 6이 스택에서 가장 작은 값이므로 찾아볼 필요 없이 반환합니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "val",
+         "ko": "val"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LowTrackStack",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "12"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "6"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "push",
+          "-2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "getMin",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "top",
+          ""
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "getMin",
+          ""
+         ]
+        }
+       ],
+       "marks": {
+        "dim": [
+         [
+          0,
+          0
+         ],
+         [
+          0,
+          1
+         ],
+         [
+          1,
+          0
+         ],
+         [
+          1,
+          1
+         ],
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          1
+         ],
+         [
+          3,
+          0
+         ],
+         [
+          3,
+          1
+         ],
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          1
+         ],
+         [
+          5,
+          0
+         ],
+         [
+          5,
+          1
+         ],
+         [
+          6,
+          0
+         ],
+         [
+          6,
+          1
+         ]
+        ],
+        "lit": [
+         [
+          7,
+          0
+         ],
+         [
+          7,
+          1
+         ]
+        ]
+       }
+      },
+      "values": {
+       "values": [
+        12,
+        6
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1
+        ]
+       }
+      },
+      "lows": {
+       "values": [
+        12,
+        6
+       ],
+       "marks": {
+        "lit": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null",
+        "-2",
+        "null",
+        "6",
+        "6"
+       ],
+       "marks": {
+        "good": [
+         7
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "lows",
+        "at": 1
+       },
+       "to": {
+        "view": "result",
+        "at": 7
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Every call is answered, in order: answer [null,null,null,null,-2,null,6,6].",
+      "ko": "모든 호출의 반환값을 차례로 모았습니다. 답은 [null,null,null,null,-2,null,6,6]입니다."
+     },
+     "views": {
+      "calls": {
+       "columns": [
+        {
+         "en": "call",
+         "ko": "호출"
+        },
+        {
+         "en": "val",
+         "ko": "val"
+        }
+       ],
+       "rows": [
+        {
+         "label": "0",
+         "cells": [
+          "LowTrackStack",
+          ""
+         ]
+        },
+        {
+         "label": "1",
+         "cells": [
+          "push",
+          "12"
+         ]
+        },
+        {
+         "label": "2",
+         "cells": [
+          "push",
+          "6"
+         ]
+        },
+        {
+         "label": "3",
+         "cells": [
+          "push",
+          "-2"
+         ]
+        },
+        {
+         "label": "4",
+         "cells": [
+          "getMin",
+          ""
+         ]
+        },
+        {
+         "label": "5",
+         "cells": [
+          "pop",
+          ""
+         ]
+        },
+        {
+         "label": "6",
+         "cells": [
+          "top",
+          ""
+         ]
+        },
+        {
+         "label": "7",
+         "cells": [
+          "getMin",
+          ""
+         ]
+        }
+       ],
+       "marks": {}
+      },
+      "values": {
+       "values": [
+        12,
+        6
+       ],
+       "marks": {}
+      },
+      "lows": {
+       "values": [
+        12,
+        6
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "null",
+        "null",
+        "null",
+        "null",
+        "-2",
+        "null",
+        "6",
+        "6"
+       ],
+       "marks": {
+        "path": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7
+        ]
+       }
+      }
+     },
+     "answer": "[null,null,null,null,-2,null,6,6]"
+    }
+   ],
+   "sampleInput": "[\"LowTrackStack\",\"push\",\"push\",\"push\",\"getMin\",\"pop\",\"top\",\"getMin\"]\n[[],[12],[6],[-2],[],[],[],[]]"
+  }
+ ]
+}
