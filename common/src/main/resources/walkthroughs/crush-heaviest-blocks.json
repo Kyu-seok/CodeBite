@@ -1,0 +1,3737 @@
+{
+ "format": "walkthrough/1",
+ "title": {
+  "en": "Crush Heaviest Blocks",
+  "ko": "가장 무거운 블록 부수기"
+ },
+ "approach": {
+  "en": "A max-heap keeps the heaviest block on top, so each round pops the two heaviest in two pops, and pushes back what is left of the heavier one. The last block left in the heap is the answer, or 0 when none is left.",
+  "ko": "최대 힙은 가장 무거운 블록을 맨 위에 두므로, 매 라운드 두 번 꺼내 가장 무거운 두 블록을 얻고, 무거운 쪽에서 남은 무게를 다시 넣습니다. 힙에 마지막으로 남은 블록이 답이고, 없으면 0입니다."
+ },
+ "views": [
+  {
+   "id": "blocks",
+   "type": "array",
+   "title": {
+    "en": "blocks",
+    "ko": "blocks (블록)"
+   }
+  },
+  {
+   "id": "heap",
+   "type": "tree",
+   "arity": 2,
+   "title": {
+    "en": "max-heap: heaviest on top ([i]: array index)",
+    "ko": "최대 힙: 맨 위가 가장 무거움 ([i]: 배열 인덱스)"
+   },
+   "empty": {
+    "en": "empty",
+    "ko": "비어 있음"
+   }
+  },
+  {
+   "id": "crusher",
+   "type": "array",
+   "title": {
+    "en": "crusher: y (heaviest), x",
+    "ko": "부수는 자리: y (가장 무거움), x"
+   }
+  },
+  {
+   "id": "result",
+   "type": "output",
+   "title": {
+    "en": "answer",
+    "ko": "답"
+   },
+   "empty": {
+    "en": "not yet",
+    "ko": "아직 없음"
+   }
+  }
+ ],
+ "runs": [
+  {
+   "label": {
+    "en": "Example 1",
+    "ko": "예시 1"
+   },
+   "input": "blocks = [3,6,4,9,5,2]",
+   "expected": "1",
+   "frames": [
+    {
+     "caption": {
+      "en": "6 blocks: [3,6,4,9,5,2]. A max-heap will keep the heaviest on top, so the two heaviest are always two pops away.",
+      "ko": "블록 6개: [3,6,4,9,5,2]. 최대 힙이 가장 무거운 블록을 맨 위에 두므로, 가장 무거운 두 블록은 언제나 두 번 꺼내면 나옵니다."
+     },
+     "views": {
+      "blocks": {
+       "values": [
+        3,
+        6,
+        4,
+        9,
+        5,
+        2
+       ],
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "crusher": {
+       "values": [
+        "",
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "y"
+        ],
+        [
+         1,
+         "x"
+        ]
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The 6 weights go into the heap list in their order; heapify then sifts each parent down, from the last one to the root.",
+      "ko": "무게 6개를 순서대로 힙 리스트에 넣습니다. 이어서 heapify가 마지막 부모부터 루트까지 차례로 아래로 내립니다."
+     },
+     "views": {
+      "blocks": {
+       "values": [
+        3,
+        6,
+        4,
+        9,
+        5,
+        2
+       ],
+       "marks": {
+        "lit": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        },
+        {
+         "id": 1,
+         "value": 6
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 9
+        },
+        {
+         "id": 4,
+         "value": 5
+        },
+        {
+         "id": 5,
+         "value": 2
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        },
+        {
+         "from": 1,
+         "to": 3,
+         "slot": 0
+        },
+        {
+         "from": 1,
+         "to": 4,
+         "slot": 1
+        },
+        {
+         "from": 2,
+         "to": 5,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ],
+        [
+         3,
+         "[3]"
+        ],
+        [
+         4,
+         "[4]"
+        ],
+        [
+         5,
+         "[5]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "crusher": {
+       "values": [
+        "",
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "y"
+        ],
+        [
+         1,
+         "x"
+        ]
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "blocks",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      },
+      {
+       "from": {
+        "view": "blocks",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       }
+      },
+      {
+       "from": {
+        "view": "blocks",
+        "at": 2
+       },
+       "to": {
+        "view": "heap",
+        "at": 2
+       }
+      },
+      {
+       "from": {
+        "view": "blocks",
+        "at": 3
+       },
+       "to": {
+        "view": "heap",
+        "at": 3
+       }
+      },
+      {
+       "from": {
+        "view": "blocks",
+        "at": 4
+       },
+       "to": {
+        "view": "heap",
+        "at": 4
+       }
+      },
+      {
+       "from": {
+        "view": "blocks",
+        "at": 5
+       },
+       "to": {
+        "view": "heap",
+        "at": 5
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Sift down: 6 at [1] is lighter than its heavier child 9 at [3], so they swap.",
+      "ko": "아래로 내리기: [1]의 6은 더 무거운 자식 [3]의 9보다 가벼우므로 자리를 바꿉니다."
+     },
+     "views": {
+      "blocks": {
+       "values": [
+        3,
+        6,
+        4,
+        9,
+        5,
+        2
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        },
+        {
+         "id": 1,
+         "value": 9
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 6
+        },
+        {
+         "id": 4,
+         "value": 5
+        },
+        {
+         "id": 5,
+         "value": 2
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        },
+        {
+         "from": 1,
+         "to": 3,
+         "slot": 0
+        },
+        {
+         "from": 1,
+         "to": 4,
+         "slot": 1
+        },
+        {
+         "from": 2,
+         "to": 5,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ],
+        [
+         3,
+         "[3]"
+        ],
+        [
+         4,
+         "[4]"
+        ],
+        [
+         5,
+         "[5]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         1
+        ],
+        "lit": [
+         3
+        ]
+       }
+      },
+      "crusher": {
+       "values": [
+        "",
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "y"
+        ],
+        [
+         1,
+         "x"
+        ]
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 3
+       },
+       "value": 6
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 3
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       },
+       "value": 9
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Sift down: 3 at [0] is lighter than its heavier child 9 at [1], so they swap.",
+      "ko": "아래로 내리기: [0]의 3은 더 무거운 자식 [1]의 9보다 가벼우므로 자리를 바꿉니다."
+     },
+     "views": {
+      "blocks": {
+       "values": [
+        3,
+        6,
+        4,
+        9,
+        5,
+        2
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 9
+        },
+        {
+         "id": 1,
+         "value": 3
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 6
+        },
+        {
+         "id": 4,
+         "value": 5
+        },
+        {
+         "id": 5,
+         "value": 2
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        },
+        {
+         "from": 1,
+         "to": 3,
+         "slot": 0
+        },
+        {
+         "from": 1,
+         "to": 4,
+         "slot": 1
+        },
+        {
+         "from": 2,
+         "to": 5,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ],
+        [
+         3,
+         "[3]"
+        ],
+        [
+         4,
+         "[4]"
+        ],
+        [
+         5,
+         "[5]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "crusher": {
+       "values": [
+        "",
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "y"
+        ],
+        [
+         1,
+         "x"
+        ]
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       },
+       "value": 3
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": 9
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Sift down: 3 at [1] is lighter than its heavier child 6 at [3], so they swap.",
+      "ko": "아래로 내리기: [1]의 3은 더 무거운 자식 [3]의 6보다 가벼우므로 자리를 바꿉니다."
+     },
+     "views": {
+      "blocks": {
+       "values": [
+        3,
+        6,
+        4,
+        9,
+        5,
+        2
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 9
+        },
+        {
+         "id": 1,
+         "value": 6
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 3
+        },
+        {
+         "id": 4,
+         "value": 5
+        },
+        {
+         "id": 5,
+         "value": 2
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        },
+        {
+         "from": 1,
+         "to": 3,
+         "slot": 0
+        },
+        {
+         "from": 1,
+         "to": 4,
+         "slot": 1
+        },
+        {
+         "from": 2,
+         "to": 5,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ],
+        [
+         3,
+         "[3]"
+        ],
+        [
+         4,
+         "[4]"
+        ],
+        [
+         5,
+         "[5]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         1
+        ],
+        "lit": [
+         3
+        ]
+       }
+      },
+      "crusher": {
+       "values": [
+        "",
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "y"
+        ],
+        [
+         1,
+         "x"
+        ]
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 3
+       },
+       "value": 3
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 3
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       },
+       "value": 6
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "heappop: the root 9 is the heaviest block left; it goes to the crusher as y, and the last node 2 at [5] fills the root.",
+      "ko": "heappop: 루트 9가 남은 블록 중 가장 무겁습니다. y 자리로 옮기고, 마지막 노드 [5]의 2가 루트를 채웁니다."
+     },
+     "views": {
+      "blocks": {
+       "values": [
+        3,
+        6,
+        4,
+        9,
+        5,
+        2
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 2
+        },
+        {
+         "id": 1,
+         "value": 6
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 3
+        },
+        {
+         "id": 4,
+         "value": 5
+        },
+        {
+         "id": 5,
+         "value": 2
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        },
+        {
+         "from": 1,
+         "to": 3,
+         "slot": 0
+        },
+        {
+         "from": 1,
+         "to": 4,
+         "slot": 1
+        },
+        {
+         "from": 2,
+         "to": 5,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ],
+        [
+         3,
+         "[3]"
+        ],
+        [
+         4,
+         "[4]"
+        ],
+        [
+         5,
+         "[5]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "crusher": {
+       "values": [
+        9,
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "y"
+        ],
+        [
+         1,
+         "x"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "crusher",
+        "at": 0
+       },
+       "value": "9"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 5
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Sift down: 2 at [0] is lighter than its heavier child 6 at [1], so they swap.",
+      "ko": "아래로 내리기: [0]의 2는 더 무거운 자식 [1]의 6보다 가벼우므로 자리를 바꿉니다."
+     },
+     "views": {
+      "blocks": {
+       "values": [
+        3,
+        6,
+        4,
+        9,
+        5,
+        2
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 6
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 3
+        },
+        {
+         "id": 4,
+         "value": 5
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        },
+        {
+         "from": 1,
+         "to": 3,
+         "slot": 0
+        },
+        {
+         "from": 1,
+         "to": 4,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ],
+        [
+         3,
+         "[3]"
+        ],
+        [
+         4,
+         "[4]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "crusher": {
+       "values": [
+        9,
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "y"
+        ],
+        [
+         1,
+         "x"
+        ]
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       },
+       "value": 2
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": 6
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Sift down: 2 at [1] is lighter than its heavier child 5 at [4], so they swap.",
+      "ko": "아래로 내리기: [1]의 2는 더 무거운 자식 [4]의 5보다 가벼우므로 자리를 바꿉니다."
+     },
+     "views": {
+      "blocks": {
+       "values": [
+        3,
+        6,
+        4,
+        9,
+        5,
+        2
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 6
+        },
+        {
+         "id": 1,
+         "value": 5
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 3
+        },
+        {
+         "id": 4,
+         "value": 2
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        },
+        {
+         "from": 1,
+         "to": 3,
+         "slot": 0
+        },
+        {
+         "from": 1,
+         "to": 4,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ],
+        [
+         3,
+         "[3]"
+        ],
+        [
+         4,
+         "[4]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         1
+        ],
+        "lit": [
+         4
+        ]
+       }
+      },
+      "crusher": {
+       "values": [
+        9,
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "y"
+        ],
+        [
+         1,
+         "x"
+        ]
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 4
+       },
+       "value": 2
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 4
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       },
+       "value": 5
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "heappop: the root 6 is the second heaviest block left; it goes to the crusher as x, and the last node 2 at [4] fills the root.",
+      "ko": "heappop: 루트 6이 남은 블록 중 두 번째로 무겁습니다. x 자리로 옮기고, 마지막 노드 [4]의 2가 루트를 채웁니다."
+     },
+     "views": {
+      "blocks": {
+       "values": [
+        3,
+        6,
+        4,
+        9,
+        5,
+        2
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 2
+        },
+        {
+         "id": 1,
+         "value": 5
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 3
+        },
+        {
+         "id": 4,
+         "value": 2
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        },
+        {
+         "from": 1,
+         "to": 3,
+         "slot": 0
+        },
+        {
+         "from": 1,
+         "to": 4,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ],
+        [
+         3,
+         "[3]"
+        ],
+        [
+         4,
+         "[4]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "crusher": {
+       "values": [
+        9,
+        6
+       ],
+       "tags": [
+        [
+         0,
+         "y"
+        ],
+        [
+         1,
+         "x"
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "crusher",
+        "at": 1
+       },
+       "value": "6"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 4
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Sift down: 2 at [0] is lighter than its heavier child 5 at [1], so they swap.",
+      "ko": "아래로 내리기: [0]의 2는 더 무거운 자식 [1]의 5보다 가벼우므로 자리를 바꿉니다."
+     },
+     "views": {
+      "blocks": {
+       "values": [
+        3,
+        6,
+        4,
+        9,
+        5,
+        2
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 5
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 3
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        },
+        {
+         "from": 1,
+         "to": 3,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ],
+        [
+         3,
+         "[3]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "crusher": {
+       "values": [
+        9,
+        6
+       ],
+       "tags": [
+        [
+         0,
+         "y"
+        ],
+        [
+         1,
+         "x"
+        ]
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       },
+       "value": 2
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": 5
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Sift down: 2 at [1] is lighter than its heavier child 3 at [3], so they swap.",
+      "ko": "아래로 내리기: [1]의 2는 더 무거운 자식 [3]의 3보다 가벼우므로 자리를 바꿉니다."
+     },
+     "views": {
+      "blocks": {
+       "values": [
+        3,
+        6,
+        4,
+        9,
+        5,
+        2
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 5
+        },
+        {
+         "id": 1,
+         "value": 3
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 2
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        },
+        {
+         "from": 1,
+         "to": 3,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ],
+        [
+         3,
+         "[3]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         1
+        ],
+        "lit": [
+         3
+        ]
+       }
+      },
+      "crusher": {
+       "values": [
+        9,
+        6
+       ],
+       "tags": [
+        [
+         0,
+         "y"
+        ],
+        [
+         1,
+         "x"
+        ]
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 3
+       },
+       "value": 2
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 3
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       },
+       "value": 3
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Crush 9 and 6: 6 is destroyed and 9 becomes 9 − 6 = 3, which goes back in at the heap's end, [4].",
+      "ko": "9와 6을 부딪칩니다. 6은 사라지고 9는 9 − 6 = 3이 되어 힙의 맨 끝 [4]에 다시 들어갑니다."
+     },
+     "views": {
+      "blocks": {
+       "values": [
+        3,
+        6,
+        4,
+        9,
+        5,
+        2
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 5
+        },
+        {
+         "id": 1,
+         "value": 3
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 2
+        },
+        {
+         "id": 4,
+         "value": 3
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        },
+        {
+         "from": 1,
+         "to": 3,
+         "slot": 0
+        },
+        {
+         "from": 1,
+         "to": 4,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ],
+        [
+         3,
+         "[3]"
+        ],
+        [
+         4,
+         "[4]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         4
+        ]
+       }
+      },
+      "crusher": {
+       "values": [
+        9,
+        6
+       ],
+       "tags": [
+        [
+         0,
+         "y"
+        ],
+        [
+         1,
+         "x"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "bad": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "crusher",
+        "at": 1
+       },
+       "mark": "bad"
+      },
+      {
+       "from": {
+        "view": "crusher",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 4
+       },
+       "value": "3"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "heappop: the root 5 is the heaviest block left; it goes to the crusher as y, and the last node 3 at [4] fills the root.",
+      "ko": "heappop: 루트 5가 남은 블록 중 가장 무겁습니다. y 자리로 옮기고, 마지막 노드 [4]의 3이 루트를 채웁니다."
+     },
+     "views": {
+      "blocks": {
+       "values": [
+        3,
+        6,
+        4,
+        9,
+        5,
+        2
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        },
+        {
+         "id": 1,
+         "value": 3
+        },
+        {
+         "id": 2,
+         "value": 4
+        },
+        {
+         "id": 3,
+         "value": 2
+        },
+        {
+         "id": 4,
+         "value": 3
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        },
+        {
+         "from": 1,
+         "to": 3,
+         "slot": 0
+        },
+        {
+         "from": 1,
+         "to": 4,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ],
+        [
+         3,
+         "[3]"
+        ],
+        [
+         4,
+         "[4]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "crusher": {
+       "values": [
+        5,
+        6
+       ],
+       "tags": [
+        [
+         0,
+         "y"
+        ],
+        [
+         1,
+         "x"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ],
+        "dim": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "crusher",
+        "at": 0
+       },
+       "value": "5"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 4
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Sift down: 3 at [0] is lighter than its heavier child 4 at [2], so they swap.",
+      "ko": "아래로 내리기: [0]의 3은 더 무거운 자식 [2]의 4보다 가벼우므로 자리를 바꿉니다."
+     },
+     "views": {
+      "blocks": {
+       "values": [
+        3,
+        6,
+        4,
+        9,
+        5,
+        2
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 4
+        },
+        {
+         "id": 1,
+         "value": 3
+        },
+        {
+         "id": 2,
+         "value": 3
+        },
+        {
+         "id": 3,
+         "value": 2
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        },
+        {
+         "from": 1,
+         "to": 3,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ],
+        [
+         3,
+         "[3]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "crusher": {
+       "values": [
+        5,
+        6
+       ],
+       "tags": [
+        [
+         0,
+         "y"
+        ],
+        [
+         1,
+         "x"
+        ]
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 2
+       },
+       "value": 3
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 2
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": 4
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "heappop: the root 4 is the second heaviest block left; it goes to the crusher as x, and the last node 2 at [3] fills the root.",
+      "ko": "heappop: 루트 4가 남은 블록 중 두 번째로 무겁습니다. x 자리로 옮기고, 마지막 노드 [3]의 2가 루트를 채웁니다."
+     },
+     "views": {
+      "blocks": {
+       "values": [
+        3,
+        6,
+        4,
+        9,
+        5,
+        2
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 2
+        },
+        {
+         "id": 1,
+         "value": 3
+        },
+        {
+         "id": 2,
+         "value": 3
+        },
+        {
+         "id": 3,
+         "value": 2
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        },
+        {
+         "from": 1,
+         "to": 3,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ],
+        [
+         3,
+         "[3]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "crusher": {
+       "values": [
+        5,
+        4
+       ],
+       "tags": [
+        [
+         0,
+         "y"
+        ],
+        [
+         1,
+         "x"
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "crusher",
+        "at": 1
+       },
+       "value": "4"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 3
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Sift down: 2 at [0] is lighter than its heavier child 3 at [1], so they swap.",
+      "ko": "아래로 내리기: [0]의 2는 더 무거운 자식 [1]의 3보다 가벼우므로 자리를 바꿉니다."
+     },
+     "views": {
+      "blocks": {
+       "values": [
+        3,
+        6,
+        4,
+        9,
+        5,
+        2
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 3
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "crusher": {
+       "values": [
+        5,
+        4
+       ],
+       "tags": [
+        [
+         0,
+         "y"
+        ],
+        [
+         1,
+         "x"
+        ]
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       },
+       "value": 2
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": 3
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Crush 5 and 4: 4 is destroyed and 5 becomes 5 − 4 = 1, which goes back in at the heap's end, [3].",
+      "ko": "5와 4를 부딪칩니다. 4는 사라지고 5는 5 − 4 = 1이 되어 힙의 맨 끝 [3]에 다시 들어갑니다."
+     },
+     "views": {
+      "blocks": {
+       "values": [
+        3,
+        6,
+        4,
+        9,
+        5,
+        2
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 3
+        },
+        {
+         "id": 3,
+         "value": 1
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        },
+        {
+         "from": 1,
+         "to": 3,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ],
+        [
+         3,
+         "[3]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         3
+        ]
+       }
+      },
+      "crusher": {
+       "values": [
+        5,
+        4
+       ],
+       "tags": [
+        [
+         0,
+         "y"
+        ],
+        [
+         1,
+         "x"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "bad": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "crusher",
+        "at": 1
+       },
+       "mark": "bad"
+      },
+      {
+       "from": {
+        "view": "crusher",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 3
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "heappop: the root 3 is the heaviest block left; it goes to the crusher as y, and the last node 1 at [3] fills the root.",
+      "ko": "heappop: 루트 3이 남은 블록 중 가장 무겁습니다. y 자리로 옮기고, 마지막 노드 [3]의 1이 루트를 채웁니다."
+     },
+     "views": {
+      "blocks": {
+       "values": [
+        3,
+        6,
+        4,
+        9,
+        5,
+        2
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 3
+        },
+        {
+         "id": 3,
+         "value": 1
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        },
+        {
+         "from": 1,
+         "to": 3,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ],
+        [
+         3,
+         "[3]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "crusher": {
+       "values": [
+        3,
+        4
+       ],
+       "tags": [
+        [
+         0,
+         "y"
+        ],
+        [
+         1,
+         "x"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ],
+        "dim": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "crusher",
+        "at": 0
+       },
+       "value": "3"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 3
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Sift down: 1 at [0] is lighter than its heavier child 3 at [2], so they swap.",
+      "ko": "아래로 내리기: [0]의 1은 더 무거운 자식 [2]의 3보다 가벼우므로 자리를 바꿉니다."
+     },
+     "views": {
+      "blocks": {
+       "values": [
+        3,
+        6,
+        4,
+        9,
+        5,
+        2
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 3
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 1
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ],
+        "lit": [
+         2
+        ]
+       }
+      },
+      "crusher": {
+       "values": [
+        3,
+        4
+       ],
+       "tags": [
+        [
+         0,
+         "y"
+        ],
+        [
+         1,
+         "x"
+        ]
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 2
+       },
+       "value": 1
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 2
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": 3
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "heappop: the root 3 is the second heaviest block left; it goes to the crusher as x, and the last node 1 at [2] fills the root.",
+      "ko": "heappop: 루트 3이 남은 블록 중 두 번째로 무겁습니다. x 자리로 옮기고, 마지막 노드 [2]의 1이 루트를 채웁니다."
+     },
+     "views": {
+      "blocks": {
+       "values": [
+        3,
+        6,
+        4,
+        9,
+        5,
+        2
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        },
+        {
+         "id": 1,
+         "value": 2
+        },
+        {
+         "id": 2,
+         "value": 1
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        },
+        {
+         "from": 0,
+         "to": 2,
+         "slot": 1
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ],
+        [
+         2,
+         "[2]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "crusher": {
+       "values": [
+        3,
+        3
+       ],
+       "tags": [
+        [
+         0,
+         "y"
+        ],
+        [
+         1,
+         "x"
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "crusher",
+        "at": 1
+       },
+       "value": "3"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 2
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Sift down: 1 at [0] is lighter than its heavier child 2 at [1], so they swap.",
+      "ko": "아래로 내리기: [0]의 1은 더 무거운 자식 [1]의 2보다 가벼우므로 자리를 바꿉니다."
+     },
+     "views": {
+      "blocks": {
+       "values": [
+        3,
+        6,
+        4,
+        9,
+        5,
+        2
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 2
+        },
+        {
+         "id": 1,
+         "value": 1
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ],
+        "lit": [
+         1
+        ]
+       }
+      },
+      "crusher": {
+       "values": [
+        3,
+        3
+       ],
+       "tags": [
+        [
+         0,
+         "y"
+        ],
+        [
+         1,
+         "x"
+        ]
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 1
+       },
+       "value": 1
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": 2
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Crush 3 and 3: they weigh the same, so both are pulverized and nothing goes back.",
+      "ko": "3과 3을 부딪칩니다. 무게가 같으므로 둘 다 산산조각 나고 다시 넣을 것이 없습니다."
+     },
+     "views": {
+      "blocks": {
+       "values": [
+        3,
+        6,
+        4,
+        9,
+        5,
+        2
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 2
+        },
+        {
+         "id": 1,
+         "value": 1
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {}
+      },
+      "crusher": {
+       "values": [
+        3,
+        3
+       ],
+       "tags": [
+        [
+         0,
+         "y"
+        ],
+        [
+         1,
+         "x"
+        ]
+       ],
+       "marks": {
+        "bad": [
+         0,
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "crusher",
+        "at": 0
+       },
+       "mark": "bad"
+      },
+      {
+       "from": {
+        "view": "crusher",
+        "at": 1
+       },
+       "mark": "bad"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "heappop: the root 2 is the heaviest block left; it goes to the crusher as y, and the last node 1 at [1] fills the root.",
+      "ko": "heappop: 루트 2가 남은 블록 중 가장 무겁습니다. y 자리로 옮기고, 마지막 노드 [1]의 1이 루트를 채웁니다."
+     },
+     "views": {
+      "blocks": {
+       "values": [
+        3,
+        6,
+        4,
+        9,
+        5,
+        2
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        },
+        {
+         "id": 1,
+         "value": 1
+        }
+       ],
+       "edges": [
+        {
+         "from": 0,
+         "to": 1,
+         "slot": 0
+        }
+       ],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ],
+        [
+         1,
+         "[1]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "crusher": {
+       "values": [
+        2,
+        3
+       ],
+       "tags": [
+        [
+         0,
+         "y"
+        ],
+        [
+         1,
+         "x"
+        ]
+       ],
+       "marks": {
+        "good": [
+         0
+        ],
+        "dim": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "crusher",
+        "at": 0
+       },
+       "value": "2"
+      },
+      {
+       "from": {
+        "view": "heap",
+        "at": 1
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "heappop: the root 1, the only block left in the heap, goes to the crusher as x.",
+      "ko": "heappop: 힙에 하나 남은 루트 1이 x 자리로 갑니다."
+     },
+     "views": {
+      "blocks": {
+       "values": [
+        3,
+        6,
+        4,
+        9,
+        5,
+        2
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "crusher": {
+       "values": [
+        2,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         "y"
+        ],
+        [
+         1,
+         "x"
+        ]
+       ],
+       "marks": {
+        "good": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "crusher",
+        "at": 1
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Crush 2 and 1: 1 is destroyed and 2 becomes 2 − 1 = 1, which goes back in at the heap's end, [0].",
+      "ko": "2와 1을 부딪칩니다. 1은 사라지고 2는 2 − 1 = 1이 되어 힙의 맨 끝 [0]에 다시 들어갑니다."
+     },
+     "views": {
+      "blocks": {
+       "values": [
+        3,
+        6,
+        4,
+        9,
+        5,
+        2
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "crusher": {
+       "values": [
+        2,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         "y"
+        ],
+        [
+         1,
+         "x"
+        ]
+       ],
+       "marks": {
+        "lit": [
+         0
+        ],
+        "bad": [
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "crusher",
+        "at": 1
+       },
+       "mark": "bad"
+      },
+      {
+       "from": {
+        "view": "crusher",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       },
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Only one block is left in the heap, so the crushing stops: the last block weighs 1.",
+      "ko": "힙에 블록이 하나만 남아 부수기가 끝납니다. 마지막 블록의 무게는 1입니다."
+     },
+     "views": {
+      "blocks": {
+       "values": [
+        3,
+        6,
+        4,
+        9,
+        5,
+        2
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1,
+         2,
+         3,
+         4,
+         5
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 1
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {
+        "path": [
+         0
+        ]
+       }
+      },
+      "crusher": {
+       "values": [
+        2,
+        1
+       ],
+       "tags": [
+        [
+         0,
+         "y"
+        ],
+        [
+         1,
+         "x"
+        ]
+       ],
+       "marks": {
+        "dim": [
+         0,
+         1
+        ]
+       }
+      },
+      "result": {
+       "values": [
+        "1"
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      }
+     ],
+     "answer": "1"
+    }
+   ],
+   "sampleInput": "[3,6,4,9,5,2]"
+  },
+  {
+   "label": {
+    "en": "Example 2",
+    "ko": "예시 2"
+   },
+   "input": "blocks = [9]",
+   "expected": "9",
+   "frames": [
+    {
+     "caption": {
+      "en": "1 block: [9]. A max-heap will keep the heaviest on top, so the two heaviest are always two pops away.",
+      "ko": "블록 1개: [9]. 최대 힙이 가장 무거운 블록을 맨 위에 두므로, 가장 무거운 두 블록은 언제나 두 번 꺼내면 나옵니다."
+     },
+     "views": {
+      "blocks": {
+       "values": [
+        9
+       ],
+       "marks": {}
+      },
+      "heap": {
+       "nodes": [],
+       "edges": [],
+       "tags": [],
+       "nodeMarks": {}
+      },
+      "crusher": {
+       "values": [
+        "",
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "y"
+        ],
+        [
+         1,
+         "x"
+        ]
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     }
+    },
+    {
+     "caption": {
+      "en": "The 1 weights go into the heap list in their order; heapify then sifts each parent down, from the last one to the root.",
+      "ko": "무게 1개를 순서대로 힙 리스트에 넣습니다. 이어서 heapify가 마지막 부모부터 루트까지 차례로 아래로 내립니다."
+     },
+     "views": {
+      "blocks": {
+       "values": [
+        9
+       ],
+       "marks": {
+        "lit": [
+         0
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 9
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {
+        "good": [
+         0
+        ]
+       }
+      },
+      "crusher": {
+       "values": [
+        "",
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "y"
+        ],
+        [
+         1,
+         "x"
+        ]
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [],
+       "marks": {}
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "blocks",
+        "at": 0
+       },
+       "to": {
+        "view": "heap",
+        "at": 0
+       }
+      }
+     ]
+    },
+    {
+     "caption": {
+      "en": "Only one block is left in the heap, so the crushing stops: the last block weighs 9.",
+      "ko": "힙에 블록이 하나만 남아 부수기가 끝납니다. 마지막 블록의 무게는 9입니다."
+     },
+     "views": {
+      "blocks": {
+       "values": [
+        9
+       ],
+       "marks": {
+        "dim": [
+         0
+        ]
+       }
+      },
+      "heap": {
+       "nodes": [
+        {
+         "id": 0,
+         "value": 9
+        }
+       ],
+       "edges": [],
+       "tags": [
+        [
+         0,
+         "[0]"
+        ]
+       ],
+       "nodeMarks": {
+        "path": [
+         0
+        ]
+       }
+      },
+      "crusher": {
+       "values": [
+        "",
+        ""
+       ],
+       "tags": [
+        [
+         0,
+         "y"
+        ],
+        [
+         1,
+         "x"
+        ]
+       ],
+       "marks": {}
+      },
+      "result": {
+       "values": [
+        "9"
+       ],
+       "marks": {
+        "path": [
+         0
+        ]
+       }
+      }
+     },
+     "moves": [
+      {
+       "from": {
+        "view": "heap",
+        "at": 0
+       },
+       "to": {
+        "view": "result",
+        "at": 0
+       }
+      }
+     ],
+     "answer": "9"
+    }
+   ],
+   "sampleInput": "[9]"
+  }
+ ]
+}
