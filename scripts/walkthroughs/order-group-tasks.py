@@ -18,7 +18,7 @@ from collections import deque
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import driver_list, josa, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import driver_list, josa, node_order, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, move  # noqa: E402
 
 SLUG = "order-group-tasks"
@@ -41,16 +41,6 @@ wt = Walkthrough(
 )
 
 
-def node_order(n, prereqs):
-    """The nodes as the description's graph Diagram places them: in the order the edges name them, then the rest."""
-    order = []
-    for a, b in prereqs:
-        for v in (a, b):
-            if v not in order:
-                order.append(v)
-    return order + [v for v in range(n) if v not in order]
-
-
 def solve(n, prereqs, run):
     """Solution.findTaskOrder with a frame per step. Returns the answer as the Driver prints it."""
     unlocks = [[] for _ in range(n)]
@@ -65,7 +55,7 @@ def solve(n, prereqs, run):
         shown = ([leaving] if leaving is not None else []) + list(ready)
         run.frame(caption,
                   tasks={"nodes": [{"id": v, "tag": {"en": f"#{finished.index(v) + 1}", "ko": f"{finished.index(v) + 1}번째"}}
-                                   if v in finished else {"id": v} for v in node_order(n, prereqs)],
+                                   if v in finished else {"id": v} for v in node_order(prereqs, range(n))],
                          "values": {str(v): waiting[v] for v in range(n)},
                          "nodeMarks": {"dim": list(finished) if not node_path else [], "path": list(node_path),
                                        "bad": list(node_bad), "good": list(node_good), "lit": list(node_lit)},
@@ -152,7 +142,7 @@ for number, sample in enumerate(sample_cases(SLUG), start=1):
     solve(n, prereqs, run)
 # No sample has a cycle: an extra run where tasks 2 and 3 wait on each other, so the order stops at 2 of 4.
 n, prereqs = 4, [[1, 0], [2, 1], [3, 2], [2, 3]]
-run = wt.run({"en": "With a cycle", "ko": "사이클이 있을 때"}, input=f"numTasks = {n}, prereqs = {driver_list(prereqs)}",
+run = wt.run({"en": "Extra: with a cycle", "ko": "추가: 사이클이 있을 때"}, input=f"numTasks = {n}, prereqs = {driver_list(prereqs)}",
              expected="VALID", extra=True, setup={"tasks": {"edges": [{"from": a, "to": b} for a, b in prereqs]}})
 solve(n, prereqs, run)
 wt.write(walkthrough_path(SLUG))

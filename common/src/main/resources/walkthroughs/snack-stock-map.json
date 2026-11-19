@@ -3969,8 +3969,8 @@
   },
   {
    "label": {
-    "en": "Two keys, one bucket",
-    "ko": "한 버킷에 키 두 개"
+    "en": "Extra: two keys, one bucket",
+    "ko": "추가: 한 버킷에 키 두 개"
    },
    "input": "[\"ChainedMap\",\"set\",\"set\",\"lookup\",\"erase\",\"lookup\"]\n[[],[1,10],[2070,5],[2070],[2070],[2070]]",
    "expected": "[null,null,null,5,null,-1]",

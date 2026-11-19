@@ -17,7 +17,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import josa, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import centre_text, josa, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, span  # noqa: E402
 
 SLUG = "longest-palindromic-substring"
@@ -40,13 +40,6 @@ def q(text):
 
 def letters(k):
     return {"en": f"{k} {plural(k, 'letter', 'letters')}", "ko": f"{k}글자"}
-
-
-def centre_text(centre):
-    i = centre // 2
-    if centre % 2 == 0:
-        return {"en": f"Centre letter {i}", "ko": f"가운데 글자 {i}"}
-    return {"en": f"Centre gap {i}|{i + 1}", "ko": f"가운데 {josa(i, '과와')} {i + 1} 사이"}
 
 
 def solve(s, run):

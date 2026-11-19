@@ -15,7 +15,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import build_tree, driver_list, josa, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import build_tree, driver_list, josa, ordinal, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, level_order_tree, move, stack  # noqa: E402
 
 SLUG = "nth-lowest-score"
@@ -36,10 +36,6 @@ wt = Walkthrough(
         {"id": "state", "type": "vars"},
     ],
 )
-
-
-def ordinal(n):
-    return f"{n}{'th' if 10 <= n % 100 <= 20 else {1: 'st', 2: 'nd', 3: 'rd'}.get(n % 10, 'th')}"
 
 
 def place(n):

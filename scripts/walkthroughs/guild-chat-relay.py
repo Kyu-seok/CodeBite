@@ -17,7 +17,7 @@ from collections import defaultdict
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import driver_list, josa, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import driver_list, josa, node_order, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, level_order_tree, move  # noqa: E402
 
 SLUG = "guild-chat-relay"
@@ -37,16 +37,6 @@ wt = Walkthrough(
          "empty": {"en": "empty", "ko": "비어 있음"}},
     ],
 )
-
-
-def node_order(n, links):
-    """The players as the description's graph Diagram places them: in the order the links name them, then the rest."""
-    order = []
-    for a, b, _ in links:
-        for v in (a, b):
-            if v not in order:
-                order.append(v)
-    return order + [v for v in range(1, n + 1) if v not in order]
 
 
 def solve(links, n, src, run):
@@ -186,7 +176,7 @@ for number, sample in enumerate(sample_cases(SLUG), start=1):
     lines = sample["input"].split("\n")
     links, n, src = json.loads(lines[0]), int(lines[1]), int(lines[2])
     setup = {"players": {"nodes": [{"id": p, **({"tag": {"en": "src", "ko": "출발"}} if p == src else {})}
-                                   for p in node_order(n, links)],
+                                   for p in node_order(links, range(1, n + 1))],
                          "edges": [{"from": a, "to": b, "label": m} for a, b, m in links]}}
     run = sample_run(wt, number, sample, setup=setup,
                      input=f"links = {driver_list(links)}, n = {n}, src = {src}")

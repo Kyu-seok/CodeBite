@@ -87,7 +87,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
          "value": 14
         }
        ]
@@ -183,7 +186,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
          "value": 14
         }
        ]
@@ -300,7 +306,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
          "value": 14
         }
        ]
@@ -437,7 +446,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
          "value": 14
         }
        ]
@@ -590,7 +602,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
          "value": 14
         }
        ]
@@ -759,7 +774,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
          "value": 14
         }
        ]
@@ -929,7 +947,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
          "value": 14
         }
        ]
@@ -1004,7 +1025,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
          "value": 24
         }
        ]
@@ -1100,7 +1124,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
          "value": 24
         }
        ]
@@ -1221,7 +1248,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
          "value": 24
         }
        ]
@@ -1358,7 +1388,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
          "value": 24
         }
        ]
@@ -1515,7 +1548,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
          "value": 24
         }
        ]
@@ -1692,7 +1728,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
          "value": 24
         }
        ]
@@ -1889,7 +1928,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
          "value": 24
         }
        ]
@@ -2078,7 +2120,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
          "value": 24
         }
        ]
@@ -2126,7 +2171,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
          "value": -1
         }
        ]
@@ -2172,7 +2220,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
          "value": -1
         }
        ]

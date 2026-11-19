@@ -23,7 +23,7 @@ wt = Walkthrough(
     {"en": "A power of two has exactly one 1 bit. n − 1 turns that lowest 1 into 0 and the bits below it into 1s, "
            "so n & (n − 1) is 0 exactly when n had no other 1.",
      "ko": "2의 거듭제곱은 1 비트가 딱 하나입니다. n − 1은 가장 낮은 1을 0으로, 그 아래 비트를 1로 바꾸므로, "
-           "n & (n − 1)이 0이면 n에 다른 1이 없었다는 뜻입니다."},
+           "n & (n − 1) 값이 0이면 n에 다른 1이 없었다는 뜻입니다."},
     views=[
         {"id": "n", "type": "array", "title": {"en": "n (tag: place value)", "ko": "n (태그: 자릿값)"}},
         {"id": "less", "type": "array", "title": "n − 1"},
@@ -83,13 +83,13 @@ def solve(n, run):
     if ones:
         answer = "false"
         en = (f"n & (n − 1) is not 0: n has a 1 besides its lowest one, so {n} is not a power of two. Answer false.")
-        ko = f"n & (n − 1)이 0이 아니라 n에 가장 낮은 1 말고도 1이 있으므로 {josa(n, '은는')} 2의 거듭제곱이 아닙니다. 답은 false입니다."
+        ko = f"n & (n − 1) 값이 0이 아니라 n에 가장 낮은 1 말고도 1이 있으므로 {josa(n, '은는')} 2의 거듭제곱이 아닙니다. 답은 false입니다."
         marks = ({"bad": [p for p in range(width) if nb[p]]}, {"bad": ones})
     else:
         answer = "true"
         k = width - 1
         en = f"n & (n − 1) is 0: n's one 1 bit was its only one, so {n} = 2^{k}. Answer true."
-        ko = f"n & (n − 1)이 0이므로 n의 1 비트는 하나뿐이고, {n} = 2^{k}입니다. 답은 true입니다."
+        ko = f"n & (n − 1) 값이 0이므로 n의 1 비트는 하나뿐이고, {n} = 2^{k}입니다. 답은 true입니다."
         marks = ({"path": [0]}, {"path": list(range(width))})
     run.frame({"en": en, "ko": ko},
               n={**view("n", n, nb, marks[0]), "tags": tags},

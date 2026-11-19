@@ -13,7 +13,10 @@
    "id": "tree",
    "type": "tree",
    "arity": 2,
-   "title": "root",
+   "title": {
+    "en": "root",
+    "ko": "root (트리)"
+   },
    "empty": {
     "en": "empty tree",
     "ko": "빈 트리"

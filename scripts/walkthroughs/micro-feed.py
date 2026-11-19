@@ -129,7 +129,7 @@ def solve(ops, args, run):
         if op == "MicroFeed":
             result.append("null")
             frame({"en": "MicroFeed() starts an empty board, with the clock at 0; the constructor returns null.",
-                   "ko": "MicroFeed()는 시계를 0에 두고 빈 보드로 시작하며, 생성자는 null을 반환합니다."})
+                   "ko": "생성자 MicroFeed() 호출은 시계를 0에 두고 빈 보드로 시작하며 null을 반환합니다."})
         elif op == "publishPost":
             user, msg = arg
             post = (clock[0], msg)

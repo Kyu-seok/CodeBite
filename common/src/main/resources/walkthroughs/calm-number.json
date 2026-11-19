@@ -12,7 +12,10 @@
   {
    "id": "reading",
    "type": "array",
-   "title": "reading"
+   "title": {
+    "en": "reading",
+    "ko": "reading (지금 수)"
+   }
   },
   {
    "id": "digits",

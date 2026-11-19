@@ -24,7 +24,7 @@ wt = Walkthrough(
     {"en": "Product of All Other Elements", "ko": "자기 자신을 제외한 모든 원소의 곱"},
     {"en": "answer[i] is the product of everything left of i times the product of everything right of i: "
            "one pass left to right writes the left products, one pass right to left multiplies in the right ones.",
-     "ko": "answer[i]는 i 왼쪽 원소들의 곱 × i 오른쪽 원소들의 곱입니다. 왼쪽에서 오른쪽으로 한 번 훑으며 "
+     "ko": "answer[i] 값은 i 왼쪽 원소들의 곱 × i 오른쪽 원소들의 곱입니다. 왼쪽에서 오른쪽으로 한 번 훑으며 "
            "왼쪽 곱을 적고, 오른쪽에서 왼쪽으로 한 번 더 훑으며 오른쪽 곱을 곱해 넣습니다."},
     views=[
         {"id": "nums", "type": "array", "title": {"en": "nums", "ko": "nums"}},
@@ -62,7 +62,7 @@ def solve(nums, run):
 
     frame({"en": "Without division, answer[i] is (product of everything left of i) × (product of everything "
                  "right of i). First pass: walk left to right, carrying the left product in prefix, which starts at 1.",
-           "ko": "나눗셈 없이, answer[i]는 (i 왼쪽 원소들의 곱) × (i 오른쪽 원소들의 곱)입니다. 첫 번째 단계는 "
+           "ko": "나눗셈 없이, answer[i] 값은 (i 왼쪽 원소들의 곱) × (i 오른쪽 원소들의 곱)입니다. 첫 번째 단계는 "
                  "왼쪽에서 오른쪽으로 훑으며 왼쪽 곱을 prefix에 들고 가는데, prefix는 1에서 시작합니다."})
     for i in range(n):
         result[i] = prefix
@@ -107,7 +107,7 @@ def solve(nums, run):
     answer = driver_list(result)
     frame({"en": f"Both passes are done: each answer[i] is its left product times its right product, "
                  f"with nums[i] itself never multiplied in. Answer {answer}.",
-           "ko": f"두 단계가 끝나 각 answer[i]는 왼쪽 곱 × 오른쪽 곱이고, nums[i] 자신은 한 번도 곱해지지 "
+           "ko": f"두 단계가 끝나 각 answer[i] 값은 왼쪽 곱 × 오른쪽 곱이고, nums[i] 자신은 한 번도 곱해지지 "
                  f"않았습니다. 답은 {answer}입니다."},
           path=range(n), answer=answer)
     return answer

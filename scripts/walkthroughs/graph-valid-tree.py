@@ -15,7 +15,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import driver_list, josa, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import driver_list, josa, node_order, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, move  # noqa: E402
 
 SLUG = "graph-valid-tree"
@@ -32,16 +32,6 @@ wt = Walkthrough(
         {"id": "parent", "type": "array", "title": {"en": "parent (index: node)", "ko": "parent (인덱스: 노드)"}},
     ],
 )
-
-
-def node_order(n, edges):
-    """The nodes as the description's graph Diagram places them: in the order the edges name them, then the rest."""
-    order = []
-    for a, b in edges:
-        for v in (a, b):
-            if v not in order:
-                order.append(v)
-    return order + [v for v in range(n) if v not in order]
 
 
 def solve(n, edges, run):
@@ -76,7 +66,7 @@ def solve(n, edges, run):
             nm = {"lit": list(edges[edge])}
         run.frame(caption,
                   graph={"nodes": [{"id": v, "tag": {"en": f"root {root_of(v)}", "ko": f"루트 {root_of(v)}"}}
-                                   for v in node_order(n, edges)],
+                                   for v in node_order(edges, range(n))],
                          "edgeMarks": em, "nodeMarks": nm},
                   parent={"values": list(parent), "pointers": pointers or {},
                           "marks": {"lit": list(lit_cells), "good": list(good_cells)}},
@@ -147,7 +137,7 @@ for number, sample in enumerate(sample_cases(SLUG), start=1):
     run = sample_run(wt, number, sample, input=f"n = {n}, edges = {lines[1].strip()}", setup=setup)
     solve(n, edges, run)
 n, edges = 4, [[0, 1], [1, 2], [2, 0]]
-run = wt.run({"en": "n - 1 edges, with a cycle", "ko": "간선 n - 1개, 사이클 있음"},
+run = wt.run({"en": "Extra: n - 1 edges, with a cycle", "ko": "추가: 간선 n - 1개, 사이클 있음"},
              input=f"n = {n}, edges = {driver_list(edges)}", expected="false", extra=True,
              setup={"graph": {"edges": [{"from": x, "to": y} for x, y in edges]}})
 solve(n, edges, run)

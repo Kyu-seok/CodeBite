@@ -12,7 +12,10 @@
   {
    "id": "drifts",
    "type": "array",
-   "title": "drifts"
+   "title": {
+    "en": "drifts",
+    "ko": "drifts (온도 차)"
+   }
   },
   {
    "id": "result",
@@ -90,7 +93,7 @@
     {
      "caption": {
       "en": "|9| ≥ |-5|, so the right end is further from 0: 9² = 81 is the biggest square left and takes slot 4. right moves in.",
-      "ko": "|9| ≥ |-5|, right 쪽이 0에서 더 멉니다. 9² = 81이 남은 제곱 중 가장 커서 4번 칸에 들어가고, right가 안으로 옵니다."
+      "ko": "|9| ≥ |-5|, right 쪽이 0에서 더 멉니다. 9² = 81이 남은 제곱 중 가장 커서 4번 칸에 들어가고, right 포인터가 안으로 옵니다."
      },
      "views": {
       "drifts": {
@@ -164,7 +167,7 @@
     {
      "caption": {
       "en": "|-5| > |4|, so the left end is further from 0: (-5)² = 25 is the biggest square left and takes slot 3. left moves in.",
-      "ko": "|-5| > |4|, left 쪽이 0에서 더 멉니다. (-5)² = 25가 남은 제곱 중 가장 커서 3번 칸에 들어가고, left가 안으로 옵니다."
+      "ko": "|-5| > |4|, left 쪽이 0에서 더 멉니다. (-5)² = 25가 남은 제곱 중 가장 커서 3번 칸에 들어가고, left 포인터가 안으로 옵니다."
      },
      "views": {
       "drifts": {
@@ -237,7 +240,7 @@
     {
      "caption": {
       "en": "|4| ≥ |-2|, so the right end is further from 0: 4² = 16 is the biggest square left and takes slot 2. right moves in.",
-      "ko": "|4| ≥ |-2|, right 쪽이 0에서 더 멉니다. 4² = 16이 남은 제곱 중 가장 커서 2번 칸에 들어가고, right가 안으로 옵니다."
+      "ko": "|4| ≥ |-2|, right 쪽이 0에서 더 멉니다. 4² = 16이 남은 제곱 중 가장 커서 2번 칸에 들어가고, right 포인터가 안으로 옵니다."
      },
      "views": {
       "drifts": {
@@ -309,7 +312,7 @@
     {
      "caption": {
       "en": "|-2| > |0|, so the left end is further from 0: (-2)² = 4 is the biggest square left and takes slot 1. left moves in.",
-      "ko": "|-2| > |0|, left 쪽이 0에서 더 멉니다. (-2)² = 4가 남은 제곱 중 가장 커서 1번 칸에 들어가고, left가 안으로 옵니다."
+      "ko": "|-2| > |0|, left 쪽이 0에서 더 멉니다. (-2)² = 4가 남은 제곱 중 가장 커서 1번 칸에 들어가고, left 포인터가 안으로 옵니다."
      },
      "views": {
       "drifts": {
@@ -562,7 +565,7 @@
     {
      "caption": {
       "en": "|8| ≥ |-6|, so the right end is further from 0: 8² = 64 is the biggest square left and takes slot 4. right moves in.",
-      "ko": "|8| ≥ |-6|, right 쪽이 0에서 더 멉니다. 8² = 64가 남은 제곱 중 가장 커서 4번 칸에 들어가고, right가 안으로 옵니다."
+      "ko": "|8| ≥ |-6|, right 쪽이 0에서 더 멉니다. 8² = 64가 남은 제곱 중 가장 커서 4번 칸에 들어가고, right 포인터가 안으로 옵니다."
      },
      "views": {
       "drifts": {
@@ -636,7 +639,7 @@
     {
      "caption": {
       "en": "|-6| > |3|, so the left end is further from 0: (-6)² = 36 is the biggest square left and takes slot 3. left moves in.",
-      "ko": "|-6| > |3|, left 쪽이 0에서 더 멉니다. (-6)² = 36이 남은 제곱 중 가장 커서 3번 칸에 들어가고, left가 안으로 옵니다."
+      "ko": "|-6| > |3|, left 쪽이 0에서 더 멉니다. (-6)² = 36이 남은 제곱 중 가장 커서 3번 칸에 들어가고, left 포인터가 안으로 옵니다."
      },
      "views": {
       "drifts": {
@@ -709,7 +712,7 @@
     {
      "caption": {
       "en": "|-4| > |3|, so the left end is further from 0: (-4)² = 16 is the biggest square left and takes slot 2. left moves in.",
-      "ko": "|-4| > |3|, left 쪽이 0에서 더 멉니다. (-4)² = 16이 남은 제곱 중 가장 커서 2번 칸에 들어가고, left가 안으로 옵니다."
+      "ko": "|-4| > |3|, left 쪽이 0에서 더 멉니다. (-4)² = 16이 남은 제곱 중 가장 커서 2번 칸에 들어가고, left 포인터가 안으로 옵니다."
      },
      "views": {
       "drifts": {
@@ -781,7 +784,7 @@
     {
      "caption": {
       "en": "|3| ≥ |1|, so the right end is further from 0: 3² = 9 is the biggest square left and takes slot 1. right moves in.",
-      "ko": "|3| ≥ |1|, right 쪽이 0에서 더 멉니다. 3² = 9가 남은 제곱 중 가장 커서 1번 칸에 들어가고, right가 안으로 옵니다."
+      "ko": "|3| ≥ |1|, right 쪽이 0에서 더 멉니다. 3² = 9가 남은 제곱 중 가장 커서 1번 칸에 들어가고, right 포인터가 안으로 옵니다."
      },
      "views": {
       "drifts": {
@@ -1031,7 +1034,7 @@
     {
      "caption": {
       "en": "|7| ≥ |2|, so the right end is further from 0: 7² = 49 is the biggest square left and takes slot 3. right moves in.",
-      "ko": "|7| ≥ |2|, right 쪽이 0에서 더 멉니다. 7² = 49가 남은 제곱 중 가장 커서 3번 칸에 들어가고, right가 안으로 옵니다."
+      "ko": "|7| ≥ |2|, right 쪽이 0에서 더 멉니다. 7² = 49가 남은 제곱 중 가장 커서 3번 칸에 들어가고, right 포인터가 안으로 옵니다."
      },
      "views": {
       "drifts": {
@@ -1102,7 +1105,7 @@
     {
      "caption": {
       "en": "|5| ≥ |2|, so the right end is further from 0: 5² = 25 is the biggest square left and takes slot 2. right moves in.",
-      "ko": "|5| ≥ |2|, right 쪽이 0에서 더 멉니다. 5² = 25가 남은 제곱 중 가장 커서 2번 칸에 들어가고, right가 안으로 옵니다."
+      "ko": "|5| ≥ |2|, right 쪽이 0에서 더 멉니다. 5² = 25가 남은 제곱 중 가장 커서 2번 칸에 들어가고, right 포인터가 안으로 옵니다."
      },
      "views": {
       "drifts": {
@@ -1172,7 +1175,7 @@
     {
      "caption": {
       "en": "|3| ≥ |2|, so the right end is further from 0: 3² = 9 is the biggest square left and takes slot 1. right moves in.",
-      "ko": "|3| ≥ |2|, right 쪽이 0에서 더 멉니다. 3² = 9가 남은 제곱 중 가장 커서 1번 칸에 들어가고, right가 안으로 옵니다."
+      "ko": "|3| ≥ |2|, right 쪽이 0에서 더 멉니다. 3² = 9가 남은 제곱 중 가장 커서 1번 칸에 들어가고, right 포인터가 안으로 옵니다."
      },
      "views": {
       "drifts": {

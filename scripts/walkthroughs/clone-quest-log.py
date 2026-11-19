@@ -100,14 +100,14 @@ def solve(pairs, run):
             if j is None:
                 caption = {"en": f"Node {i}'s {link} is null, and copies.get(null) is null, so copy {i}'s {link} is "
                                  f"null too.",
-                           "ko": f"{i}번 노드의 {link}가 null이고 copies.get(null)도 null이므로, {i}번 사본의 {link}도 "
+                           "ko": f"{i}번 노드의 {link} 포인터가 null이고 copies.get(null)도 null이므로, {i}번 사본의 {link} 포인터도 "
                                  f"null입니다."}
                 lit = [i]
             else:
                 reached = {"en": "itself", "ko": "자기 자신을"} if j == i else {"en": f"node {j}", "ko": f"{j}번 노드를"}
                 caption = {"en": f"Node {i}'s {link} reaches {reached['en']}, so copy {i}'s {link} is "
                                  f"copies[node {j}], the copy at position {j}, never the original.",
-                           "ko": f"{i}번 노드의 {link}가 {reached['ko']} 가리키므로, {i}번 사본의 {link}는 "
+                           "ko": f"{i}번 노드의 {link} 포인터가 {reached['ko']} 가리키므로, {i}번 사본의 {link} 포인터는 "
                                  f"원본이 아니라 같은 위치의 사본 copies[{j}번 노드]입니다."}
                 lit = sorted({i, j})
             frame(caption, log_marks={"lit": lit}, log_links={"lit": [key]},

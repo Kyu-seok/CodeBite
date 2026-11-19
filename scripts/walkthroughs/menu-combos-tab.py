@@ -21,7 +21,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import driver_list, josa, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import driver_list, josa, listed, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Tree, Walkthrough, at, move  # noqa: E402
 
 SLUG = "menu-combos-tab"
@@ -41,10 +41,6 @@ wt = Walkthrough(
          "empty": {"en": "none yet", "ko": "아직 없음"}},
     ],
 )
-
-
-def listed(values):
-    return ", ".join(map(str, values))
 
 
 def solve(pastries, tab, run):

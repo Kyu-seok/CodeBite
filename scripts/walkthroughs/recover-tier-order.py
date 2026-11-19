@@ -173,7 +173,7 @@ for number, sample in enumerate(sample_cases(SLUG), start=1):
     solve(tags, run)
 # No sample reaches the cycle: every one either has an order or a tag before its own prefix.
 tags = ["a", "b", "cc", "cb"]
-run = wt.run({"en": "Rules in a cycle", "ko": "순환하는 규칙"}, input=f"tags = {driver_list(tags)}", expected="",
+run = wt.run({"en": "Extra: rules in a cycle", "ko": "추가: 순환하는 규칙"}, input=f"tags = {driver_list(tags)}", expected="",
              extra=True, setup={"letters": {"nodes": [{"id": x} for x in dict.fromkeys(c for t in tags for c in t)]}})
 solve(tags, run)
 wt.write(walkthrough_path(SLUG))

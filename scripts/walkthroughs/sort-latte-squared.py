@@ -27,7 +27,7 @@ wt = Walkthrough(
      "ko": "정렬된 배열에서 가장 큰 제곱은 양 끝 중 0에서 더 먼 쪽에 있습니다. 그래서 result를 뒤에서부터 채웁니다. "
            "매번 더 큰 쪽 끝의 제곱이 남은 마지막 칸에 들어가고, 그쪽 포인터가 안으로 옵니다."},
     views=[
-        {"id": "drifts", "type": "array", "title": "drifts"},
+        {"id": "drifts", "type": "array", "title": {"en": "drifts", "ko": "drifts (온도 차)"}},
         {"id": "result", "type": "array", "title": {"en": "result", "ko": "result (결과)"}},
     ],
 )
@@ -78,7 +78,7 @@ def solve(drifts, run):
             caption = {"en": f"{why_en}, so the {side} end is further from 0: {sq} = {v * v} is the biggest square "
                              f"left and takes slot {slot}. {side} moves in.",
                        "ko": f"{why_ko}, {side} 쪽이 0에서 더 멉니다. {sq} = {josa(v * v, '이가')} 남은 제곱 중 가장 커서 "
-                             f"{slot}번 칸에 들어가고, {side}가 안으로 옵니다."}
+                             f"{slot}번 칸에 들어가고, {side} 포인터가 안으로 옵니다."}
         frame(caption, lit=[left, right] if not same else [i], good=[slot],
               moves=[move(at("drifts", i), at("result", slot), value=f"{v * v}")])
         if i == left:

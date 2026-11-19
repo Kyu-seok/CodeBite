@@ -61,7 +61,7 @@ def solve(trays, target, run):
                          {"left": left if left <= right else None, "right": right},
                          "unread": list(range(read, n)), "marks": marks},
                   total={"values": [total], "marks": {total_mark: [0]} if total_mark else {}},
-                  state={"items": [{"label": "target", "value": target}]},
+                  state={"items": [{"label": {"en": "target", "ko": "target (목표)"}, "value": target}]},
                   moves=moves, **answer)
 
     frame({"en": f"{n} {plural(n, 'tray', 'trays')} and target = {target}. The window starts empty with a total "

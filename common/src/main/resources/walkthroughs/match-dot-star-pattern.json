@@ -6,7 +6,7 @@
  },
  "approach": {
   "en": "matches(i, j) asks whether the rest of the pattern matches the rest of s. A piece followed by * either matches nothing (skip it) or takes one letter and stays; any other piece must take exactly one letter. Each answer is kept in a table, so no call is worked out twice.",
-  "ko": "matches(i, j)는 패턴의 나머지가 s의 나머지 전체와 맞는지 묻습니다. *가 붙은 조각은 아무것도 맞추지 않고 건너뛰거나, 한 글자를 먹고 그대로 남습니다. 다른 조각은 정확히 한 글자를 맞춰야 합니다. 답은 표에 저장해 같은 호출을 두 번 계산하지 않습니다."
+  "ko": "matches(i, j) 호출은 패턴의 나머지가 s의 나머지 전체와 맞는지 묻습니다. *가 붙은 조각은 아무것도 맞추지 않고 건너뛰거나, 한 글자를 먹고 그대로 남습니다. 다른 조각은 정확히 한 글자를 맞춰야 합니다. 답은 표에 저장해 같은 호출을 두 번 계산하지 않습니다."
  },
  "views": [
   {

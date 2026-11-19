@@ -20,12 +20,18 @@
   {
    "id": "right",
    "type": "array",
-   "title": "rightFlags"
+   "title": {
+    "en": "rightFlags",
+    "ko": "rightFlags (오른쪽 팀원)"
+   }
   },
   {
    "id": "diff",
    "type": "array",
-   "title": "diff = leftFlags ^ rightFlags"
+   "title": {
+    "en": "diff = leftFlags ^ rightFlags",
+    "ko": "diff (엇갈린 비트) = leftFlags ^ rightFlags"
+   }
   },
   {
    "id": "count",

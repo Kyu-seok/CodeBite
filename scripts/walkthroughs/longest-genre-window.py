@@ -97,7 +97,7 @@ def solve(feed, run):
             frame({"en": f"start jumps from {old} to {seen} + 1 = {start}, just past the earlier '{tag}', and "
                          f"last_seen['{tag}'] becomes {i}: {en}.",
                    "ko": f"start가 {old}에서 앞의 '{tag}' 태그 바로 다음인 {seen} + 1 = {josa(start, '(으)로')} 옮겨 가고, "
-                         f"last_seen['{tag}']는 {josa(i, '이가')} 됩니다. {ko}."},
+                         f"last_seen['{tag}'] 값은 {josa(i, '이가')} 됩니다. {ko}."},
                   card_mark={"good": [tag]}, beaten=beaten, window_mark="good" if beaten else None, moves=joins)
             continue
         last_seen[tag] = i

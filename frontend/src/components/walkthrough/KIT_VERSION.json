@@ -1,6 +1,6 @@
 {
   "note": "Written by scripts/copy-walkthrough-kit.py; never edit by hand. Blobs are git blob ids.",
-  "kit_commit": "f08f89d1d7d0d99635a1889b5665795e0c7d1acb",
+  "kit_commit": "8fe70146ed6ace1bd1f539a33bbd9ad0abb78b41",
   "files": {
     "frontend/src/components/walkthrough/addresses.json": {
       "from": "kit/addresses.json",
@@ -16,7 +16,7 @@
     },
     "frontend/src/components/walkthrough/walkthrough.d.ts": {
       "from": "kit/walkthrough.d.ts",
-      "blob": "a7d4267d226257ffe08e9fdb7c798e451d69e9cc"
+      "blob": "2a5429cfe996c6ac17249889a9160a486848a5eb"
     },
     "frontend/src/components/walkthrough/walkthrough.js": {
       "from": "kit/walkthrough.js",

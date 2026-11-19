@@ -6,7 +6,7 @@
  },
  "approach": {
   "en": "Work from the border in: every 'O' on the border is safe, and so is every 'O' a safe tile touches. Mark them 'S' with a stack, then every 'O' left is captured and the 'S' tiles turn back into 'O'.",
-  "ko": "테두리에서 안쪽으로 찾습니다. 테두리의 'O'는 살아남고, 살아남은 타일에 맞닿은 'O'도 살아남습니다. 스택으로 그런 타일을 'S'로 표시하고 나면, 남은 'O'는 모두 점령되고 'S' 타일은 다시 'O'가 됩니다."
+  "ko": "테두리에서 안쪽으로 찾습니다. 테두리의 'O' 타일은 살아남고, 살아남은 타일에 맞닿은 'O' 타일도 살아남습니다. 스택으로 그런 타일에 'S' 표시를 하고 나면, 남은 'O' 타일은 모두 점령되고 'S' 타일은 다시 'O' 타일이 됩니다."
  },
  "views": [
   {
@@ -259,7 +259,7 @@
     {
      "caption": {
       "en": "Now sweep the board. The 'O' still unmarked, (1,1), (2,2), cannot reach the border: they are captured and become 'X'.",
-      "ko": "이제 보드를 훑습니다. 표시되지 않은 'O' 타일 (1,1), (2,2) 칸은 테두리에 닿을 수 없어 점령되고 'X'가 됩니다."
+      "ko": "이제 보드를 훑습니다. 표시되지 않은 'O' 타일 (1,1), (2,2) 칸은 테두리에 닿을 수 없어 점령되어 'X' 타일이 됩니다."
      },
      "views": {
       "board": {
@@ -338,7 +338,7 @@
     {
      "caption": {
       "en": "The safe tiles turn back into 'O'. Answer: [[\"X\",\"X\",\"X\",\"X\"],[\"X\",\"X\",\"X\",\"X\"],[\"X\",\"X\",\"X\",\"X\"],[\"X\",\"X\",\"X\",\"O\"]].",
-      "ko": "안전한 'S' 타일은 다시 'O'가 됩니다. 답은 [[\"X\",\"X\",\"X\",\"X\"],[\"X\",\"X\",\"X\",\"X\"],[\"X\",\"X\",\"X\",\"X\"],[\"X\",\"X\",\"X\",\"O\"]]입니다."
+      "ko": "안전한 'S' 타일은 다시 'O' 타일이 됩니다. 답은 [[\"X\",\"X\",\"X\",\"X\"],[\"X\",\"X\",\"X\",\"X\"],[\"X\",\"X\",\"X\",\"X\"],[\"X\",\"X\",\"X\",\"O\"]]입니다."
      },
      "views": {
       "board": {
@@ -544,7 +544,7 @@
     {
      "caption": {
       "en": "No 'O' was captured, and the safe tiles turn back into 'O'. Answer: [[\"O\"]].",
-      "ko": "점령된 'O'는 없고, 안전한 'S' 타일은 다시 'O'가 됩니다. 답은 [[\"O\"]]입니다."
+      "ko": "점령된 'O' 타일은 없고, 안전한 'S' 타일은 다시 'O' 타일이 됩니다. 답은 [[\"O\"]]입니다."
      },
      "views": {
       "board": {
@@ -786,7 +786,7 @@
     {
      "caption": {
       "en": "No 'O' was captured, and the safe tiles turn back into 'O'. Answer: [[\"O\",\"X\"],[\"O\",\"X\"]].",
-      "ko": "점령된 'O'는 없고, 안전한 'S' 타일은 다시 'O'가 됩니다. 답은 [[\"O\",\"X\"],[\"O\",\"X\"]]입니다."
+      "ko": "점령된 'O' 타일은 없고, 안전한 'S' 타일은 다시 'O' 타일이 됩니다. 답은 [[\"O\",\"X\"],[\"O\",\"X\"]]입니다."
      },
      "views": {
       "board": {

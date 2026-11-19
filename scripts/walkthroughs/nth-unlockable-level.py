@@ -16,7 +16,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import josa, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import josa, ordinal, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, move  # noqa: E402
 
 SLUG = "nth-unlockable-level"
@@ -37,10 +37,6 @@ wt = Walkthrough(
     ],
 )
 PRODUCT_TAGS = [[k, f"×{f}"] for k, f in enumerate(FACTORS)]
-
-
-def ordinal(k):
-    return f"{k}{'th' if 10 <= k % 100 <= 20 else {1: 'st', 2: 'nd', 3: 'rd'}.get(k % 10, 'th')}"
 
 
 def solve(n, run):

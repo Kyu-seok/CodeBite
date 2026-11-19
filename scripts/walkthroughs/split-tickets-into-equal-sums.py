@@ -119,7 +119,7 @@ for number, sample in enumerate(sample_cases(SLUG), start=1):
     run = sample_run(wt, number, sample, input=f"tickets = {sample['input']}")
     solve(tickets, run)
 extra = [1, 2, 4]
-solve(extra, wt.run({"en": "Odd total", "ko": "홀수 합"}, input=f"tickets = {json.dumps(extra, separators=(',', ':'))}",
+solve(extra, wt.run({"en": "Extra: an odd total", "ko": "추가: 홀수 합"}, input=f"tickets = {json.dumps(extra, separators=(',', ':'))}",
                     expected="false", extra=True))
 wt.write(walkthrough_path(SLUG))
 print(walkthrough_path(SLUG))

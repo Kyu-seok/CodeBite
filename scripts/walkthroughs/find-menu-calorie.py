@@ -48,7 +48,7 @@ def solve(menu, target, run):
                         "marks": {"dim": [list(c) for c in gone if c not in bad],
                                   "bad": [list(c) for c in bad], "lit": [list(c) for c in lit],
                                   "path": [list(c) for c in path]}},
-                  state={"items": [{"label": "target", "value": target}]},
+                  state={"items": [{"label": {"en": "target", "ko": "target (목표)"}, "value": target}]},
                   **answer)
 
     frame({"en": f"Look for {target} in the {m} × {n} chart. Start at the top-right cell, row 0, column {n - 1}: "

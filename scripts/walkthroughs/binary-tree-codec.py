@@ -29,9 +29,9 @@ wt = Walkthrough(
      "ko": "트리를 한 층씩 적되 없는 자식마다 # 토큰을 적습니다. 그러면 큐 순서대로 각 노드 뒤에 오는 토큰 두 개가 바로 "
            "그 노드의 두 자식이라서, 같은 큐로 다시 읽으면 트리가 그대로 복원됩니다."},
     views=[
-        {"id": "root", "type": "tree", "arity": 2, "title": "root",
+        {"id": "root", "type": "tree", "arity": 2, "title": {"en": "root", "ko": "root (트리)"},
          "empty": {"en": "empty tree", "ko": "빈 트리"}},
-        {"id": "queue", "type": "queue", "title": "queue", "empty": {"en": "empty", "ko": "비어 있음"}},
+        {"id": "queue", "type": "queue", "title": {"en": "queue", "ko": "큐"}, "empty": {"en": "empty", "ko": "비어 있음"}},
         {"id": "data", "type": "array", "title": {"en": "data, split at commas", "ko": "data (쉼표로 나눈 토큰)"}},
         {"id": "copy", "type": "tree", "arity": 2, "title": {"en": "deserialize(data)", "ko": "deserialize(data) (복원한 트리)"},
          "empty": {"en": "nothing yet", "ko": "아직 없음"}},

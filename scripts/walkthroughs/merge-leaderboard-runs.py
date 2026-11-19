@@ -70,7 +70,7 @@ def solve(a_values, b_values, run):
 
     def describe(name, nodes):
         if not nodes:
-            return {"en": f"{name} is empty (null)", "ko": f"{name}는 비어 있고(null)"}
+            return {"en": f"{name} is empty (null)", "ko": f"{name} 리스트는 비어 있고(null)"}
         return {"en": f"{name} holds {driver_list([n.val for n in nodes])}",
                 "ko": f"{name} = {driver_list([n.val for n in nodes])}"}
 
@@ -94,9 +94,9 @@ def solve(a_values, b_values, run):
             tail.next, run_b = run_b, run_b.next
             stepped = run_b
         if stepped is None:
-            on = {"en": f"{side} steps off its end to null", "ko": f"{side}는 끝을 지나 null이 됩니다"}
+            on = {"en": f"{side} steps off its end to null", "ko": f"{side} 포인터는 끝을 지나 null이 됩니다"}
         else:
-            on = {"en": f"{side} steps to {stepped.val}", "ko": f"{side}는 {josa(stepped.val, '(으)로')} 갑니다"}
+            on = {"en": f"{side} steps to {stepped.val}", "ko": f"{side} 포인터는 {josa(stepped.val, '(으)로')} 갑니다"}
         frame({"en": f"{cmp['en']}, so {took.val} from {side} is next: tail.next = {took.val}, and {on['en']}.",
                "ko": f"{cmp['ko']}이므로 {side}의 {josa(took.val, '이가')} 다음입니다. tail.next = {took.val}이고, "
                      f"{on['ko']}."},
@@ -114,12 +114,12 @@ def solve(a_values, b_values, run):
     elif old is rest:
         last = {"en": f"{'runA' if side == 'runB' else 'runB'} is null, so tail.next = {side}: "
                       f"{name(tail)} already points to {rest.val}, and the rest of {side} follows as it is.",
-                "ko": f"{'runA' if side == 'runB' else 'runB'}가 null이므로 tail.next = {side}입니다. {name(tail)}의 "
+                "ko": f"{'runA' if side == 'runB' else 'runB'} 포인터가 null이므로 tail.next = {side}입니다. {name(tail)}의 "
                       f"화살표는 이미 {josa(rest.val, '을를')} 가리키고, {side}의 나머지가 그대로 이어집니다."}
     else:
         last = {"en": f"{'runA' if side == 'runB' else 'runB'} is null, so tail.next = {side}: "
                       f"{name(tail)} now points to {rest.val}, and the rest of {side} follows as it is.",
-                "ko": f"{'runA' if side == 'runB' else 'runB'}가 null이므로 tail.next = {side}입니다. 이제 "
+                "ko": f"{'runA' if side == 'runB' else 'runB'} 포인터가 null이므로 tail.next = {side}입니다. 이제 "
                       f"{name(tail)}의 화살표가 {josa(rest.val, '을를')} 가리키고, {side}의 나머지가 그대로 이어집니다."}
     frame(last, {"lit": [nid(tail)] + ([nid(rest)] if rest else [])}, link=tail if old is not rest else None,
           cut=(tail, old) if old is not rest else None)

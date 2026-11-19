@@ -15,7 +15,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import josa, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import cell_name, josa, listed_cells, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, move  # noqa: E402
 
 SLUG = "shortest-dungeon-path"
@@ -37,14 +37,6 @@ wt = Walkthrough(
 )
 
 
-def name(p):
-    return f"{p[0]},{p[1]}"
-
-
-def listed(cells):
-    return ", ".join(f"({name(p)})" for p in cells)
-
-
 def solve(board, run):
     """Solution.shortestPathLength with a frame per step. Returns nothing; the last frame carries the answer."""
     n = len(board)
@@ -58,19 +50,19 @@ def solve(board, run):
                   board={"cells": board, "tags": [[r, c, str(t)] for (r, c), t in tiles.items()],
                          "marks": {"path": [list(p) for p in path], "bad": [list(p) for p in bad],
                                    "good": [list(p) for p in good], "lit": [list(p) for p in lit]}},
-                  queue={"values": [name(p) for p in queue], "tags": [[i, str(tiles[p])] for i, p in enumerate(queue)],
+                  queue={"values": [cell_name(p) for p in queue], "tags": [[i, str(tiles[p])] for i, p in enumerate(queue)],
                          "marks": queue_marks or {}},
                   moves=moves, **answer)
 
     end = (n - 1, n - 1)
-    frame({"en": f"A {n}×{n} board. Walk from (0,0) to ({name(end)}), stepping to any of the 8 tiles around, "
+    frame({"en": f"A {n}×{n} board. Walk from (0,0) to ({cell_name(end)}), stepping to any of the 8 tiles around, "
                  f"and count the tiles on the shortest path.",
-           "ko": f"{n}×{n} 보드입니다. 주변 8칸 중 어디로든 걸어 (0,0)에서 ({name(end)})까지 가며, 가장 짧은 경로의 "
+           "ko": f"{n}×{n} 보드입니다. 주변 8칸 중 어디로든 걸어 (0,0)에서 ({cell_name(end)})까지 가며, 가장 짧은 경로의 "
                  f"칸 수를 셉니다."})
     blocked = [p for p in ((0, 0), end) if board[p[0]][p[1]]]
     if blocked:
-        frame({"en": f"{listed(blocked)} is blocked, so no path can use it: answer -1.",
-               "ko": f"{listed(blocked)} 칸이 막혀 있어 어떤 경로도 지날 수 없습니다: 답은 -1입니다."},
+        frame({"en": f"{listed_cells(blocked)} is blocked, so no path can use it: answer -1.",
+               "ko": f"{listed_cells(blocked)} 칸이 막혀 있어 어떤 경로도 지날 수 없습니다: 답은 -1입니다."},
               bad=blocked, answer="-1")
         return
     tiles[(0, 0)] = 1
@@ -87,9 +79,9 @@ def solve(board, run):
             return
         k = leaving
         gone = queue[:k]
-        frame({"en": f"{listed(gone)} {plural(k, 'leaves', 'leave')} the front: no tile around "
+        frame({"en": f"{listed_cells(gone)} {plural(k, 'leaves', 'leave')} the front: no tile around "
                      f"{plural(k, 'it', 'them')} is walkable and not reached yet.",
-               "ko": f"{listed(gone)} 칸이 큐 앞에서 나오지만, 주변에 통과 가능하면서 아직 닿지 않은 칸이 없습니다."},
+               "ko": f"{listed_cells(gone)} 칸이 큐 앞에서 나오지만, 주변에 통과 가능하면서 아직 닿지 않은 칸이 없습니다."},
               lit=gone, queue_marks={"lit": list(range(k))}, moves=[move(at("queue", i)) for i in range(k)])
         del queue[:k]
         leaving = 0
@@ -104,9 +96,9 @@ def solve(board, run):
             while route[-1] in parent:
                 route.append(parent[route[-1]])
             route.reverse()
-            frame({"en": f"({name(end)}) leaves the front: it is the far corner, reached on a path of {t} tiles, "
-                         f"{' → '.join(f'({name(p)})' for p in route)}. Answer: {t}.",
-                   "ko": f"({name(end)}) 칸이 큐 앞에서 나옵니다. 반대편 모서리이고 {' → '.join(f'({name(p)})' for p in route)} "
+            frame({"en": f"({cell_name(end)}) leaves the front: it is the far corner, reached on a path of {t} tiles, "
+                         f"{' → '.join(f'({cell_name(p)})' for p in route)}. Answer: {t}.",
+                   "ko": f"({cell_name(end)}) 칸이 큐 앞에서 나옵니다. 반대편 모서리이고 {' → '.join(f'({cell_name(p)})' for p in route)} "
                          f"경로의 칸 {t}개로 닿았으므로 답은 {t}입니다."},
                   path=route, queue_marks={"path": [0]}, answer=str(t))
             return
@@ -127,11 +119,11 @@ def solve(board, run):
             tiles[p] = t + 1
             parent[p] = (r, c)
         k = len(added)
-        frame({"en": f"({name((r, c))}) leaves the front with {t} {plural(t, 'tile', 'tiles')}: {listed(added)} "
+        frame({"en": f"({cell_name((r, c))}) leaves the front with {t} {plural(t, 'tile', 'tiles')}: {listed_cells(added)} "
                      f"{plural(k, 'is', 'are')} walkable and not reached yet, so {plural(k, 'it gets', 'they get')} "
                      f"{t} + 1 = {t + 1}.",
-               "ko": f"칸 수 {t}인 ({name((r, c))}) 칸이 큐 앞에서 나옵니다. 통과 가능하고 아직 닿지 않은 "
-                     f"{listed(added)} 칸은 {t} + 1 = {josa(t + 1, '을를')} 받습니다."},
+               "ko": f"칸 수 {t}인 ({cell_name((r, c))}) 칸이 큐 앞에서 나옵니다. 통과 가능하고 아직 닿지 않은 "
+                     f"{listed_cells(added)} 칸은 {t} + 1 = {josa(t + 1, '을를')} 받습니다."},
               lit=[(r, c)], good=added, queue_marks={"lit": [0]},
               moves=[move(at("queue", 0), at("board", list(p)), value=str(t + 1)) for p in added])
         queue.pop(0)
@@ -141,11 +133,11 @@ def solve(board, run):
                      f"{plural(t, 'tile', 'tiles')}.",
                "ko": f"새로 닿은 칸 {k}개가 칸 수 {t}인 칸들 뒤로 큐에 들어갑니다."},
               good=added, queue_marks={"good": list(range(back, len(queue)))},
-              moves=[move(at("board", list(p)), at("queue", back + j), value=name(p)) for j, p in enumerate(added)])
+              moves=[move(at("board", list(p)), at("queue", back + j), value=cell_name(p)) for j, p in enumerate(added)])
         i = 0
     flush()
-    frame({"en": f"The queue is empty and ({name(end)}) was never reached: answer -1.",
-           "ko": f"큐가 비었는데 ({name(end)}) 칸에 끝내 닿지 못했으므로 답은 -1입니다."},
+    frame({"en": f"The queue is empty and ({cell_name(end)}) was never reached: answer -1.",
+           "ko": f"큐가 비었는데 ({cell_name(end)}) 칸에 끝내 닿지 못했으므로 답은 -1입니다."},
           bad=[end], answer="-1")
 
 

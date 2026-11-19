@@ -27,7 +27,7 @@ wt = Walkthrough(
     views=[
         {"id": "numeral", "type": "array",
          "title": {"en": "numeral (tag: value, under: added)", "ko": "numeral (태그: 값, 아래: 더한 값)"}},
-        {"id": "total", "type": "output", "title": "total"},
+        {"id": "total", "type": "output", "title": {"en": "total", "ko": "total (합계)"}},
     ],
 )
 

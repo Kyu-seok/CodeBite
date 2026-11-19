@@ -27,7 +27,7 @@ wt = Walkthrough(
     {"en": "Split Candy Bar for Max Product", "ko": "곱이 최대가 되게 사탕 막대 쪼개기"},
     {"en": "Fill best[k], the largest product from a bar of k, kept whole or split. A bar of total breaks off a "
            "first piece, and the rest is either kept whole or split at its own best, whichever is larger.",
-     "ko": "best[k]는 길이 k 막대를 그대로 두거나 쪼개서 얻는 가장 큰 곱입니다. 길이 total 막대는 첫 조각을 "
+     "ko": "best[k] 값은 길이 k 막대를 그대로 두거나 쪼개서 얻는 가장 큰 곱입니다. 길이 total 막대는 첫 조각을 "
            "떼어 내고, 나머지는 그대로 두거나 나머지의 best로 쪼개는 것 중 큰 쪽을 씁니다."},
     views=[
         {"id": "best", "type": "array",

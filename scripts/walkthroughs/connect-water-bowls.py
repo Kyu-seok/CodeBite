@@ -106,7 +106,7 @@ def solve(bowls, run):
                 best[i] = cost
                 via[i] = node
                 frame({"en": f"Hose {node}–{i}: {calc}, shorter than best[{i}] = {show(old)}, so best[{i}] becomes {cost}.",
-                       "ko": f"호스 {node}–{i}: {calc}. best[{i}] = {show(old)}보다 짧으므로 best[{i}]를 "
+                       "ko": f"호스 {node}–{i}: {calc}. best[{i}] = {show(old)}보다 짧으므로 best[{i}] 값을 "
                              f"{josa(cost, '(으)로')} 바꿉니다."},
                       lit_nodes=[node], good_nodes=[i], good_edge=e,
                       best_marks={"path": [v for v in range(n) if in_tree[v]], "good": [i]},
@@ -115,7 +115,7 @@ def solve(bowls, run):
                 frame({"en": f"Hose {node}–{i}: {calc}, not shorter than best[{i}] = {best[i]} (from bowl {via[i]}), "
                              f"so best[{i}] stays.",
                        "ko": f"호스 {node}–{i}: {calc}. best[{i}] = {best[i]}(그릇 {via[i]}번에서 오는 호스)보다 짧지 "
-                             f"않으므로 best[{i}]는 그대로입니다."},
+                             f"않으므로 best[{i}] 값은 그대로입니다."},
                       lit_nodes=[node, i], lit_edge=e,
                       best_marks={"path": [v for v in range(n) if in_tree[v]], "lit": [i]},
                       moves=[move(at("bowls", [node, i]), value=cost)])

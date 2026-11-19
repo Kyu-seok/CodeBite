@@ -13,7 +13,10 @@
    "id": "root",
    "type": "tree",
    "arity": 2,
-   "title": "root",
+   "title": {
+    "en": "root",
+    "ko": "root (트리)"
+   },
    "empty": {
     "en": "empty tree",
     "ko": "빈 트리"
@@ -22,7 +25,10 @@
   {
    "id": "queue",
    "type": "queue",
-   "title": "queue",
+   "title": {
+    "en": "queue",
+    "ko": "큐"
+   },
    "empty": {
     "en": "empty",
     "ko": "비어 있음"

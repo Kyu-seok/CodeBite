@@ -1452,8 +1452,8 @@
   },
   {
    "label": {
-    "en": "Odd total",
-    "ko": "홀수 합"
+    "en": "Extra: an odd total",
+    "ko": "추가: 홀수 합"
    },
    "input": "tickets = [1,2,4]",
    "expected": "false",

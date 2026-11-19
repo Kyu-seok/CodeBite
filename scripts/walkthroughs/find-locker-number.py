@@ -57,7 +57,7 @@ def solve(lockers, target, run):
                   lockers={"values": lockers, "pointers": pointers, "spans": spans,
                            "marks": {"path": list(path), "lit": list(lit),
                                      "dim": [i for i in range(n) if i not in lit] if done and not path else []}},
-                  state={"items": [{"label": "target", "value": target}]},
+                  state={"items": [{"label": {"en": "target", "ko": "target (목표)"}, "value": target}]},
                   **answer)
 
     frame({"en": f"Look for locker {target} among {n} lockers: the range starts as the whole array, low = 0 and "

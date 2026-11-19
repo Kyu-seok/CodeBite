@@ -72,7 +72,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
          "value": 3
         }
        ]
@@ -131,7 +134,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
          "value": 3
         }
        ]
@@ -191,7 +197,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
          "value": 3
         }
        ]
@@ -227,7 +236,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
          "value": 3
         }
        ]
@@ -287,7 +299,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
          "value": 15
         }
        ]
@@ -347,7 +362,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
          "value": 15
         }
        ]
@@ -407,7 +425,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
          "value": 15
         }
        ]
@@ -466,7 +487,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
          "value": 15
         }
        ]
@@ -508,7 +532,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
          "value": 15
         }
        ]
@@ -562,7 +589,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
          "value": 3
         }
        ]
@@ -615,7 +645,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
          "value": 3
         }
        ]
@@ -645,7 +678,10 @@
       "state": {
        "items": [
         {
-         "label": "target",
+         "label": {
+          "en": "target",
+          "ko": "target (목표)"
+         },
          "value": 3
         }
        ]

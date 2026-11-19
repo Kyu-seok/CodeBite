@@ -68,7 +68,7 @@ def solve(ops, args, run):
                                      "cells": [pair(e) for e in h] + [""] * (width - len(h))}
                                     for c, h in enumerate(history)],
                            "marks": cell_marks or {}},
-                  state={"items": [{"label": "snap_id", "value": snap_id}]},
+                  state={"items": [{"label": {"en": "snap_id", "ko": "snap_id (다음 스냅샷 id)"}, "value": snap_id}]},
                   result={"values": result, "marks": {"path": list(range(len(result)))} if path else {"good": fresh}},
                   moves=moves, **answer)
 

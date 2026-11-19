@@ -621,7 +621,7 @@
     {
      "caption": {
       "en": "The window combo[0..3] is full: its peak is the deque's front, beat 2 with 8.",
-      "ko": "윈도 combo[0..3]가 찼습니다. 최댓값은 덱의 맨 앞, 2번 비트의 8입니다."
+      "ko": "combo[0..3] 윈도가 찼습니다. 최댓값은 덱의 맨 앞, 2번 비트의 8입니다."
      },
      "views": {
       "combo": {
@@ -816,7 +816,7 @@
     {
      "caption": {
       "en": "The window combo[1..4] is full: its peak is the deque's front, beat 2 with 8.",
-      "ko": "윈도 combo[1..4]가 찼습니다. 최댓값은 덱의 맨 앞, 2번 비트의 8입니다."
+      "ko": "combo[1..4] 윈도가 찼습니다. 최댓값은 덱의 맨 앞, 2번 비트의 8입니다."
      },
      "views": {
       "combo": {
@@ -1195,7 +1195,7 @@
     {
      "caption": {
       "en": "The window combo[2..5] is full: its peak is the deque's front, beat 2 with 8.",
-      "ko": "윈도 combo[2..5]가 찼습니다. 최댓값은 덱의 맨 앞, 2번 비트의 8입니다."
+      "ko": "combo[2..5] 윈도가 찼습니다. 최댓값은 덱의 맨 앞, 2번 비트의 8입니다."
      },
      "views": {
       "combo": {
@@ -1542,7 +1542,7 @@
     {
      "caption": {
       "en": "The window combo[3..6] is full: its peak is the deque's front, beat 6 with 9.",
-      "ko": "윈도 combo[3..6]가 찼습니다. 최댓값은 덱의 맨 앞, 6번 비트의 9입니다."
+      "ko": "combo[3..6] 윈도가 찼습니다. 최댓값은 덱의 맨 앞, 6번 비트의 9입니다."
      },
      "views": {
       "combo": {
@@ -1720,7 +1720,7 @@
     {
      "caption": {
       "en": "The window combo[4..7] is full: its peak is the deque's front, beat 6 with 9.",
-      "ko": "윈도 combo[4..7]가 찼습니다. 최댓값은 덱의 맨 앞, 6번 비트의 9입니다."
+      "ko": "combo[4..7] 윈도가 찼습니다. 최댓값은 덱의 맨 앞, 6번 비트의 9입니다."
      },
      "views": {
       "combo": {
@@ -2159,7 +2159,7 @@
     {
      "caption": {
       "en": "The window combo[0..1] is full: its peak is the deque's front, beat 1 with 6.",
-      "ko": "윈도 combo[0..1]가 찼습니다. 최댓값은 덱의 맨 앞, 1번 비트의 6입니다."
+      "ko": "combo[0..1] 윈도가 찼습니다. 최댓값은 덱의 맨 앞, 1번 비트의 6입니다."
      },
      "views": {
       "combo": {
@@ -2384,7 +2384,7 @@
     {
      "caption": {
       "en": "The window combo[1..2] is full: its peak is the deque's front, beat 2 with 6.",
-      "ko": "윈도 combo[1..2]가 찼습니다. 최댓값은 덱의 맨 앞, 2번 비트의 6입니다."
+      "ko": "combo[1..2] 윈도가 찼습니다. 최댓값은 덱의 맨 앞, 2번 비트의 6입니다."
      },
      "views": {
       "combo": {
@@ -2730,7 +2730,7 @@
     {
      "caption": {
       "en": "The window combo[0..1] is full: its peak is the deque's front, beat 0 with 5.",
-      "ko": "윈도 combo[0..1]가 찼습니다. 최댓값은 덱의 맨 앞, 0번 비트의 5입니다."
+      "ko": "combo[0..1] 윈도가 찼습니다. 최댓값은 덱의 맨 앞, 0번 비트의 5입니다."
      },
      "views": {
       "combo": {
@@ -3003,7 +3003,7 @@
     {
      "caption": {
       "en": "The window combo[1..2] is full: its peak is the deque's front, beat 1 with 3.",
-      "ko": "윈도 combo[1..2]가 찼습니다. 최댓값은 덱의 맨 앞, 1번 비트의 3입니다."
+      "ko": "combo[1..2] 윈도가 찼습니다. 최댓값은 덱의 맨 앞, 1번 비트의 3입니다."
      },
      "views": {
       "combo": {
@@ -3339,7 +3339,7 @@
     {
      "caption": {
       "en": "The window combo[2..3] is full: its peak is the deque's front, beat 3 with 2.",
-      "ko": "윈도 combo[2..3]가 찼습니다. 최댓값은 덱의 맨 앞, 3번 비트의 2입니다."
+      "ko": "combo[2..3] 윈도가 찼습니다. 최댓값은 덱의 맨 앞, 3번 비트의 2입니다."
      },
      "views": {
       "combo": {

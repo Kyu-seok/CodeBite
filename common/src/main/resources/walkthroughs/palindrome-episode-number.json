@@ -20,7 +20,10 @@
   {
    "id": "rev",
    "type": "array",
-   "title": "text[::-1]"
+   "title": {
+    "en": "text[::-1]",
+    "ko": "text[::-1] (뒤집은 text)"
+   }
   }
  ],
  "runs": [

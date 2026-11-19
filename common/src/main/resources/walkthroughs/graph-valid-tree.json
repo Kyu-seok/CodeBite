@@ -1397,8 +1397,8 @@
   },
   {
    "label": {
-    "en": "n - 1 edges, with a cycle",
-    "ko": "간선 n - 1개, 사이클 있음"
+    "en": "Extra: n - 1 edges, with a cycle",
+    "ko": "추가: 간선 n - 1개, 사이클 있음"
    },
    "input": "n = 4, edges = [[0,1],[1,2],[2,0]]",
    "expected": "false",

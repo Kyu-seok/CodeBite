@@ -27,7 +27,7 @@ wt = Walkthrough(
      "ko": "내려가기만 하는 꼬리는 이미 가장 큰 배치이므로, 바꿀 곳은 꼬리 바로 왼쪽입니다. 그 ID를 꼬리에서 "
            "바로 다음으로 큰 ID와 맞바꾸고, 꼬리를 뒤집어 오름차순으로 만듭니다."},
     views=[
-        {"id": "order", "type": "array", "title": "lineup"},
+        {"id": "order", "type": "array", "title": {"en": "lineup", "ko": "lineup (발표 순서)"}},
     ],
 )
 

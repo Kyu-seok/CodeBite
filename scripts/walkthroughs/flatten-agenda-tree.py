@@ -31,7 +31,7 @@ wt = Walkthrough(
      "ko": "전위 순회에서 노드의 오른쪽 서브트리는 왼쪽 서브트리의 마지막 노드 바로 다음에 옵니다. 그 노드는 왼쪽 자식에서 "
            "오른쪽으로만 내려가면 나옵니다. 오른쪽 서브트리를 그 아래에 달고, 왼쪽 서브트리를 오른쪽으로 옮긴 뒤, 오른쪽으로 "
            "한 칸 내려가 다음 노드에서 같은 일을 합니다."},
-    views=[{"id": "tree", "type": "tree", "arity": 2, "title": "root",
+    views=[{"id": "tree", "type": "tree", "arity": 2, "title": {"en": "root", "ko": "root (트리)"},
             "empty": {"en": "empty tree", "ko": "빈 트리"}}],
 )
 

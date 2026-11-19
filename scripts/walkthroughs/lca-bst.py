@@ -28,7 +28,7 @@ wt = Walkthrough(
      "ko": "BST에서는 노드의 왼쪽이 모두 작고 오른쪽이 모두 큽니다. root에서 내려가며 p와 q가 둘 다 작으면 왼쪽, 둘 다 "
            "크면 오른쪽으로 갑니다. 두 값이 처음으로 서로 다른 쪽으로 갈리는 노드, 또는 둘 중 하나인 노드가 최소 공통 "
            "조상입니다."},
-    views=[{"id": "tree", "type": "tree", "arity": 2, "title": "root"}],
+    views=[{"id": "tree", "type": "tree", "arity": 2, "title": {"en": "root", "ko": "root (트리)"}}],
 )
 
 

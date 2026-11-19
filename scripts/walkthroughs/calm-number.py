@@ -25,7 +25,7 @@ wt = Walkthrough(
      "ko": "수를 각 자릿수 제곱의 합으로 바꾸기를 1이 되거나(차분함) 이미 본 수가 다시 나올 때까지(1에 닿지 않는 "
            "고리) 반복합니다. 본 수를 담은 집합이 반복을 잡아냅니다."},
     views=[
-        {"id": "reading", "type": "array", "title": "reading"},
+        {"id": "reading", "type": "array", "title": {"en": "reading", "ko": "reading (지금 수)"}},
         {"id": "digits", "type": "array", "title": {"en": "digits (under: square)", "ko": "자릿수 (아래: 제곱)"},
          "empty": {"en": "not split yet", "ko": "아직 나누지 않음"}},
         {"id": "seen", "type": "set", "title": {"en": "seen", "ko": "seen (본 수)"},

@@ -29,7 +29,7 @@ wt = Walkthrough(
         {"id": "left", "type": "array", "title": {"en": "left (tag: place)", "ko": "left (태그: 자리)"}},
         {"id": "right", "type": "array", "title": {"en": "right (tag: place)", "ko": "right (태그: 자리)"}},
         {"id": "digits", "type": "array", "title": {"en": "digits (tag: place)", "ko": "digits (태그: 자리)"}},
-        {"id": "carry", "type": "array", "title": "carry"},
+        {"id": "carry", "type": "array", "title": {"en": "carry", "ko": "carry (올림)"}},
     ],
 )
 
