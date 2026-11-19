@@ -65,8 +65,8 @@ def solve(values, run):
     n = len(tree["nodes"])
     frame({"en": f"A tree of {n} {plural(n, 'hero', 'heroes')} with root {root.val}. Count from the root down, carrying "
                  f"the highest number above each node; above the root there is none (−∞).",
-           "ko": f"root가 {root.val}인 영웅 {n}명의 트리입니다. root부터 내려가며 각 노드 위쪽의 가장 큰 값을 넘겨주며 "
-                 f"셉니다. root 위에는 아무도 없습니다(−∞)."})
+           "ko": f"root가 {root.val}인 영웅 {n}명의 트리입니다. root 위에는 아무도 없으므로(−∞) root부터 내려가며 각 "
+                 f"노드 위쪽의 가장 큰 값을 넘겨주며 셉니다."})
 
     def count(node, best, parent=None):
         if node is None:

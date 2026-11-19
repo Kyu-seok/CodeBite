@@ -75,7 +75,7 @@ def solve(values, run):
         n = len(tree["nodes"])
         frame({"en": f"A tree of {n} {plural(n, 'node', 'nodes')}. serialize starts with the root {root.val} alone in "
                      f"the queue; the tokens will number {full}: one per node and one # per missing child.",
-               "ko": f"노드 {n}개짜리 트리입니다. serialize는 root {root.val} 하나를 큐에 넣고 시작합니다. 토큰은 "
+               "ko": f"노드 {n}개짜리 트리이고, serialize는 root {root.val} 하나를 큐에 넣고 시작합니다. 토큰은 "
                      f"노드마다 하나, 없는 자식마다 # 하나씩 모두 {full}개가 됩니다."})
 
     # serialize
@@ -153,7 +153,7 @@ def solve(values, run):
                  "ko": f". 새 노드를 큐에 넣습니다."})
         frame({"en": f"Take {copy_val[node]} from the front: the next two tokens, {left} and {right}, are its children: "
                      f"{said[0]['en']}, {said[1]['en']}{tail['en']}",
-               "ko": f"맨 앞의 {copy_val[node]} 값을 꺼냅니다. 다음 두 토큰 {left}, {right} 토큰이 그 자식입니다: "
+               "ko": f"맨 앞의 {copy_val[node]} 값을 꺼내 다음 두 토큰 {left}, {right} 토큰을 자식으로 읽습니다: "
                      f"{said[0]['ko']}, {said[1]['ko']}{tail['ko']}"},
               data_marks={"lit": [i, i + 1]}, copy_marks={"lit": [node], "good": made},
               q_marks={"lit": [0], "good": list(range(len(queue) - joined, len(queue)))}, moves=moves or None)
@@ -169,7 +169,7 @@ def solve(values, run):
     printed = driver_list(tree_values(built[0]))
     frame({"en": f"Every token is read and the queue is empty. The rebuilt tree is {printed}, the same as root in "
                  f"shape and in every value.",
-           "ko": f"토큰을 모두 읽어 큐가 비었습니다. 복원한 트리는 {printed}입니다. 모양과 모든 값이 root와 같습니다."},
+           "ko": f"토큰을 모두 읽어 큐가 비었습니다. 복원한 트리는 모양과 모든 값이 root와 같은 {printed}입니다."},
           root_marks={}, copy_marks={"path": [n["id"] for n in copy.nodes]}, answer=printed)
     return printed
 

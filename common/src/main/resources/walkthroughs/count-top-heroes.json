@@ -31,7 +31,7 @@
     {
      "caption": {
       "en": "A tree of 6 heroes with root 4. Count from the root down, carrying the highest number above each node; above the root there is none (−∞).",
-      "ko": "root가 4인 영웅 6명의 트리입니다. root부터 내려가며 각 노드 위쪽의 가장 큰 값을 넘겨주며 셉니다. root 위에는 아무도 없습니다(−∞)."
+      "ko": "root가 4인 영웅 6명의 트리입니다. root 위에는 아무도 없으므로(−∞) root부터 내려가며 각 노드 위쪽의 가장 큰 값을 넘겨주며 셉니다."
      },
      "views": {
       "tree": {
@@ -783,7 +783,7 @@
     {
      "caption": {
       "en": "A tree of 5 heroes with root 5. Count from the root down, carrying the highest number above each node; above the root there is none (−∞).",
-      "ko": "root가 5인 영웅 5명의 트리입니다. root부터 내려가며 각 노드 위쪽의 가장 큰 값을 넘겨주며 셉니다. root 위에는 아무도 없습니다(−∞)."
+      "ko": "root가 5인 영웅 5명의 트리입니다. root 위에는 아무도 없으므로(−∞) root부터 내려가며 각 노드 위쪽의 가장 큰 값을 넘겨주며 셉니다."
      },
      "views": {
       "tree": {
@@ -1358,7 +1358,7 @@
     {
      "caption": {
       "en": "A tree of 1 hero with root 7. Count from the root down, carrying the highest number above each node; above the root there is none (−∞).",
-      "ko": "root가 7인 영웅 1명의 트리입니다. root부터 내려가며 각 노드 위쪽의 가장 큰 값을 넘겨주며 셉니다. root 위에는 아무도 없습니다(−∞)."
+      "ko": "root가 7인 영웅 1명의 트리입니다. root 위에는 아무도 없으므로(−∞) root부터 내려가며 각 노드 위쪽의 가장 큰 값을 넘겨주며 셉니다."
      },
      "views": {
       "tree": {

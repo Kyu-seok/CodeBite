@@ -62,7 +62,7 @@
     {
      "caption": {
       "en": "A tree of 5 nodes. serialize starts with the root 1 alone in the queue; the tokens will number 11: one per node and one # per missing child.",
-      "ko": "노드 5개짜리 트리입니다. serialize는 root 1 하나를 큐에 넣고 시작합니다. 토큰은 노드마다 하나, 없는 자식마다 # 하나씩 모두 11개가 됩니다."
+      "ko": "노드 5개짜리 트리이고, serialize는 root 1 하나를 큐에 넣고 시작합니다. 토큰은 노드마다 하나, 없는 자식마다 # 하나씩 모두 11개가 됩니다."
      },
      "views": {
       "root": {
@@ -1151,7 +1151,7 @@
     {
      "caption": {
       "en": "Take 1 from the front: the next two tokens, 2 and 3, are its children: left child 2, right child 3; they join the queue.",
-      "ko": "맨 앞의 1 값을 꺼냅니다. 다음 두 토큰 2, 3 토큰이 그 자식입니다: 왼쪽 자식 2, 오른쪽 자식 3. 새 노드를 큐에 넣습니다."
+      "ko": "맨 앞의 1 값을 꺼내 다음 두 토큰 2, 3 토큰을 자식으로 읽습니다: 왼쪽 자식 2, 오른쪽 자식 3. 새 노드를 큐에 넣습니다."
      },
      "views": {
       "root": {
@@ -1287,7 +1287,7 @@
     {
      "caption": {
       "en": "Take 2 from the front: the next two tokens, # and #, are its children: no left child, no right child; nothing joins the queue.",
-      "ko": "맨 앞의 2 값을 꺼냅니다. 다음 두 토큰 #, # 토큰이 그 자식입니다: 왼쪽 자식 없음, 오른쪽 자식 없음. 큐에 들어가는 것은 없습니다."
+      "ko": "맨 앞의 2 값을 꺼내 다음 두 토큰 #, # 토큰을 자식으로 읽습니다: 왼쪽 자식 없음, 오른쪽 자식 없음. 큐에 들어가는 것은 없습니다."
      },
      "views": {
       "root": {
@@ -1374,7 +1374,7 @@
     {
      "caption": {
       "en": "Take 3 from the front: the next two tokens, 4 and 5, are its children: left child 4, right child 5; they join the queue.",
-      "ko": "맨 앞의 3 값을 꺼냅니다. 다음 두 토큰 4, 5 토큰이 그 자식입니다: 왼쪽 자식 4, 오른쪽 자식 5. 새 노드를 큐에 넣습니다."
+      "ko": "맨 앞의 3 값을 꺼내 다음 두 토큰 4, 5 토큰을 자식으로 읽습니다: 왼쪽 자식 4, 오른쪽 자식 5. 새 노드를 큐에 넣습니다."
      },
      "views": {
       "root": {
@@ -1528,7 +1528,7 @@
     {
      "caption": {
       "en": "Take 4 from the front: the next two tokens, # and #, are its children: no left child, no right child; nothing joins the queue.",
-      "ko": "맨 앞의 4 값을 꺼냅니다. 다음 두 토큰 #, # 토큰이 그 자식입니다: 왼쪽 자식 없음, 오른쪽 자식 없음. 큐에 들어가는 것은 없습니다."
+      "ko": "맨 앞의 4 값을 꺼내 다음 두 토큰 #, # 토큰을 자식으로 읽습니다: 왼쪽 자식 없음, 오른쪽 자식 없음. 큐에 들어가는 것은 없습니다."
      },
      "views": {
       "root": {
@@ -1633,7 +1633,7 @@
     {
      "caption": {
       "en": "Take 5 from the front: the next two tokens, # and #, are its children: no left child, no right child; nothing joins the queue.",
-      "ko": "맨 앞의 5 값을 꺼냅니다. 다음 두 토큰 #, # 토큰이 그 자식입니다: 왼쪽 자식 없음, 오른쪽 자식 없음. 큐에 들어가는 것은 없습니다."
+      "ko": "맨 앞의 5 값을 꺼내 다음 두 토큰 #, # 토큰을 자식으로 읽습니다: 왼쪽 자식 없음, 오른쪽 자식 없음. 큐에 들어가는 것은 없습니다."
      },
      "views": {
       "root": {
@@ -1737,7 +1737,7 @@
     {
      "caption": {
       "en": "Every token is read and the queue is empty. The rebuilt tree is [1,2,3,null,null,4,5], the same as root in shape and in every value.",
-      "ko": "토큰을 모두 읽어 큐가 비었습니다. 복원한 트리는 [1,2,3,null,null,4,5]입니다. 모양과 모든 값이 root와 같습니다."
+      "ko": "토큰을 모두 읽어 큐가 비었습니다. 복원한 트리는 모양과 모든 값이 root와 같은 [1,2,3,null,null,4,5]입니다."
      },
      "views": {
       "root": {
@@ -2019,7 +2019,7 @@
     {
      "caption": {
       "en": "A tree of 1 node. serialize starts with the root 1 alone in the queue; the tokens will number 3: one per node and one # per missing child.",
-      "ko": "노드 1개짜리 트리입니다. serialize는 root 1 하나를 큐에 넣고 시작합니다. 토큰은 노드마다 하나, 없는 자식마다 # 하나씩 모두 3개가 됩니다."
+      "ko": "노드 1개짜리 트리이고, serialize는 root 1 하나를 큐에 넣고 시작합니다. 토큰은 노드마다 하나, 없는 자식마다 # 하나씩 모두 3개가 됩니다."
      },
      "views": {
       "root": {
@@ -2330,7 +2330,7 @@
     {
      "caption": {
       "en": "Take 1 from the front: the next two tokens, # and #, are its children: no left child, no right child; nothing joins the queue.",
-      "ko": "맨 앞의 1 값을 꺼냅니다. 다음 두 토큰 #, # 토큰이 그 자식입니다: 왼쪽 자식 없음, 오른쪽 자식 없음. 큐에 들어가는 것은 없습니다."
+      "ko": "맨 앞의 1 값을 꺼내 다음 두 토큰 #, # 토큰을 자식으로 읽습니다: 왼쪽 자식 없음, 오른쪽 자식 없음. 큐에 들어가는 것은 없습니다."
      },
      "views": {
       "root": {
@@ -2385,7 +2385,7 @@
     {
      "caption": {
       "en": "Every token is read and the queue is empty. The rebuilt tree is [1], the same as root in shape and in every value.",
-      "ko": "토큰을 모두 읽어 큐가 비었습니다. 복원한 트리는 [1]입니다. 모양과 모든 값이 root와 같습니다."
+      "ko": "토큰을 모두 읽어 큐가 비었습니다. 복원한 트리는 모양과 모든 값이 root와 같은 [1]입니다."
      },
      "views": {
       "root": {
