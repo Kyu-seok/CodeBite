@@ -155,7 +155,7 @@ The route table (path, page, auth) is in `docs/agents/frontend.md`; a new route 
 
 ### Issue tracker
 
-GitHub Issues in `Kyu-seok/CodeBite`. Reading, filing or commenting on an issue: the commands in `docs/agents/issue-tracker.md` (`scripts/gh-ticket.sh` files one, `--json` reads one with its comments).
+GitHub Issues in `Kyu-seok/CodeBite`. Reading, filing or commenting on an issue: the commands in `docs/agents/issue-tracker.md` (`scripts/gh-ticket.sh` files one; `gh issue view <n> --json …` reads one with its comments).
 
 ### Triage labels
 
