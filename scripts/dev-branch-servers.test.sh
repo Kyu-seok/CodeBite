@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Checks scripts/dev-branch-servers.sh without Docker or running servers: the branch database name
 # (which also prefixes its Kafka topics and groups) and its ownership, the Redis index claim, which
-# processes it would stop, the port picking, and that it refuses to run from the main checkout.
+# processes it would stop, the port picking, what orphans lists and drop <name> deletes (Kafka and
+# Redis leftovers of a dropped database among them), and that it refuses to run from the main checkout.
 set -euo pipefail
 
 script="$(cd "$(dirname "$0")" && pwd)/dev-branch-servers.sh"
@@ -233,6 +234,7 @@ root=/work/wt-a db=codebite_mine
 docker() { echo "docker $*" >> "$fake/calls"; }
 psql_admin() { echo "psql $1" >> "$fake/calls"; [[ "$1" == SELECT* ]] && cat "$fake/db-state" 2>/dev/null; return 0; }
 run_flyway() { echo "flyway $1" >> "$fake/calls"; }
+container_state() { echo running; }
 flyway_version() { echo 260; }
 rm -f "$fake/db-state"
 out=$(cmd_migrate 2>&1) && code=0 || code=$?
@@ -252,7 +254,7 @@ echo "x$(db_owner_comment /work/wt-b)" > "$fake/db-state"
 out=$(cmd_migrate 2>&1) && code=0 || code=$?
 check "migrate refuses another worktree's database" "$code" 1
 [[ "$(cat "$fake/calls")" != *flyway* ]] || { echo "FAIL: migrate ran Flyway on another worktree's database"; fail=1; }
-unset -f docker psql_admin run_flyway flyway_version
+unset -f docker psql_admin run_flyway flyway_version container_state
 # shellcheck source=SCRIPTDIR/dev-branch-servers.sh
 source "$script"
 
@@ -265,23 +267,26 @@ mkdir -p "$fake/live-wt"; state_base="$fake/state-base"
 psql_admin() {
   echo "psql $1" >> "$fake/calls"
   case "$1" in
-    *shobj_description*LIKE*) printf 'codebite_gone_1\t%s\ncodebite_live_2\t%s\n' "$fake/gone-wt" "$fake/live-wt" ;;
+    *shobj_description*LIKE*) printf 'codebite_gone_aaaaaaaa\t%s\ncodebite_live_bbbbbbbb\t%s\n' "$fake/gone-wt" "$fake/live-wt" ;;
+    "SELECT datname FROM pg_database") printf 'postgres\ncodebite_gone_aaaaaaaa\ncodebite_live_bbbbbbbb\n' ;;
   esac
   return 0
 }
 kafka_bin() {
   echo "kafka $*" >> "$fake/calls"
   case "$1 $2" in
-    "kafka-topics.sh --list") printf 'codebite_gone_1-submission-events\ncodebite_live_2-submission-events\n' ;;
+    "kafka-topics.sh --list") printf 'codebite_gone_aaaaaaaa-submission-events\ncodebite_live_bbbbbbbb-submission-events\n' ;;
   esac
 }
 flush_owned_redis_index() { echo "redis flush $db" >> "$fake/calls"; }
 branch_pids() { :; }
 container_state() { echo running; }
-check "orphans lists a database whose worktree is gone" "$(orphan_databases)" "codebite_gone_1	$fake/gone-wt"
+live_worktree_databases() { :; }
+docker() { echo "docker $*" >> "$fake/calls"; }
+check "orphans lists a database whose worktree is gone" "$(orphan_databases)" "codebite_gone_aaaaaaaa	$fake/gone-wt"
 out=$(cmd_orphans)
-[[ "$out" == *codebite_gone_1* && "$out" != *codebite_live_2* ]] || { echo "FAIL: orphans printed: $out"; fail=1; }
-for name in codebite_live_2 codebite codebite_nope; do
+[[ "$out" == *codebite_gone_aaaaaaaa* && "$out" != *codebite_live_bbbbbbbb* ]] || { echo "FAIL: orphans printed: $out"; fail=1; }
+for name in codebite_live_bbbbbbbb codebite codebite_nope; do
   : > "$fake/calls"
   out=$(cmd_drop_orphan "$name" 2>&1) && code=0 || code=$?
   check "drop $name by name refused" "$code" 1
@@ -289,46 +294,51 @@ for name in codebite_live_2 codebite codebite_nope; do
     || { echo "FAIL: drop $name dropped something: $(cat "$fake/calls")"; fail=1; }
 done
 : > "$fake/calls"
-out=$(cmd_drop_orphan codebite_gone_1 2>&1) && code=0 || code=$?
+out=$(cmd_drop_orphan codebite_gone_aaaaaaaa 2>&1) && code=0 || code=$?
 check "drop an orphan by name" "$code" 0
 calls=$(cat "$fake/calls")
-[[ "$calls" == *'DROP DATABASE IF EXISTS "codebite_gone_1"'* ]] || { echo "FAIL: the orphan wasn't dropped: $calls"; fail=1; }
-[[ "$calls" == *"--delete --topic codebite_gone_1-submission-events"* && "$calls" != *"topic codebite_live_2"* ]] \
+[[ "$calls" == *'DROP DATABASE IF EXISTS "codebite_gone_aaaaaaaa"'* ]] || { echo "FAIL: the orphan wasn't dropped: $calls"; fail=1; }
+[[ "$calls" == *"--delete --topic codebite_gone_aaaaaaaa-submission-events"* && "$calls" != *"topic codebite_live_bbbbbbbb"* ]] \
   || { echo "FAIL: drop should delete only the orphan's topics: $calls"; fail=1; }
-[[ "$calls" == *"redis flush codebite_gone_1"* ]] || { echo "FAIL: drop should flush the orphan's Redis index: $calls"; fail=1; }
+[[ "$calls" == *"redis flush codebite_gone_aaaaaaaa"* ]] || { echo "FAIL: drop should flush the orphan's Redis index: $calls"; fail=1; }
 # Kafka and Redis stopped: the database is still dropped, and each skipped cleanup is one line,
 # with no docker call that could only print "container ... is not running".
 container_state() { case "$1" in codebite-postgres) echo running ;; *) echo stopped ;; esac; }
 # The script's own kafka_bin and Redis functions again, over a docker that only fails; the other
 # fakes stay.
-kept=$(declare -f psql_admin branch_pids container_state)
+kept=$(declare -f psql_admin branch_pids container_state live_worktree_databases)
 # shellcheck source=SCRIPTDIR/dev-branch-servers.sh
 source "$script"
 eval "$kept"
-docker() { echo "docker $*" >> "$fake/calls"; echo "Error response from daemon: container 3f2a9c is not running" >&2; return 1; }
-mkdir -p "$state_base/codebite_gone_1"
+docker() {
+  echo "docker $*" >> "$fake/calls"
+  [[ "$*" == "exec codebite-postgres pg_isready"* ]] && return 0
+  echo "Error response from daemon: container 3f2a9c is not running" >&2; return 1
+}
+mkdir -p "$state_base/codebite_gone_aaaaaaaa"
 : > "$fake/calls"
-out=$(cmd_drop_orphan codebite_gone_1 2>&1) && code=0 || code=$?
+out=$(cmd_drop_orphan codebite_gone_aaaaaaaa 2>&1) && code=0 || code=$?
 check "drop with Kafka and Redis stopped still succeeds" "$code" 0
-check "drop with Kafka and Redis stopped says what it skipped" "$out" "database codebite_gone_1: dropped
-codebite-kafka isn't running: topics and groups prefixed codebite_gone_1 left behind, and no later drop finds them
-codebite-redis isn't running: the Redis index of codebite_gone_1 left claimed, and no later drop finds it"
+check "drop with Kafka and Redis stopped says what it skipped" "$out" "database codebite_gone_aaaaaaaa: dropped
+codebite-kafka isn't running: topics and groups prefixed codebite_gone_aaaaaaaa left behind; once it runs: scripts/dev-branch-servers.sh drop codebite_gone_aaaaaaaa
+codebite-redis isn't running: the Redis index of codebite_gone_aaaaaaaa left claimed; once it runs: scripts/dev-branch-servers.sh drop codebite_gone_aaaaaaaa"
 calls=$(cat "$fake/calls")
-[[ "$calls" == *'DROP DATABASE IF EXISTS "codebite_gone_1"'* ]] || { echo "FAIL: the database wasn't dropped with Kafka and Redis stopped: $calls"; fail=1; }
-[[ "$calls" != *docker* ]] || { echo "FAIL: drop called docker on a stopped container: $calls"; fail=1; }
-[[ ! -d "$state_base/codebite_gone_1" ]] || { echo "FAIL: drop with Kafka and Redis stopped left its state directory"; fail=1; }
+[[ "$calls" == *'DROP DATABASE IF EXISTS "codebite_gone_aaaaaaaa"'* ]] || { echo "FAIL: the database wasn't dropped with Kafka and Redis stopped: $calls"; fail=1; }
+[[ "$calls" != *"docker exec codebite-kafka"* && "$calls" != *"docker exec codebite-redis"* ]] \
+  || { echo "FAIL: drop called docker on a stopped container: $calls"; fail=1; }
+[[ ! -d "$state_base/codebite_gone_aaaaaaaa" ]] || { echo "FAIL: drop with Kafka and Redis stopped left its state directory"; fail=1; }
 # Only Redis stopped: Kafka is still cleaned.
 container_state() { case "$1" in codebite-redis) echo stopped ;; *) echo running ;; esac; }
 : > "$fake/calls"
-out=$(cmd_drop_orphan codebite_gone_1 2>&1) && code=0 || code=$?
+out=$(cmd_drop_orphan codebite_gone_aaaaaaaa 2>&1) && code=0 || code=$?
 [[ "$out" == *"codebite-redis isn't running"* && "$out" != *"codebite-kafka isn't running"* && "$(cat "$fake/calls")" == *"docker exec codebite-kafka"* ]] \
   || { echo "FAIL: with only Redis stopped, Kafka should still be cleaned: $out / $(cat "$fake/calls")"; fail=1; }
-# A Docker daemon that doesn't answer is named as such.
+# A Docker daemon that doesn't answer is named as such (drop asks Postgres first, so this is a
+# daemon that stopped answering after it).
 container_state() { echo daemon; }
-out=$(cmd_drop_orphan codebite_gone_1 2>&1) && code=0 || code=$?
-[[ "$out" == *"the Docker daemon doesn't answer: topics and groups prefixed codebite_gone_1 left behind, and no later drop finds them"* ]] \
+out=$(use_database codebite_gone_aaaaaaaa; drop_branch_data "scripts/dev-branch-servers.sh drop codebite_gone_aaaaaaaa" 2>&1)
+[[ "$out" == *"the Docker daemon doesn't answer: topics and groups prefixed codebite_gone_aaaaaaaa left behind; once it runs: scripts/dev-branch-servers.sh drop codebite_gone_aaaaaaaa"* ]] \
   || { echo "FAIL: drop with the daemon down should say so: $out"; fail=1; }
-unset -f docker
 
 # start refuses, saying what to start, when Kafka or Redis doesn't run; a daemon that doesn't
 # answer is said once.
@@ -347,10 +357,283 @@ check "start goes on with Kafka and Redis running" "$code/$out" "0/"
 
 branch_pids() { echo 301; }
 : > "$fake/calls"
-out=$(cmd_drop_orphan codebite_gone_1 2>&1) && code=0 || code=$?
+out=$(cmd_drop_orphan codebite_gone_aaaaaaaa 2>&1) && code=0 || code=$?
 check "drop by name refused while its servers run" "$code" 1
 [[ "$(cat "$fake/calls")" != *DROP* ]] || { echo "FAIL: dropped an orphan whose servers run"; fail=1; }
-unset -f psql_admin branch_pids container_state
+unset -f psql_admin branch_pids container_state live_worktree_databases docker
+# shellcheck source=SCRIPTDIR/dev-branch-servers.sh
+source "$script"
+
+# --- Kafka topics and groups, and Redis indexes, left behind ----------------------------------
+
+# A drop that skipped Kafka or Redis (its container stopped) leaves them once its database is
+# gone. kafka_owner is the one rule orphans and drop use to tell a branch's topic or group
+# ($db-<name>, as start names them) from the shared servers' own and from lookalikes.
+b=codebite_feat_x_0a1b2c3d
+check "a branch's topic" "$(kafka_owner "$b-submission-events")" "$b"
+check "a branch's group" "$(kafka_owner "$b-codebite-worker")" "$b"
+check "a branch whose name ends like a hash" "$(kafka_owner codebite_a_12345678_deadbeef-x)" codebite_a_12345678_deadbeef
+for name in submission-events submission-events-admin submission-results github-imports \
+  codebite-worker codebite-worker-admin codebite-stats codebite-streaks codebite-github-imports \
+  codebite-solution-commits codebite-sse-61514665-d682-4023-b3c2-f1a6c7730aff __consumer_offsets \
+  "$b" "$b-" "${b}0-submission-events" "${b%?}-submission-events" codebite_feat_x_0A1B2C3D-x \
+  codebite__x_0a1b2c3d-x codebite_0a1b2c3d-x codebite_Feat_0a1b2c3d-x "codebite_fé_0a1b2c3d-x" \
+  "codebite_feat x_0a1b2c3d-x" "x$b-submission-events" "codebite_$(printf 'a%.0s' {1..46})_0a1b2c3d-x"; do
+  check "'$name' is no branch's" "$(kafka_owner "$name")" ""
+done
+
+# The fixture: databases that exist, Kafka topics and groups, and each Redis index's owner key.
+# codebite_gone_33333333 and codebite_a_12345678 are gone and left things; codebite_kept_22222222
+# exists, codebite_wt_44444444 is gone but a live worktree's, and the rest are the shared servers'
+# own or lookalikes.
+fx="$fake/leftovers"
+reset_fixture() {
+  rm -rf "$fx"; mkdir -p "$fx"
+  printf '%s\n' postgres codebite codebite_orphan_11111111 codebite_kept_22222222 \
+    codebite_a_12345678_deadbeef > "$fx/databases"
+  printf '%s\n' submission-events submission-events-admin submission-results github-imports \
+    codebite_gone_33333333-submission-events codebite_gone_33333333-github-imports \
+    codebite_kept_22222222-submission-events codebite_kept_222222220-submission-events \
+    codebite_a_12345678-submission-events codebite_a_12345678_deadbeef-submission-events \
+    codebite_wt_44444444-submission-events > "$fx/topics"
+  printf '%s\n' codebite-worker codebite-stats codebite-sse-61514665-d682-4023-b3c2-f1a6c7730aff \
+    codebite_gone_33333333-codebite-worker codebite_kept_22222222-codebite-worker > "$fx/groups"
+  echo codebite_gone_33333333 > "$fx/redis-0"         # the shared backend's: never read or flushed
+  echo codebite_gone_33333333 > "$fx/redis-1"
+  echo codebite_kept_22222222 > "$fx/redis-2"
+  echo codebite > "$fx/redis-3"                       # not a branch database's name
+  echo "codebite_gone_33333333 x" > "$fx/redis-4"
+  echo codebite_wt_44444444 > "$fx/redis-5"
+  echo codebite_a_12345678 > "$fx/redis-7"
+  : > "$fx/calls"
+}
+psql_fails=""
+psql_admin() {
+  echo "psql $1" >> "$fx/calls"
+  [[ -z "$psql_fails" ]] || return 2
+  case "$1" in
+    "SELECT datname FROM pg_database") cat "$fx/databases" ;;
+    *shobj_description*LIKE*) printf 'codebite_orphan_11111111\t%s\ncodebite_kept_22222222\t%s\n' "$fake/gone-wt" "$fake/live-wt" ;;
+    "SELECT 'x' ||"*) cat "$fx/db-state" 2>/dev/null ;;
+  esac
+  return 0
+}
+kafka_bin() {
+  local f="$fx/groups"
+  echo "kafka $*" >> "$fx/calls"
+  [[ "$1" == kafka-topics.sh ]] && f="$fx/topics"
+  case "$2" in
+    --list) cat "$f" ;;
+    --delete) { echo "$4" | tr , '\n' | grep -vxFf - "$f" || true; } > "$f.new"; mv "$f.new" "$f" ;;
+  esac
+}
+redis_cmd() {
+  echo "redis $*" >> "$fx/calls"
+  [[ "$1" == 0 ]] && echo "$*" >> "$fx/redis0-touched"
+  case "$2" in
+    GET) cat "$fx/redis-$1" 2>/dev/null || echo ;;
+    FLUSHDB) rm -f "$fx/redis-$1"; echo OK ;;
+  esac
+}
+pg_state=running kafka_state=running redis_state=running
+container_state() {
+  case "$1" in codebite-kafka) echo "$kafka_state" ;; codebite-redis) echo "$redis_state" ;; *) echo "$pg_state" ;; esac
+}
+docker() { echo "docker $*" >> "$fx/calls"; }
+live_worktree_databases() { printf '%s\n' codebite_kept_22222222 codebite_wt_44444444; }
+branch_pids() { :; }
+state_base="$fake/leftover-states"
+shared_topics="submission-events
+submission-events-admin
+submission-results
+github-imports"
+untouched() {  # what no drop here may delete: all but the two gone databases' topics and groups
+  [[ "$(cat "$fx/topics")" == "$shared_topics
+codebite_kept_22222222-submission-events
+codebite_kept_222222220-submission-events
+codebite_a_12345678_deadbeef-submission-events
+codebite_wt_44444444-submission-events" \
+    && "$(cat "$fx/groups")" == "codebite-worker
+codebite-stats
+codebite-sse-61514665-d682-4023-b3c2-f1a6c7730aff
+codebite_kept_22222222-codebite-worker" \
+    && "$(cat "$fx/redis-0" "$fx/redis-2" "$fx/redis-3" "$fx/redis-4" "$fx/redis-5")" == "codebite_gone_33333333
+codebite_kept_22222222
+codebite
+codebite_gone_33333333 x
+codebite_wt_44444444" && ! -f "$fx/redis0-touched" ]]
+}
+
+reset_fixture
+check "what gone databases left" "$(orphan_leftovers | LC_ALL=C sort)" "codebite_a_12345678	redis 7
+codebite_a_12345678	topic
+codebite_gone_33333333	group
+codebite_gone_33333333	redis 1
+codebite_gone_33333333	topic
+codebite_gone_33333333	topic"
+out=$(cmd_orphans 2>&1) && code=0 || code=$?
+check "orphans lists what gone databases left" "$code
+$out" "0
+branch databases whose worktree is gone:
+  codebite_orphan_11111111  (was $fake/gone-wt)
+branch databases already dropped whose Kafka topics or Redis index are left:
+  codebite_a_12345678  (1 Kafka topic, Redis index 7)
+  codebite_gone_33333333  (2 Kafka topics, 1 Kafka group, Redis index 1)
+drop one, with its Kafka topics and Redis index: scripts/dev-branch-servers.sh drop <name>"
+[[ ! -f "$fx/redis0-touched" ]] || { echo "FAIL: orphans read Redis index 0"; fail=1; }
+
+# drop <name> takes only a name orphans lists: never a live database or worktree's, a lookalike,
+# a shared name, an owner key's odd value, a pattern, or a listed name on a line of several.
+for name in codebite_kept_22222222 codebite_wt_44444444 codebite_a_12345678_deadbeef \
+  codebite_kept_222222220 codebite submission-events codebite-worker codebite_zz_99999999 \
+  'codebite_gone_33333333 x' 'codebite_gone_3333333.' '.*' 'codebite_gone_33333333-submission-events' \
+  $'x\ncodebite_gone_33333333' $'codebite_gone_33333333\ncodebite_kept_22222222' $'codebite_orphan_11111111\nx'; do
+  reset_fixture
+  out=$(cmd_drop_orphan "$name" 2>&1) && code=0 || code=$?
+  check "drop '$name' refused" "$code" 1
+  [[ "$(cat "$fx/calls")" != *DROP* && "$(cat "$fx/calls")" != *--delete* && "$(cat "$fx/calls")" != *FLUSHDB* ]] \
+    || { echo "FAIL: drop '$name' deleted something: $(cat "$fx/calls")"; fail=1; }
+done
+
+reset_fixture
+mkdir -p "$state_base/codebite_gone_33333333"
+out=$(cmd_drop_orphan codebite_gone_33333333 2>&1) && code=0 || code=$?
+check "drop a gone database's leftovers by name" "$code
+$out" "0
+database codebite_gone_33333333: none (dropped before)
+Kafka topics: deleted codebite_gone_33333333-submission-events codebite_gone_33333333-github-imports
+Kafka groups: deleted codebite_gone_33333333-codebite-worker
+Redis database 1: flushed"
+[[ "$(cat "$fx/calls")" != *DROP* ]] || { echo "FAIL: drop of a gone database's leftovers dropped a database"; fail=1; }
+[[ ! -f "$fx/redis-1" && "$(cat "$fx/redis-7")" == codebite_a_12345678 ]] || { echo "FAIL: drop flushed the wrong Redis index"; fail=1; }
+[[ ! -d "$state_base/codebite_gone_33333333" ]] || { echo "FAIL: drop left the state directory"; fail=1; }
+out=$(cmd_drop_orphan codebite_a_12345678 2>&1) && code=0 || code=$?
+check "drop a database that is a prefix of another's name" "$code
+$out" "0
+database codebite_a_12345678: none (dropped before)
+Kafka topics: deleted codebite_a_12345678-submission-events
+Redis database 7: flushed"
+untouched || { echo "FAIL: drop deleted another's: $(cat "$fx/topics" "$fx/groups" "$fx/redis-"*)"; fail=1; }
+check "once dropped, orphans lists the database only" "$(cmd_orphans 2>&1)" "branch databases whose worktree is gone:
+  codebite_orphan_11111111  (was $fake/gone-wt)
+drop one, with its Kafka topics and Redis index: scripts/dev-branch-servers.sh drop <name>"
+check "kafka_names_of never takes an empty database for one" "$(kafka_names_of kafka-topics.sh '')" ""
+
+# A database lookup that fails, or answers without the postgres database every server has, is no
+# "none exist": read so, an existing database's topics and Redis index would be listed and deleted.
+# codebite_a_12345678_deadbeef exists, is no live worktree's and has a topic.
+lookup_failed="dev-branch-servers.sh: couldn't list the databases in codebite-postgres; rerun"
+for broken in fails empty; do
+  for cmd in cmd_orphans 'cmd_drop_orphan codebite_a_12345678_deadbeef' 'cmd_drop_orphan codebite_gone_33333333'; do
+    reset_fixture
+    if [[ $broken == fails ]]; then psql_fails=1; else : > "$fx/databases"; fi
+    # shellcheck disable=SC2086  # the name is a word of its own
+    out=$($cmd 2>&1) && code=0 || code=$?
+    psql_fails=""
+    [[ "$code" == 1 && "$out" == *"$lookup_failed"* && "$out" != *codebite_a_12345678_deadbeef* ]] \
+      || { echo "FAIL: $cmd when the database lookup $broken: $code $out"; fail=1; }
+    [[ "$(cat "$fx/calls")" != *DROP* && "$(cat "$fx/calls")" != *--delete* && "$(cat "$fx/calls")" != *FLUSHDB* ]] \
+      || { echo "FAIL: $cmd when the database lookup $broken deleted something: $(cat "$fx/calls")"; fail=1; }
+  done
+done
+
+# With Kafka or Redis stopped, orphans says in one line where it didn't look, and lists the rest.
+reset_fixture
+kafka_state=stopped
+out=$(cmd_orphans 2>&1)
+check "orphans with Kafka stopped" "$out" "branch databases whose worktree is gone:
+  codebite_orphan_11111111  (was $fake/gone-wt)
+branch databases already dropped whose Kafka topics or Redis index are left:
+  codebite_a_12345678  (Redis index 7)
+  codebite_gone_33333333  (Redis index 1)
+drop one, with its Kafka topics and Redis index: scripts/dev-branch-servers.sh drop <name>
+Kafka topics and groups not looked at: the codebite-kafka container isn't running; start it: docker compose -f infra/docker-compose.yml up -d kafka"
+[[ "$(cat "$fx/calls")" != *kafka\ * ]] || { echo "FAIL: orphans asked a stopped Kafka: $(cat "$fx/calls")"; fail=1; }
+kafka_state=running redis_state=stopped
+check "orphans with Redis stopped" "$(cmd_orphans 2>&1)" "branch databases whose worktree is gone:
+  codebite_orphan_11111111  (was $fake/gone-wt)
+branch databases already dropped whose Kafka topics or Redis index are left:
+  codebite_a_12345678  (1 Kafka topic)
+  codebite_gone_33333333  (2 Kafka topics, 1 Kafka group)
+drop one, with its Kafka topics and Redis index: scripts/dev-branch-servers.sh drop <name>
+Redis indexes not looked at: the codebite-redis container isn't running; start it: docker compose -f infra/docker-compose.yml up -d redis"
+redis_state=running
+printf '%s\n' "${shared_topics}" > "$fx/topics"; : > "$fx/groups"; rm -f "$fx"/redis-[1-9]*
+psql_admin() {
+  case "$1" in "SELECT datname FROM pg_database") cat "$fx/databases" ;; esac
+  return 0
+}
+check "orphans with nothing left" "$(cmd_orphans 2>&1)" \
+  "no branch database outlives its worktree, and no dropped one left Kafka topics or a Redis index"
+kafka_state=stopped
+check "orphans with nothing found and Kafka stopped claims nothing about Kafka" "$(cmd_orphans 2>&1)" \
+  "nothing found: no branch database outlives its worktree, and no dropped one left what could be looked at
+Kafka topics and groups not looked at: the codebite-kafka container isn't running; start it: docker compose -f infra/docker-compose.yml up -d kafka"
+kafka_state=running
+
+# With Postgres or the Docker daemon down, orphans and drop say so, in one line, and exit 1:
+# not a docker error followed by "none".
+pg_state=stopped
+for cmd in cmd_orphans cmd_drop 'cmd_drop_orphan codebite_gone_33333333'; do
+  # shellcheck disable=SC2086  # the name is a word of its own
+  out=$(root=/work/wt-x; $cmd 2>&1) && code=0 || code=$?
+  check "$cmd with Postgres stopped" "$code
+$out" "1
+dev-branch-servers.sh: the codebite-postgres container isn't running; start it: docker compose -f infra/docker-compose.yml up -d postgres"
+done
+pg_state=daemon kafka_state=daemon redis_state=daemon
+out=$(cmd_orphans 2>&1) && code=0 || code=$?
+check "orphans with the daemon down" "$code
+$out" "1
+dev-branch-servers.sh: the Docker daemon doesn't answer; start Docker Desktop (open -a Docker) and rerun"
+pg_state=running kafka_state=running redis_state=running
+docker() { [[ "$*" != *pg_isready* ]]; }
+out=$(cmd_orphans 2>&1) && code=0 || code=$?
+check "orphans while Postgres starts" "$code
+$out" "1
+dev-branch-servers.sh: codebite-postgres runs but doesn't accept connections yet; rerun in a few seconds"
+docker() { echo "docker $*" >> "$fx/calls"; }
+
+# Plain drop in a worktree whose drop skipped Kafka and Redis: the rerun finds them by its own
+# name though the database and state directory are gone; with nothing left it says so.
+reset_fixture
+psql_admin() {
+  echo "psql $1" >> "$fx/calls"
+  [[ -z "$psql_fails" ]] || return 2
+  case "$1" in "SELECT 'x' ||"*) cat "$fx/db-state" 2>/dev/null ;; esac
+  return 0
+}
+root=/work/wt-gone
+use_database codebite_gone_33333333
+# A lookup of this worktree's database that fails is not "none": its topics and index stay.
+psql_fails=1
+out=$(cmd_drop 2>&1) && code=0 || code=$?
+psql_fails=""
+check "plain drop when the database lookup fails" "$code
+$out" "1
+dev-branch-servers.sh: couldn't look up database codebite_gone_33333333 in codebite-postgres; rerun"
+[[ "$(cat "$fx/calls")" != *--delete* && "$(cat "$fx/calls")" != *FLUSHDB* ]] \
+  || { echo "FAIL: plain drop deleted something after a failed lookup: $(cat "$fx/calls")"; fail=1; }
+out=$(cmd_drop 2>&1) && code=0 || code=$?
+check "a rerun of drop finds what the first left" "$code
+$out" "0
+database codebite_gone_33333333: none
+Kafka topics: deleted codebite_gone_33333333-submission-events codebite_gone_33333333-github-imports
+Kafka groups: deleted codebite_gone_33333333-codebite-worker
+Redis database 1: flushed"
+use_database codebite_nothing_55555555
+check "drop with nothing anywhere" "$(cmd_drop 2>&1)" "database codebite_nothing_55555555: none; nothing to drop"
+# A plain drop that skips Kafka and Redis names the later command for both cases: this worktree
+# still there, or gone (as after scripts/ship-branch.sh).
+reset_fixture
+use_database codebite_mine_66666666
+echo "x$(db_owner_comment /work/wt-gone)" > "$fx/db-state"
+kafka_state=stopped redis_state=stopped
+check "plain drop's skip lines name the later command" "$(cmd_drop 2>&1)" "database codebite_mine_66666666: dropped
+codebite-kafka isn't running: topics and groups prefixed codebite_mine_66666666 left behind; once it runs: scripts/dev-branch-servers.sh drop in this worktree, or drop codebite_mine_66666666 once the worktree is gone
+codebite-redis isn't running: the Redis index of codebite_mine_66666666 left claimed; once it runs: scripts/dev-branch-servers.sh drop in this worktree, or drop codebite_mine_66666666 once the worktree is gone"
+kafka_state=running redis_state=running
+unset -f psql_admin kafka_bin redis_cmd container_state docker live_worktree_databases branch_pids reset_fixture untouched
 # shellcheck source=SCRIPTDIR/dev-branch-servers.sh
 source "$script"
 
@@ -385,6 +668,16 @@ out=$(cd "$repo" && "$script" name)
 check "worktree name" "$(cd "$fake/wt" && "$script" name)" \
   "$(branch_db_name feat/x "$(cd "$fake/wt" && git rev-parse --show-toplevel)")"
 (cd "$fake/wt" && setup && [[ "$root" != "$main" ]]) || { echo "FAIL: a worktree taken for the main checkout"; fail=1; }
+
+# The live worktrees' databases, each named as name names it there (a detached one by its
+# directory), from any checkout; a worktree whose directory is gone has none.
+git -C "$repo" worktree add -q "$fake/wt-removed" -b feat/removed
+git -C "$repo" worktree add -q --detach "$fake/wt-detached"
+rm -rf "$fake/wt-removed"
+check "live worktrees' databases" "$(cd "$fake/wt" && setup && live_worktree_databases)" \
+  "$(cd "$repo" && "$script" name)
+$(cd "$fake/wt" && "$script" name)
+$(cd "$fake/wt-detached" && "$script" name)"
 
 out=$("$script" bogus 2>&1) && code=0 || code=$?
 check "unknown subcommand" "$code" 2

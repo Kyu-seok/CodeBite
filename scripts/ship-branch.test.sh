@@ -49,13 +49,15 @@ reset_branch() {
   git -C "$main" worktree add -q "$dir/wt" -b feat master
   git -C "$dir/wt" -c user.name=t -c user.email=t@t commit -q --allow-empty -m feat
   # With "servers", the branch has a scripts/dev-branch-servers.sh stub that logs its calls and
-  # the directory they run in; its drop fails when SERVERS_STUB_FAIL is set.
+  # the directory they run in; its drop fails when SERVERS_STUB_FAIL is set, and skips Kafka
+  # (exiting 0, as dev-branch-servers.sh does with codebite-kafka stopped) when SERVERS_STUB_SKIP is.
   if [[ ${1:-} == servers ]]; then
     mkdir -p "$dir/wt/scripts"
     cat > "$dir/wt/scripts/dev-branch-servers.sh" <<'SERVERS'
 #!/usr/bin/env bash
 echo "servers $* in $PWD" >> "$GH_STUB_LOG"
 [[ $1 == drop && -n "${SERVERS_STUB_FAIL:-}" ]] && exit 1
+[[ $1 == drop && -n "${SERVERS_STUB_SKIP:-}" ]] && echo "codebite-kafka isn't running: topics and groups prefixed codebite_feat_1 left behind; once it runs: scripts/dev-branch-servers.sh drop in this worktree, or drop codebite_feat_1 once the worktree is gone" >&2
 exit 0
 SERVERS
     chmod +x "$dir/wt/scripts/dev-branch-servers.sh"
@@ -135,6 +137,11 @@ reset_branch servers
 GH_STUB_PR=7 SERVERS_STUB_FAIL=1 run "$main" feat
 check "a failed drop still ships, and says how to drop it later" \
   '[[ $status == 0 && ! -d $dir/wt && $err == *"dev-branch-servers.sh orphans"* ]]'
+
+reset_branch servers
+GH_STUB_PR=7 SERVERS_STUB_SKIP=1 run "$main" feat
+check "a drop that skipped Kafka ships with its own line, and no warning that it failed" \
+  '[[ $status == 0 && ! -d $dir/wt && $err == *"drop codebite_feat_1"* && $err != *"couldn'\''t drop"* ]]'
 
 # The walkthrough kit copy is checked on the branch's tree before merging, with the kit beside the
 # main checkout; a failing check ships nothing.
