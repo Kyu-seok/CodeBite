@@ -19,7 +19,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import driver_list, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import driver_list, quote, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, move, span  # noqa: E402
 
 SLUG = "word-break-chat"
@@ -36,10 +36,6 @@ wt = Walkthrough(
          "title": {"en": "splittable: do the first end letters split?", "ko": "splittable: 앞 end글자가 나뉘는가?"}},
     ],
 )
-
-
-def q(text):
-    return f"'{text}'"
 
 
 def solve(message, words, run):
@@ -79,22 +75,22 @@ def solve(message, words, run):
                  for k, (word, start, ok) in enumerate(tried)}
         tags = [[start, word] for word, start, _ in tried]
         if not tried:
-            frame({"en": f"End {end}, {q(prefix)}: no known word ends it, so it can't split. It stays F.",
-                   "ko": f"end {end}, {q(prefix)}: 끝에 오는 아는 단어가 없어 나눌 수 없습니다. F 그대로입니다."},
+            frame({"en": f"End {end}, {quote(prefix)}: no known word ends it, so it can't split. It stays F.",
+                   "ko": f"end {end}, {quote(prefix)}: 끝에 오는 아는 단어가 없어 나눌 수 없습니다. F 그대로입니다."},
                   end=end, letter_marks={"lit": [end - 1]}, split_marks={"bad": [end]})
             continue
         en, ko = [], []
         for word, start, ok in tried:
-            before = q(message[:start]) if start else "nothing"
-            before_ko = f"{q(message[:start])} 부분" if start else "빈 앞부분"
+            before = quote(message[:start]) if start else "nothing"
+            before_ko = f"{quote(message[:start])} 부분" if start else "빈 앞부분"
             if ok:
-                en.append(f"{q(word)} ends it, and {before} before it splits (cell {start} is T), so "
-                          f"{q(prefix)} splits: T.")
-                ko.append(f"단어 {q(word)}에서 끝나고 그 앞 {before_ko}이 나뉘므로(칸 {start} T), "
-                          f"{q(prefix)} 부분도 나뉩니다: T.")
+                en.append(f"{quote(word)} ends it, and {before} before it splits (cell {start} is T), so "
+                          f"{quote(prefix)} splits: T.")
+                ko.append(f"단어 {quote(word)}에서 끝나고 그 앞 {before_ko}이 나뉘므로(칸 {start} T), "
+                          f"{quote(prefix)} 부분도 나뉩니다: T.")
             else:
-                en.append(f"{q(word)} ends it, but {before} before it doesn't split (cell {start} is F).")
-                ko.append(f"단어 {q(word)}에서 끝나지만 그 앞 {before_ko}은 나뉘지 않습니다(칸 {start} F).")
+                en.append(f"{quote(word)} ends it, but {before} before it doesn't split (cell {start} is F).")
+                ko.append(f"단어 {quote(word)}에서 끝나지만 그 앞 {before_ko}은 나뉘지 않습니다(칸 {start} F).")
         if not splittable[end]:
             en.append("No other word ends it, so it stays F.")
             ko.append("끝나는 다른 단어가 없어 F 그대로입니다.")
@@ -110,8 +106,8 @@ def solve(message, words, run):
                            ("good" if splittable[end] else "bad"): [end]},
               moves=moves)
     if not splittable[n]:
-        frame({"en": f"Cell {n} is F: no split of {q(message)} uses only known words. Answer: false.",
-               "ko": f"{n}번 칸이 F이므로 {q(message)} 메시지는 아는 단어로만 나눌 수 없습니다. 답은 false입니다."},
+        frame({"en": f"Cell {n} is F: no split of {quote(message)} uses only known words. Answer: false.",
+               "ko": f"{n}번 칸이 F이므로 {quote(message)} 메시지는 아는 단어로만 나눌 수 없습니다. 답은 false입니다."},
               done=True, split_marks={"bad": [n]}, answer="false")
         return
     chain, parts, end = [n], [], n
@@ -121,7 +117,7 @@ def solve(message, words, run):
         chain.append(end)
     parts.reverse()
     split_words = [message[a:b] for a, b in parts]
-    joined = " + ".join(q(w) for w in split_words)
+    joined = " + ".join(quote(w) for w in split_words)
     frame({"en": f"Cell {n} is T, and following each T back to the cell its word started from splits the message "
                  f"into {joined}. Answer: true.",
            "ko": f"{n}번 칸이 T이고, 각 T 칸을 그 단어가 시작한 칸으로 거슬러 가면 메시지가 이렇게 나뉩니다: {joined}. "

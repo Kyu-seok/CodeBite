@@ -13,7 +13,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import cell_name, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, move  # noqa: E402
 
 SLUG = "rotting-donuts"
@@ -31,10 +31,6 @@ wt = Walkthrough(
         {"id": "state", "type": "vars"},
     ],
 )
-
-
-def name(p):
-    return f"{p[0]},{p[1]}"
 
 
 def minute_tag(m):
@@ -55,7 +51,7 @@ def solve(tray, run):
                   tray={"cells": tray, "tags": [[r, c, minute_tag(m)] for (r, c), m in went_stale.items()],
                         "marks": {"lit": [list(p) for p in lit], "good": [list(p) for p in good],
                                   "bad": [list(p) for p in bad], "path": [list(p) for p in path]}},
-                  queue={"values": [name(p) for p in queue],
+                  queue={"values": [cell_name(p) for p in queue],
                          "tags": [[i, minute_tag(went_stale[p])] for i, p in enumerate(queue)],
                          "marks": queue_marks or {}},
                   state={"items": [{"label": {"en": "fresh left", "ko": "남은 신선"}, "value": fresh,
@@ -75,7 +71,7 @@ def solve(tray, run):
                  f"{plural(s, 'one joins', 'ones join')} the queue as the first wave.",
            "ko": f"신선한 도넛 {fresh}개를 세고, 상한 도넛 {s}개가 첫 물결로 큐에 들어갑니다."},
           lit=rotten, queue_marks={"good": list(range(s))},
-          moves=[move(at("tray", list(p)), at("queue", i), value=name(p)) for i, p in enumerate(queue)])
+          moves=[move(at("tray", list(p)), at("queue", i), value=cell_name(p)) for i, p in enumerate(queue)])
     while rotten and fresh:
         next_wave = []
         for r, c in rotten:
@@ -87,7 +83,7 @@ def solve(tray, run):
                     next_wave.append((nr, nc))
                     turned.append((nr, nc))
                     went_stale[(nr, nc)] = minutes + 1
-            here = name((r, c))
+            here = cell_name((r, c))
             if not turned:
                 frame({"en": f"Donut ({here}) leaves the front of the queue; no fresh donut sits next to it.",
                        "ko": f"({here}) 도넛이 큐 앞에서 나오지만, 옆에 신선한 도넛이 없습니다."},
@@ -107,7 +103,7 @@ def solve(tray, run):
                          f"{fresh} fresh left.",
                    "ko": f"새로 상한 도넛 {n}개가 {m}분 물결로 큐 뒤에 들어갑니다. 신선한 도넛 {fresh}개 남음."},
                   good=turned, queue_marks={"good": list(range(back, len(queue)))},
-                  moves=[move(at("tray", list(p)), at("queue", back + i), value=name(p))
+                  moves=[move(at("tray", list(p)), at("queue", back + i), value=cell_name(p))
                          for i, p in enumerate(turned)])
         rotten = next_wave
         minutes += 1

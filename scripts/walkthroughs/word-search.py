@@ -19,7 +19,7 @@ from collections import Counter
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import cell_at, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, move  # noqa: E402
 
 SLUG = "word-search"
@@ -35,10 +35,6 @@ wt = Walkthrough(
         {"id": "word", "type": "array", "title": {"en": "word", "ko": "word (단어)"}},
     ],
 )
-
-
-def cell(r, c):
-    return f"({r},{c})"
 
 
 def solve(board, word, run):
@@ -98,14 +94,14 @@ def solve(board, word, run):
                      "ko": f"보드를 훑으며 '{word[0]}' 글자가 아닌 칸 {len(skipped)}개를 지나고, "} if skipped else
                     {"en": "", "ko": ""})
             skipped.clear()
-            head = {"en": skip["en"] + f"{cell(r, c)} holds '{word[0]}', word[0]: start a trace there and mark it \"#\".",
-                    "ko": skip["ko"] + f"{cell(r, c)} 칸에 word[0]인 '{word[0]}' 글자가 있으니 여기서 시작해 \"#\" 표시를 "
+            head = {"en": skip["en"] + f"{cell_at(r, c)} holds '{word[0]}', word[0]: start a trace there and mark it \"#\".",
+                    "ko": skip["ko"] + f"{cell_at(r, c)} 칸에 word[0]인 '{word[0]}' 글자가 있으니 여기서 시작해 \"#\" 표시를 "
                                        f"합니다."}
         else:
             pr, pc, _ = path[-2]
-            head = {"en": f"The neighbour {cell(r, c)} of {cell(pr, pc)} holds '{word[i]}', word[{i}]: step onto it and "
+            head = {"en": f"The neighbour {cell_at(r, c)} of {cell_at(pr, pc)} holds '{word[i]}', word[{i}]: step onto it and "
                           f"mark it \"#\".",
-                    "ko": f"{cell(pr, pc)} 칸의 이웃 {cell(r, c)} 칸에 word[{i}]인 '{word[i]}' 글자가 있으니 그 칸으로 가서 "
+                    "ko": f"{cell_at(pr, pc)} 칸의 이웃 {cell_at(r, c)} 칸에 word[{i}]인 '{word[i]}' 글자가 있으니 그 칸으로 가서 "
                           f"\"#\" 표시를 합니다."}
         if i + 1 == len(word):
             head = {"en": head["en"][:-1] + f"; that was the last letter, so search(i={i + 1}) returns true.",
@@ -116,9 +112,9 @@ def solve(board, word, run):
                  or search(r, c + 1, i + 1) or search(r, c - 1, i + 1))
         board[r][c] = word[i]
         if not found:
-            frame({"en": f"No neighbour of {cell(r, c)} holds '{word[i + 1]}', word[{i + 1}], so this call frees the cell "
+            frame({"en": f"No neighbour of {cell_at(r, c)} holds '{word[i + 1]}', word[{i + 1}], so this call frees the cell "
                          f"and returns false.",
-                   "ko": f"{cell(r, c)} 칸의 이웃에 word[{i + 1}]인 '{word[i + 1]}' 글자가 없으므로 이 호출은 칸을 풀어 주고 "
+                   "ko": f"{cell_at(r, c)} 칸의 이웃에 word[{i + 1}]인 '{word[i + 1]}' 글자가 없으므로 이 호출은 칸을 풀어 주고 "
                          f"false를 반환합니다."},
                   bad=[(r, c)], want=i + 1, word_marks={"good": [k for _, _, k in path], "bad": [i + 1]})
             path.pop()

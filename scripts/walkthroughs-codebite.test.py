@@ -5,7 +5,8 @@ import unittest
 
 sys.dont_write_bytecode = True
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "walkthroughs"))
-from codebite import driver_list, josa, plural, run_label  # noqa: E402
+from codebite import (bag_text, build_list, cell_at, driver_list, josa, or_infinity, plural, quote,  # noqa: E402
+                      run_label)
 
 DESCRIPTION = "Intro.\n\n**Example 1:**\n```\nInput: x = 1\n```\n\n**Example 2:**\n```\nInput: x = 2\n```\n"
 
@@ -60,6 +61,30 @@ class Josa(unittest.TestCase):
     def test_an_unknown_particle_is_refused(self):
         with self.assertRaises(ValueError):
             josa(3, "로")
+
+
+class CaptionHelpers(unittest.TestCase):
+    def test_a_string_is_named_in_single_quotes(self):
+        self.assertEqual(quote("aba"), "'aba'")
+
+    def test_an_unreached_cost_shows_as_infinity_and_a_reached_one_as_itself(self):
+        self.assertEqual([or_infinity(float("inf")), or_infinity(0), or_infinity(7)], ["∞", 0, 7])
+
+    def test_a_grid_cell_is_written_in_brackets(self):
+        self.assertEqual(cell_at(1, 2), "(1,2)")
+
+    def test_a_bag_tag_names_its_size_in_both_languages(self):
+        self.assertEqual(bag_text(4), {"en": "bag 4", "ko": "봉지 4"})
+
+
+class BuildList(unittest.TestCase):
+    def test_the_nodes_come_back_in_order_each_linked_to_the_next(self):
+        nodes = build_list([3, 1, 2])
+        self.assertEqual([n.val for n in nodes], [3, 1, 2])
+        self.assertEqual([nodes[0].next, nodes[1].next, nodes[2].next], [nodes[1], nodes[2], None])
+
+    def test_no_values_give_no_nodes(self):
+        self.assertEqual(build_list([]), [])
 
 
 if __name__ == "__main__":

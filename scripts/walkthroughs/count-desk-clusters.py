@@ -14,7 +14,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import cell_name, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, move, stack  # noqa: E402
 
 SLUG = "count-desk-clusters"
@@ -38,10 +38,6 @@ wt = Walkthrough(
 )
 
 
-def name(p):
-    return f"{p[0]},{p[1]}"
-
-
 def cluster_tag(k):
     return f"#{k}"
 
@@ -62,7 +58,7 @@ def solve(board, run):
                          "marks": {"dim": [list(p) for p, k in seen.items() if k < current and not path],
                                    "lit": [list(p) for p in lit], "good": [list(p) for p in good],
                                    "path": [list(p) for p in path]}},
-                  stack={**stack(todo + leaving, value=name), "marks": stack_marks or {}},
+                  stack={**stack(todo + leaving, value=cell_name), "marks": stack_marks or {}},
                   clusters={"values": list(found), "marks": found_marks or {}},
                   moves=moves, **answer)
 
@@ -82,12 +78,12 @@ def solve(board, run):
             todo.append((r, c))
             found.append(cluster_tag(clusters))
             k = clusters
-            frame({"en": f"The scan reaches ({name((r, c))}), a desk no cluster holds yet: cluster {k} starts here, "
+            frame({"en": f"The scan reaches ({cell_name((r, c))}), a desk no cluster holds yet: cluster {k} starts here, "
                          f"and the desk goes on the stack.",
-                   "ko": f"훑다가 ({name((r, c))}) 책상에 닿았는데 아직 어느 그룹에도 없으므로 그룹 {k}번이 여기서 "
+                   "ko": f"훑다가 ({cell_name((r, c))}) 책상에 닿았는데 아직 어느 그룹에도 없으므로 그룹 {k}번이 여기서 "
                          f"시작되고, 이 책상을 스택에 넣습니다."},
                   good=[(r, c)], stack_marks={"good": [len(todo) - 1]}, found_marks={"good": [k - 1]},
-                  moves=[move(at("board", [r, c]), at("stack", len(todo) - 1), value=name((r, c))),
+                  moves=[move(at("board", [r, c]), at("stack", len(todo) - 1), value=cell_name((r, c))),
                          move(at("board", [r, c]), at("clusters", k - 1), value=cluster_tag(k))])
             while todo:
                 y, x = todo.pop()
@@ -98,7 +94,7 @@ def solve(board, run):
                         seen[(ny, nx)] = clusters
                         added.append((ny, nx))
                 top = len(todo)
-                here = name((y, x))
+                here = cell_name((y, x))
                 if not added:
                     done = "" if todo else f" The stack is empty, so cluster {k} is complete."
                     done_ko = "있습니다." if todo else f"있고, 스택이 비었으므로 그룹 {k}번이 완성됩니다."
@@ -109,7 +105,7 @@ def solve(board, run):
                     leaving.clear()
                     continue
                 n = len(added)
-                listed = ", ".join(f"({name(p)})" for p in added)
+                listed = ", ".join(f"({cell_name(p)})" for p in added)
                 frame({"en": f"Pop ({here}): {n} {plural(n, 'desk', 'desks')} next to it, {listed}, "
                              f"{plural(n, 'joins', 'join')} cluster {k}.",
                        "ko": f"({here}) 책상을 꺼냅니다. 맞닿은 책상 {n}개가 그룹 {k}번에 들어갑니다: {listed}."},
@@ -121,7 +117,7 @@ def solve(board, run):
                              f"neighbours in turn.",
                        "ko": f"새로 들어온 책상 {n}개를 스택에 넣어, 차례로 그 이웃을 살핍니다."},
                       good=added, stack_marks={"good": list(range(top, len(todo)))},
-                      moves=[move(at("board", list(p)), at("stack", top + i), value=name(p))
+                      moves=[move(at("board", list(p)), at("stack", top + i), value=cell_name(p))
                              for i, p in enumerate(added)])
     frame({"en": f"The scan passed every cell and started {clusters} {plural(clusters, 'cluster', 'clusters')}: "
                  f"answer {clusters}.",

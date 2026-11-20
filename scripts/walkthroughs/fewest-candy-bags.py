@@ -17,7 +17,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import josa, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import bag_text, josa, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, move  # noqa: E402
 
 SLUG = "fewest-candy-bags"
@@ -35,10 +35,6 @@ wt = Walkthrough(
                                                     "ko": "사탕 개수별 최소 봉지 수"}},
     ],
 )
-
-
-def bag(size):
-    return {"en": f"bag {size}", "ko": f"봉지 {size}"}
 
 
 def solve(bag_sizes, quota, run):
@@ -76,7 +72,7 @@ def solve(bag_sizes, quota, run):
             v = fewest[total - s]
             read.append(f"{total - s} ({INF})" if v == unreachable else f"{total - s} ({v} + 1)")
             read_ko.append(f"{total - s}개({INF})" if v == unreachable else f"{total - s}개({v} + 1)")
-        tags = [[total - s, bag(s)] for s in tried]
+        tags = [[total - s, bag_text(s)] for s in tried]
         sizes_marks = {"lit": [i for i, s in enumerate(bag_sizes) if s <= total],
                        "dim": [i for i, s in enumerate(bag_sizes) if s > total]}
         unread = list(range(total + 1, quota + 1))
@@ -128,7 +124,7 @@ def solve(bag_sizes, quota, run):
         ko = (f"사탕 {quota}개에는 봉지가 {k}개 필요합니다. 각 칸이 온 칸을 거슬러 가면 "
               f"{' + '.join(map(str, used))} = {quota}입니다.")
     frame({"en": en, "ko": ko}, cells={"path": chain},
-          tags=[[a - won[a], bag(won[a])] for a in chain[:-1]], answer=str(k))
+          tags=[[a - won[a], bag_text(won[a])] for a in chain[:-1]], answer=str(k))
 
 
 for number, sample in enumerate(sample_cases(SLUG), start=1):

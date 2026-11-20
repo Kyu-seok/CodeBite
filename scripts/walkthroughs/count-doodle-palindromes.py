@@ -17,7 +17,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import centre_text, josa, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import centre_text, josa, plural, quote, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, move, span  # noqa: E402
 
 SLUG = "count-doodle-palindromes"
@@ -34,10 +34,6 @@ wt = Walkthrough(
          "empty": {"en": "none yet", "ko": "아직 없음"}},
     ],
 )
-
-
-def q(text):
-    return f"'{text}'"
 
 
 def solve(doodle, run):
@@ -68,13 +64,13 @@ def solve(doodle, run):
             found.append(sub)
             off_end = left - 1 < 0 or right + 1 >= n
             if left == right:
-                en = f"{where['en']}: {q(sub)} alone is a palindrome, number {count}."
-                ko = f"{where['ko']}: 한 글자 {q(sub)}도 회문이고, {count}번째입니다."
+                en = f"{where['en']}: {quote(sub)} alone is a palindrome, number {count}."
+                ko = f"{where['ko']}: 한 글자 {quote(sub)}도 회문이고, {count}번째입니다."
             else:
-                en = (f"{where['en']}: letters {left} and {right} are both {q(doodle[left])}, so {q(sub)} is a "
+                en = (f"{where['en']}: letters {left} and {right} are both {quote(doodle[left])}, so {quote(sub)} is a "
                       f"palindrome, number {count}.")
-                ko = (f"{where['ko']}: 글자 {josa(left, '과와')} {right}의 글자가 같으므로({q(doodle[left])}) "
-                      f"{q(sub)} 부분은 회문이고, {count}번째입니다.")
+                ko = (f"{where['ko']}: 글자 {josa(left, '과와')} {right}의 글자가 같으므로({quote(doodle[left])}) "
+                      f"{quote(sub)} 부분은 회문이고, {count}번째입니다.")
             if off_end:
                 en += " The next pair would run off the end, so this centre is done."
                 ko += " 다음 쌍은 문자열 밖이라 이 가운데는 끝납니다."
@@ -88,9 +84,9 @@ def solve(doodle, run):
             grew = right - left - 1
             done_en = "no palindrome here" if grew == 0 else "this centre is done"
             done_ko = "여기서는 회문이 없습니다" if grew == 0 else "이 가운데는 끝납니다"
-            frame({"en": f"{where['en']}: letter {left} is {q(doodle[left])} but letter {right} is "
-                         f"{q(doodle[right])}, so {done_en}.",
-                   "ko": f"{where['ko']}: 글자 {left}의 {q(doodle[left])}, 글자 {right}의 {q(doodle[right])}. "
+            frame({"en": f"{where['en']}: letter {left} is {quote(doodle[left])} but letter {right} is "
+                         f"{quote(doodle[right])}, so {done_en}.",
+                   "ko": f"{where['ko']}: 글자 {left}의 {quote(doodle[left])}, 글자 {right}의 {quote(doodle[right])}. "
                          f"서로 다르므로 {done_ko}."},
                   left=left, right=right, marks={"bad": [left, right]})
     frame({"en": f"Every centre is done: the box holds {count} palindromes. Answer: {count}.",

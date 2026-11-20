@@ -14,7 +14,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import ListNode, driver_list, josa, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import ListNode, build_list, driver_list, josa, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, linked_list, move, node_id  # noqa: E402
 
 SLUG = "add-score-lists"
@@ -37,13 +37,6 @@ wt = Walkthrough(
 )
 
 
-def build(values):
-    nodes = [ListNode(v) for v in values]
-    for a, b in zip(nodes, nodes[1:]):
-        a.next = b
-    return nodes
-
-
 def number(values):
     """The score a ones-digit-first list spells, as text: [3,1,7] is 713."""
     return "".join(str(v) for v in reversed(values))
@@ -51,7 +44,7 @@ def number(values):
 
 def solve(v1, v2, run):
     """Solution.addScoreLists with a frame per step. Returns the answer as the Driver prints it."""
-    n1, n2 = build(v1), build(v2)
+    n1, n2 = build_list(v1), build_list(v2)
     dummy = ListNode("")  # the solution's dummy holds 0; its value is never read, so it is drawn empty
     out = [dummy]
     s1, s2, tail = n1[0], n2[0], dummy
