@@ -2,7 +2,7 @@
 # Ships a finished ticket branch through its own PR, the one-PR-per-ticket path
 # (scripts/merge-ticket.sh is the integration-branch path):
 #
-#   scripts/ship-branch.sh <branch> [--title <title> --body-file <file>]
+#   scripts/ship-branch.sh <branch> [--title <title> --body-file <file>] [--allow-unticked]
 #
 # Run it from the main checkout. It fetches, reuses the branch's open PR (or opens one when given
 # --title and --body-file, pushing the branch first), runs the branch's
@@ -14,19 +14,26 @@
 # branch's own worktree (the cleanup would remove the directory it runs in). When a check fails
 # it names it and leaves everything in place.
 #
+# Before anything is pushed or waited on, it reads the PR body (the open PR's, or --body-file's
+# for a PR it opens) and refuses, printing them, any unticked task-list lines (`- [ ]` or `* [ ]`
+# after optional indentation, outside fenced code blocks): a step left for the user, such as a
+# production comparison, can't merge silently. --allow-unticked merges anyway and prints the
+# lines it let through.
+#
 # Why it waits before watching: for the first seconds after a PR opens, `gh pr checks` answers
 # "no checks reported" and exits 1, which `--watch` would take for a finished run.
 # SHIP_BRANCH_POLL is the seconds between those looks (default 10).
 set -euo pipefail
 
-usage() { echo "usage: scripts/ship-branch.sh <branch> [--title <title> --body-file <file>]" >&2; exit 2; }
+usage() { echo "usage: scripts/ship-branch.sh <branch> [--title <title> --body-file <file>] [--allow-unticked]" >&2; exit 2; }
 [[ $# -ge 1 ]] || usage
 branch=$1; shift
-title=""; body=""
+title=""; body=""; allow_unticked=""
 while [[ $# -gt 0 ]]; do
   case $1 in
     --title) [[ $# -ge 2 ]] || usage; title=$2; shift 2 ;;
     --body-file) [[ $# -ge 2 ]] || usage; body=$2; shift 2 ;;
+    --allow-unticked) allow_unticked=1; shift ;;
     *) usage ;;
   esac
 done
@@ -43,6 +50,27 @@ drop_branch_database() {
   fi
 }
 
+# Prints the unticked task-list lines of the PR body on stdin: `- [ ]` or `* [ ]` after optional
+# indentation, outside ``` and ~~~ fences. A line with other text first (a quoted diff's `-- [ ]`)
+# is not one.
+unticked_lines() {
+  awk '{ sub(/\r$/, "") } /^[[:space:]]*(```|~~~)/ { fenced = !fenced; next } !fenced && /^[[:space:]]*[-*] \[ \]/'
+}
+
+# Refuses PR #$1 (or "the new PR") when the body on stdin has unticked lines, unless
+# --allow-unticked was given, in which case it names what it lets through.
+check_unticked() {
+  local lines
+  lines=$(unticked_lines)
+  [[ -n $lines ]] || return 0
+  if [[ -n $allow_unticked ]]; then
+    printf 'ship-branch: --allow-unticked: merging %s with these unticked lines:\n%s\n' "$1" "$lines" >&2
+    return 0
+  fi
+  printf 'ship-branch: %s has unticked boxes, nothing merged (tick them, or pass --allow-unticked):\n%s\n' "$1" "$lines" >&2
+  exit 1
+}
+
 here=$(git rev-parse --show-toplevel)
 worktree=$(git worktree list --porcelain | awk -v b="refs/heads/$branch" '$1=="worktree"{w=$2} $1=="branch" && $2==b {print w}')
 if [[ -n $worktree && $here == "$worktree" ]]; then
@@ -57,9 +85,13 @@ if [[ -z $n ]]; then
     echo "ship-branch: $branch has no open PR; pass --title and --body-file to open one" >&2
     exit 2
   fi
+  check_unticked "the new PR" < "$body"
   git push -q -u origin "$branch"
   url=$(gh pr create --base master --head "$branch" --title "$title" --body-file "$body")
   n=${url##*/}
+else
+  pr_body=$(gh pr view "$n" --json body --jq .body)
+  check_unticked "#$n" <<<"$pr_body"
 fi
 echo "ship-branch: PR #$n"
 

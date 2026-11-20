@@ -4,8 +4,9 @@
 # remote branch, the branch database scripts/dev-branch-servers.sh made for the worktree, the
 # worktree and the local branch; it refuses master, a branch with no PR and
 # no --title, a run from inside the branch's worktree, and a branch whose walkthrough kit copy
-# fails scripts/copy-walkthrough-kit.py --check.
-# shellcheck disable=SC2016,SC2034 # check() evals its single-quoted conditions (and the variables they read) later
+# fails scripts/copy-walkthrough-kit.py --check; and it refuses a PR body (open PR or --body-file) with
+# an unticked task-list line outside a fenced block, unless --allow-unticked names it.
+# shellcheck disable=SC2016,SC2034,SC2329 # check() evals its single-quoted conditions (and the variables they read) later
 set -euo pipefail
 
 script="$(cd "$(dirname "$0")" && pwd)/ship-branch.sh"
@@ -14,13 +15,15 @@ trap 'rm -rf "$dir"' EXIT
 mkdir "$dir/bin"
 # The stub logs each call on one line. `pr list` answers GH_STUB_PR (a number, or nothing);
 # the first GH_STUB_NOCHECKS `pr checks` calls answer "no checks reported" and exit 1; after
-# that a check passes, or fails when GH_STUB_FAIL_CHECK is set; `pr create` answers a URL.
+# that a check passes, or fails when GH_STUB_FAIL_CHECK is set; `pr create` answers a URL;
+# `pr view` answers GH_STUB_BODY, the PR's body.
 cat > "$dir/bin/gh" <<'STUB'
 #!/usr/bin/env bash
 echo "$*" >> "$GH_STUB_LOG"
 case "$1 $2" in
   "pr list") [[ -n "${GH_STUB_PR:-}" ]] && echo "$GH_STUB_PR"; exit 0 ;;
   "pr create") echo "https://github.com/Kyu-seok/CodeBite/pull/9"; exit 0 ;;
+  "pr view") printf '%s\n' "${GH_STUB_BODY:-}"; exit 0 ;;
   "pr checks")
     count=$(( $(cat "$GH_STUB_COUNT" 2>/dev/null || echo 0) + 1 )); echo "$count" > "$GH_STUB_COUNT"
     if (( count <= ${GH_STUB_NOCHECKS:-0} )); then echo "no checks reported on the branch"; exit 1; fi
@@ -145,6 +148,32 @@ GH_STUB_PR=7 run "$main" feat
 check "the branch's own copy-walkthrough-kit.py checks, given the kit beside the main checkout" \
   '[[ $status == 0 ]] && grep -q "^kit --check in .* with $(cd "$dir" && pwd -P)/walkthrough-skill$" <<<"$log" && grep -qx "pr merge 7 --squash" <<<"$log"'
 rm -rf "$dir/walkthrough-skill"
+
+# An unticked task-list line anywhere in the PR body stops the merge before CI is waited on.
+reset_branch
+GH_STUB_PR=7 GH_STUB_BODY=$'## Evidence\n- [x] tests pass\n  - [ ] compare with prod-text.sh' run "$main" feat
+check "an unticked box under any heading exits 1 and quotes the line" \
+  '[[ $status == 1 && $err == *"  - [ ] compare with prod-text.sh"* && $err != *"tests pass"* ]]'
+check "an unticked box merges, deletes and waits on nothing" \
+  '! grep -q "pr merge" <<<"$log" && ! grep -q "^pr checks" <<<"$log" && remote_has feat && local_has feat && [[ -d $dir/wt ]]'
+
+GH_STUB_PR=7 GH_STUB_BODY=$'* [ ] star item\r\n- [x] done' run "$main" feat --allow-unticked
+check "--allow-unticked merges and names the lines it let through" \
+  '[[ $status == 0 && $err == *"--allow-unticked"* && $err == *"* [ ] star item"* && $err != *"done"* ]] && grep -qx "pr merge 7 --squash" <<<"$log"'
+
+reset_branch
+GH_STUB_PR=7 GH_STUB_BODY=$'## Checks\n- [x] tests pass\n* [X] lint' run "$main" feat
+check "a body with only ticked boxes merges as before" '[[ $status == 0 && -z $err ]] && grep -qx "pr merge 7 --squash" <<<"$log"'
+
+reset_branch
+GH_STUB_PR=7 GH_STUB_BODY=$'Template:\n```markdown\n- [ ] in a fence\n```\n~~~\n  * [ ] tilde fence\n~~~\n```diff\n-- [ ] quoted diff line in a fence\n```\n-- [ ] quoted diff line\n> - [ ] quoted' run "$main" feat
+check "boxes in fenced blocks and quoted diff lines don't stop the merge" '[[ $status == 0 ]] && grep -qx "pr merge 7 --squash" <<<"$log"'
+
+reset_branch
+printf '%s\n' '# Summary' '- [ ] run prod-text.sh' > "$dir/unticked.md"
+run "$main" feat --title "feat: thing" --body-file "$dir/unticked.md"
+check "a --body-file with an unticked box is refused before the push and the PR" \
+  '[[ $status == 1 && $err == *"- [ ] run prod-text.sh"* ]] && ! grep -q "^pr create" <<<"$log" && local_has feat && [[ -d $dir/wt ]]'
 
 run "$main"
 check "no branch prints usage" '[[ $status == 2 && $err == usage:* ]]'
