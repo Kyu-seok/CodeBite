@@ -57,7 +57,7 @@ reset_branch() {
 #!/usr/bin/env bash
 echo "servers $* in $PWD" >> "$GH_STUB_LOG"
 [[ $1 == drop && -n "${SERVERS_STUB_FAIL:-}" ]] && exit 1
-[[ $1 == drop && -n "${SERVERS_STUB_SKIP:-}" ]] && echo "codebite-kafka isn't running: topics and groups prefixed codebite_feat_1 left behind; once it runs: scripts/dev-branch-servers.sh drop codebite_feat_1" >&2
+[[ $1 == drop && -n "${SERVERS_STUB_SKIP:-}" ]] && echo "codebite-kafka isn't running: topics and groups prefixed codebite_feat_1 left behind; once it runs: scripts/dev-branch-servers.sh drop in this worktree, or drop codebite_feat_1 once the worktree is gone" >&2
 exit 0
 SERVERS
     chmod +x "$dir/wt/scripts/dev-branch-servers.sh"

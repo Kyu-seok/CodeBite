@@ -268,7 +268,7 @@ psql_admin() {
   echo "psql $1" >> "$fake/calls"
   case "$1" in
     *shobj_description*LIKE*) printf 'codebite_gone_aaaaaaaa\t%s\ncodebite_live_bbbbbbbb\t%s\n' "$fake/gone-wt" "$fake/live-wt" ;;
-    "SELECT datname FROM pg_database") printf 'codebite_gone_aaaaaaaa\ncodebite_live_bbbbbbbb\n' ;;
+    "SELECT datname FROM pg_database") printf 'postgres\ncodebite_gone_aaaaaaaa\ncodebite_live_bbbbbbbb\n' ;;
   esac
   return 0
 }
@@ -407,8 +407,10 @@ reset_fixture() {
   echo codebite_a_12345678 > "$fx/redis-7"
   : > "$fx/calls"
 }
+psql_fails=""
 psql_admin() {
   echo "psql $1" >> "$fx/calls"
+  [[ -z "$psql_fails" ]] || return 2
   case "$1" in
     "SELECT datname FROM pg_database") cat "$fx/databases" ;;
     *shobj_description*LIKE*) printf 'codebite_orphan_11111111\t%s\ncodebite_kept_22222222\t%s\n' "$fake/gone-wt" "$fake/live-wt" ;;
@@ -481,10 +483,11 @@ drop one, with its Kafka topics and Redis index: scripts/dev-branch-servers.sh d
 [[ ! -f "$fx/redis0-touched" ]] || { echo "FAIL: orphans read Redis index 0"; fail=1; }
 
 # drop <name> takes only a name orphans lists: never a live database or worktree's, a lookalike,
-# a shared name, an owner key's odd value, or a pattern.
+# a shared name, an owner key's odd value, a pattern, or a listed name on a line of several.
 for name in codebite_kept_22222222 codebite_wt_44444444 codebite_a_12345678_deadbeef \
   codebite_kept_222222220 codebite submission-events codebite-worker codebite_zz_99999999 \
-  'codebite_gone_33333333 x' 'codebite_gone_3333333.' '.*' 'codebite_gone_33333333-submission-events'; do
+  'codebite_gone_33333333 x' 'codebite_gone_3333333.' '.*' 'codebite_gone_33333333-submission-events' \
+  $'x\ncodebite_gone_33333333' $'codebite_gone_33333333\ncodebite_kept_22222222' $'codebite_orphan_11111111\nx'; do
   reset_fixture
   out=$(cmd_drop_orphan "$name" 2>&1) && code=0 || code=$?
   check "drop '$name' refused" "$code" 1
@@ -516,6 +519,24 @@ check "once dropped, orphans lists the database only" "$(cmd_orphans 2>&1)" "bra
 drop one, with its Kafka topics and Redis index: scripts/dev-branch-servers.sh drop <name>"
 check "kafka_names_of never takes an empty database for one" "$(kafka_names_of kafka-topics.sh '')" ""
 
+# A database lookup that fails, or answers without the postgres database every server has, is no
+# "none exist": read so, an existing database's topics and Redis index would be listed and deleted.
+# codebite_a_12345678_deadbeef exists, is no live worktree's and has a topic.
+lookup_failed="dev-branch-servers.sh: couldn't list the databases in codebite-postgres; rerun"
+for broken in fails empty; do
+  for cmd in cmd_orphans 'cmd_drop_orphan codebite_a_12345678_deadbeef' 'cmd_drop_orphan codebite_gone_33333333'; do
+    reset_fixture
+    if [[ $broken == fails ]]; then psql_fails=1; else : > "$fx/databases"; fi
+    # shellcheck disable=SC2086  # the name is a word of its own
+    out=$($cmd 2>&1) && code=0 || code=$?
+    psql_fails=""
+    [[ "$code" == 1 && "$out" == *"$lookup_failed"* && "$out" != *codebite_a_12345678_deadbeef* ]] \
+      || { echo "FAIL: $cmd when the database lookup $broken: $code $out"; fail=1; }
+    [[ "$(cat "$fx/calls")" != *DROP* && "$(cat "$fx/calls")" != *--delete* && "$(cat "$fx/calls")" != *FLUSHDB* ]] \
+      || { echo "FAIL: $cmd when the database lookup $broken deleted something: $(cat "$fx/calls")"; fail=1; }
+  done
+done
+
 # With Kafka or Redis stopped, orphans says in one line where it didn't look, and lists the rest.
 reset_fixture
 kafka_state=stopped
@@ -544,6 +565,11 @@ psql_admin() {
 }
 check "orphans with nothing left" "$(cmd_orphans 2>&1)" \
   "no branch database outlives its worktree, and no dropped one left Kafka topics or a Redis index"
+kafka_state=stopped
+check "orphans with nothing found and Kafka stopped claims nothing about Kafka" "$(cmd_orphans 2>&1)" \
+  "nothing found: no branch database outlives its worktree, and no dropped one left what could be looked at
+Kafka topics and groups not looked at: the codebite-kafka container isn't running; start it: docker compose -f infra/docker-compose.yml up -d kafka"
+kafka_state=running
 
 # With Postgres or the Docker daemon down, orphans and drop say so, in one line, and exit 1:
 # not a docker error followed by "none".
@@ -573,11 +599,21 @@ docker() { echo "docker $*" >> "$fx/calls"; }
 reset_fixture
 psql_admin() {
   echo "psql $1" >> "$fx/calls"
+  [[ -z "$psql_fails" ]] || return 2
   case "$1" in "SELECT 'x' ||"*) cat "$fx/db-state" 2>/dev/null ;; esac
   return 0
 }
 root=/work/wt-gone
 use_database codebite_gone_33333333
+# A lookup of this worktree's database that fails is not "none": its topics and index stay.
+psql_fails=1
+out=$(cmd_drop 2>&1) && code=0 || code=$?
+psql_fails=""
+check "plain drop when the database lookup fails" "$code
+$out" "1
+dev-branch-servers.sh: couldn't look up database codebite_gone_33333333 in codebite-postgres; rerun"
+[[ "$(cat "$fx/calls")" != *--delete* && "$(cat "$fx/calls")" != *FLUSHDB* ]] \
+  || { echo "FAIL: plain drop deleted something after a failed lookup: $(cat "$fx/calls")"; fail=1; }
 out=$(cmd_drop 2>&1) && code=0 || code=$?
 check "a rerun of drop finds what the first left" "$code
 $out" "0

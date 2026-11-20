@@ -331,6 +331,18 @@ database_state() {
   psql_admin "SELECT 'x' || coalesce(shobj_description(oid, 'pg_database'), '') FROM pg_database WHERE datname = '$db'"
 }
 
+# Every database's name. A lookup that fails, or lacks the postgres database every server has,
+# exits: read as "none exist", it would make each existing branch database's topics and Redis
+# index look left behind, for drop <name> to delete.
+existing_databases() {
+  local names
+  if ! names=$(psql_admin "SELECT datname FROM pg_database") || ! grep -qxF postgres <<<"$names"; then
+    echo "dev-branch-servers.sh: couldn't list the databases in codebite-postgres; rerun" >&2
+    exit 1
+  fi
+  echo "$names"
+}
+
 kafka_bin() {
   local tool=$1
   shift
@@ -671,9 +683,14 @@ cmd_drop() {
     exit 1
   fi
   require_postgres
-  local comment
+  local comment found
   comment=$(db_owner_comment "$root")
-  case "$(database_verdict "$(database_state)" "$comment")" in
+  # A failed lookup is not "none": that would delete the topics and index of a database still there.
+  if ! found=$(database_state); then
+    echo "dev-branch-servers.sh: couldn't look up database $db in codebite-postgres; rerun" >&2
+    exit 1
+  fi
+  case "$(database_verdict "$found" "$comment")" in
     create)
       # Nothing was ever started here (start makes the state directory, start and migrate the
       # database), or an earlier drop skipped a stopped Kafka or Redis: only that is looked for.
@@ -763,7 +780,8 @@ live_worktree_databases() {
 # database that doesn't exist and is no live worktree's. Looks only in the containers that run.
 orphan_leftovers() {
   local known name what i owner
-  known=$(psql_admin "SELECT datname FROM pg_database"; live_worktree_databases)
+  known=$(existing_databases) || exit 1
+  known+=$'\n'$(live_worktree_databases)
   {
     if [[ "$(container_state codebite-kafka)" == running ]]; then
       for what in topic:kafka-topics.sh group:kafka-consumer-groups.sh; do
@@ -788,9 +806,13 @@ cmd_orphans() {
   require_postgres
   local list leftovers down
   list=$(orphan_databases)
-  leftovers=$(orphan_leftovers)
+  leftovers=$(orphan_leftovers) || exit 1
   if [[ -z "$list$leftovers" ]]; then
-    echo "no branch database outlives its worktree, and no dropped one left Kafka topics or a Redis index"
+    if [[ -z "$(container_down_reason codebite-kafka)$(container_down_reason codebite-redis)" ]]; then
+      echo "no branch database outlives its worktree, and no dropped one left Kafka topics or a Redis index"
+    else
+      echo "nothing found: no branch database outlives its worktree, and no dropped one left what could be looked at"
+    fi
   else
     if [[ -n "$list" ]]; then
       echo "branch databases whose worktree is gone:"
@@ -827,14 +849,20 @@ cmd_orphans() {
 # in Kafka and Redis when it is gone too; a live worktree's is dropped from that worktree, and
 # any other database or name is never touched.
 cmd_drop_orphan() {
-  local name=$1 gone=false
+  local name=$1 listed=false gone=false leftovers
   require_postgres
-  # Captured, not piped to grep -q: under pipefail, its early exit can fail the pipe it ends.
-  if grep -qxF -- "$name" <<<"$(orphan_databases | cut -f1)"; then
-    :
-  elif grep -qxF -- "$name" <<<"$(orphan_leftovers | cut -f1)"; then
-    gone=true
-  else
+  # The shape comes first: grep reads a name of several lines as several names, any one of which
+  # may match. Lists are captured, not piped to grep -q: under pipefail its early exit can fail
+  # the pipe it ends, and a lookup that exits inside a pipe wouldn't end the drop.
+  if is_branch_db_name "$name"; then
+    if grep -qxF -- "$name" <<<"$(orphan_databases | cut -f1)"; then
+      listed=true
+    else
+      leftovers=$(orphan_leftovers) || exit 1
+      if grep -qxF -- "$name" <<<"$(cut -f1 <<<"$leftovers")"; then listed=true gone=true; fi
+    fi
+  fi
+  if ! $listed; then
     echo "$name isn't a branch database whose worktree is gone, nor one already dropped that left Kafka topics or a Redis index" \
       "(scripts/dev-branch-servers.sh orphans lists both); dropping nothing" >&2
     exit 1
