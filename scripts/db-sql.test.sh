@@ -9,6 +9,17 @@ trap 'rm -rf "$tmp"' EXIT
 mkdir "$tmp/bin"
 cat > "$tmp/bin/docker" <<'STUB'
 #!/usr/bin/env bash
+# STUB_DOCKER is the state docker is in: up (the default), down (the daemon doesn't answer),
+# stopped (the daemon answers, the container isn't running) or absent (no such container).
+case "${STUB_DOCKER:-up} $1" in
+  "down "*) echo 'Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?' >&2; exit 1 ;;
+  *" info") exit 0 ;;
+  "up inspect") echo true; exit 0 ;;
+  "stopped inspect") echo false; exit 0 ;;
+  "absent inspect") echo; echo 'Error: No such object: codebite-postgres' >&2; exit 1 ;;
+  "stopped exec") echo 'Error response from daemon: container 3f2a9c is not running' >&2; exit 1 ;;
+  "absent exec") echo 'Error response from daemon: No such container: codebite-postgres' >&2; exit 1 ;;
+esac
 printf '%s\n' "$*" >> "$STUB_LOG"
 case "$*" in
   *max*) cat >/dev/null; printf '%s\n' "$STUB_VERSION" ;;   # docker exec -i drains stdin
@@ -58,9 +69,30 @@ grep -q 'relation "boom" does not exist' "$tmp/err" || fail "a failing query sho
 
 if STUB_VERSION=999999 run a b >/dev/null 2>&1; then fail "two arguments should be a usage error"; fi
 
+# Docker down: one line saying what to start, exit 2 (1 is a failing query), and no query sent.
+: > "$tmp/log"
+code=0; out=$(STUB_DOCKER=down run "select 1" 2>"$tmp/err") || code=$?
+[[ $code == 2 ]] || fail "a Docker daemon that doesn't answer should exit 2, got $code"
+[[ "$(cat "$tmp/err")" == "db-sql.sh: database codebite not reachable: the Docker daemon doesn't answer; start Docker Desktop (open -a Docker) and rerun" ]] \
+  || fail "a Docker daemon that doesn't answer should say to start Docker Desktop, in one line: $(cat "$tmp/err")"
+[[ -z "$out" && ! -s "$tmp/log" ]] || fail "no query should run while the Docker daemon doesn't answer"
+
+# Docker up, container not running (stopped, or never created): the compose command, exit 2.
+for state in stopped absent; do
+  : > "$tmp/log"
+  code=0; out=$(STUB_DOCKER=$state run "select 1" 2>"$tmp/err") || code=$?
+  [[ $code == 2 ]] || fail "a codebite-postgres that is $state should exit 2, got $code"
+  [[ "$(cat "$tmp/err")" == "db-sql.sh: database codebite not reachable: the codebite-postgres container isn't running; start it: docker compose -f infra/docker-compose.yml up -d postgres" ]] \
+    || fail "a codebite-postgres that is $state should name the compose command, in one line: $(cat "$tmp/err")"
+  [[ -z "$out" && ! -s "$tmp/log" ]] || fail "no query should run while codebite-postgres is $state"
+done
+grep -q '^  postgres:$' "$here/../infra/docker-compose.yml" \
+  || fail "the compose command names the service postgres, which infra/docker-compose.yml no longer has"
+
 # require_current_db itself, as every reader shares it: a checkout without migrations (a worktree before
-# common/ exists, say) neither warns nor errors, and an unreachable database prints the one message
-# dev-status.sh prints too, prefixed by the script's name.
+# common/ exists, say) neither warns nor errors, and a database that can't be read returns 2 with the
+# one message dev-status.sh prints too, prefixed by the script's name: what to start when Docker or
+# the container is down, and otherwise that the container runs, so it is the database that is missing.
 mkdir "$tmp/bare"
 (
   set -euo pipefail
@@ -69,12 +101,25 @@ mkdir "$tmp/bare"
   PATH="$tmp/bin:$PATH" STUB_VERSION=7 require_current_db codebite "$tmp/bare" db-sql.sh 2>"$tmp/err" \
     || fail "a checkout with no migrations should not fail the check: $(cat "$tmp/err")"
   [[ ! -s "$tmp/err" ]] || fail "a checkout with no migrations should not warn: $(cat "$tmp/err")"
-  if PATH="$tmp/bin:$PATH" STUB_VERSION='' require_current_db codebite "$tmp/bare" db-sql.sh 2>"$tmp/err"; then
-    fail "an unreachable database should return 1"
-  fi
-  [[ "$(cat "$tmp/err")" == "db-sql.sh: database codebite $(db_unreachable_message)" ]] \
+  code=0
+  PATH="$tmp/bin:$PATH" STUB_VERSION='' require_current_db nope "$tmp/bare" db-sql.sh 2>"$tmp/err" || code=$?
+  [[ $code == 2 ]] || fail "a database that can't be read should return 2, got $code"
+  [[ "$(cat "$tmp/err")" == "db-sql.sh: database nope not readable though the codebite-postgres container runs: no such database, or no migration has run in it" ]] \
+    || fail "a missing database should not be told to start Docker: $(cat "$tmp/err")"
+  code=0
+  PATH="$tmp/bin:$PATH" STUB_DOCKER=down require_current_db codebite "$tmp/bare" db-sql.sh 2>"$tmp/err" || code=$?
+  [[ $code == 2 ]] || fail "a database behind a Docker that is down should return 2, got $code"
+  [[ "$(cat "$tmp/err")" == "db-sql.sh: database codebite $(PATH="$tmp/bin:$PATH" STUB_DOCKER=down db_unreachable_message)" ]] \
     || fail "the unreachable message should be the shared one, prefixed by the script: $(cat "$tmp/err")"
-  grep -q 'open -a Docker' "$tmp/err" || fail "the unreachable message should say how to start the database"
+  grep -q 'start Docker Desktop' "$tmp/err" || fail "the unreachable message should say what to start: $(cat "$tmp/err")"
+  # db_psql itself, for a caller that skips require_current_db: nothing runs, and it returns 2.
+  : > "$tmp/log"
+  code=0
+  PATH="$tmp/bin:$PATH" STUB_DOCKER=stopped db_psql codebite -tAc 'select 1' >/dev/null 2>"$tmp/err" || code=$?
+  [[ $code == 2 ]] || fail "db_psql with the container stopped should return 2, got $code"
+  grep -q "database codebite not reachable: the codebite-postgres container isn't running; start it: docker compose" "$tmp/err" \
+    || fail "db_psql with the container stopped should say what to start: $(cat "$tmp/err")"
+  [[ ! -s "$tmp/log" ]] || fail "db_psql with the container stopped should not reach docker exec"
 )
 
 echo "db-sql.test.sh: ok"

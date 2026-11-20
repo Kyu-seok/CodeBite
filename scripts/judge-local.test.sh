@@ -16,6 +16,14 @@ contains() { grep -qE -- "$3" <<<"$2" || { echo "FAIL: $1: no /$3/ in:"; echo "$
 mkdir "$fake/bin"
 cat > "$fake/bin/docker" <<'SH'
 #!/usr/bin/env bash
+# FAKE_DOCKER=down is a Docker daemon that doesn't answer, stopped a codebite-postgres not running.
+case "${FAKE_DOCKER:-up} $1" in
+  "down "*) echo 'Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?' >&2; exit 1 ;;
+  *" info") exit 0 ;;
+  "up inspect") echo true; exit 0 ;;
+  "stopped inspect") echo false; exit 0 ;;
+  "stopped exec") echo 'Error response from daemon: container 3f2a9c is not running' >&2; exit 1 ;;
+esac
 sql=$(cat)
 echo "$* $sql" >> "$FAKE_DIR/docker.log"
 if [[ "$*$sql" == *flyway_schema_history* ]]; then echo "${FAKE_VERSION:-99999}"; else cat "$FAKE_DIR/export.json"; fi
@@ -82,6 +90,23 @@ contains "the refusal names the way past it" "$out" "CODEBITE_ALLOW_STALE=1"
 FAKE_VERSION=1 CODEBITE_ALLOW_STALE=1 run piggy-bank-total --languages python
 check "CODEBITE_ALLOW_STALE=1 judges a database behind" "$code" 0
 contains "judging a database behind still warns" "$out" "WARNING: database codebite at V1"
+
+# --- Docker or the container down ---------------------------------------------------------------
+
+# Exit 2 with what to start, as scripts/db-sql.sh says it: never 1, a failing case.
+rm -f "$fake/docker.log"
+export FAKE_DOCKER=down
+run piggy-bank-total --languages python
+check "a Docker daemon that doesn't answer is not a failing case" "$code" 2
+check "a Docker daemon that doesn't answer says to start Docker Desktop" "$out" \
+  "judge-local.sh: database codebite not reachable: the Docker daemon doesn't answer; start Docker Desktop (open -a Docker) and rerun"
+export FAKE_DOCKER=stopped
+run piggy-bank-total --languages python
+check "a stopped codebite-postgres is not a failing case" "$code" 2
+check "a stopped codebite-postgres names the compose command" "$out" \
+  "judge-local.sh: database codebite not reachable: the codebite-postgres container isn't running; start it: docker compose -f infra/docker-compose.yml up -d postgres"
+check "nothing is read from a database that is down" "$([[ -e "$fake/docker.log" ]] && echo touched || echo untouched)" untouched
+unset FAKE_DOCKER
 
 # --- from a file, before the migration exists -------------------------------------------------
 
