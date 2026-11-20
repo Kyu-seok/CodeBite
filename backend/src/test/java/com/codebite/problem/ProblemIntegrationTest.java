@@ -4,6 +4,10 @@ import com.codebite.problem.dto.CreateProblemRequest;
 import com.codebite.problem.dto.CreateTestCaseRequest;
 import com.codebite.problem.dto.UpdateProblemRequest;
 import com.codebite.problem.entity.Difficulty;
+import com.codebite.problem.entity.Problem;
+import com.codebite.problem.entity.ProblemTranslation;
+import com.codebite.problem.repository.ProblemRepository;
+import com.codebite.problem.repository.ProblemTranslationRepository;
 import com.codebite.user.entity.Role;
 import com.codebite.user.entity.User;
 import com.codebite.user.repository.UserRepository;
@@ -20,6 +24,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -40,6 +45,12 @@ class ProblemIntegrationTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private ProblemRepository problemRepository;
+
+    @Autowired
+    private ProblemTranslationRepository translationRepository;
 
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
@@ -111,6 +122,28 @@ class ProblemIntegrationTest {
                 .andExpect(jsonPath("$.starterCode.cpp").isNotEmpty())
                 .andExpect(jsonPath("$.sampleTestCases").isArray())
                 .andExpect(jsonPath("$.sampleTestCases.length()").value(2));
+    }
+
+    @Test
+    void getProblemBySlug_inEnglish_comesFromTheProblem() throws Exception {
+        Problem problem = problemRepository.findBySlug("snack-drawer-pair").orElseThrow();
+        mockMvc.perform(get("/api/problems/snack-drawer-pair").header("Accept-Language", "en"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value(problem.getTitle()))
+                .andExpect(jsonPath("$.description").value(problem.getDescription()))
+                .andExpect(jsonPath("$.constraints").value(problem.getConstraints()));
+    }
+
+    @Test
+    void getProblemBySlug_inKorean_comesFromTheTranslation() throws Exception {
+        Problem problem = problemRepository.findBySlug("snack-drawer-pair").orElseThrow();
+        ProblemTranslation korean = translationRepository.findByProblemIdAndLocale(problem.getId(), "ko").orElseThrow();
+        assertNotEquals(problem.getTitle(), korean.getTitle());
+        mockMvc.perform(get("/api/problems/snack-drawer-pair").header("Accept-Language", "ko"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value(korean.getTitle()))
+                .andExpect(jsonPath("$.description").value(korean.getDescription()))
+                .andExpect(jsonPath("$.constraints").value(korean.getConstraints()));
     }
 
     @Test

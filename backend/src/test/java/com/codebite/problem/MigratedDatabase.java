@@ -40,15 +40,31 @@ public final class MigratedDatabase {
     }
 
     public <T> List<T> query(String sql, RowReader<T> reader, Object... params) throws SQLException {
-        List<T> result = new ArrayList<>();
-        try (Connection connection = DriverManager.getConnection(url, "sa", "");
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            for (int i = 0; i < params.length; i++) statement.setObject(i + 1, params[i]);
+        return run(sql, params, statement -> {
+            List<T> result = new ArrayList<>();
             try (ResultSet rows = statement.executeQuery()) {
                 while (rows.next()) result.add(reader.read(rows));
             }
+            return result;
+        });
+    }
+
+    /** Runs one statement that returns no rows, such as an INSERT, and returns the rows it changed. */
+    public int execute(String sql, Object... params) throws SQLException {
+        return run(sql, params, PreparedStatement::executeUpdate);
+    }
+
+    private interface StatementRunner<T> {
+        T run(PreparedStatement statement) throws SQLException;
+    }
+
+    /** Prepares {@code sql} on a connection of its own, binds {@code params} and hands it to {@code runner}. */
+    private <T> T run(String sql, Object[] params, StatementRunner<T> runner) throws SQLException {
+        try (Connection connection = DriverManager.getConnection(url, "sa", "");
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            for (int i = 0; i < params.length; i++) statement.setObject(i + 1, params[i]);
+            return runner.run(statement);
         }
-        return result;
     }
 
     /** The first column of every row. */
