@@ -41,13 +41,12 @@ class ProblemTranslationsTest {
     }
 
     @Test
-    void anEnglishRowIsRefused() throws SQLException {
-        // Not the unique (problem_id, locale) key refusing it: the problem has no en row to clash with.
-        DATABASE.execute("DELETE FROM problem_translations WHERE locale = 'en' "
-                + "AND problem_id = (SELECT id FROM problems WHERE slug = 'snack-drawer-pair')");
-        assertThrows(SQLException.class, () -> DATABASE.execute("""
+    void anEnglishRowIsRefused() {
+        SQLException refused = assertThrows(SQLException.class, () -> DATABASE.execute("""
                 INSERT INTO problem_translations (problem_id, locale, title, description, constraints)
                 SELECT id, 'en', title, description, constraints FROM problems WHERE slug = 'snack-drawer-pair'"""));
+        assertTrue(refused.getMessage().toLowerCase().contains("problem_translations_locale_not_en"),
+                "refused by something other than the locale check: " + refused.getMessage());
     }
 
     private static long count(String locale) throws SQLException {
