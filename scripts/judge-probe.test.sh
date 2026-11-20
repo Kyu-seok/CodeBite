@@ -147,15 +147,24 @@ code=0
 grep -q 'set JUDGE0_URL' "$tmp/err" || fail "should say to set JUDGE0_URL: $(cat "$tmp/err")"
 [[ ! -e "$tmp/curl.log" && ! -e "$tmp/ssh.log" ]] || fail "nothing should be sent without a Judge0"
 
-# Production's Judge0, by any name the repo knows it by (the server on the LAN, its ssh alias, the
-# compose service, the public site), is refused without --production: neither curl nor ssh runs.
-for url in http://192.168.219.200:2358 http://mini:2358 http://judge0:2358 https://code-bite.com HTTP://192.168.219.200:2359/; do
+# Production's own configuration (the compose service name infra/.env holds, the public site) is
+# refused without --production: neither curl nor ssh runs.
+for url in http://judge0:2358 https://code-bite.com HTTP://JUDGE0:2359/; do
   reset
   code=0
   JUDGE0_URL=$url run cpp "$tmp/bind.cpp" > "$tmp/out" 2> "$tmp/err" || code=$?
   [[ "$code" -eq 2 ]] || fail "$url: production without --production should exit 2, got $code"
   grep -q -- '--production' "$tmp/err" || fail "$url: should name --production: $(cat "$tmp/err")"
   [[ ! -e "$tmp/curl.log" && ! -e "$tmp/ssh.log" ]] || fail "$url: production must not be reached without --production"
+done
+
+# The dev Judge0's addresses, the LAN one the dev profile defaults to and a Tailscale name, are
+# judged like any other JUDGE0_URL.
+for url in http://192.168.219.200:2358 http://nucbox:2358; do
+  reset
+  JUDGE0_URL=$url run cpp "$tmp/bind.cpp" > "$tmp/out" 2>&1 || fail "$url: the dev Judge0 should be judged: $(cat "$tmp/out")"
+  grep -q "^judge0: $url" "$tmp/out" || fail "$url: should say where it judged: $(cat "$tmp/out")"
+  [[ ! -e "$tmp/ssh.log" ]] || fail "$url: ssh must not run without --production"
 done
 
 # --production: curl runs on the server over ssh (SSH_TARGET, default mini) against its

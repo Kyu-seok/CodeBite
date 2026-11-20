@@ -18,15 +18,16 @@
 # at gnu++14). Then GET /submissions/<token>?base64_encoded=true every 150 ms until the status
 # leaves In Queue and Processing, for up to 30 s (JUDGE_PROBE_WAIT seconds), as JudgeService polls.
 #
-# The target is the Judge0 JUDGE0_URL names. Unset, the script exits 2 saying to set it. A
-# JUDGE0_URL naming production's Judge0 (192.168.219.200 or mini, the server whose Judge0 the dev
-# profile defaults to; the compose name judge0; code-bite.com) is refused: a Tailscale or other name
-# for that server isn't known here, so don't point JUDGE0_URL at it.
+# The target is the Judge0 JUDGE0_URL names: the dev Judge0, the LAN or Tailscale address the dev
+# profile and the branch servers already send every Run to. Unset, the script exits 2 saying to set
+# it. A JUDGE0_URL that is production's own configuration (infra/.env's compose name judge0, as
+# dev-branch-servers.sh's dev_judge0_url reads it, or code-bite.com) is refused.
 #
-# --production runs the code on the production judge, so it needs the maintainer's go-ahead each
-# time it is used. It runs curl on the server over `ssh $SSH_TARGET` (default mini, as
-# scripts/cutover-judge0-py312.sh does) against its localhost:2358, and ignores JUDGE0_URL. Without
-# the flag, ssh never runs.
+# --production is for when that address doesn't answer from where you are: it logs in to the
+# production server and runs the code on the production judge from there, so it needs the
+# maintainer's go-ahead each time it is used. It runs curl on the server over `ssh $SSH_TARGET`
+# (default mini, as scripts/cutover-judge0-py312.sh does) against its localhost:2358, and ignores
+# JUDGE0_URL. Without the flag, ssh never runs.
 #
 # Exits 0 when Judge0 says Accepted (it compiled and ran), 1 for any other verdict on the code
 # (Compilation Error, a Runtime Error, Time Limit Exceeded), and 2 when nothing was judged: usage, an
@@ -83,14 +84,14 @@ if [[ -n "$production" ]]; then
 else
   base=${JUDGE0_URL:-}
   [[ -n "$base" ]] || {
-    echo "judge-probe.sh: set JUDGE0_URL to a Judge0 that isn't production's (or, with the maintainer's go-ahead, pass --production)" >&2
+    echo "judge-probe.sh: set JUDGE0_URL to the dev Judge0 (or, with the maintainer's go-ahead, pass --production)" >&2
     exit 2
   }
   base=${base%/}
   host=$(printf '%s' "$base" | tr '[:upper:]' '[:lower:]' | sed -E 's#^[a-z]+://##; s#[/?].*##; s#.*@##; s#:[0-9]*$##')
   case $host in
-    192.168.219.200 | mini | judge0 | code-bite.com | www.code-bite.com)
-      echo "judge-probe.sh: JUDGE0_URL $base is production's Judge0; code runs there only with --production and the maintainer's go-ahead" >&2
+    judge0 | code-bite.com | www.code-bite.com)
+      echo "judge-probe.sh: JUDGE0_URL $base is production's configuration, not the dev Judge0's address; the server is reached only with --production and the maintainer's go-ahead" >&2
       exit 2 ;;
   esac
   where=$base
