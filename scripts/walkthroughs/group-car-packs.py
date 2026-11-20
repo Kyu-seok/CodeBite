@@ -55,7 +55,7 @@ def solve(target, position, speed, run):
     cars = sorted(zip(position, speed), reverse=True)
     n = len(cars)
     kms = [p for p, _ in cars]
-    speed_tags = [[j, f"{s}km/h"] for j, (_, s) in enumerate(cars)]
+    speed_tags = [[j, {"en": f"{s}km/h", "ko": f"시속 {s}km"}] for j, (_, s) in enumerate(cars)]
     arrivals = {}
     packs = []  # (arrival, index of the car leading the pack), nearest pack at the bottom
     leaders = []

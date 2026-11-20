@@ -40,7 +40,7 @@ wt = Walkthrough(
         {"id": "calc", "type": "array", "title": {"en": "n! / product of sizes", "ko": "n! / 크기의 곱"}},
     ],
 )
-CALC_TAGS = [[FACT, "n!"], [PROD, "∏ size"], [ANS, {"en": "answer", "ko": "답"}]]
+CALC_TAGS = [[FACT, "n!"], [PROD, {"en": "∏ size", "ko": "∏ size (크기의 곱)"}], [ANS, {"en": "answer", "ko": "답"}]]
 
 
 def solve(parent, run):
