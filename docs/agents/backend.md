@@ -25,3 +25,4 @@ Each feature package holds `controller/`, `service/` and `dto/` (the `*Request` 
 
 - `github/gateway/FakeGitHubGateway`, swapped in by `config/TestGitHubConfig`; `config/TestKafkaConfig` runs Imports synchronously
 - `problem/MigratedDatabase` for tests that read migrated rows (H2 keeps `E'…\n…'` escapes literally)
+- `testsupport/LoopbackHttpServer` for a test that stands in for an HTTP API with a JDK `HttpServer`: it binds 127.0.0.1, never the wildcard address (#247)
