@@ -7,12 +7,12 @@
 #   scripts/replay-local.sh slug,slug,...    # just those problems
 #   scripts/replay-local.sh                  # every problem
 #
-# Exits 1 unless every problem replayed was Accepted. CODEBITE_PYTHON312 names the interpreter
-# when python3.12 isn't on PATH. Extra arguments after the slugs go to the replay (e.g. --time-limit 10).
+# Exits 1 unless every problem replayed was Accepted, 2 when scripts/python312.sh finds no Python 3.12
+# (CODEBITE_PYTHON312 names one). Extra arguments after the slugs go to the replay (e.g. --time-limit 10).
 set -euo pipefail
 root="$(cd "$(dirname "$0")/.." && pwd)"
 
-python="${CODEBITE_PYTHON312:-$(command -v python3.12 || echo /opt/homebrew/bin/python3.12)}"
+python=$("$root/scripts/python312.sh") || exit 2
 container=codebite-postgres
 psql() { docker exec -i "$container" psql -U codebite -d codebite -tA "$@"; }
 
