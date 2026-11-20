@@ -10,6 +10,8 @@ spec = importlib.util.spec_from_file_location("check_doc_references", SCRIPT)
 checker = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(checker)
 CEILING = checker.CLAUDE_MD_CEILING
+VIEWS = ".claude/skills/add-walkthrough/views.md"
+ADVICE = "a new pattern edits the bullet it refines or adds one beside it in its category's section"
 
 GLOSSARY = """# Glossary
 
@@ -98,6 +100,45 @@ class CheckDocReferences(unittest.TestCase):
     def test_a_claude_md_at_the_ceiling_passes(self):
         self.write("CLAUDE.md", "x" * (CEILING - 1) + "\n")
         self.assertEqual(self.check(), (0, ""))
+
+    def test_a_views_heading_with_a_ticket_number_fails_and_says_what_to_do(self):
+        self.write(VIEWS, "# Views\n\n## Stack\n\n- a rule\n\n## Greedy (#375)\n\n- another\n")
+        code, out = self.check()
+        self.assertEqual(code, 1)
+        self.assertIn(f'{VIEWS}:7: heading "Greedy (#375)" carries a ticket number: {ADVICE}', out)
+        self.assertEqual(len(out.splitlines()), 1)
+
+    def test_a_repeated_views_heading_fails_and_names_the_first(self):
+        self.write(VIEWS, "## Dynamic Programming\n\n- a rule\n\n## Greedy\n\n##  dynamic programming \n")
+        code, out = self.check()
+        self.assertEqual(code, 1)
+        self.assertIn(f'{VIEWS}:7: heading "dynamic programming" repeats line 1: {ADVICE}', out)
+        self.assertEqual(len(out.splitlines()), 1)
+
+    def test_views_headings_that_differ_and_carry_no_ticket_number_pass(self):
+        # Just inside each rule: a number without #, a # without digits, a ticket in a bullet or a
+        # deeper heading, and a section whose name only starts like another's.
+        self.write(VIEWS, "# Views (#364)\n\n## Dynamic Programming\n\n- from #376\n\n### Tables (#376)\n\n"
+                   "## 2D Dynamic Programming\n\n## C# tracers\n\n## Part 2\n")
+        self.assertEqual(self.check(), (0, ""))
+
+    def test_a_fenced_views_heading_is_not_a_heading_but_one_after_the_fence_is(self):
+        fenced = "## Stack\n\n```\n## Stack\n## Greedy (#375)\n```\n"
+        self.write(VIEWS, fenced)
+        self.assertEqual(self.check(), (0, ""))
+        self.write(VIEWS, fenced + "\n## Greedy (#375)\n")
+        code, out = self.check()
+        self.assertEqual(code, 1)
+        self.assertIn(f'{VIEWS}:8: heading "Greedy (#375)" carries a ticket number', out)
+
+    def test_a_ticket_number_heading_in_another_document_passes(self):
+        self.write(".claude/skills/add-walkthrough/SKILL.md", "## Greedy (#375)\n\n## Greedy (#375)\n")
+        self.assertEqual(self.check(), (0, ""))
+
+    def test_this_checkouts_views_headings_pass(self):
+        repo = SCRIPT.parent.parent
+        self.assertEqual(list(checker.heading_problems(repo)), [])
+        self.assertIn("## Every view", (repo / VIEWS).read_text())
 
 
 if __name__ == "__main__":

@@ -17,10 +17,13 @@ A third check keeps the same documents' tables whole: a line that is neither bla
 between two rows of a table (a paragraph pasted into the middle) cuts the rows after it off.
 A fourth keeps CLAUDE.md under CLAUDE_MD_CEILING bytes: it loads on every turn of every session,
 so layout and reference belong in docs/agents/ behind a pointer (#151).
+A fifth keeps the add-walkthrough skill's views.md to one section per category (CODING_STANDARDS.md,
+"views.md states each rule once"): a `## ` heading there carries no ticket number ("Greedy (#375)") and never
+repeats another, fenced lines aside. Whether two bullets state one rule is left to the reviewer.
 
     scripts/check-doc-references.py [repo-root]
 
-Exits 1 and lists each dangling pointer as file:line.
+Exits 1 and lists each problem as file:line.
 """
 import re
 import subprocess
@@ -47,6 +50,11 @@ TABLE_ROW = re.compile(r"^\s*\|")
 # CLAUDE.md's size after #151 (22.3KB) plus about ten percent headroom, to a whole KB. Raising it is
 # a decision to make on purpose, in its own commit, not a fix for a check that went red.
 CLAUDE_MD_CEILING = 25_000
+VIEWS = ".claude/skills/add-walkthrough/views.md"
+SECTION_HEADING = re.compile(r"^##\s+(.*?)\s*$")
+TICKET = re.compile(r"#\d+")
+VIEWS_ADVICE = ("a new pattern edits the bullet it refines or adds one beside it in its category's section "
+                "(CODING_STANDARDS.md, \"views.md states each rule once\")")
 
 
 def files(root, patterns):
@@ -131,9 +139,32 @@ def size_problems(root):
                "CLAUDE_MD_CEILING is a decision to make on purpose)")
 
 
+def heading_problems(root):
+    views = root / VIEWS
+    if not views.exists():
+        return
+    first_line = {}
+    in_fence = False
+    for number, line in enumerate(views.read_text().splitlines(), 1):
+        if FENCE.match(line):
+            in_fence = not in_fence
+            continue
+        heading = None if in_fence else SECTION_HEADING.match(line)
+        if not heading:
+            continue
+        title = heading.group(1)
+        if TICKET.search(title):
+            yield f"{VIEWS}:{number}: heading \"{title}\" carries a ticket number: {VIEWS_ADVICE}"
+        same = " ".join(title.casefold().split())
+        if same in first_line:
+            yield f"{VIEWS}:{number}: heading \"{title}\" repeats line {first_line[same]}: {VIEWS_ADVICE}"
+        first_line.setdefault(same, number)
+
+
 def problems(root):
     terms = known_terms(root)
     yield from size_problems(root)
+    yield from heading_problems(root)
     for path in files(root, DOCS):
         text = path.read_text()
         yield from path_problems(root, path, text)
