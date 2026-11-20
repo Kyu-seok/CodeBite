@@ -223,7 +223,7 @@ class JudgeRun(unittest.TestCase):
 
     def test_a_403_without_a_json_body_is_the_proxy_refusing_this_client(self):
         cloudflare_page = b"<!DOCTYPE html><title>Attention Required! | Cloudflare</title>"
-        for body in (b"", cloudflare_page):
+        for body in (b"", cloudflare_page, b"[]"):
             with self.subTest(body=body[:20]):
                 self.stub.log.clear()
                 self.stub.runs = lambda language: (403, body)

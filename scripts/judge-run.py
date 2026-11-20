@@ -41,7 +41,8 @@ class Outcome(IntEnum):
 
 
 class Unreachable(Exception):
-    """The backend can't answer: exit 2 at once, since nothing after it can be judged either."""
+    """The backend can't answer, or a proxy won't let this client reach it: exit 2 at once, since
+    nothing after it can be judged either."""
 
 
 def usage(message=None):
@@ -127,10 +128,10 @@ def request(url, body=None):
         parsed = json.loads(raw) if raw else None
     except ValueError:
         parsed = None
-    # The backend's own 403 carries its JSON error; an empty or HTML one comes from the proxy.
-    if status == 403 and parsed is None:
+    # The backend's handlers answer a 403 with a JSON object; anything else is taken for the proxy's.
+    if status == 403 and not isinstance(parsed, dict):
         raise Unreachable(f"{url} answered HTTP 403 without the backend's JSON body: a proxy in front of "
-                          f"the backend refused this client (User-Agent {USER_AGENT}), so nothing was judged")
+                          f"the backend refused this client (User-Agent {USER_AGENT}), as it would every later request")
     return status, parsed
 
 
