@@ -19,7 +19,8 @@ A fourth keeps CLAUDE.md under CLAUDE_MD_CEILING bytes: it loads on every turn o
 so layout and reference belong in docs/agents/ behind a pointer (#151).
 A fifth keeps the add-walkthrough skill's views.md to one section per category (CODING_STANDARDS.md,
 "views.md states each rule once"): a `## ` heading there carries no ticket number ("Greedy (#375)") and never
-repeats another, fenced lines aside. Whether two bullets state one rule is left to the reviewer.
+repeats another. A fenced `## ` line counts too: skipping fences would let one left open hide every
+heading after it. Whether two bullets state one rule is left to the reviewer.
 
     scripts/check-doc-references.py [repo-root]
 
@@ -144,21 +145,17 @@ def heading_problems(root):
     if not views.exists():
         return
     first_line = {}
-    in_fence = False
     for number, line in enumerate(views.read_text().splitlines(), 1):
-        if FENCE.match(line):
-            in_fence = not in_fence
-            continue
-        heading = None if in_fence else SECTION_HEADING.match(line)
+        heading = SECTION_HEADING.match(line)
         if not heading:
             continue
         title = heading.group(1)
         if TICKET.search(title):
             yield f"{VIEWS}:{number}: heading \"{title}\" carries a ticket number: {VIEWS_ADVICE}"
-        same = " ".join(title.casefold().split())
-        if same in first_line:
-            yield f"{VIEWS}:{number}: heading \"{title}\" repeats line {first_line[same]}: {VIEWS_ADVICE}"
-        first_line.setdefault(same, number)
+        folded = " ".join(title.casefold().split())
+        if folded in first_line:
+            yield f"{VIEWS}:{number}: heading \"{title}\" repeats line {first_line[folded]}: {VIEWS_ADVICE}"
+        first_line.setdefault(folded, number)
 
 
 def problems(root):

@@ -10,7 +10,7 @@ spec = importlib.util.spec_from_file_location("check_doc_references", SCRIPT)
 checker = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(checker)
 CEILING = checker.CLAUDE_MD_CEILING
-VIEWS = ".claude/skills/add-walkthrough/views.md"
+VIEWS = checker.VIEWS
 ADVICE = "a new pattern edits the bullet it refines or adds one beside it in its category's section"
 
 GLOSSARY = """# Glossary
@@ -122,14 +122,11 @@ class CheckDocReferences(unittest.TestCase):
                    "## 2D Dynamic Programming\n\n## C# tracers\n\n## Part 2\n")
         self.assertEqual(self.check(), (0, ""))
 
-    def test_a_fenced_views_heading_is_not_a_heading_but_one_after_the_fence_is(self):
-        fenced = "## Stack\n\n```\n## Stack\n## Greedy (#375)\n```\n"
-        self.write(VIEWS, fenced)
-        self.assertEqual(self.check(), (0, ""))
-        self.write(VIEWS, fenced + "\n## Greedy (#375)\n")
+    def test_a_fence_left_open_does_not_hide_the_views_headings_after_it(self):
+        self.write(VIEWS, "## Stack\n\n```\nan example\n\n## Greedy (#375)\n")
         code, out = self.check()
         self.assertEqual(code, 1)
-        self.assertIn(f'{VIEWS}:8: heading "Greedy (#375)" carries a ticket number', out)
+        self.assertIn(f'{VIEWS}:6: heading "Greedy (#375)" carries a ticket number', out)
 
     def test_a_ticket_number_heading_in_another_document_passes(self):
         self.write(".claude/skills/add-walkthrough/SKILL.md", "## Greedy (#375)\n\n## Greedy (#375)\n")
