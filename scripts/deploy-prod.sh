@@ -17,6 +17,13 @@ set -euo pipefail
 
 COMPOSE=(docker compose -f infra/docker-compose.prod.yml)
 
+# No default provenance attestation on any build this script starts. BuildKit attaches one to every
+# build, new each time, and under Docker's containerd image store an image's id is the digest of
+# the index holding both: a fully cached build got a new id, so needs_roll rolled unchanged code
+# and `up` recreated an unchanged nginx and worker (#403). `provenance: false` in the compose file
+# doesn't do it: compose 5.1.0 leaves a false out of what it hands buildx.
+export BUILDX_NO_DEFAULT_ATTESTATIONS=1
+
 # Roll the backend only when its image or its compose config changed: a docs- or frontend-only
 # merge builds from cache, and rolling identical replicas spends ~2 min for nothing.
 # needs_roll <event> <new-image-id> <new-config-hash> [<old container id>...]
