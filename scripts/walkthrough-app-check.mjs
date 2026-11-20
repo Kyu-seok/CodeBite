@@ -10,6 +10,9 @@
 // Walkthrough's first frame at 1440 (walkthrough-diagram-beside.mjs decides and names it). Last, that a
 // problem without a Walkthrough shows no tab. Prints a line per check
 // and each screenshot's path; exits 1 on a failed check or a console error, 2 on bad arguments.
+// Something the rest of a pass needs (the tabs, the reveal button, the player) that doesn't show within
+// WALKTHROUGH_WAIT_MS (default 15000) is one failed check, "<pass>: <what> did not show within 15 s", with
+// a shot of that moment, <pass>-stopped.png; that pass stops there and the next one starts.
 // Node 22+, no npm dependencies; set CHROME_PATH if Chrome isn't found. A Chrome command unanswered for
 // WALKTHROUGH_CDP_TIMEOUT_MS (default 60000) fails the check, naming it; Chrome never outlives the script.
 import { spawn, execFileSync } from 'node:child_process';
@@ -31,8 +34,14 @@ function chromePath() {
   return execFileSync('which', ['google-chrome']).toString().trim();
 }
 
-// How long one DevTools command may take.
+// How long one DevTools command may take, and how long the page has to show what a step waits for.
 const CDP_TIMEOUT = +process.env.WALKTHROUGH_CDP_TIMEOUT_MS || 60000;
+const WAIT = +process.env.WALKTHROUGH_WAIT_MS || 15000;
+
+// A wait ran out: the rest of the pass has nothing to look at.
+class Stopped extends Error {}
+// Chrome stopped answering: nothing more can be checked.
+class ChromeGone extends Error {}
 
 async function openChrome() {
   const profile = mkdtempSync(join(tmpdir(), 'app-chrome-'));
@@ -59,7 +68,7 @@ async function openChrome() {
   // A Chrome under load can drop a reply; fail naming the command rather than wait forever.
   const send = (method, params = {}) => new Promise((ok, fail) => {
     const id = ++seq;
-    const t = setTimeout(() => { waiting.delete(id); fail(new Error(`Chrome did not answer ${method} within ${CDP_TIMEOUT} ms`)); }, CDP_TIMEOUT);
+    const t = setTimeout(() => { waiting.delete(id); fail(new ChromeGone(`Chrome did not answer ${method} within ${CDP_TIMEOUT} ms`)); }, CDP_TIMEOUT);
     waiting.set(id, { ok: v => { clearTimeout(t); ok(v); }, fail: e => { clearTimeout(t); fail(e); } });
     ws.send(JSON.stringify({ id, method, params }));
   });
@@ -75,13 +84,37 @@ async function openChrome() {
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 let failures = 0;
 const check = (ok, what) => { console.log(`${ok ? 'ok  ' : 'FAIL'} ${what}`); if (!ok) failures++; };
+// Whatever else goes wrong (Chrome gone, no Chrome at all) is a failed check too, never a stack trace.
+process.on('uncaughtException', e => { check(false, e.message); process.exit(1); });
 
 const c = await openChrome();
 const js = async expression => (await c.send('Runtime.evaluate', { expression, returnByValue: true, awaitPromise: true })).result.value;
-async function waitFor(expression, ms = 15000) {
+async function waitFor(expression, ms = WAIT) {
   const end = Date.now() + ms;
-  while (Date.now() < end) { if (await js(expression)) return true; await sleep(150); }
-  return false;
+  for (;;) {
+    // A page between two documents refuses the expression: not there yet.
+    if (await js(expression).catch(e => { if (e instanceof ChromeGone) throw e; return false; })) return true;
+    if (Date.now() >= end) return false;
+    await sleep(Math.min(150, ms));
+  }
+}
+// For what the next steps read: waits like waitFor, and stops the pass when it doesn't show. `seen` is an
+// expression for what the page has instead, added to the failed check.
+async function shown(what, expression, { seen } = {}) {
+  if (await waitFor(expression)) return;
+  const instead = seen ? await js(seen).catch(() => null) : null;
+  throw new Stopped(`${what} did not show within ${WAIT / 1000} s${instead ? ` (${instead})` : ''}`);
+}
+// One pass, or one of the checks after them: an error in it (a wait that ran out, a read of something the
+// page doesn't have, a backend that doesn't answer) is one failed check under its name with a shot of the
+// page as it stood, and the sections after it still run.
+async function section(name, body) {
+  try { await body(); }
+  catch (e) {
+    if (e instanceof ChromeGone) throw e;
+    check(false, `${name}: ${e instanceof Stopped ? e.message : `stopped at an error: ${e.message}`}`);
+    await shot(`${name}-stopped`).catch(e2 => { if (e2 instanceof ChromeGone) throw e2; });
+  }
 }
 async function shot(name) {
   const { data } = await c.send('Page.captureScreenshot', { format: 'png' });
@@ -100,26 +133,39 @@ async function token(username) {
   return (await res.json()).token;
 }
 
-async function open({ width, theme, lang, jwt }) {
+// Opens a problem's page as a visitor with this theme, language and sign-in, and waits for its tabs.
+// The visitor's localStorage is written by a script Chrome runs in the new document before any of the app's,
+// never on a page the app is already running on: there the last pass's signed-in app, once its GET /auth/me
+// answered, wrote that user's language and theme back over this pass's, and an English pass then waited for
+// "Description" on a Korean page until it gave up (#432; a backend or Vite under load widened the gap).
+let opens = 0;
+async function open({ width, theme, lang, jwt }, slug = SLUG) {
   await c.send('Emulation.setDeviceMetricsOverride', { width, height: width < 600 ? 844 : 900, deviceScaleFactor: 1, mobile: width < 600 });
   await c.send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: 'reduce' }] });
-  await c.send('Page.navigate', { url: VITE + '/' });
-  await waitFor(`document.readyState === 'complete'`);
-  await js(`(() => { localStorage.clear(); localStorage.setItem('theme', ${JSON.stringify(theme)}); localStorage.setItem('i18nextLng', ${JSON.stringify(lang)});
-    ${jwt ? `localStorage.setItem('token', ${JSON.stringify(jwt)});` : ''} return true; })()`);
-  await c.send('Page.navigate', { url: `${VITE}/problems/${SLUG}` });
-  return waitFor(`!!document.querySelector('[role=tab]')`);
+  const id = ++opens; // marks the new document: the last pass's page has tabs too, until this one replaces it
+  const { identifier } = await c.send('Page.addScriptToEvaluateOnNewDocument', { source: `if (window === top && location.origin === ${JSON.stringify(new URL(VITE).origin)}) {
+    localStorage.clear(); localStorage.setItem('theme', ${JSON.stringify(theme)}); localStorage.setItem('i18nextLng', ${JSON.stringify(lang)});
+    ${jwt ? `localStorage.setItem('token', ${JSON.stringify(jwt)});` : ''} window.__appCheckOpen = ${id}; }` });
+  await c.send('Page.navigate', { url: `${VITE}/problems/${slug}` });
+  try { await shown('tabs', `window.__appCheckOpen === ${id} && !!document.querySelector('[role=tab]')`); }
+  // Once only: a later load in the same pass keeps what the app stored since.
+  finally { await c.send('Page.removeScriptToEvaluateOnNewDocument', { identifier }); }
 }
 
+const tabTexts = `[...document.querySelectorAll('[role=tab]')].map(e => e.textContent.trim()).join(' | ')`;
+const tabWith = text => `[...document.querySelectorAll('[role=tab]')].find(e => e.textContent.includes(${JSON.stringify(text)}))`;
+
 // Opens the Walkthrough tab and reveals the player, in language strings `s`: waits for the tab, clicks it, waits for
-// the intro's reveal button, clicks it, and waits for the player. `atTab(shown)` runs once the tab shows (or doesn't),
-// `atIntro(shown)` once the reveal button does, so a caller checks and shoots each stage. Whether the player mounted.
+// the intro's reveal button, clicks it, and waits for the player; a stage that doesn't show stops the pass.
+// `atTab()` runs once the tab shows, `atIntro()` once the reveal button does, so a caller checks and shoots each stage.
 async function openPlayer(s, { atTab = async () => {}, atIntro = async () => {} } = {}) {
-  await atTab(await waitFor(`[...document.querySelectorAll('[role=tab]')].some(e => e.textContent.includes(${JSON.stringify(s.tab)}))`));
+  await shown('the Walkthrough tab', `!!${tabWith(s.tab)}`, { seen: tabTexts });
+  await atTab();
   await clickText('[role=tab]', s.tab);
-  await atIntro(await waitFor(`[...document.querySelectorAll('button')].some(b => b.textContent.includes(${JSON.stringify(s.reveal)}))`));
+  await shown('the reveal button', `[...document.querySelectorAll('button')].some(b => b.textContent.includes(${JSON.stringify(s.reveal)}))`);
+  await atIntro();
   await clickText('button', s.reveal);
-  return waitFor(`!!document.querySelector('.wt-count')`);
+  await shown('the player', `!!document.querySelector('.wt-count')`);
 }
 
 const L = { en: { tab: 'Walkthrough', reveal: "Show how it's solved", desc: 'Description', next: 'Next step' },
@@ -132,31 +178,32 @@ const runs = [
   { name: 'in-390-dark-ko', width: 390, theme: 'dark', lang: 'ko', user: 'wtcheck' },
 ];
 
-for (const r of runs) {
+for (const r of runs) await section(r.name, () => pass(r));
+
+async function pass(r) {
   const s = L[r.lang];
-  const jwt = r.user ? await token(`${r.user}${Date.now() % 100000}`) : null; // a fresh user: no stored theme or language
-  check(await open({ ...r, jwt }), `${r.name}: page loads`);
-  const descTab = `[...document.querySelectorAll('[role=tab]')].find(e => e.textContent.includes(${JSON.stringify(s.desc)}))`;
-  await waitFor(`!!${descTab}`); // the first tab can show before the language does on a slow render
-  const desc = await js(`${descTab}?.textContent.trim() ?? null`);
-  check(!!desc, `${r.name}: tabs in ${r.lang} (${desc})`);
-  const mounted = await openPlayer(s, {
-    async atTab(shown) {
-      check(shown, `${r.name}: Walkthrough tab shows`);
-      const fit = await js(`(() => { const t = [...document.querySelectorAll('[role=tab]')].find(e => e.textContent.includes(${JSON.stringify(s.tab)}));
+  const jwt = r.user ? await token(`${r.user}${Date.now() % 100000}`) : null; // a fresh user: no stored theme
+  await open({ ...r, jwt });
+  check(true, `${r.name}: page loads`);
+  await shown(`tabs in ${r.lang}`, `!!${tabWith(s.desc)}`, { seen: tabTexts }); // the first tab can show before the language does on a slow render
+  check(true, `${r.name}: tabs in ${r.lang} (${await js(`${tabWith(s.desc)}.textContent.trim()`)})`);
+  await openPlayer(s, {
+    async atTab() {
+      check(true, `${r.name}: Walkthrough tab shows`);
+      const fit = await js(`(() => { const t = ${tabWith(s.tab)};
         const list = t.parentElement, l = list.getBoundingClientRect(), b = t.getBoundingClientRect();
         return { right: Math.round(b.right), listRight: Math.round(l.right), scroll: list.scrollWidth, client: list.clientWidth, row: Math.round(list.parentElement.getBoundingClientRect().width) }; })()`);
       check(fit.right <= fit.listRight + 1, `${r.name}: Walkthrough tab fully visible ${JSON.stringify(fit)}`);
       if (r.jwt === undefined) check(await waitFor(`!!localStorage.getItem('token')`), `${r.name}: signed in`);
       await shot(`${r.name}-1-tabs`);
     },
-    async atIntro(shown) {
-      check(shown, `${r.name}: intro with the reveal button`);
+    async atIntro() {
+      check(true, `${r.name}: intro with the reveal button`);
       check(!(await js(`!!document.querySelector('.wt')`)), `${r.name}: no player before the reveal`);
       await shot(`${r.name}-2-intro`);
     },
   });
-  check(mounted, `${r.name}: player mounts after the reveal`);
+  check(true, `${r.name}: player mounts after the reveal`);
   const theme = await js(`document.querySelector('.wt').dataset.theme`);
   const pageTheme = await js(`document.documentElement.classList.contains('dark') ? 'dark' : 'light'`);
   check(theme === pageTheme && theme === r.theme, `${r.name}: player theme ${theme}, page ${pageTheme}`);
@@ -200,7 +247,8 @@ for (const r of runs) {
   await clickText('[role=tab]', s.desc);
   check(await waitFor(`!document.querySelector('.wt')`), `${r.name}: description tab hides the player`);
   await clickText('[role=tab]', s.tab);
-  check(await waitFor(`!!document.querySelector('.wt-count')`), `${r.name}: back on the tab, no reveal needed`);
+  await shown('the player, back on its tab with no reveal', `!!document.querySelector('.wt-count')`);
+  check(true, `${r.name}: back on the tab, no reveal needed`);
   const back = await js(`[document.querySelector('.wt-runbtn[aria-selected=true]').textContent, document.querySelector('.wt-count').textContent].join(' @ ')`);
   check(place === back, `${r.name}: same run and step after a tab switch (${place} / ${back})`);
 
@@ -219,9 +267,9 @@ for (const r of runs) {
 // The description's Diagrams beside the first frame, so a view drawing the same structure can be held to
 // its layout (docs/adr/0012). Each Diagram and the player are shot from the page, then laid side by side
 // on a blank page and shot again as one picture.
-const beside = diagramBeside(SLUG, (await (await fetch(`${API}/problems/${SLUG}`)).json()).description);
-if (!beside) console.log(`info no Diagram in the description: no side-by-side shot`);
-else {
+await section('diagram-beside', async () => {
+  const beside = diagramBeside(SLUG, (await (await fetch(`${API}/problems/${SLUG}`)).json()).description);
+  if (!beside) { console.log(`info no Diagram in the description: no side-by-side shot`); return; }
   const clip = async sel => {
     await js(`${sel}.scrollIntoView({ block: 'start' })`);
     await sleep(300);
@@ -249,38 +297,40 @@ else {
     <div style="display:flex;flex-direction:column;gap:12px"><b>Description: ${beside.kinds.join(', ')}</b>${diagrams.map(d => img(d, d.width)).join('')}</div>
     <div style="display:flex;flex-direction:column;gap:12px"><b>Walkthrough: first frame</b>${img(frame, frame.width)}</div></body>`;
   await c.send('Page.navigate', { url: 'about:blank' });
-  await waitFor(`document.readyState === 'complete'`);
+  await waitFor(`location.href === 'about:blank' && document.readyState === 'complete'`);
   await js(`(() => { document.open(); document.write(${JSON.stringify(html)}); document.close(); return true; })()`);
   await waitFor(`[...document.images].every(i => i.complete)`);
   const size = await js(`(() => { const b = document.body.getBoundingClientRect(); return { width: Math.ceil(b.width), height: Math.ceil(b.height) }; })()`);
   const { data } = await c.send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: true, clip: { x: 0, y: 0, ...size, scale: 1 } });
   writeFileSync(join(OUT, beside.name + '.png'), Buffer.from(data, 'base64'));
   console.log(`     ${join(OUT, beside.name + '.png')} (the description's Diagrams beside the first frame: same layout?)`);
-}
+});
 
 // The folded left panel's strip lists the Walkthrough too, and opens it.
-await open({ width: 1440, theme: 'dark', lang: 'en', jwt: null });
-await js(`document.querySelector('[aria-label="Fold panel"]')?.click() ?? false`);
-await sleep(1000);
-console.log('     left panel width after fold: ' + await js(`Math.round(document.querySelector('[data-tour=description]')?.getBoundingClientRect().width ?? -1)`));
-// Headless, Fold panel leaves the panel at 55px still drawing the full panel (never the strip), on any
-// problem: reported only, not failed, until that is looked into.
-const strip = await waitFor(`[...document.querySelectorAll('button[aria-pressed]')].some(b => b.textContent.includes('Walkthrough'))`, 3000);
-console.log(`info folded strip lists Walkthrough: ${strip}`);
-await shot('strip-1440-dark-en');
+await section('strip-1440-dark-en', async () => {
+  await open({ width: 1440, theme: 'dark', lang: 'en', jwt: null });
+  await js(`document.querySelector('[aria-label="Fold panel"]')?.click() ?? false`);
+  await sleep(1000);
+  console.log('     left panel width after fold: ' + await js(`Math.round(document.querySelector('[data-tour=description]')?.getBoundingClientRect().width ?? -1)`));
+  // Headless, Fold panel leaves the panel at 55px still drawing the full panel (never the strip), on any
+  // problem: reported only, not failed, until that is looked into.
+  const strip = await waitFor(`[...document.querySelectorAll('button[aria-pressed]')].some(b => b.textContent.includes('Walkthrough'))`, Math.min(3000, WAIT));
+  console.log(`info folded strip lists Walkthrough: ${strip}`);
+  await shot('strip-1440-dark-en');
+});
 
 // A problem without a Walkthrough shows no tab: the first one in the list whose Walkthrough read is a 404.
-const listed = (await (await fetch(`${API}/problems?size=100`)).json()).content.map(p => p.slug);
-let without = null;
-for (const slug of listed) if ((await fetch(`${API}/problems/${slug}/walkthrough`)).status === 404) { without = slug; break; }
-check(!!without, `a problem without a Walkthrough to compare (${without})`);
-if (without) {
-  await open({ width: 1440, theme: 'dark', lang: 'en', jwt: null });
-  await c.send('Page.navigate', { url: `${VITE}/problems/${without}` });
-  await waitFor(`[...document.querySelectorAll('[role=tab]')].some(e => e.textContent.includes('Solutions'))`);
-  check(!(await js(`[...document.querySelectorAll('[role=tab]')].some(e => e.textContent.includes('Walkthrough'))`)), `${without}: no Walkthrough tab`);
+await section('no-walkthrough', async () => {
+  const listed = (await (await fetch(`${API}/problems?size=100`)).json()).content.map(p => p.slug);
+  let without = null;
+  for (const slug of listed) if ((await fetch(`${API}/problems/${slug}/walkthrough`)).status === 404) { without = slug; break; }
+  check(!!without, `a problem without a Walkthrough to compare (${without})`);
+  if (!without) return;
+  await open({ width: 1440, theme: 'dark', lang: 'en', jwt: null }, without);
+  await shown('tabs in en', `!!${tabWith('Solutions')}`, { seen: tabTexts });
+  check(!(await js(`!!${tabWith('Walkthrough')}`)), `${without}: no Walkthrough tab`);
   await shot('no-walkthrough-1440-dark-en');
-}
+});
 
 check(c.errors.length === 0, `console errors: ${c.errors.length ? c.errors.join(' | ') : 'none'}`);
 c.close();
