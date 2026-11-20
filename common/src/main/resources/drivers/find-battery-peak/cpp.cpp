@@ -22,8 +22,9 @@ int main() {
     while (getline(ss, token, ',')) {
         nums.push_back(stoi(token));
     }
-    vector<int> given = nums;
-    int result = Solution().pinpointPeak(given);
+    // The solution gets a copy: one that edits the array must not change what is checked.
+    vector<int> numsCopy = nums;
+    int result = Solution().pinpointPeak(numsCopy);
     if (isReturnedPeak(nums, result)) {
         cout << "VALID" << endl;
     } else {

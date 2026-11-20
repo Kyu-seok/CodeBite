@@ -13,8 +13,38 @@
 -- FindBatteryPeakGuarantee checks every case's input against the constraints and that VALID is
 -- its only accepted output.
 
+-- Each case is matched by its position, input and old expected output, so a case that has
+-- already changed is left alone.
 UPDATE test_cases SET expected_output = 'VALID'
-WHERE problem_id = (SELECT id FROM problems WHERE slug = 'find-battery-peak');
+WHERE problem_id = (SELECT id FROM problems WHERE slug = 'find-battery-peak')
+  AND is_sample = TRUE AND order_index = 1 AND input = '[11,18,22,19,15]' AND expected_output = '2';
+UPDATE test_cases SET expected_output = 'VALID'
+WHERE problem_id = (SELECT id FROM problems WHERE slug = 'find-battery-peak')
+  AND is_sample = TRUE AND order_index = 2 AND input = '[3,7,12,25,20,14,9]' AND expected_output = '3';
+UPDATE test_cases SET expected_output = 'VALID'
+WHERE problem_id = (SELECT id FROM problems WHERE slug = 'find-battery-peak')
+  AND is_sample = FALSE AND order_index = 3 AND input = '[1,2]' AND expected_output = '1';
+UPDATE test_cases SET expected_output = 'VALID'
+WHERE problem_id = (SELECT id FROM problems WHERE slug = 'find-battery-peak')
+  AND is_sample = FALSE AND order_index = 4 AND input = '[2,1]' AND expected_output = '0';
+UPDATE test_cases SET expected_output = 'VALID'
+WHERE problem_id = (SELECT id FROM problems WHERE slug = 'find-battery-peak')
+  AND is_sample = FALSE AND order_index = 5 AND input = '[1,3,1]' AND expected_output = '1';
+UPDATE test_cases SET expected_output = 'VALID'
+WHERE problem_id = (SELECT id FROM problems WHERE slug = 'find-battery-peak')
+  AND is_sample = FALSE AND order_index = 6 AND input = '[1,2,3,4,5,6,7,8,9,10]' AND expected_output = '9';
+UPDATE test_cases SET expected_output = 'VALID'
+WHERE problem_id = (SELECT id FROM problems WHERE slug = 'find-battery-peak')
+  AND is_sample = FALSE AND order_index = 7 AND input = '[10,9,8,7,6,5,4,3,2,1]' AND expected_output = '0';
+UPDATE test_cases SET expected_output = 'VALID'
+WHERE problem_id = (SELECT id FROM problems WHERE slug = 'find-battery-peak')
+  AND is_sample = FALSE AND order_index = 8 AND input = '[1,2,3,4,5,4,3,2,1]' AND expected_output = '4';
+UPDATE test_cases SET expected_output = 'VALID'
+WHERE problem_id = (SELECT id FROM problems WHERE slug = 'find-battery-peak')
+  AND is_sample = FALSE AND order_index = 9 AND input = '[1,2,3,2,1]' AND expected_output = '2';
+UPDATE test_cases SET expected_output = 'VALID'
+WHERE problem_id = (SELECT id FROM problems WHERE slug = 'find-battery-peak')
+  AND is_sample = FALSE AND order_index = 10 AND input = '[5,10,5]' AND expected_output = '1';
 
 INSERT INTO test_cases (problem_id, input, expected_output, is_sample, order_index)
 SELECT p.id, t.input, 'VALID', FALSE, t.ord

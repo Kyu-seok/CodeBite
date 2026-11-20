@@ -7,8 +7,8 @@ import java.util.Set;
 /**
  * find-battery-peak: {@code readings} with no two neighbours equal; any index whose reading beats
  * each neighbour that exists (the ends sit beside -infinity) is accepted. The Driver checks the
- * returned index and prints {@code VALID} for a peak, so VALID is the one output whenever a peak
- * exists, which the constraints guarantee.
+ * returned index and prints {@code VALID} for a peak. An input the constraints allow always has a
+ * peak (its largest reading is one), so VALID is its one correct output.
  */
 class FindBatteryPeakGuarantee implements ProblemGuarantee {
 
@@ -35,13 +35,6 @@ class FindBatteryPeakGuarantee implements ProblemGuarantee {
 
     @Override
     public Set<String> correctOutputs(CaseInput input) {
-        long[] readings = input.integers(0);
-        int n = readings.length;
-        for (int i = 0; i < n; i++) {
-            boolean beatsLeft = i == 0 || readings[i] > readings[i - 1];
-            boolean beatsRight = i == n - 1 || readings[i] > readings[i + 1];
-            if (beatsLeft && beatsRight) return Set.of("VALID");
-        }
-        return Set.of();
+        return Set.of("VALID");
     }
 }

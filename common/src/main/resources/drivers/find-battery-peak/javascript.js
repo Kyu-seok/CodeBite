@@ -2,6 +2,7 @@
 
 const input = require('fs').readFileSync('/dev/stdin', 'utf8').trim();
 const nums = JSON.parse(input);
+// The solution gets a copy: one that edits the array must not change what is checked.
 const result = new Solution().pinpointPeak(nums.slice());
 
 function isReturnedPeak(readings, i) {
