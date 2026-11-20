@@ -3043,8 +3043,8 @@
     },
     {
      "caption": {
-      "en": "build(opened=3, closed=1) is back from its ( branch with 1 string found; now closed 1 < opened 3, so it tries ).",
-      "ko": "build(opened=3, closed=1) 호출이 ( 쪽 호출에서 문자열 1개를 찾고 돌아왔습니다. 이제 closed 1 < opened 3이므로 ) 괄호를 시도합니다."
+      "en": "Skipping 5 steps like the ones before: build(opened=3, closed=1) is back from its ( branch and tries ), and the calls after it fill the prefix again, so ((())()) is the 3rd string.",
+      "ko": "앞과 같은 5단계를 건너뜁니다. build(opened=3, closed=1) 호출이 ( 쪽에서 돌아와 ) 괄호를 시도하고 이어지는 호출이 접두사를 다시 채워, ((())()) 문자열이 3번째로 목록에 들어갑니다."
      },
      "views": {
       "prefix": {
@@ -3053,19 +3053,14 @@
         "(",
         "(",
         ")",
-        "",
-        "",
-        "",
-        ""
+        ")",
+        "(",
+        ")",
+        ")"
        ],
-       "unread": [
-        4,
-        5,
-        6,
-        7
-       ],
+       "unread": [],
        "marks": {
-        "bad": [
+        "good": [
          4,
          5,
          6,
@@ -3113,8 +3108,8 @@
         {
          "name": "build",
          "args": {
-          "opened": 4,
-          "closed": 1
+          "opened": 3,
+          "closed": 2
          }
         },
         {
@@ -3143,634 +3138,6 @@
         "lit": [
          4
         ],
-        "dim": [
-         5,
-         6,
-         7,
-         8
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "prefix",
-        "at": 4
-       },
-       "value": "("
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 5
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 6
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 7
-       },
-       "value": ")"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "closed 1 < opened 3: add ) and call build(opened=3, closed=2).",
-      "ko": "closed 1 < opened 3이므로 ) 괄호를 붙이고 다음 호출 build(opened=3, closed=2)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        "(",
-        "(",
-        ")",
-        ")",
-        "",
-        "",
-        ""
-       ],
-       "unread": [
-        5,
-        6,
-        7
-       ],
-       "marks": {
-        "good": [
-         4
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 2
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         5
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 4
-       },
-       "to": {
-        "view": "prefix",
-        "at": 4
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 4
-       },
-       "to": {
-        "view": "calls",
-        "at": 5
-       },
-       "value": "3,2"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "opened 3 < pairCount 4: add ( and call build(opened=4, closed=2).",
-      "ko": "opened 3 < pairCount 4이므로 ( 괄호를 붙이고 다음 호출 build(opened=4, closed=2)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        "(",
-        "(",
-        ")",
-        ")",
-        "(",
-        "",
-        ""
-       ],
-       "unread": [
-        6,
-        7
-       ],
-       "marks": {
-        "good": [
-         5
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 2
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         6
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 5
-       },
-       "to": {
-        "view": "prefix",
-        "at": 5
-       },
-       "value": "("
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 5
-       },
-       "to": {
-        "view": "calls",
-        "at": 6
-       },
-       "value": "4,2"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "closed 2 < opened 4: add ) and call build(opened=4, closed=3).",
-      "ko": "closed 2 < opened 4이므로 ) 괄호를 붙이고 다음 호출 build(opened=4, closed=3)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        "(",
-        "(",
-        ")",
-        ")",
-        "(",
-        ")",
-        ""
-       ],
-       "unread": [
-        7
-       ],
-       "marks": {
-        "good": [
-         6
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 3
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         7
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 6
-       },
-       "to": {
-        "view": "prefix",
-        "at": 6
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 6
-       },
-       "to": {
-        "view": "calls",
-        "at": 7
-       },
-       "value": "4,3"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "closed 3 < opened 4: add ) and call build(opened=4, closed=4).",
-      "ko": "closed 3 < opened 4이므로 ) 괄호를 붙이고 다음 호출 build(opened=4, closed=4)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        "(",
-        "(",
-        ")",
-        ")",
-        "(",
-        ")",
-        ")"
-       ],
-       "unread": [],
-       "marks": {
-        "good": [
-         7
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 3
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 4
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         8
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 7
-       },
-       "to": {
-        "view": "prefix",
-        "at": 7
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 7
-       },
-       "to": {
-        "view": "calls",
-        "at": 8
-       },
-       "value": "4,4"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "The prefix is full, 8 brackets: ((())()) is well-formed, so it goes into the list.",
-      "ko": "접두사가 괄호 8개로 다 찼습니다. ((())()) 문자열은 올바르므로 목록에 넣습니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        "(",
-        "(",
-        ")",
-        ")",
-        "(",
-        ")",
-        ")"
-       ],
-       "unread": [],
-       "marks": {
-        "good": [
-         0,
-         1,
-         2,
-         3,
-         4,
-         5,
-         6,
-         7
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 3
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 4
-         }
-        }
-       ],
-       "marks": {
         "good": [
          8
         ]
@@ -3790,6 +3157,138 @@
       }
      },
      "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 0
+       },
+       "to": {
+        "view": "prefix",
+        "at": 0
+       },
+       "value": "("
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 1
+       },
+       "to": {
+        "view": "prefix",
+        "at": 1
+       },
+       "value": "("
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 2
+       },
+       "to": {
+        "view": "prefix",
+        "at": 2
+       },
+       "value": "("
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 3
+       },
+       "to": {
+        "view": "prefix",
+        "at": 3
+       },
+       "value": ")"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       },
+       "to": {
+        "view": "prefix",
+        "at": 4
+       },
+       "value": ")"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 5
+       },
+       "to": {
+        "view": "prefix",
+        "at": 5
+       },
+       "value": "("
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 6
+       },
+       "to": {
+        "view": "prefix",
+        "at": 6
+       },
+       "value": ")"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 7
+       },
+       "to": {
+        "view": "prefix",
+        "at": 7
+       },
+       "value": ")"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 4
+       },
+       "to": {
+        "view": "calls",
+        "at": 5
+       },
+       "value": "3,2"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 5
+       },
+       "to": {
+        "view": "calls",
+        "at": 6
+       },
+       "value": "4,2"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 6
+       },
+       "to": {
+        "view": "calls",
+        "at": 7
+       },
+       "value": "4,3"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 7
+       },
+       "to": {
+        "view": "calls",
+        "at": 8
+       },
+       "value": "4,4"
+      },
       {
        "from": {
         "view": "calls",
@@ -3805,8 +3304,8 @@
     },
     {
      "caption": {
-      "en": "build(opened=3, closed=2) is back from its ( branch with 1 string found; now closed 2 < opened 3, so it tries ).",
-      "ko": "build(opened=3, closed=2) 호출이 ( 쪽 호출에서 문자열 1개를 찾고 돌아왔습니다. 이제 closed 2 < opened 3이므로 ) 괄호를 시도합니다."
+      "en": "Skipping 4 steps like the ones before: build(opened=3, closed=2) is back from its ( branch and tries ), and the calls after it fill the prefix again, so ((()))() is the 4th string.",
+      "ko": "앞과 같은 4단계를 건너뜁니다. build(opened=3, closed=2) 호출이 ( 쪽에서 돌아와 ) 괄호를 시도하고 이어지는 호출이 접두사를 다시 채워, ((()))() 문자열이 4번째로 목록에 들어갑니다."
      },
      "views": {
       "prefix": {
@@ -3816,17 +3315,13 @@
         "(",
         ")",
         ")",
-        "",
-        "",
-        ""
+        ")",
+        "(",
+        ")"
        ],
-       "unread": [
-        5,
-        6,
-        7
-       ],
+       "unread": [],
        "marks": {
-        "bad": [
+        "good": [
          5,
          6,
          7
@@ -3880,8 +3375,8 @@
         {
          "name": "build",
          "args": {
-          "opened": 4,
-          "closed": 2
+          "opened": 3,
+          "closed": 3
          }
         },
         {
@@ -3903,518 +3398,6 @@
         "lit": [
          5
         ],
-        "dim": [
-         6,
-         7,
-         8
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "prefix",
-        "at": 5
-       },
-       "value": "("
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 6
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 7
-       },
-       "value": ")"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "closed 2 < opened 3: add ) and call build(opened=3, closed=3).",
-      "ko": "closed 2 < opened 3이므로 ) 괄호를 붙이고 다음 호출 build(opened=3, closed=3)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        "(",
-        "(",
-        ")",
-        ")",
-        ")",
-        "",
-        ""
-       ],
-       "unread": [
-        6,
-        7
-       ],
-       "marks": {
-        "good": [
-         5
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 3
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         6
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 5
-       },
-       "to": {
-        "view": "prefix",
-        "at": 5
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 5
-       },
-       "to": {
-        "view": "calls",
-        "at": 6
-       },
-       "value": "3,3"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "opened 3 < pairCount 4: add ( and call build(opened=4, closed=3).",
-      "ko": "opened 3 < pairCount 4이므로 ( 괄호를 붙이고 다음 호출 build(opened=4, closed=3)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        "(",
-        "(",
-        ")",
-        ")",
-        ")",
-        "(",
-        ""
-       ],
-       "unread": [
-        7
-       ],
-       "marks": {
-        "good": [
-         6
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 3
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 3
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         7
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 6
-       },
-       "to": {
-        "view": "prefix",
-        "at": 6
-       },
-       "value": "("
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 6
-       },
-       "to": {
-        "view": "calls",
-        "at": 7
-       },
-       "value": "4,3"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "closed 3 < opened 4: add ) and call build(opened=4, closed=4).",
-      "ko": "closed 3 < opened 4이므로 ) 괄호를 붙이고 다음 호출 build(opened=4, closed=4)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        "(",
-        "(",
-        ")",
-        ")",
-        ")",
-        "(",
-        ")"
-       ],
-       "unread": [],
-       "marks": {
-        "good": [
-         7
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 3
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 3
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 4
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         8
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 7
-       },
-       "to": {
-        "view": "prefix",
-        "at": 7
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 7
-       },
-       "to": {
-        "view": "calls",
-        "at": 8
-       },
-       "value": "4,4"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "The prefix is full, 8 brackets: ((()))() is well-formed, so it goes into the list.",
-      "ko": "접두사가 괄호 8개로 다 찼습니다. ((()))() 문자열은 올바르므로 목록에 넣습니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        "(",
-        "(",
-        ")",
-        ")",
-        ")",
-        "(",
-        ")"
-       ],
-       "unread": [],
-       "marks": {
-        "good": [
-         0,
-         1,
-         2,
-         3,
-         4,
-         5,
-         6,
-         7
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 3
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 3
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 4
-         }
-        }
-       ],
-       "marks": {
         "good": [
          8
         ]
@@ -4435,6 +3418,127 @@
       }
      },
      "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 0
+       },
+       "to": {
+        "view": "prefix",
+        "at": 0
+       },
+       "value": "("
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 1
+       },
+       "to": {
+        "view": "prefix",
+        "at": 1
+       },
+       "value": "("
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 2
+       },
+       "to": {
+        "view": "prefix",
+        "at": 2
+       },
+       "value": "("
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 3
+       },
+       "to": {
+        "view": "prefix",
+        "at": 3
+       },
+       "value": ")"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       },
+       "to": {
+        "view": "prefix",
+        "at": 4
+       },
+       "value": ")"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 5
+       },
+       "to": {
+        "view": "prefix",
+        "at": 5
+       },
+       "value": ")"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 6
+       },
+       "to": {
+        "view": "prefix",
+        "at": 6
+       },
+       "value": "("
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 7
+       },
+       "to": {
+        "view": "prefix",
+        "at": 7
+       },
+       "value": ")"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 5
+       },
+       "to": {
+        "view": "calls",
+        "at": 6
+       },
+       "value": "3,3"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 6
+       },
+       "to": {
+        "view": "calls",
+        "at": 7
+       },
+       "value": "4,3"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 7
+       },
+       "to": {
+        "view": "calls",
+        "at": 8
+       },
+       "value": "4,4"
+      },
       {
        "from": {
         "view": "calls",
@@ -4450,31 +3554,24 @@
     },
     {
      "caption": {
-      "en": "build(opened=2, closed=0) is back from its ( branch with 4 strings found; now closed 0 < opened 2, so it tries ).",
-      "ko": "build(opened=2, closed=0) 호출이 ( 쪽 호출에서 문자열 4개를 찾고 돌아왔습니다. 이제 closed 0 < opened 2이므로 ) 괄호를 시도합니다."
+      "en": "Skipping 7 steps like the ones before: build(opened=2, closed=0) is back from its ( branch and tries ), and the calls after it fill the prefix again, so (()(())) is the 5th string.",
+      "ko": "앞과 같은 7단계를 건너뜁니다. build(opened=2, closed=0) 호출이 ( 쪽에서 돌아와 ) 괄호를 시도하고 이어지는 호출이 접두사를 다시 채워, (()(())) 문자열이 5번째로 목록에 들어갑니다."
      },
      "views": {
       "prefix": {
        "values": [
         "(",
         "(",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        ")",
+        "(",
+        "(",
+        ")",
+        ")",
+        ")"
        ],
-       "unread": [
-        2,
-        3,
-        4,
-        5,
-        6,
-        7
-       ],
+       "unread": [],
        "marks": {
-        "bad": [
+        "good": [
          2,
          3,
          4,
@@ -4510,8 +3607,8 @@
         {
          "name": "build",
          "args": {
-          "opened": 3,
-          "closed": 0
+          "opened": 2,
+          "closed": 1
          }
         },
         {
@@ -4524,15 +3621,15 @@
         {
          "name": "build",
          "args": {
-          "opened": 3,
-          "closed": 2
+          "opened": 4,
+          "closed": 1
          }
         },
         {
          "name": "build",
          "args": {
-          "opened": 3,
-          "closed": 3
+          "opened": 4,
+          "closed": 2
          }
         },
         {
@@ -4554,870 +3651,6 @@
         "lit": [
          2
         ],
-        "dim": [
-         3,
-         4,
-         5,
-         6,
-         7,
-         8
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "prefix",
-        "at": 2
-       },
-       "value": "("
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 3
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 4
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 5
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 6
-       },
-       "value": "("
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 7
-       },
-       "value": ")"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "closed 0 < opened 2: add ) and call build(opened=2, closed=1).",
-      "ko": "closed 0 < opened 2이므로 ) 괄호를 붙이고 다음 호출 build(opened=2, closed=1)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        "(",
-        ")",
-        "",
-        "",
-        "",
-        "",
-        ""
-       ],
-       "unread": [
-        3,
-        4,
-        5,
-        6,
-        7
-       ],
-       "marks": {
-        "good": [
-         2
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         3
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 2
-       },
-       "to": {
-        "view": "prefix",
-        "at": 2
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 2
-       },
-       "to": {
-        "view": "calls",
-        "at": 3
-       },
-       "value": "2,1"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "opened 2 < pairCount 4: add ( and call build(opened=3, closed=1).",
-      "ko": "opened 2 < pairCount 4이므로 ( 괄호를 붙이고 다음 호출 build(opened=3, closed=1)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        "(",
-        ")",
-        "(",
-        "",
-        "",
-        "",
-        ""
-       ],
-       "unread": [
-        4,
-        5,
-        6,
-        7
-       ],
-       "marks": {
-        "good": [
-         3
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 1
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         4
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 3
-       },
-       "to": {
-        "view": "prefix",
-        "at": 3
-       },
-       "value": "("
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 3
-       },
-       "to": {
-        "view": "calls",
-        "at": 4
-       },
-       "value": "3,1"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "opened 3 < pairCount 4: add ( and call build(opened=4, closed=1).",
-      "ko": "opened 3 < pairCount 4이므로 ( 괄호를 붙이고 다음 호출 build(opened=4, closed=1)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        "(",
-        ")",
-        "(",
-        "(",
-        "",
-        "",
-        ""
-       ],
-       "unread": [
-        5,
-        6,
-        7
-       ],
-       "marks": {
-        "good": [
-         4
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 1
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         5
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 4
-       },
-       "to": {
-        "view": "prefix",
-        "at": 4
-       },
-       "value": "("
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 4
-       },
-       "to": {
-        "view": "calls",
-        "at": 5
-       },
-       "value": "4,1"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "closed 1 < opened 4: add ) and call build(opened=4, closed=2).",
-      "ko": "closed 1 < opened 4이므로 ) 괄호를 붙이고 다음 호출 build(opened=4, closed=2)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        "(",
-        ")",
-        "(",
-        "(",
-        ")",
-        "",
-        ""
-       ],
-       "unread": [
-        6,
-        7
-       ],
-       "marks": {
-        "good": [
-         5
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 2
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         6
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 5
-       },
-       "to": {
-        "view": "prefix",
-        "at": 5
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 5
-       },
-       "to": {
-        "view": "calls",
-        "at": 6
-       },
-       "value": "4,2"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "closed 2 < opened 4: add ) and call build(opened=4, closed=3).",
-      "ko": "closed 2 < opened 4이므로 ) 괄호를 붙이고 다음 호출 build(opened=4, closed=3)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        "(",
-        ")",
-        "(",
-        "(",
-        ")",
-        ")",
-        ""
-       ],
-       "unread": [
-        7
-       ],
-       "marks": {
-        "good": [
-         6
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 3
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         7
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 6
-       },
-       "to": {
-        "view": "prefix",
-        "at": 6
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 6
-       },
-       "to": {
-        "view": "calls",
-        "at": 7
-       },
-       "value": "4,3"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "closed 3 < opened 4: add ) and call build(opened=4, closed=4).",
-      "ko": "closed 3 < opened 4이므로 ) 괄호를 붙이고 다음 호출 build(opened=4, closed=4)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        "(",
-        ")",
-        "(",
-        "(",
-        ")",
-        ")",
-        ")"
-       ],
-       "unread": [],
-       "marks": {
-        "good": [
-         7
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 3
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 4
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         8
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 7
-       },
-       "to": {
-        "view": "prefix",
-        "at": 7
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 7
-       },
-       "to": {
-        "view": "calls",
-        "at": 8
-       },
-       "value": "4,4"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "The prefix is full, 8 brackets: (()(())) is well-formed, so it goes into the list.",
-      "ko": "접두사가 괄호 8개로 다 찼습니다. (()(())) 문자열은 올바르므로 목록에 넣습니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        "(",
-        ")",
-        "(",
-        "(",
-        ")",
-        ")",
-        ")"
-       ],
-       "unread": [],
-       "marks": {
-        "good": [
-         0,
-         1,
-         2,
-         3,
-         4,
-         5,
-         6,
-         7
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 3
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 4
-         }
-        }
-       ],
-       "marks": {
         "good": [
          8
         ]
@@ -5439,6 +3672,160 @@
       }
      },
      "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 0
+       },
+       "to": {
+        "view": "prefix",
+        "at": 0
+       },
+       "value": "("
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 1
+       },
+       "to": {
+        "view": "prefix",
+        "at": 1
+       },
+       "value": "("
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 2
+       },
+       "to": {
+        "view": "prefix",
+        "at": 2
+       },
+       "value": ")"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 3
+       },
+       "to": {
+        "view": "prefix",
+        "at": 3
+       },
+       "value": "("
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       },
+       "to": {
+        "view": "prefix",
+        "at": 4
+       },
+       "value": "("
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 5
+       },
+       "to": {
+        "view": "prefix",
+        "at": 5
+       },
+       "value": ")"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 6
+       },
+       "to": {
+        "view": "prefix",
+        "at": 6
+       },
+       "value": ")"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 7
+       },
+       "to": {
+        "view": "prefix",
+        "at": 7
+       },
+       "value": ")"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 2
+       },
+       "to": {
+        "view": "calls",
+        "at": 3
+       },
+       "value": "2,1"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 3
+       },
+       "to": {
+        "view": "calls",
+        "at": 4
+       },
+       "value": "3,1"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 4
+       },
+       "to": {
+        "view": "calls",
+        "at": 5
+       },
+       "value": "4,1"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 5
+       },
+       "to": {
+        "view": "calls",
+        "at": 6
+       },
+       "value": "4,2"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 6
+       },
+       "to": {
+        "view": "calls",
+        "at": 7
+       },
+       "value": "4,3"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 7
+       },
+       "to": {
+        "view": "calls",
+        "at": 8
+       },
+       "value": "4,4"
+      },
       {
        "from": {
         "view": "calls",
@@ -5454,8 +3841,8 @@
     },
     {
      "caption": {
-      "en": "build(opened=3, closed=1) is back from its ( branch with 1 string found; now closed 1 < opened 3, so it tries ).",
-      "ko": "build(opened=3, closed=1) 호출이 ( 쪽 호출에서 문자열 1개를 찾고 돌아왔습니다. 이제 closed 1 < opened 3이므로 ) 괄호를 시도합니다."
+      "en": "Skipping 5 steps like the ones before: build(opened=3, closed=1) is back from its ( branch and tries ), and the calls after it fill the prefix again, so (()()()) is the 6th string.",
+      "ko": "앞과 같은 5단계를 건너뜁니다. build(opened=3, closed=1) 호출이 ( 쪽에서 돌아와 ) 괄호를 시도하고 이어지는 호출이 접두사를 다시 채워, (()()()) 문자열이 6번째로 목록에 들어갑니다."
      },
      "views": {
       "prefix": {
@@ -5464,19 +3851,14 @@
         "(",
         ")",
         "(",
-        "",
-        "",
-        "",
-        ""
+        ")",
+        "(",
+        ")",
+        ")"
        ],
-       "unread": [
-        4,
-        5,
-        6,
-        7
-       ],
+       "unread": [],
        "marks": {
-        "bad": [
+        "good": [
          4,
          5,
          6,
@@ -5524,8 +3906,8 @@
         {
          "name": "build",
          "args": {
-          "opened": 4,
-          "closed": 1
+          "opened": 3,
+          "closed": 2
          }
         },
         {
@@ -5554,649 +3936,6 @@
         "lit": [
          4
         ],
-        "dim": [
-         5,
-         6,
-         7,
-         8
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()",
-        "(()(()))"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "prefix",
-        "at": 4
-       },
-       "value": "("
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 5
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 6
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 7
-       },
-       "value": ")"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "closed 1 < opened 3: add ) and call build(opened=3, closed=2).",
-      "ko": "closed 1 < opened 3이므로 ) 괄호를 붙이고 다음 호출 build(opened=3, closed=2)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        "(",
-        ")",
-        "(",
-        ")",
-        "",
-        "",
-        ""
-       ],
-       "unread": [
-        5,
-        6,
-        7
-       ],
-       "marks": {
-        "good": [
-         4
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 2
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         5
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()",
-        "(()(()))"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 4
-       },
-       "to": {
-        "view": "prefix",
-        "at": 4
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 4
-       },
-       "to": {
-        "view": "calls",
-        "at": 5
-       },
-       "value": "3,2"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "opened 3 < pairCount 4: add ( and call build(opened=4, closed=2).",
-      "ko": "opened 3 < pairCount 4이므로 ( 괄호를 붙이고 다음 호출 build(opened=4, closed=2)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        "(",
-        ")",
-        "(",
-        ")",
-        "(",
-        "",
-        ""
-       ],
-       "unread": [
-        6,
-        7
-       ],
-       "marks": {
-        "good": [
-         5
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 2
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         6
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()",
-        "(()(()))"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 5
-       },
-       "to": {
-        "view": "prefix",
-        "at": 5
-       },
-       "value": "("
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 5
-       },
-       "to": {
-        "view": "calls",
-        "at": 6
-       },
-       "value": "4,2"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "closed 2 < opened 4: add ) and call build(opened=4, closed=3).",
-      "ko": "closed 2 < opened 4이므로 ) 괄호를 붙이고 다음 호출 build(opened=4, closed=3)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        "(",
-        ")",
-        "(",
-        ")",
-        "(",
-        ")",
-        ""
-       ],
-       "unread": [
-        7
-       ],
-       "marks": {
-        "good": [
-         6
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 3
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         7
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()",
-        "(()(()))"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 6
-       },
-       "to": {
-        "view": "prefix",
-        "at": 6
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 6
-       },
-       "to": {
-        "view": "calls",
-        "at": 7
-       },
-       "value": "4,3"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "closed 3 < opened 4: add ) and call build(opened=4, closed=4).",
-      "ko": "closed 3 < opened 4이므로 ) 괄호를 붙이고 다음 호출 build(opened=4, closed=4)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        "(",
-        ")",
-        "(",
-        ")",
-        "(",
-        ")",
-        ")"
-       ],
-       "unread": [],
-       "marks": {
-        "good": [
-         7
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 3
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 4
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         8
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()",
-        "(()(()))"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 7
-       },
-       "to": {
-        "view": "prefix",
-        "at": 7
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 7
-       },
-       "to": {
-        "view": "calls",
-        "at": 8
-       },
-       "value": "4,4"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "The prefix is full, 8 brackets: (()()()) is well-formed, so it goes into the list.",
-      "ko": "접두사가 괄호 8개로 다 찼습니다. (()()()) 문자열은 올바르므로 목록에 넣습니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        "(",
-        ")",
-        "(",
-        ")",
-        "(",
-        ")",
-        ")"
-       ],
-       "unread": [],
-       "marks": {
-        "good": [
-         0,
-         1,
-         2,
-         3,
-         4,
-         5,
-         6,
-         7
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 3
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 4
-         }
-        }
-       ],
-       "marks": {
         "good": [
          8
         ]
@@ -6219,6 +3958,138 @@
       }
      },
      "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 0
+       },
+       "to": {
+        "view": "prefix",
+        "at": 0
+       },
+       "value": "("
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 1
+       },
+       "to": {
+        "view": "prefix",
+        "at": 1
+       },
+       "value": "("
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 2
+       },
+       "to": {
+        "view": "prefix",
+        "at": 2
+       },
+       "value": ")"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 3
+       },
+       "to": {
+        "view": "prefix",
+        "at": 3
+       },
+       "value": "("
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       },
+       "to": {
+        "view": "prefix",
+        "at": 4
+       },
+       "value": ")"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 5
+       },
+       "to": {
+        "view": "prefix",
+        "at": 5
+       },
+       "value": "("
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 6
+       },
+       "to": {
+        "view": "prefix",
+        "at": 6
+       },
+       "value": ")"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 7
+       },
+       "to": {
+        "view": "prefix",
+        "at": 7
+       },
+       "value": ")"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 4
+       },
+       "to": {
+        "view": "calls",
+        "at": 5
+       },
+       "value": "3,2"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 5
+       },
+       "to": {
+        "view": "calls",
+        "at": 6
+       },
+       "value": "4,2"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 6
+       },
+       "to": {
+        "view": "calls",
+        "at": 7
+       },
+       "value": "4,3"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 7
+       },
+       "to": {
+        "view": "calls",
+        "at": 8
+       },
+       "value": "4,4"
+      },
       {
        "from": {
         "view": "calls",
@@ -6234,8 +4105,8 @@
     },
     {
      "caption": {
-      "en": "build(opened=3, closed=2) is back from its ( branch with 1 string found; now closed 2 < opened 3, so it tries ).",
-      "ko": "build(opened=3, closed=2) 호출이 ( 쪽 호출에서 문자열 1개를 찾고 돌아왔습니다. 이제 closed 2 < opened 3이므로 ) 괄호를 시도합니다."
+      "en": "Skipping 4 steps like the ones before: build(opened=3, closed=2) is back from its ( branch and tries ), and the calls after it fill the prefix again, so (()())() is the 7th string.",
+      "ko": "앞과 같은 4단계를 건너뜁니다. build(opened=3, closed=2) 호출이 ( 쪽에서 돌아와 ) 괄호를 시도하고 이어지는 호출이 접두사를 다시 채워, (()())() 문자열이 7번째로 목록에 들어갑니다."
      },
      "views": {
       "prefix": {
@@ -6245,17 +4116,13 @@
         ")",
         "(",
         ")",
-        "",
-        "",
-        ""
+        ")",
+        "(",
+        ")"
        ],
-       "unread": [
-        5,
-        6,
-        7
-       ],
+       "unread": [],
        "marks": {
-        "bad": [
+        "good": [
          5,
          6,
          7
@@ -6309,8 +4176,8 @@
         {
          "name": "build",
          "args": {
-          "opened": 4,
-          "closed": 2
+          "opened": 3,
+          "closed": 3
          }
         },
         {
@@ -6332,530 +4199,6 @@
         "lit": [
          5
         ],
-        "dim": [
-         6,
-         7,
-         8
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()",
-        "(()(()))",
-        "(()()())"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "prefix",
-        "at": 5
-       },
-       "value": "("
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 6
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 7
-       },
-       "value": ")"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "closed 2 < opened 3: add ) and call build(opened=3, closed=3).",
-      "ko": "closed 2 < opened 3이므로 ) 괄호를 붙이고 다음 호출 build(opened=3, closed=3)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        "(",
-        ")",
-        "(",
-        ")",
-        ")",
-        "",
-        ""
-       ],
-       "unread": [
-        6,
-        7
-       ],
-       "marks": {
-        "good": [
-         5
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 3
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         6
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()",
-        "(()(()))",
-        "(()()())"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 5
-       },
-       "to": {
-        "view": "prefix",
-        "at": 5
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 5
-       },
-       "to": {
-        "view": "calls",
-        "at": 6
-       },
-       "value": "3,3"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "opened 3 < pairCount 4: add ( and call build(opened=4, closed=3).",
-      "ko": "opened 3 < pairCount 4이므로 ( 괄호를 붙이고 다음 호출 build(opened=4, closed=3)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        "(",
-        ")",
-        "(",
-        ")",
-        ")",
-        "(",
-        ""
-       ],
-       "unread": [
-        7
-       ],
-       "marks": {
-        "good": [
-         6
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 3
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 3
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         7
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()",
-        "(()(()))",
-        "(()()())"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 6
-       },
-       "to": {
-        "view": "prefix",
-        "at": 6
-       },
-       "value": "("
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 6
-       },
-       "to": {
-        "view": "calls",
-        "at": 7
-       },
-       "value": "4,3"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "closed 3 < opened 4: add ) and call build(opened=4, closed=4).",
-      "ko": "closed 3 < opened 4이므로 ) 괄호를 붙이고 다음 호출 build(opened=4, closed=4)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        "(",
-        ")",
-        "(",
-        ")",
-        ")",
-        "(",
-        ")"
-       ],
-       "unread": [],
-       "marks": {
-        "good": [
-         7
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 3
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 3
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 4
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         8
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()",
-        "(()(()))",
-        "(()()())"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 7
-       },
-       "to": {
-        "view": "prefix",
-        "at": 7
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 7
-       },
-       "to": {
-        "view": "calls",
-        "at": 8
-       },
-       "value": "4,4"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "The prefix is full, 8 brackets: (()())() is well-formed, so it goes into the list.",
-      "ko": "접두사가 괄호 8개로 다 찼습니다. (()())() 문자열은 올바르므로 목록에 넣습니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        "(",
-        ")",
-        "(",
-        ")",
-        ")",
-        "(",
-        ")"
-       ],
-       "unread": [],
-       "marks": {
-        "good": [
-         0,
-         1,
-         2,
-         3,
-         4,
-         5,
-         6,
-         7
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 3
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 3
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 4
-         }
-        }
-       ],
-       "marks": {
         "good": [
          8
         ]
@@ -6879,6 +4222,127 @@
       }
      },
      "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 0
+       },
+       "to": {
+        "view": "prefix",
+        "at": 0
+       },
+       "value": "("
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 1
+       },
+       "to": {
+        "view": "prefix",
+        "at": 1
+       },
+       "value": "("
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 2
+       },
+       "to": {
+        "view": "prefix",
+        "at": 2
+       },
+       "value": ")"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 3
+       },
+       "to": {
+        "view": "prefix",
+        "at": 3
+       },
+       "value": "("
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       },
+       "to": {
+        "view": "prefix",
+        "at": 4
+       },
+       "value": ")"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 5
+       },
+       "to": {
+        "view": "prefix",
+        "at": 5
+       },
+       "value": ")"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 6
+       },
+       "to": {
+        "view": "prefix",
+        "at": 6
+       },
+       "value": "("
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 7
+       },
+       "to": {
+        "view": "prefix",
+        "at": 7
+       },
+       "value": ")"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 5
+       },
+       "to": {
+        "view": "calls",
+        "at": 6
+       },
+       "value": "3,3"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 6
+       },
+       "to": {
+        "view": "calls",
+        "at": 7
+       },
+       "value": "4,3"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 7
+       },
+       "to": {
+        "view": "calls",
+        "at": 8
+       },
+       "value": "4,4"
+      },
       {
        "from": {
         "view": "calls",
@@ -6894,8 +4358,8 @@
     },
     {
      "caption": {
-      "en": "build(opened=2, closed=1) is back from its ( branch with 3 strings found; now closed 1 < opened 2, so it tries ).",
-      "ko": "build(opened=2, closed=1) 호출이 ( 쪽 호출에서 문자열 3개를 찾고 돌아왔습니다. 이제 closed 1 < opened 2이므로 ) 괄호를 시도합니다."
+      "en": "Skipping 6 steps like the ones before: build(opened=2, closed=1) is back from its ( branch and tries ), and the calls after it fill the prefix again, so (())(()) is the 8th string.",
+      "ko": "앞과 같은 6단계를 건너뜁니다. build(opened=2, closed=1) 호출이 ( 쪽에서 돌아와 ) 괄호를 시도하고 이어지는 호출이 접두사를 다시 채워, (())(()) 문자열이 8번째로 목록에 들어갑니다."
      },
      "views": {
       "prefix": {
@@ -6903,21 +4367,15 @@
         "(",
         "(",
         ")",
-        "",
-        "",
-        "",
-        "",
-        ""
+        ")",
+        "(",
+        "(",
+        ")",
+        ")"
        ],
-       "unread": [
-        3,
-        4,
-        5,
-        6,
-        7
-       ],
+       "unread": [],
        "marks": {
-        "bad": [
+        "good": [
          3,
          4,
          5,
@@ -6959,8 +4417,8 @@
         {
          "name": "build",
          "args": {
-          "opened": 3,
-          "closed": 1
+          "opened": 2,
+          "closed": 2
          }
         },
         {
@@ -6973,8 +4431,8 @@
         {
          "name": "build",
          "args": {
-          "opened": 3,
-          "closed": 3
+          "opened": 4,
+          "closed": 2
          }
         },
         {
@@ -6996,778 +4454,6 @@
         "lit": [
          3
         ],
-        "dim": [
-         4,
-         5,
-         6,
-         7,
-         8
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()",
-        "(()(()))",
-        "(()()())",
-        "(()())()"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "prefix",
-        "at": 3
-       },
-       "value": "("
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 4
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 5
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 6
-       },
-       "value": "("
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 7
-       },
-       "value": ")"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "closed 1 < opened 2: add ) and call build(opened=2, closed=2).",
-      "ko": "closed 1 < opened 2이므로 ) 괄호를 붙이고 다음 호출 build(opened=2, closed=2)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        "(",
-        ")",
-        ")",
-        "",
-        "",
-        "",
-        ""
-       ],
-       "unread": [
-        4,
-        5,
-        6,
-        7
-       ],
-       "marks": {
-        "good": [
-         3
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 2
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         4
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()",
-        "(()(()))",
-        "(()()())",
-        "(()())()"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 3
-       },
-       "to": {
-        "view": "prefix",
-        "at": 3
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 3
-       },
-       "to": {
-        "view": "calls",
-        "at": 4
-       },
-       "value": "2,2"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "opened 2 < pairCount 4: add ( and call build(opened=3, closed=2).",
-      "ko": "opened 2 < pairCount 4이므로 ( 괄호를 붙이고 다음 호출 build(opened=3, closed=2)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        "(",
-        ")",
-        ")",
-        "(",
-        "",
-        "",
-        ""
-       ],
-       "unread": [
-        5,
-        6,
-        7
-       ],
-       "marks": {
-        "good": [
-         4
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 2
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         5
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()",
-        "(()(()))",
-        "(()()())",
-        "(()())()"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 4
-       },
-       "to": {
-        "view": "prefix",
-        "at": 4
-       },
-       "value": "("
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 4
-       },
-       "to": {
-        "view": "calls",
-        "at": 5
-       },
-       "value": "3,2"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "opened 3 < pairCount 4: add ( and call build(opened=4, closed=2).",
-      "ko": "opened 3 < pairCount 4이므로 ( 괄호를 붙이고 다음 호출 build(opened=4, closed=2)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        "(",
-        ")",
-        ")",
-        "(",
-        "(",
-        "",
-        ""
-       ],
-       "unread": [
-        6,
-        7
-       ],
-       "marks": {
-        "good": [
-         5
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 2
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         6
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()",
-        "(()(()))",
-        "(()()())",
-        "(()())()"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 5
-       },
-       "to": {
-        "view": "prefix",
-        "at": 5
-       },
-       "value": "("
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 5
-       },
-       "to": {
-        "view": "calls",
-        "at": 6
-       },
-       "value": "4,2"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "closed 2 < opened 4: add ) and call build(opened=4, closed=3).",
-      "ko": "closed 2 < opened 4이므로 ) 괄호를 붙이고 다음 호출 build(opened=4, closed=3)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        "(",
-        ")",
-        ")",
-        "(",
-        "(",
-        ")",
-        ""
-       ],
-       "unread": [
-        7
-       ],
-       "marks": {
-        "good": [
-         6
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 3
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         7
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()",
-        "(()(()))",
-        "(()()())",
-        "(()())()"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 6
-       },
-       "to": {
-        "view": "prefix",
-        "at": 6
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 6
-       },
-       "to": {
-        "view": "calls",
-        "at": 7
-       },
-       "value": "4,3"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "closed 3 < opened 4: add ) and call build(opened=4, closed=4).",
-      "ko": "closed 3 < opened 4이므로 ) 괄호를 붙이고 다음 호출 build(opened=4, closed=4)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        "(",
-        ")",
-        ")",
-        "(",
-        "(",
-        ")",
-        ")"
-       ],
-       "unread": [],
-       "marks": {
-        "good": [
-         7
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 3
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 4
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         8
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()",
-        "(()(()))",
-        "(()()())",
-        "(()())()"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 7
-       },
-       "to": {
-        "view": "prefix",
-        "at": 7
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 7
-       },
-       "to": {
-        "view": "calls",
-        "at": 8
-       },
-       "value": "4,4"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "The prefix is full, 8 brackets: (())(()) is well-formed, so it goes into the list.",
-      "ko": "접두사가 괄호 8개로 다 찼습니다. (())(()) 문자열은 올바르므로 목록에 넣습니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        "(",
-        ")",
-        ")",
-        "(",
-        "(",
-        ")",
-        ")"
-       ],
-       "unread": [],
-       "marks": {
-        "good": [
-         0,
-         1,
-         2,
-         3,
-         4,
-         5,
-         6,
-         7
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 3
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 4
-         }
-        }
-       ],
-       "marks": {
         "good": [
          8
         ]
@@ -7792,6 +4478,149 @@
       }
      },
      "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 0
+       },
+       "to": {
+        "view": "prefix",
+        "at": 0
+       },
+       "value": "("
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 1
+       },
+       "to": {
+        "view": "prefix",
+        "at": 1
+       },
+       "value": "("
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 2
+       },
+       "to": {
+        "view": "prefix",
+        "at": 2
+       },
+       "value": ")"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 3
+       },
+       "to": {
+        "view": "prefix",
+        "at": 3
+       },
+       "value": ")"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       },
+       "to": {
+        "view": "prefix",
+        "at": 4
+       },
+       "value": "("
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 5
+       },
+       "to": {
+        "view": "prefix",
+        "at": 5
+       },
+       "value": "("
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 6
+       },
+       "to": {
+        "view": "prefix",
+        "at": 6
+       },
+       "value": ")"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 7
+       },
+       "to": {
+        "view": "prefix",
+        "at": 7
+       },
+       "value": ")"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 3
+       },
+       "to": {
+        "view": "calls",
+        "at": 4
+       },
+       "value": "2,2"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 4
+       },
+       "to": {
+        "view": "calls",
+        "at": 5
+       },
+       "value": "3,2"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 5
+       },
+       "to": {
+        "view": "calls",
+        "at": 6
+       },
+       "value": "4,2"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 6
+       },
+       "to": {
+        "view": "calls",
+        "at": 7
+       },
+       "value": "4,3"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 7
+       },
+       "to": {
+        "view": "calls",
+        "at": 8
+       },
+       "value": "4,4"
+      },
       {
        "from": {
         "view": "calls",
@@ -7807,8 +4636,8 @@
     },
     {
      "caption": {
-      "en": "build(opened=3, closed=2) is back from its ( branch with 1 string found; now closed 2 < opened 3, so it tries ).",
-      "ko": "build(opened=3, closed=2) 호출이 ( 쪽 호출에서 문자열 1개를 찾고 돌아왔습니다. 이제 closed 2 < opened 3이므로 ) 괄호를 시도합니다."
+      "en": "Skipping 4 steps like the ones before: build(opened=3, closed=2) is back from its ( branch and tries ), and the calls after it fill the prefix again, so (())()() is the 9th string.",
+      "ko": "앞과 같은 4단계를 건너뜁니다. build(opened=3, closed=2) 호출이 ( 쪽에서 돌아와 ) 괄호를 시도하고 이어지는 호출이 접두사를 다시 채워, (())()() 문자열이 9번째로 목록에 들어갑니다."
      },
      "views": {
       "prefix": {
@@ -7818,17 +4647,13 @@
         ")",
         ")",
         "(",
-        "",
-        "",
-        ""
+        ")",
+        "(",
+        ")"
        ],
-       "unread": [
-        5,
-        6,
-        7
-       ],
+       "unread": [],
        "marks": {
-        "bad": [
+        "good": [
          5,
          6,
          7
@@ -7882,8 +4707,8 @@
         {
          "name": "build",
          "args": {
-          "opened": 4,
-          "closed": 2
+          "opened": 3,
+          "closed": 3
          }
         },
         {
@@ -7905,538 +4730,6 @@
         "lit": [
          5
         ],
-        "dim": [
-         6,
-         7,
-         8
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()",
-        "(()(()))",
-        "(()()())",
-        "(()())()",
-        "(())(())"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "prefix",
-        "at": 5
-       },
-       "value": "("
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 6
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 7
-       },
-       "value": ")"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "closed 2 < opened 3: add ) and call build(opened=3, closed=3).",
-      "ko": "closed 2 < opened 3이므로 ) 괄호를 붙이고 다음 호출 build(opened=3, closed=3)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        "(",
-        ")",
-        ")",
-        "(",
-        ")",
-        "",
-        ""
-       ],
-       "unread": [
-        6,
-        7
-       ],
-       "marks": {
-        "good": [
-         5
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 3
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         6
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()",
-        "(()(()))",
-        "(()()())",
-        "(()())()",
-        "(())(())"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 5
-       },
-       "to": {
-        "view": "prefix",
-        "at": 5
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 5
-       },
-       "to": {
-        "view": "calls",
-        "at": 6
-       },
-       "value": "3,3"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "opened 3 < pairCount 4: add ( and call build(opened=4, closed=3).",
-      "ko": "opened 3 < pairCount 4이므로 ( 괄호를 붙이고 다음 호출 build(opened=4, closed=3)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        "(",
-        ")",
-        ")",
-        "(",
-        ")",
-        "(",
-        ""
-       ],
-       "unread": [
-        7
-       ],
-       "marks": {
-        "good": [
-         6
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 3
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 3
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         7
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()",
-        "(()(()))",
-        "(()()())",
-        "(()())()",
-        "(())(())"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 6
-       },
-       "to": {
-        "view": "prefix",
-        "at": 6
-       },
-       "value": "("
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 6
-       },
-       "to": {
-        "view": "calls",
-        "at": 7
-       },
-       "value": "4,3"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "closed 3 < opened 4: add ) and call build(opened=4, closed=4).",
-      "ko": "closed 3 < opened 4이므로 ) 괄호를 붙이고 다음 호출 build(opened=4, closed=4)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        "(",
-        ")",
-        ")",
-        "(",
-        ")",
-        "(",
-        ")"
-       ],
-       "unread": [],
-       "marks": {
-        "good": [
-         7
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 3
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 3
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 4
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         8
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()",
-        "(()(()))",
-        "(()()())",
-        "(()())()",
-        "(())(())"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 7
-       },
-       "to": {
-        "view": "prefix",
-        "at": 7
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 7
-       },
-       "to": {
-        "view": "calls",
-        "at": 8
-       },
-       "value": "4,4"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "The prefix is full, 8 brackets: (())()() is well-formed, so it goes into the list.",
-      "ko": "접두사가 괄호 8개로 다 찼습니다. (())()() 문자열은 올바르므로 목록에 넣습니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        "(",
-        ")",
-        ")",
-        "(",
-        ")",
-        "(",
-        ")"
-       ],
-       "unread": [],
-       "marks": {
-        "good": [
-         0,
-         1,
-         2,
-         3,
-         4,
-         5,
-         6,
-         7
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 3
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 3
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 4
-         }
-        }
-       ],
-       "marks": {
         "good": [
          8
         ]
@@ -8462,6 +4755,127 @@
       }
      },
      "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 0
+       },
+       "to": {
+        "view": "prefix",
+        "at": 0
+       },
+       "value": "("
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 1
+       },
+       "to": {
+        "view": "prefix",
+        "at": 1
+       },
+       "value": "("
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 2
+       },
+       "to": {
+        "view": "prefix",
+        "at": 2
+       },
+       "value": ")"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 3
+       },
+       "to": {
+        "view": "prefix",
+        "at": 3
+       },
+       "value": ")"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       },
+       "to": {
+        "view": "prefix",
+        "at": 4
+       },
+       "value": "("
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 5
+       },
+       "to": {
+        "view": "prefix",
+        "at": 5
+       },
+       "value": ")"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 6
+       },
+       "to": {
+        "view": "prefix",
+        "at": 6
+       },
+       "value": "("
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 7
+       },
+       "to": {
+        "view": "prefix",
+        "at": 7
+       },
+       "value": ")"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 5
+       },
+       "to": {
+        "view": "calls",
+        "at": 6
+       },
+       "value": "3,3"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 6
+       },
+       "to": {
+        "view": "calls",
+        "at": 7
+       },
+       "value": "4,3"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 7
+       },
+       "to": {
+        "view": "calls",
+        "at": 8
+       },
+       "value": "4,4"
+      },
       {
        "from": {
         "view": "calls",
@@ -8477,32 +4891,24 @@
     },
     {
      "caption": {
-      "en": "build(opened=1, closed=0) is back from its ( branch with 9 strings found; now closed 0 < opened 1, so it tries ).",
-      "ko": "build(opened=1, closed=0) 호출이 ( 쪽 호출에서 문자열 9개를 찾고 돌아왔습니다. 이제 closed 0 < opened 1이므로 ) 괄호를 시도합니다."
+      "en": "Skipping 8 steps like the ones before: build(opened=1, closed=0) is back from its ( branch and tries ), and the calls after it fill the prefix again, so ()((())) is the 10th string.",
+      "ko": "앞과 같은 8단계를 건너뜁니다. build(opened=1, closed=0) 호출이 ( 쪽에서 돌아와 ) 괄호를 시도하고 이어지는 호출이 접두사를 다시 채워, ()((())) 문자열이 10번째로 목록에 들어갑니다."
      },
      "views": {
       "prefix": {
        "values": [
         "(",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        ")",
+        "(",
+        "(",
+        "(",
+        ")",
+        ")",
+        ")"
        ],
-       "unread": [
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7
-       ],
+       "unread": [],
        "marks": {
-        "bad": [
+        "good": [
          1,
          2,
          3,
@@ -8532,8 +4938,8 @@
         {
          "name": "build",
          "args": {
-          "opened": 2,
-          "closed": 0
+          "opened": 1,
+          "closed": 1
          }
         },
         {
@@ -8546,22 +4952,22 @@
         {
          "name": "build",
          "args": {
-          "opened": 2,
-          "closed": 2
+          "opened": 3,
+          "closed": 1
          }
         },
         {
          "name": "build",
          "args": {
-          "opened": 3,
-          "closed": 2
+          "opened": 4,
+          "closed": 1
          }
         },
         {
          "name": "build",
          "args": {
-          "opened": 3,
-          "closed": 3
+          "opened": 4,
+          "closed": 2
          }
         },
         {
@@ -8583,1014 +4989,6 @@
         "lit": [
          1
         ],
-        "dim": [
-         2,
-         3,
-         4,
-         5,
-         6,
-         7,
-         8
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()",
-        "(()(()))",
-        "(()()())",
-        "(()())()",
-        "(())(())",
-        "(())()()"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "prefix",
-        "at": 1
-       },
-       "value": "("
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 2
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 3
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 4
-       },
-       "value": "("
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 5
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 6
-       },
-       "value": "("
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 7
-       },
-       "value": ")"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "closed 0 < opened 1: add ) and call build(opened=1, closed=1).",
-      "ko": "closed 0 < opened 1이므로 ) 괄호를 붙이고 다음 호출 build(opened=1, closed=1)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        ")",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
-       ],
-       "unread": [
-        2,
-        3,
-        4,
-        5,
-        6,
-        7
-       ],
-       "marks": {
-        "good": [
-         1
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 1
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         2
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()",
-        "(()(()))",
-        "(()()())",
-        "(()())()",
-        "(())(())",
-        "(())()()"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 1
-       },
-       "to": {
-        "view": "prefix",
-        "at": 1
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 1
-       },
-       "to": {
-        "view": "calls",
-        "at": 2
-       },
-       "value": "1,1"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "opened 1 < pairCount 4: add ( and call build(opened=2, closed=1).",
-      "ko": "opened 1 < pairCount 4이므로 ( 괄호를 붙이고 다음 호출 build(opened=2, closed=1)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        ")",
-        "(",
-        "",
-        "",
-        "",
-        "",
-        ""
-       ],
-       "unread": [
-        3,
-        4,
-        5,
-        6,
-        7
-       ],
-       "marks": {
-        "good": [
-         2
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         3
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()",
-        "(()(()))",
-        "(()()())",
-        "(()())()",
-        "(())(())",
-        "(())()()"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 2
-       },
-       "to": {
-        "view": "prefix",
-        "at": 2
-       },
-       "value": "("
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 2
-       },
-       "to": {
-        "view": "calls",
-        "at": 3
-       },
-       "value": "2,1"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "opened 2 < pairCount 4: add ( and call build(opened=3, closed=1).",
-      "ko": "opened 2 < pairCount 4이므로 ( 괄호를 붙이고 다음 호출 build(opened=3, closed=1)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        ")",
-        "(",
-        "(",
-        "",
-        "",
-        "",
-        ""
-       ],
-       "unread": [
-        4,
-        5,
-        6,
-        7
-       ],
-       "marks": {
-        "good": [
-         3
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 1
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         4
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()",
-        "(()(()))",
-        "(()()())",
-        "(()())()",
-        "(())(())",
-        "(())()()"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 3
-       },
-       "to": {
-        "view": "prefix",
-        "at": 3
-       },
-       "value": "("
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 3
-       },
-       "to": {
-        "view": "calls",
-        "at": 4
-       },
-       "value": "3,1"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "opened 3 < pairCount 4: add ( and call build(opened=4, closed=1).",
-      "ko": "opened 3 < pairCount 4이므로 ( 괄호를 붙이고 다음 호출 build(opened=4, closed=1)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        ")",
-        "(",
-        "(",
-        "(",
-        "",
-        "",
-        ""
-       ],
-       "unread": [
-        5,
-        6,
-        7
-       ],
-       "marks": {
-        "good": [
-         4
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 1
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         5
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()",
-        "(()(()))",
-        "(()()())",
-        "(()())()",
-        "(())(())",
-        "(())()()"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 4
-       },
-       "to": {
-        "view": "prefix",
-        "at": 4
-       },
-       "value": "("
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 4
-       },
-       "to": {
-        "view": "calls",
-        "at": 5
-       },
-       "value": "4,1"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "closed 1 < opened 4: add ) and call build(opened=4, closed=2).",
-      "ko": "closed 1 < opened 4이므로 ) 괄호를 붙이고 다음 호출 build(opened=4, closed=2)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        ")",
-        "(",
-        "(",
-        "(",
-        ")",
-        "",
-        ""
-       ],
-       "unread": [
-        6,
-        7
-       ],
-       "marks": {
-        "good": [
-         5
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 2
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         6
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()",
-        "(()(()))",
-        "(()()())",
-        "(()())()",
-        "(())(())",
-        "(())()()"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 5
-       },
-       "to": {
-        "view": "prefix",
-        "at": 5
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 5
-       },
-       "to": {
-        "view": "calls",
-        "at": 6
-       },
-       "value": "4,2"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "closed 2 < opened 4: add ) and call build(opened=4, closed=3).",
-      "ko": "closed 2 < opened 4이므로 ) 괄호를 붙이고 다음 호출 build(opened=4, closed=3)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        ")",
-        "(",
-        "(",
-        "(",
-        ")",
-        ")",
-        ""
-       ],
-       "unread": [
-        7
-       ],
-       "marks": {
-        "good": [
-         6
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 3
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         7
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()",
-        "(()(()))",
-        "(()()())",
-        "(()())()",
-        "(())(())",
-        "(())()()"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 6
-       },
-       "to": {
-        "view": "prefix",
-        "at": 6
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 6
-       },
-       "to": {
-        "view": "calls",
-        "at": 7
-       },
-       "value": "4,3"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "closed 3 < opened 4: add ) and call build(opened=4, closed=4).",
-      "ko": "closed 3 < opened 4이므로 ) 괄호를 붙이고 다음 호출 build(opened=4, closed=4)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        ")",
-        "(",
-        "(",
-        "(",
-        ")",
-        ")",
-        ")"
-       ],
-       "unread": [],
-       "marks": {
-        "good": [
-         7
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 3
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 4
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         8
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()",
-        "(()(()))",
-        "(()()())",
-        "(()())()",
-        "(())(())",
-        "(())()()"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 7
-       },
-       "to": {
-        "view": "prefix",
-        "at": 7
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 7
-       },
-       "to": {
-        "view": "calls",
-        "at": 8
-       },
-       "value": "4,4"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "The prefix is full, 8 brackets: ()((())) is well-formed, so it goes into the list.",
-      "ko": "접두사가 괄호 8개로 다 찼습니다. ()((())) 문자열은 올바르므로 목록에 넣습니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        ")",
-        "(",
-        "(",
-        "(",
-        ")",
-        ")",
-        ")"
-       ],
-       "unread": [],
-       "marks": {
-        "good": [
-         0,
-         1,
-         2,
-         3,
-         4,
-         5,
-         6,
-         7
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 3
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 4
-         }
-        }
-       ],
-       "marks": {
         "good": [
          8
         ]
@@ -9620,6 +5018,171 @@
       {
        "from": {
         "view": "calls",
+        "at": 0
+       },
+       "to": {
+        "view": "prefix",
+        "at": 0
+       },
+       "value": "("
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 1
+       },
+       "to": {
+        "view": "prefix",
+        "at": 1
+       },
+       "value": ")"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 2
+       },
+       "to": {
+        "view": "prefix",
+        "at": 2
+       },
+       "value": "("
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 3
+       },
+       "to": {
+        "view": "prefix",
+        "at": 3
+       },
+       "value": "("
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       },
+       "to": {
+        "view": "prefix",
+        "at": 4
+       },
+       "value": "("
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 5
+       },
+       "to": {
+        "view": "prefix",
+        "at": 5
+       },
+       "value": ")"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 6
+       },
+       "to": {
+        "view": "prefix",
+        "at": 6
+       },
+       "value": ")"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 7
+       },
+       "to": {
+        "view": "prefix",
+        "at": 7
+       },
+       "value": ")"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 1
+       },
+       "to": {
+        "view": "calls",
+        "at": 2
+       },
+       "value": "1,1"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 2
+       },
+       "to": {
+        "view": "calls",
+        "at": 3
+       },
+       "value": "2,1"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 3
+       },
+       "to": {
+        "view": "calls",
+        "at": 4
+       },
+       "value": "3,1"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 4
+       },
+       "to": {
+        "view": "calls",
+        "at": 5
+       },
+       "value": "4,1"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 5
+       },
+       "to": {
+        "view": "calls",
+        "at": 6
+       },
+       "value": "4,2"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 6
+       },
+       "to": {
+        "view": "calls",
+        "at": 7
+       },
+       "value": "4,3"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 7
+       },
+       "to": {
+        "view": "calls",
+        "at": 8
+       },
+       "value": "4,4"
+      },
+      {
+       "from": {
+        "view": "calls",
         "at": 8
        },
        "to": {
@@ -9632,8 +5195,8 @@
     },
     {
      "caption": {
-      "en": "build(opened=3, closed=1) is back from its ( branch with 1 string found; now closed 1 < opened 3, so it tries ).",
-      "ko": "build(opened=3, closed=1) 호출이 ( 쪽 호출에서 문자열 1개를 찾고 돌아왔습니다. 이제 closed 1 < opened 3이므로 ) 괄호를 시도합니다."
+      "en": "Skipping 5 steps like the ones before: build(opened=3, closed=1) is back from its ( branch and tries ), and the calls after it fill the prefix again, so ()(()()) is the 11th string.",
+      "ko": "앞과 같은 5단계를 건너뜁니다. build(opened=3, closed=1) 호출이 ( 쪽에서 돌아와 ) 괄호를 시도하고 이어지는 호출이 접두사를 다시 채워, ()(()()) 문자열이 11번째로 목록에 들어갑니다."
      },
      "views": {
       "prefix": {
@@ -9642,19 +5205,14 @@
         ")",
         "(",
         "(",
-        "",
-        "",
-        "",
-        ""
+        ")",
+        "(",
+        ")",
+        ")"
        ],
-       "unread": [
-        4,
-        5,
-        6,
-        7
-       ],
+       "unread": [],
        "marks": {
-        "bad": [
+        "good": [
          4,
          5,
          6,
@@ -9702,8 +5260,8 @@
         {
          "name": "build",
          "args": {
-          "opened": 4,
-          "closed": 1
+          "opened": 3,
+          "closed": 2
          }
         },
         {
@@ -9732,674 +5290,6 @@
         "lit": [
          4
         ],
-        "dim": [
-         5,
-         6,
-         7,
-         8
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()",
-        "(()(()))",
-        "(()()())",
-        "(()())()",
-        "(())(())",
-        "(())()()",
-        "()((()))"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "prefix",
-        "at": 4
-       },
-       "value": "("
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 5
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 6
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 7
-       },
-       "value": ")"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "closed 1 < opened 3: add ) and call build(opened=3, closed=2).",
-      "ko": "closed 1 < opened 3이므로 ) 괄호를 붙이고 다음 호출 build(opened=3, closed=2)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        ")",
-        "(",
-        "(",
-        ")",
-        "",
-        "",
-        ""
-       ],
-       "unread": [
-        5,
-        6,
-        7
-       ],
-       "marks": {
-        "good": [
-         4
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 2
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         5
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()",
-        "(()(()))",
-        "(()()())",
-        "(()())()",
-        "(())(())",
-        "(())()()",
-        "()((()))"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 4
-       },
-       "to": {
-        "view": "prefix",
-        "at": 4
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 4
-       },
-       "to": {
-        "view": "calls",
-        "at": 5
-       },
-       "value": "3,2"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "opened 3 < pairCount 4: add ( and call build(opened=4, closed=2).",
-      "ko": "opened 3 < pairCount 4이므로 ( 괄호를 붙이고 다음 호출 build(opened=4, closed=2)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        ")",
-        "(",
-        "(",
-        ")",
-        "(",
-        "",
-        ""
-       ],
-       "unread": [
-        6,
-        7
-       ],
-       "marks": {
-        "good": [
-         5
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 2
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         6
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()",
-        "(()(()))",
-        "(()()())",
-        "(()())()",
-        "(())(())",
-        "(())()()",
-        "()((()))"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 5
-       },
-       "to": {
-        "view": "prefix",
-        "at": 5
-       },
-       "value": "("
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 5
-       },
-       "to": {
-        "view": "calls",
-        "at": 6
-       },
-       "value": "4,2"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "closed 2 < opened 4: add ) and call build(opened=4, closed=3).",
-      "ko": "closed 2 < opened 4이므로 ) 괄호를 붙이고 다음 호출 build(opened=4, closed=3)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        ")",
-        "(",
-        "(",
-        ")",
-        "(",
-        ")",
-        ""
-       ],
-       "unread": [
-        7
-       ],
-       "marks": {
-        "good": [
-         6
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 3
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         7
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()",
-        "(()(()))",
-        "(()()())",
-        "(()())()",
-        "(())(())",
-        "(())()()",
-        "()((()))"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 6
-       },
-       "to": {
-        "view": "prefix",
-        "at": 6
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 6
-       },
-       "to": {
-        "view": "calls",
-        "at": 7
-       },
-       "value": "4,3"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "closed 3 < opened 4: add ) and call build(opened=4, closed=4).",
-      "ko": "closed 3 < opened 4이므로 ) 괄호를 붙이고 다음 호출 build(opened=4, closed=4)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        ")",
-        "(",
-        "(",
-        ")",
-        "(",
-        ")",
-        ")"
-       ],
-       "unread": [],
-       "marks": {
-        "good": [
-         7
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 3
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 4
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         8
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()",
-        "(()(()))",
-        "(()()())",
-        "(()())()",
-        "(())(())",
-        "(())()()",
-        "()((()))"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 7
-       },
-       "to": {
-        "view": "prefix",
-        "at": 7
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 7
-       },
-       "to": {
-        "view": "calls",
-        "at": 8
-       },
-       "value": "4,4"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "The prefix is full, 8 brackets: ()(()()) is well-formed, so it goes into the list.",
-      "ko": "접두사가 괄호 8개로 다 찼습니다. ()(()()) 문자열은 올바르므로 목록에 넣습니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        ")",
-        "(",
-        "(",
-        ")",
-        "(",
-        ")",
-        ")"
-       ],
-       "unread": [],
-       "marks": {
-        "good": [
-         0,
-         1,
-         2,
-         3,
-         4,
-         5,
-         6,
-         7
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 3
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 4
-         }
-        }
-       ],
-       "marks": {
         "good": [
          8
         ]
@@ -10430,6 +5320,138 @@
       {
        "from": {
         "view": "calls",
+        "at": 0
+       },
+       "to": {
+        "view": "prefix",
+        "at": 0
+       },
+       "value": "("
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 1
+       },
+       "to": {
+        "view": "prefix",
+        "at": 1
+       },
+       "value": ")"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 2
+       },
+       "to": {
+        "view": "prefix",
+        "at": 2
+       },
+       "value": "("
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 3
+       },
+       "to": {
+        "view": "prefix",
+        "at": 3
+       },
+       "value": "("
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       },
+       "to": {
+        "view": "prefix",
+        "at": 4
+       },
+       "value": ")"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 5
+       },
+       "to": {
+        "view": "prefix",
+        "at": 5
+       },
+       "value": "("
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 6
+       },
+       "to": {
+        "view": "prefix",
+        "at": 6
+       },
+       "value": ")"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 7
+       },
+       "to": {
+        "view": "prefix",
+        "at": 7
+       },
+       "value": ")"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 4
+       },
+       "to": {
+        "view": "calls",
+        "at": 5
+       },
+       "value": "3,2"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 5
+       },
+       "to": {
+        "view": "calls",
+        "at": 6
+       },
+       "value": "4,2"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 6
+       },
+       "to": {
+        "view": "calls",
+        "at": 7
+       },
+       "value": "4,3"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 7
+       },
+       "to": {
+        "view": "calls",
+        "at": 8
+       },
+       "value": "4,4"
+      },
+      {
+       "from": {
+        "view": "calls",
         "at": 8
        },
        "to": {
@@ -10442,8 +5464,8 @@
     },
     {
      "caption": {
-      "en": "build(opened=3, closed=2) is back from its ( branch with 1 string found; now closed 2 < opened 3, so it tries ).",
-      "ko": "build(opened=3, closed=2) 호출이 ( 쪽 호출에서 문자열 1개를 찾고 돌아왔습니다. 이제 closed 2 < opened 3이므로 ) 괄호를 시도합니다."
+      "en": "Skipping 4 steps like the ones before: build(opened=3, closed=2) is back from its ( branch and tries ), and the calls after it fill the prefix again, so ()(())() is the 12th string.",
+      "ko": "앞과 같은 4단계를 건너뜁니다. build(opened=3, closed=2) 호출이 ( 쪽에서 돌아와 ) 괄호를 시도하고 이어지는 호출이 접두사를 다시 채워, ()(())() 문자열이 12번째로 목록에 들어갑니다."
      },
      "views": {
       "prefix": {
@@ -10453,17 +5475,13 @@
         "(",
         "(",
         ")",
-        "",
-        "",
-        ""
+        ")",
+        "(",
+        ")"
        ],
-       "unread": [
-        5,
-        6,
-        7
-       ],
+       "unread": [],
        "marks": {
-        "bad": [
+        "good": [
          5,
          6,
          7
@@ -10517,8 +5535,8 @@
         {
          "name": "build",
          "args": {
-          "opened": 4,
-          "closed": 2
+          "opened": 3,
+          "closed": 3
          }
         },
         {
@@ -10540,550 +5558,6 @@
         "lit": [
          5
         ],
-        "dim": [
-         6,
-         7,
-         8
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()",
-        "(()(()))",
-        "(()()())",
-        "(()())()",
-        "(())(())",
-        "(())()()",
-        "()((()))",
-        "()(()())"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "prefix",
-        "at": 5
-       },
-       "value": "("
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 6
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 7
-       },
-       "value": ")"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "closed 2 < opened 3: add ) and call build(opened=3, closed=3).",
-      "ko": "closed 2 < opened 3이므로 ) 괄호를 붙이고 다음 호출 build(opened=3, closed=3)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        ")",
-        "(",
-        "(",
-        ")",
-        ")",
-        "",
-        ""
-       ],
-       "unread": [
-        6,
-        7
-       ],
-       "marks": {
-        "good": [
-         5
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 3
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         6
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()",
-        "(()(()))",
-        "(()()())",
-        "(()())()",
-        "(())(())",
-        "(())()()",
-        "()((()))",
-        "()(()())"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 5
-       },
-       "to": {
-        "view": "prefix",
-        "at": 5
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 5
-       },
-       "to": {
-        "view": "calls",
-        "at": 6
-       },
-       "value": "3,3"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "opened 3 < pairCount 4: add ( and call build(opened=4, closed=3).",
-      "ko": "opened 3 < pairCount 4이므로 ( 괄호를 붙이고 다음 호출 build(opened=4, closed=3)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        ")",
-        "(",
-        "(",
-        ")",
-        ")",
-        "(",
-        ""
-       ],
-       "unread": [
-        7
-       ],
-       "marks": {
-        "good": [
-         6
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 3
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 3
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         7
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()",
-        "(()(()))",
-        "(()()())",
-        "(()())()",
-        "(())(())",
-        "(())()()",
-        "()((()))",
-        "()(()())"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 6
-       },
-       "to": {
-        "view": "prefix",
-        "at": 6
-       },
-       "value": "("
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 6
-       },
-       "to": {
-        "view": "calls",
-        "at": 7
-       },
-       "value": "4,3"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "closed 3 < opened 4: add ) and call build(opened=4, closed=4).",
-      "ko": "closed 3 < opened 4이므로 ) 괄호를 붙이고 다음 호출 build(opened=4, closed=4)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        ")",
-        "(",
-        "(",
-        ")",
-        ")",
-        "(",
-        ")"
-       ],
-       "unread": [],
-       "marks": {
-        "good": [
-         7
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 3
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 3
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 4
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         8
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()",
-        "(()(()))",
-        "(()()())",
-        "(()())()",
-        "(())(())",
-        "(())()()",
-        "()((()))",
-        "()(()())"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 7
-       },
-       "to": {
-        "view": "prefix",
-        "at": 7
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 7
-       },
-       "to": {
-        "view": "calls",
-        "at": 8
-       },
-       "value": "4,4"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "The prefix is full, 8 brackets: ()(())() is well-formed, so it goes into the list.",
-      "ko": "접두사가 괄호 8개로 다 찼습니다. ()(())() 문자열은 올바르므로 목록에 넣습니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        ")",
-        "(",
-        "(",
-        ")",
-        ")",
-        "(",
-        ")"
-       ],
-       "unread": [],
-       "marks": {
-        "good": [
-         0,
-         1,
-         2,
-         3,
-         4,
-         5,
-         6,
-         7
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 3
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 3
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 4
-         }
-        }
-       ],
-       "marks": {
         "good": [
          8
         ]
@@ -11115,6 +5589,127 @@
       {
        "from": {
         "view": "calls",
+        "at": 0
+       },
+       "to": {
+        "view": "prefix",
+        "at": 0
+       },
+       "value": "("
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 1
+       },
+       "to": {
+        "view": "prefix",
+        "at": 1
+       },
+       "value": ")"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 2
+       },
+       "to": {
+        "view": "prefix",
+        "at": 2
+       },
+       "value": "("
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 3
+       },
+       "to": {
+        "view": "prefix",
+        "at": 3
+       },
+       "value": "("
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       },
+       "to": {
+        "view": "prefix",
+        "at": 4
+       },
+       "value": ")"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 5
+       },
+       "to": {
+        "view": "prefix",
+        "at": 5
+       },
+       "value": ")"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 6
+       },
+       "to": {
+        "view": "prefix",
+        "at": 6
+       },
+       "value": "("
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 7
+       },
+       "to": {
+        "view": "prefix",
+        "at": 7
+       },
+       "value": ")"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 5
+       },
+       "to": {
+        "view": "calls",
+        "at": 6
+       },
+       "value": "3,3"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 6
+       },
+       "to": {
+        "view": "calls",
+        "at": 7
+       },
+       "value": "4,3"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 7
+       },
+       "to": {
+        "view": "calls",
+        "at": 8
+       },
+       "value": "4,4"
+      },
+      {
+       "from": {
+        "view": "calls",
         "at": 8
        },
        "to": {
@@ -11127,8 +5722,8 @@
     },
     {
      "caption": {
-      "en": "build(opened=2, closed=1) is back from its ( branch with 3 strings found; now closed 1 < opened 2, so it tries ).",
-      "ko": "build(opened=2, closed=1) 호출이 ( 쪽 호출에서 문자열 3개를 찾고 돌아왔습니다. 이제 closed 1 < opened 2이므로 ) 괄호를 시도합니다."
+      "en": "Skipping 6 steps like the ones before: build(opened=2, closed=1) is back from its ( branch and tries ), and the calls after it fill the prefix again, so ()()(()) is the 13th string.",
+      "ko": "앞과 같은 6단계를 건너뜁니다. build(opened=2, closed=1) 호출이 ( 쪽에서 돌아와 ) 괄호를 시도하고 이어지는 호출이 접두사를 다시 채워, ()()(()) 문자열이 13번째로 목록에 들어갑니다."
      },
      "views": {
       "prefix": {
@@ -11136,21 +5731,15 @@
         "(",
         ")",
         "(",
-        "",
-        "",
-        "",
-        "",
-        ""
+        ")",
+        "(",
+        "(",
+        ")",
+        ")"
        ],
-       "unread": [
-        3,
-        4,
-        5,
-        6,
-        7
-       ],
+       "unread": [],
        "marks": {
-        "bad": [
+        "good": [
          3,
          4,
          5,
@@ -11192,8 +5781,8 @@
         {
          "name": "build",
          "args": {
-          "opened": 3,
-          "closed": 1
+          "opened": 2,
+          "closed": 2
          }
         },
         {
@@ -11206,8 +5795,8 @@
         {
          "name": "build",
          "args": {
-          "opened": 3,
-          "closed": 3
+          "opened": 4,
+          "closed": 2
          }
         },
         {
@@ -11229,808 +5818,6 @@
         "lit": [
          3
         ],
-        "dim": [
-         4,
-         5,
-         6,
-         7,
-         8
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()",
-        "(()(()))",
-        "(()()())",
-        "(()())()",
-        "(())(())",
-        "(())()()",
-        "()((()))",
-        "()(()())",
-        "()(())()"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "prefix",
-        "at": 3
-       },
-       "value": "("
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 4
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 5
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 6
-       },
-       "value": "("
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 7
-       },
-       "value": ")"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "closed 1 < opened 2: add ) and call build(opened=2, closed=2).",
-      "ko": "closed 1 < opened 2이므로 ) 괄호를 붙이고 다음 호출 build(opened=2, closed=2)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        ")",
-        "(",
-        ")",
-        "",
-        "",
-        "",
-        ""
-       ],
-       "unread": [
-        4,
-        5,
-        6,
-        7
-       ],
-       "marks": {
-        "good": [
-         3
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 2
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         4
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()",
-        "(()(()))",
-        "(()()())",
-        "(()())()",
-        "(())(())",
-        "(())()()",
-        "()((()))",
-        "()(()())",
-        "()(())()"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 3
-       },
-       "to": {
-        "view": "prefix",
-        "at": 3
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 3
-       },
-       "to": {
-        "view": "calls",
-        "at": 4
-       },
-       "value": "2,2"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "opened 2 < pairCount 4: add ( and call build(opened=3, closed=2).",
-      "ko": "opened 2 < pairCount 4이므로 ( 괄호를 붙이고 다음 호출 build(opened=3, closed=2)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        ")",
-        "(",
-        ")",
-        "(",
-        "",
-        "",
-        ""
-       ],
-       "unread": [
-        5,
-        6,
-        7
-       ],
-       "marks": {
-        "good": [
-         4
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 2
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         5
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()",
-        "(()(()))",
-        "(()()())",
-        "(()())()",
-        "(())(())",
-        "(())()()",
-        "()((()))",
-        "()(()())",
-        "()(())()"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 4
-       },
-       "to": {
-        "view": "prefix",
-        "at": 4
-       },
-       "value": "("
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 4
-       },
-       "to": {
-        "view": "calls",
-        "at": 5
-       },
-       "value": "3,2"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "opened 3 < pairCount 4: add ( and call build(opened=4, closed=2).",
-      "ko": "opened 3 < pairCount 4이므로 ( 괄호를 붙이고 다음 호출 build(opened=4, closed=2)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        ")",
-        "(",
-        ")",
-        "(",
-        "(",
-        "",
-        ""
-       ],
-       "unread": [
-        6,
-        7
-       ],
-       "marks": {
-        "good": [
-         5
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 2
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         6
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()",
-        "(()(()))",
-        "(()()())",
-        "(()())()",
-        "(())(())",
-        "(())()()",
-        "()((()))",
-        "()(()())",
-        "()(())()"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 5
-       },
-       "to": {
-        "view": "prefix",
-        "at": 5
-       },
-       "value": "("
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 5
-       },
-       "to": {
-        "view": "calls",
-        "at": 6
-       },
-       "value": "4,2"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "closed 2 < opened 4: add ) and call build(opened=4, closed=3).",
-      "ko": "closed 2 < opened 4이므로 ) 괄호를 붙이고 다음 호출 build(opened=4, closed=3)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        ")",
-        "(",
-        ")",
-        "(",
-        "(",
-        ")",
-        ""
-       ],
-       "unread": [
-        7
-       ],
-       "marks": {
-        "good": [
-         6
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 3
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         7
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()",
-        "(()(()))",
-        "(()()())",
-        "(()())()",
-        "(())(())",
-        "(())()()",
-        "()((()))",
-        "()(()())",
-        "()(())()"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 6
-       },
-       "to": {
-        "view": "prefix",
-        "at": 6
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 6
-       },
-       "to": {
-        "view": "calls",
-        "at": 7
-       },
-       "value": "4,3"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "closed 3 < opened 4: add ) and call build(opened=4, closed=4).",
-      "ko": "closed 3 < opened 4이므로 ) 괄호를 붙이고 다음 호출 build(opened=4, closed=4)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        ")",
-        "(",
-        ")",
-        "(",
-        "(",
-        ")",
-        ")"
-       ],
-       "unread": [],
-       "marks": {
-        "good": [
-         7
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 3
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 4
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         8
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()",
-        "(()(()))",
-        "(()()())",
-        "(()())()",
-        "(())(())",
-        "(())()()",
-        "()((()))",
-        "()(()())",
-        "()(())()"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 7
-       },
-       "to": {
-        "view": "prefix",
-        "at": 7
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 7
-       },
-       "to": {
-        "view": "calls",
-        "at": 8
-       },
-       "value": "4,4"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "The prefix is full, 8 brackets: ()()(()) is well-formed, so it goes into the list.",
-      "ko": "접두사가 괄호 8개로 다 찼습니다. ()()(()) 문자열은 올바르므로 목록에 넣습니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        ")",
-        "(",
-        ")",
-        "(",
-        "(",
-        ")",
-        ")"
-       ],
-       "unread": [],
-       "marks": {
-        "good": [
-         0,
-         1,
-         2,
-         3,
-         4,
-         5,
-         6,
-         7
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 3
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 4
-         }
-        }
-       ],
-       "marks": {
         "good": [
          8
         ]
@@ -12063,6 +5850,149 @@
       {
        "from": {
         "view": "calls",
+        "at": 0
+       },
+       "to": {
+        "view": "prefix",
+        "at": 0
+       },
+       "value": "("
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 1
+       },
+       "to": {
+        "view": "prefix",
+        "at": 1
+       },
+       "value": ")"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 2
+       },
+       "to": {
+        "view": "prefix",
+        "at": 2
+       },
+       "value": "("
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 3
+       },
+       "to": {
+        "view": "prefix",
+        "at": 3
+       },
+       "value": ")"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       },
+       "to": {
+        "view": "prefix",
+        "at": 4
+       },
+       "value": "("
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 5
+       },
+       "to": {
+        "view": "prefix",
+        "at": 5
+       },
+       "value": "("
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 6
+       },
+       "to": {
+        "view": "prefix",
+        "at": 6
+       },
+       "value": ")"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 7
+       },
+       "to": {
+        "view": "prefix",
+        "at": 7
+       },
+       "value": ")"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 3
+       },
+       "to": {
+        "view": "calls",
+        "at": 4
+       },
+       "value": "2,2"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 4
+       },
+       "to": {
+        "view": "calls",
+        "at": 5
+       },
+       "value": "3,2"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 5
+       },
+       "to": {
+        "view": "calls",
+        "at": 6
+       },
+       "value": "4,2"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 6
+       },
+       "to": {
+        "view": "calls",
+        "at": 7
+       },
+       "value": "4,3"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 7
+       },
+       "to": {
+        "view": "calls",
+        "at": 8
+       },
+       "value": "4,4"
+      },
+      {
+       "from": {
+        "view": "calls",
         "at": 8
        },
        "to": {
@@ -12075,8 +6005,8 @@
     },
     {
      "caption": {
-      "en": "build(opened=3, closed=2) is back from its ( branch with 1 string found; now closed 2 < opened 3, so it tries ).",
-      "ko": "build(opened=3, closed=2) 호출이 ( 쪽 호출에서 문자열 1개를 찾고 돌아왔습니다. 이제 closed 2 < opened 3이므로 ) 괄호를 시도합니다."
+      "en": "Skipping 4 steps like the ones before: build(opened=3, closed=2) is back from its ( branch and tries ), and the calls after it fill the prefix again, so ()()()() is the 14th string.",
+      "ko": "앞과 같은 4단계를 건너뜁니다. build(opened=3, closed=2) 호출이 ( 쪽에서 돌아와 ) 괄호를 시도하고 이어지는 호출이 접두사를 다시 채워, ()()()() 문자열이 14번째로 목록에 들어갑니다."
      },
      "views": {
       "prefix": {
@@ -12086,17 +6016,13 @@
         "(",
         ")",
         "(",
-        "",
-        "",
-        ""
+        ")",
+        "(",
+        ")"
        ],
-       "unread": [
-        5,
-        6,
-        7
-       ],
+       "unread": [],
        "marks": {
-        "bad": [
+        "good": [
          5,
          6,
          7
@@ -12150,8 +6076,8 @@
         {
          "name": "build",
          "args": {
-          "opened": 4,
-          "closed": 2
+          "opened": 3,
+          "closed": 3
          }
         },
         {
@@ -12173,558 +6099,6 @@
         "lit": [
          5
         ],
-        "dim": [
-         6,
-         7,
-         8
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()",
-        "(()(()))",
-        "(()()())",
-        "(()())()",
-        "(())(())",
-        "(())()()",
-        "()((()))",
-        "()(()())",
-        "()(())()",
-        "()()(())"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "prefix",
-        "at": 5
-       },
-       "value": "("
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 6
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 7
-       },
-       "value": ")"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "closed 2 < opened 3: add ) and call build(opened=3, closed=3).",
-      "ko": "closed 2 < opened 3이므로 ) 괄호를 붙이고 다음 호출 build(opened=3, closed=3)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        ")",
-        "(",
-        ")",
-        "(",
-        ")",
-        "",
-        ""
-       ],
-       "unread": [
-        6,
-        7
-       ],
-       "marks": {
-        "good": [
-         5
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 3
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         6
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()",
-        "(()(()))",
-        "(()()())",
-        "(()())()",
-        "(())(())",
-        "(())()()",
-        "()((()))",
-        "()(()())",
-        "()(())()",
-        "()()(())"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 5
-       },
-       "to": {
-        "view": "prefix",
-        "at": 5
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 5
-       },
-       "to": {
-        "view": "calls",
-        "at": 6
-       },
-       "value": "3,3"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "opened 3 < pairCount 4: add ( and call build(opened=4, closed=3).",
-      "ko": "opened 3 < pairCount 4이므로 ( 괄호를 붙이고 다음 호출 build(opened=4, closed=3)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        ")",
-        "(",
-        ")",
-        "(",
-        ")",
-        "(",
-        ""
-       ],
-       "unread": [
-        7
-       ],
-       "marks": {
-        "good": [
-         6
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 3
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 3
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         7
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()",
-        "(()(()))",
-        "(()()())",
-        "(()())()",
-        "(())(())",
-        "(())()()",
-        "()((()))",
-        "()(()())",
-        "()(())()",
-        "()()(())"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 6
-       },
-       "to": {
-        "view": "prefix",
-        "at": 6
-       },
-       "value": "("
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 6
-       },
-       "to": {
-        "view": "calls",
-        "at": 7
-       },
-       "value": "4,3"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "closed 3 < opened 4: add ) and call build(opened=4, closed=4).",
-      "ko": "closed 3 < opened 4이므로 ) 괄호를 붙이고 다음 호출 build(opened=4, closed=4)에 넘깁니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        ")",
-        "(",
-        ")",
-        "(",
-        ")",
-        "(",
-        ")"
-       ],
-       "unread": [],
-       "marks": {
-        "good": [
-         7
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 3
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 3
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 4
-         }
-        }
-       ],
-       "marks": {
-        "lit": [
-         8
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "(((())))",
-        "((()()))",
-        "((())())",
-        "((()))()",
-        "(()(()))",
-        "(()()())",
-        "(()())()",
-        "(())(())",
-        "(())()()",
-        "()((()))",
-        "()(()())",
-        "()(())()",
-        "()()(())"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 7
-       },
-       "to": {
-        "view": "prefix",
-        "at": 7
-       },
-       "value": ")"
-      },
-      {
-       "from": {
-        "view": "prefix",
-        "at": 7
-       },
-       "to": {
-        "view": "calls",
-        "at": 8
-       },
-       "value": "4,4"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "The prefix is full, 8 brackets: ()()()() is well-formed, so it goes into the list.",
-      "ko": "접두사가 괄호 8개로 다 찼습니다. ()()()() 문자열은 올바르므로 목록에 넣습니다."
-     },
-     "views": {
-      "prefix": {
-       "values": [
-        "(",
-        ")",
-        "(",
-        ")",
-        "(",
-        ")",
-        "(",
-        ")"
-       ],
-       "unread": [],
-       "marks": {
-        "good": [
-         0,
-         1,
-         2,
-         3,
-         4,
-         5,
-         6,
-         7
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "build",
-         "args": {
-          "opened": 0,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 0
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 1,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 1
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 2,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 2
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 3,
-          "closed": 3
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 3
-         }
-        },
-        {
-         "name": "build",
-         "args": {
-          "opened": 4,
-          "closed": 4
-         }
-        }
-       ],
-       "marks": {
         "good": [
          8
         ]
@@ -12755,6 +6129,127 @@
       }
      },
      "moves": [
+      {
+       "from": {
+        "view": "calls",
+        "at": 0
+       },
+       "to": {
+        "view": "prefix",
+        "at": 0
+       },
+       "value": "("
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 1
+       },
+       "to": {
+        "view": "prefix",
+        "at": 1
+       },
+       "value": ")"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 2
+       },
+       "to": {
+        "view": "prefix",
+        "at": 2
+       },
+       "value": "("
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 3
+       },
+       "to": {
+        "view": "prefix",
+        "at": 3
+       },
+       "value": ")"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 4
+       },
+       "to": {
+        "view": "prefix",
+        "at": 4
+       },
+       "value": "("
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 5
+       },
+       "to": {
+        "view": "prefix",
+        "at": 5
+       },
+       "value": ")"
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 6
+       },
+       "to": {
+        "view": "prefix",
+        "at": 6
+       },
+       "value": "("
+      },
+      {
+       "from": {
+        "view": "calls",
+        "at": 7
+       },
+       "to": {
+        "view": "prefix",
+        "at": 7
+       },
+       "value": ")"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 5
+       },
+       "to": {
+        "view": "calls",
+        "at": 6
+       },
+       "value": "3,3"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 6
+       },
+       "to": {
+        "view": "calls",
+        "at": 7
+       },
+       "value": "4,3"
+      },
+      {
+       "from": {
+        "view": "prefix",
+        "at": 7
+       },
+       "to": {
+        "view": "calls",
+        "at": 8
+       },
+       "value": "4,4"
+      },
       {
        "from": {
         "view": "calls",

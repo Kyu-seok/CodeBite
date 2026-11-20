@@ -8,7 +8,9 @@ its digits, moving from them into the call that takes it.
 
 One frame per call made (a full address goes into the answer in its frame) and one per run of calls returning
 together, not per length tried: the lengths a call passes over are named in the caption of the next call it makes.
-Example 1 still takes 61 frames.
+A pruned branch, a segment with no address anywhere below it, is one frame (#388): the segment is drawn taken and
+marked bad, its caption says why the call below finds nothing, or how many calls below it ran undrawn, and the next
+frame has it off again.
 
     CODEBITE_DB=<database> scripts/walkthroughs/restore-wifi-ip.py
 
@@ -61,9 +63,36 @@ def why_not(digits, start, end, placed):
     return None
 
 
+def lengths(digits, start, placed):
+    """Each length place(start) tries with `placed` segments down, as (end, why it passes over it or None when it
+    takes it), stopping after a leading zero or a number over 255 as the solution breaks there."""
+    for end in range(start + 1, min(start + 3, len(digits)) + 1):
+        segment = digits[start:end]
+        yield end, why_not(digits, start, end, placed)
+        if (segment[0] == "0" and len(segment) > 1) or int(segment) > 255:
+            return
+
+
+def pruned(digits, start, placed):
+    """place(start) with `placed` segments down, run without frames: None when it reaches an address, else the calls
+    it takes (itself and every call below) and the segments they take."""
+    if placed == 4:
+        return None
+    calls, taken = 1, []
+    for end, reason in lengths(digits, start, placed):
+        if reason:
+            continue
+        below = pruned(digits, end, placed + 1)
+        if below is None:
+            return None
+        calls += below[0]
+        taken += [digits[start:end]] + below[1]
+    return calls, taken
+
+
 def solve(digits, run):
-    """Solution.restoreIpAddresses with a frame per call made and per run of returns. Returns the answer as the Driver
-    prints it."""
+    """Solution.restoreIpAddresses with a frame per call made, per run of returns and per pruned branch. Returns the
+    answer as the Driver prints it."""
     segments, starts, addresses = [], [], []
     stack = []          # start of each open call, bottom first
 
@@ -113,6 +142,35 @@ def solve(digits, run):
         del starts[keep:]
         returned.clear()
 
+    def dead_end(start, end, skipped, calls, taken):
+        """The pruned branch under digits[start:end] as one frame: the segment taken and the call for the next one
+        drawn bad, both gone again after it."""
+        seg, depth, nth = digits[start:end], len(stack), len(segments) + 1
+        segments.append(seg)
+        starts.append(start)
+        stack.append(end)
+        pass_over = {"en": "".join(r["en"] + "; " for r in skipped), "ko": "".join(r["ko"] + ", " for r in skipped)}
+        pass_over["en"] = pass_over["en"][:1].upper() + pass_over["en"][1:]
+        if calls == 1:
+            reasons = [reason for _, reason in lengths(digits, end, depth)]
+            why = {"en": f"place(start={end}) finds no segment {nth + 1} (" + ", ".join(r["en"] for r in reasons)
+                         + f"), so \"{seg}\" comes straight back off",
+                   "ko": f"place(start={end}) 호출에서 {nth + 1}번째 조각을 찾지 못하는(" + ", ".join(r["ko"] for r in reasons)
+                         + ") 막다른 길이므로, 바로 다시 뗍니다"}
+        else:
+            tried = ", ".join(f"\"{t}\"" for t in taken)
+            why = {"en": f"the {calls} calls below it, not drawn, try {tried} and reach no address, so \"{seg}\" "
+                         f"comes back off",
+                   "ko": f"그 아래 호출 {calls}개(그리지 않음)에서 {tried} 조각을 시도해도 주소가 나오지 않는 막다른 "
+                         f"길이므로, 다시 뗍니다"}
+        frame({"en": pass_over["en"] + f"\"{seg}\" as segment {nth} is a dead end: " + why["en"] + ".",
+               "ko": pass_over["ko"] + f"\"{seg}\" 조각을 {nth}번째 조각으로 놓으면 " + why["ko"] + "."},
+              call_marks={"bad": [depth]}, digit_marks={"bad": list(range(start, end))},
+              moves=[move(at("digits", start), at("calls", depth), value=seg)])
+        segments.pop()
+        starts.pop()
+        stack.pop()
+
     def place(start, skipped):
         depth = len(stack)
         stack.append(start)
@@ -149,16 +207,17 @@ def solve(digits, run):
             returned.append(depth)
             return
         passed = []
-        for end in range(start + 1, min(start + 3, len(digits)) + 1):
+        for end, reason in lengths(digits, start, depth):
             segment = digits[start:end]
-            reason = why_not(digits, start, end, depth)
-            if (segment[0] == "0" and len(segment) > 1) or int(segment) > 255:
-                passed.append(reason)
-                break
             if reason:
                 passed.append(reason)
                 continue
             flush()
+            below = pruned(digits, end, depth + 1)
+            if below:
+                dead_end(start, end, passed, *below)
+                passed = []
+                continue
             segments.append(segment)
             starts.append(start)
             place(end, passed)
