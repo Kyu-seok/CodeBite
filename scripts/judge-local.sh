@@ -10,7 +10,8 @@
 #                                                                # the one scripts/dev-branch-servers.sh prints
 #
 # A database missing this checkout's migrations is refused (exit 2), as scripts/problem-text.sh and
-# scripts/db-sql.sh refuse it; CODEBITE_ALLOW_STALE=1 judges it anyway.
+# scripts/db-sql.sh refuse it; CODEBITE_ALLOW_STALE=1 judges it anyway. A Docker daemon that doesn't
+# answer or a codebite-postgres that isn't running exits 2 too, with one line saying what to start.
 #
 # Reference solutions are scripts/replay-solutions/<slug>.<py|java|js|cpp>, Solution class only, as
 # a user would submit it. A Former Slug works for the database. cases.json is a list of
@@ -44,7 +45,7 @@ trap 'rm -rf "$work"' EXIT
 
 if [[ -z "$cases_file" ]]; then
   database=${CODEBITE_DB:-codebite}
-  psql() { docker exec -i codebite-postgres psql -U codebite -d "$database" -X -q -v ON_ERROR_STOP=1 -tA "$@"; }
+  psql() { db_psql "$database" -tA "$@"; }
   # A database missing this checkout's migrations holds the cases as they were: judging those
   # would report ACCEPTED on cases the branch has changed.
   require_current_db "$database" "$root" judge-local.sh || exit 2

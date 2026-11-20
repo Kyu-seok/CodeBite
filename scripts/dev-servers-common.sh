@@ -27,11 +27,33 @@ env_value() {
   { ps eww -o command= -p "$1" 2>/dev/null || true; } | tr ' ' '\n' | sed -n "s/^$2=//p" | head -n 1
 }
 
+# Why no database in the codebite-postgres container can be reached, as what to start; empty when
+# the container runs. One docker inspect then, and a docker info only to tell a daemon that doesn't
+# answer from a container that is stopped or was never created. Reads nothing from stdin, which may
+# hold the caller's query.
+db_down_reason() {
+  local running
+  running=$(docker inspect -f '{{.State.Running}}' codebite-postgres 2>/dev/null </dev/null) || true
+  if [[ "$running" == true ]]; then
+    return 0
+  elif docker info >/dev/null 2>&1 </dev/null; then
+    echo "the codebite-postgres container isn't running; start it: docker compose -f infra/docker-compose.yml up -d postgres"
+  else
+    echo "the Docker daemon doesn't answer; start Docker Desktop (open -a Docker) and rerun"
+  fi
+}
+
 # psql on the local database $1 (the codebite-postgres container), the rest of the arguments
 # psql's own; stdin goes through, so a query can arrive as a heredoc. Stops at the first error.
+# Runs nothing and returns 2, saying on stderr what to start, when Docker or the container is down.
 db_psql() {
-  local database=$1
+  local database=$1 down
   shift
+  down=$(db_down_reason)
+  if [[ -n "$down" ]]; then
+    echo "$(basename "$0"): database $database not reachable: $down" >&2
+    return 2
+  fi
   docker exec -i codebite-postgres psql -U codebite -d "$database" -X -q -v ON_ERROR_STOP=1 "$@"
 }
 
@@ -49,23 +71,31 @@ newest_migration() {
     -name 'V*__*' 2>/dev/null | sed -E 's|.*/V([0-9]+)__.*|\1|' | sort -n | tail -n 1
 }
 
-# What follows a database's name when it can't be read: the container, and how to start it.
+# What follows a database's name when it can't be read: what to start when Docker or the container
+# is down (db_down_reason), and otherwise that the container runs: the database is missing or empty, or
+# Postgres in a container just started doesn't answer yet.
 db_unreachable_message() {
-  echo "not reachable (docker container codebite-postgres); start it: open -a Docker, then docker compose -f infra/docker-compose.yml up -d postgres"
+  local down
+  down=$(db_down_reason)
+  if [[ -n "$down" ]]; then
+    echo "not reachable: $down"
+  else
+    echo "not readable though the codebite-postgres container runs: no such database, no migration has run in it, or Postgres is still starting (rerun in a few seconds)"
+  fi
 }
 
 # For a script reading database $1 from checkout $2: the database is only as new as the last
 # backend start or migrate, so a database missing migrations this checkout has (BEHIND) would show problems as
 # they were, not as they are. This refuses one on stderr, naming both versions, and returns 1; with
 # CODEBITE_ALLOW_STALE=1 it only warns. A checkout with no migrations at all has nothing to be
-# behind. Returns 1, with db_unreachable_message prefixed by $3 (the script's name), when the
-# database can't be read.
+# behind. Returns 2, with db_unreachable_message prefixed by $3 (the script's name), when the
+# database can't be read: 1 is the refusal above, and a failing case in scripts/judge-local.sh.
 require_current_db() {
   local database=$1 here=$2 script=$3 db ours
   db=$(flyway_version "$database")
   if [[ -z "$db" ]]; then
     echo "$script: database $database $(db_unreachable_message)" >&2
-    return 1
+    return 2
   fi
   ours=$(newest_migration "$here")
   if [[ -n "$ours" ]] && (( db < ours )); then

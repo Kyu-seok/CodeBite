@@ -7,6 +7,14 @@ trap 'rm -rf "$tmp"' EXIT
 mkdir "$tmp/bin"
 cat > "$tmp/bin/docker" <<'STUB'
 #!/usr/bin/env bash
+# STUB_DOCKER=down is a Docker daemon that doesn't answer, stopped a codebite-postgres not running.
+case "${STUB_DOCKER:-up} $1" in
+  "down "*) echo 'Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?' >&2; exit 1 ;;
+  *" info") exit 0 ;;
+  "up inspect") echo true; exit 0 ;;
+  "stopped inspect") echo false; exit 0 ;;
+  "stopped exec") echo 'Error response from daemon: container 3f2a9c is not running' >&2; exit 1 ;;
+esac
 printf '%s\n' "$*" >> "$STUB_LOG"
 case "$*" in
   *max*) printf '%s\n' "$STUB_VERSION" ;;
@@ -35,6 +43,16 @@ grep -q 'problem-text.sh: database codebite_branch at V1' "$tmp/err" || fail "th
 STUB_VERSION=1 CODEBITE_DB=codebite_branch CODEBITE_ALLOW_STALE=1 run some-slug >/dev/null 2>"$tmp/err" \
   || fail "CODEBITE_ALLOW_STALE=1 should read a database behind: $(cat "$tmp/err")"
 grep -q 'WARNING: database codebite_branch at V1' "$tmp/err" || fail "reading a database behind should still warn, naming it"
+
+# Docker or the container down: what to start, in one line, and exit 2 as scripts/db-sql.sh does.
+code=0; STUB_DOCKER=down run some-slug >/dev/null 2>"$tmp/err" || code=$?
+[[ $code == 2 ]] || fail "a Docker daemon that doesn't answer should exit 2, got $code"
+[[ "$(cat "$tmp/err")" == "problem-text.sh: database codebite not reachable: the Docker daemon doesn't answer; start Docker Desktop (open -a Docker) and rerun" ]] \
+  || fail "a Docker daemon that doesn't answer should say to start Docker Desktop: $(cat "$tmp/err")"
+code=0; STUB_DOCKER=stopped run some-slug >/dev/null 2>"$tmp/err" || code=$?
+[[ $code == 2 ]] || fail "a stopped codebite-postgres should exit 2, got $code"
+[[ "$(cat "$tmp/err")" == "problem-text.sh: database codebite not reachable: the codebite-postgres container isn't running; start it: docker compose -f infra/docker-compose.yml up -d postgres" ]] \
+  || fail "a stopped codebite-postgres should name the compose command: $(cat "$tmp/err")"
 
 # --json prints every case as judge-local.sh --cases reads them.
 out=$(STUB_VERSION=999999 STUB_OUT='[{"input":"1","expected_output":"2"}]' run some-slug --json) \

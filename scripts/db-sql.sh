@@ -15,6 +15,8 @@
 # a migration. The database is only as new as the last backend start, so the script
 # refuses one missing migrations this checkout has (BEHIND; CODEBITE_ALLOW_STALE=1
 # reads it anyway, with a warning). A query error exits non-zero with psql's message.
+# Exits 2, with one line saying what to start, when the Docker daemon doesn't answer or
+# the codebite-postgres container isn't running; 1 is the BEHIND refusal.
 set -euo pipefail
 
 usage() { echo 'usage: scripts/db-sql.sh "<sql>"   or   scripts/db-sql.sh < query.sql' >&2; exit 2; }
@@ -25,7 +27,7 @@ here=$(cd "$(dirname "$0")/.." && pwd)
 source "$here/scripts/dev-servers-common.sh"
 
 database=${CODEBITE_DB:-codebite}
-require_current_db "$database" "$here" db-sql.sh || exit 1
+require_current_db "$database" "$here" db-sql.sh || exit $?
 
 {
   echo 'SET default_transaction_read_only = on;'

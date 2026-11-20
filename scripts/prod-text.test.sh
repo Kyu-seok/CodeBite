@@ -20,6 +20,7 @@ chmod +x "$tmp/bin/curl"
 cat > "$tmp/bin/docker" <<'STUB'
 #!/usr/bin/env bash
 case "$*" in
+  inspect*) echo true ;;   # the container runs
   *flyway_schema_history*) echo 589 ;;
   *"'gone-slug'"*) ;;
   *"'drifted-slug'"*) printf '%s\n' '{"en":{"title":"Title","description":"English, edited","constraints":"- limit"},"ko":{"title":"제목","description":"한국어\nshared block","constraints":"- 제약"}}' ;;

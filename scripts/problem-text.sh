@@ -13,6 +13,8 @@
 # column; the oldest grep match is usually stale. The database is only as new
 # as the last backend start, so the script refuses one missing migrations this
 # checkout has (CODEBITE_ALLOW_STALE=1 reads it anyway, with a warning). For a query across problems, scripts/db-sql.sh.
+# Exits 2, with one line saying what to start, when the Docker daemon doesn't answer or
+# the codebite-postgres container isn't running; 1 is that refusal or an unknown slug.
 set -euo pipefail
 
 usage() { echo "usage: scripts/problem-text.sh <slug> [--all | --json]" >&2; exit 2; }
@@ -31,7 +33,7 @@ here=$(cd "$(dirname "$0")/.." && pwd)
 # shellcheck source=SCRIPTDIR/dev-servers-common.sh
 source "$here/scripts/dev-servers-common.sh"
 database=${CODEBITE_DB:-codebite}
-require_current_db "$database" "$here" problem-text.sh || exit 1
+require_current_db "$database" "$here" problem-text.sh || exit $?
 psql() { db_psql "$database" "$@"; }
 
 if $json; then
