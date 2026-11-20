@@ -1,3 +1,5 @@
+import java.util.*;
+
 class Solution {
     public List<String> planWalk(List<List<String>> routes) {
         Map<String, PriorityQueue<String>> outgoing = new HashMap<>();

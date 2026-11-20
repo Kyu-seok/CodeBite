@@ -1,8 +1,8 @@
 import java.util.*;
 
-// {{LIB:JsonOutput}}
-
 {USER_CODE}
+
+// {{LIB:JsonOutput}}
 
 public class Main {
     public static void main(String[] args) {
@@ -30,7 +30,7 @@ public class Main {
         int[][] heights = rows.toArray(new int[0][]);
 
         List<List<Integer>> result = new Solution().traceDualDrainage(heights);
-        result.sort((a, b) -> a.get(0) != b.get(0) ? a.get(0) - b.get(0) : a.get(1) - b.get(1));
+        result.sort((a, b) -> !a.get(0).equals(b.get(0)) ? Integer.compare(a.get(0), b.get(0)) : Integer.compare(a.get(1), b.get(1)));
         System.out.println(JsonOutput.intList2D(result));
     }
 }
