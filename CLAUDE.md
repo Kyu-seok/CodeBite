@@ -36,14 +36,14 @@ Root `settings.gradle` includes three modules: `common`, `backend`, `worker`. Th
 - `GitHubLinkRepository.findCurrentByUserId` is the user's current link, ACTIVE or BROKEN; UNLINKED rows stay.
 
 ### Reading a problem
-`scripts/problem-text.sh <slug> [--all | --json]` prints a problem as it stands (English and Korean text, sample Test Cases, or every case by `order_index` with `--all`; `--json` gives every case as the `[{input, expected_output}]` list `judge-local.sh --cases` reads, for a check of your own over them) from the local database, or a branch's with `CODEBITE_DB=<database>`; refuses a database missing this checkout's migrations, which would show a problem as it was (`CODEBITE_ALLOW_STALE=1` reads it anyway); `scripts/dev-branch-servers.sh migrate`, from a worktree, makes a current one. Anything beyond one problem (a fact across problems, a count, the largest case) is `scripts/db-sql.sh "<sql>"`, the same connection, refusal and `CODEBITE_DB`. Migrations are the slow way: the newest one that sets a column wins, and the first grep match is usually stale.
+`scripts/problem-text.sh <slug> [--all | --json]` prints a problem as it stands (English and Korean text, sample Test Cases, or every case by `order_index` with `--all`; `--json` gives every case as the `[{input, expected_output}]` list `judge-local.sh --cases` reads, for a check of your own over them) from the local database, or a branch's with `CODEBITE_DB=<database>`; refuses a database missing this checkout's migrations, which would show a problem as it was (`CODEBITE_ALLOW_STALE=1` reads it anyway); `scripts/dev-branch-servers.sh migrate`, from a worktree, makes a current one. Anything beyond one problem (a fact across problems, a count, the largest case) is `scripts/db-sql.sh "<sql>"`, the same connection, refusal and `CODEBITE_DB`. Every script that reads the database exits 2 with one line saying what to start when Docker or `codebite-postgres` is down. Migrations are the slow way: the newest one that sets a column wins, and the first grep match is usually stale.
 
 ### Judging a problem locally
-`scripts/judge-local.sh <slug> [--languages java,cpp,…] [--cases cases.json]` judges a problem's Test Cases (from the local database, a branch's with `CODEBITE_DB=<database>`, or a JSON list of `{input, expected_output}` not in a migration yet) without Judge0: each Language's reference solution, `scripts/replay-solutions/<slug>.<py|java|js|cpp>` (the `Solution` class only; most problems have only a Python one, so the others report `NOT JUDGED`), goes into the Driver and runs on the local `python3.12`, `javac`/`java`, `node` and `g++`, compared trimmed as the Grader does. Exits 1 on a failing case and 2 when a compiler, interpreter or reference solution is missing (`NOT JUDGED`, never a failed case) or the database is missing this checkout's migrations (`CODEBITE_ALLOW_STALE=1` judges it anyway). Java builds with `--release 13` and C++ with `-std=gnu++14` like Judge0; local `node` is newer than Judge0's Node 12. `scripts/replay-local.sh` replays every problem's Python instead.
+`scripts/judge-local.sh <slug> [--languages java,cpp,…] [--cases cases.json]` judges a problem's Test Cases (from the local database, a branch's with `CODEBITE_DB=<database>`, or a JSON list of `{input, expected_output}` not in a migration yet) without Judge0: each Language's reference solution, `scripts/replay-solutions/<slug>.<py|java|js|cpp>` (the `Solution` class only; most problems have only a Python one, so the others report `NOT JUDGED`), goes into the Driver and runs on the local `python3.12`, `javac`/`java`, `node` and `g++`, compared trimmed as the Grader does. Exits 1 on a failing case and 2 when a compiler, interpreter or reference solution is missing (`NOT JUDGED`, never a failed case) or the database is missing this checkout's migrations (`CODEBITE_ALLOW_STALE=1` judges it anyway) or can't be reached. Java builds with `--release 13` and C++ with `-std=gnu++14` like Judge0; local `node` is newer than Judge0's Node 12. `scripts/replay-local.sh` replays every problem's Python instead.
 `scripts/judge-run.sh <slug>… [--former <old-slug>]` sends them to a branch backend's Run endpoint (samples, Judge0) and checks a Former Slug resolves.
 
 ### Pointers in documents
-`scripts/check-doc-references.py` (pre-commit and CI) fails when CLAUDE.md, a skill, an agent or `docs/agents/` names a repo path that doesn't exist, or anything cites a glossary term (`… (GLOSSARY.md)`) the glossary lacks: the usual cause is a branch citing what another unmerged branch adds.
+`scripts/check-doc-references.py` (pre-commit and CI) fails when CLAUDE.md, a skill, an agent or `docs/agents/` names a repo path that doesn't exist, or anything cites a glossary term (`… (GLOSSARY.md)`) the glossary lacks, or the add-walkthrough skill's `views.md` has a `## ` heading that carries a ticket number or repeats another: the usual cause of a dangling pointer is a branch citing what another unmerged branch adds.
 
 ### Restating a problem
 Rewording a problem while its Test Cases stay (Slug, title, description, Starter Code names) is a Restatement: follow `.claude/skills/restate-problem/SKILL.md`. `ProblemSlugsTest` (backend) runs every migration and fails when a Slug and its `drivers/`/`starters/` directories disagree; `MigrationSlugReferencesTest` fails when a migration's `slug = …` names a slug that doesn't exist when it runs. `StatementsMatchTestCasesTest`'s exemption sets (its class comment lists them) are the known statement defects: a fix removes its slug, and the test fails on a listed slug that passes; every run writes one report per check, each problem's mismatch lines with listed ones marked, under `backend/build/reports/statements/`.
@@ -59,16 +59,6 @@ A Walkthrough is `common/src/main/resources/walkthroughs/<slug>.json`, generated
 The player (`frontend/src/components/walkthrough/`) and the recorder (`scripts/walkthroughs/walkthrough_trace.py`) are a verbatim copy of the walkthrough kit (`~/Work/walkthrough-skill`, local only; docs/adr/0012): change the kit, commit there, then `scripts/copy-walkthrough-kit.py [--kit <checkout>] [--ref <commit>]` copies its `kit/` in and records the commit in `KIT_VERSION.json` beside the player (a new kit file goes where its `COPY_RULES` say). `--check` (pre-commit and CI) fails on a copied file edited here; with the kit on the machine it also checks the recorded commit and notes a kit that has moved on.
 
 ## Backend
-
-### Tech Stack
-- Java 17, Spring Boot 3.2.5, Gradle 8.5 (wrapper)
-- Spring Security (stateless JWT auth, OAuth via Google/GitHub)
-- Spring Data JPA + Flyway migrations
-- PostgreSQL 15 (dev/prod), H2 in PostgreSQL mode (tests)
-- Redis 7 (JWT token blacklist, user profile cache)
-- Spring Kafka (submission event producer)
-- Spring Boot Actuator + Micrometer Prometheus (metrics)
-- jjwt 0.12.5 for JWT token handling
 
 ### Common Commands
 ```bash
@@ -137,13 +127,6 @@ source scripts/dev-env.sh && ./gradlew :worker:bootRun  # run worker locally (ne
 
 ## Frontend
 
-### Tech Stack
-- React 19, TypeScript, Vite
-- Tailwind CSS v4 with `@tailwindcss/typography`
-- Axios (HTTP client with JWT interceptor)
-- Monaco Editor (`@monaco-editor/react`)
-- React Router v6, React Context for auth state
-
 ### Common Commands
 ```bash
 cd frontend
@@ -162,41 +145,11 @@ Vitest runs in Node with no DOM (no jsdom or Testing Library), so a component te
 - `api/client.ts` attaches the JWT that AuthContext keeps in localStorage.
 
 ### Routing
-| Path | Page | Auth |
-|------|------|------|
-| `/login` | LoginPage | No |
-| `/auth/callback/:provider` | OAuthCallbackPage | No |
-| `/` | Redirect to `/problems` | No |
-| `/problems` | ProblemListPage | No |
-| `/problems/:slug` | ProblemDetailPage | No (submit requires auth) |
-| `/profile` | ProfilePage | Yes |
-| `/github/callback` | GitHubCallbackPage (GitHub App install redirect; links the Solution Repository named on the profile card, with a retry on failure) | Yes |
-| `/dev/diagrams` | DiagramGalleryPage (Vite dev mode only, see Diagrams above; 404 in a production build) | ADMIN |
-| `*` | NotFoundPage | No |
-
-The problem workspace, solution pages and admin pages are `lazy` routes in `App.tsx`, so the Monaco editor is downloaded only when one of them opens; a page that must not reach the entry bundle is imported that way, never statically.
+The route table (path, page, auth) is in `docs/agents/frontend.md`; a new route is a row there. The problem workspace, solution pages and admin pages are `lazy` routes in `App.tsx`, so the Monaco editor is downloaded only when one of them opens; a page that must not reach the entry bundle is imported that way, never statically.
 
 ## Monitoring
 
-### Prometheus + Grafana
-- **Prometheus**: Scrapes metrics from backend (`:8080/actuator/prometheus`) and worker (`:8081/actuator/prometheus`) every 15s
-- **Grafana**: `http://localhost:3001` (admin/admin) — auto-provisioned with Prometheus datasource and CodeBite Overview dashboard
-- **Config**: `infra/prometheus/` (scrape configs), `infra/grafana/provisioning/` (datasource + dashboards)
-
-### Custom Metrics
-| Metric | Type | Source | Description |
-|--------|------|--------|-------------|
-| `codebite.submissions.created` | Counter | Backend | Total submissions created |
-| `codebite.submissions.completed` | Counter | Worker | Submissions completed (tags: `status`, `language`) |
-| `codebite.submissions.processing.duration` | Timer | Worker | Time to process a submission through Judge0 |
-| `codebite.solution.commits` | Counter | Backend | Solution Commits by final outcome after retries (tag: `outcome` = `committed`, `failed`, or `broken` when the installation or repository is gone, which is never retried). An Import counts each commit in its batch |
-| `codebite.tutorial.milestones` | Counter | Backend | Tutorial milestones reached, each reported once per run of the Tutorial by the browser (tag: `milestone` = `started`, `ran`, `submitted`, `accepted`, `skipped`); anonymous |
-
-### Built-in Metrics (via Actuator)
-- `http_server_requests_seconds` — HTTP request rate, latency, status codes per endpoint
-- `jvm_memory_used_bytes` — JVM heap/non-heap memory
-- `hikaricp_connections_*` — Database connection pool (active, idle, pending)
-- `kafka_consumer_fetch_manager_records_lag` — Kafka consumer lag per partition
+`docs/agents/monitoring.md` has the Prometheus and Grafana setup and every metric: the `codebite.*` custom ones with their tags, and the built-in ones the dashboard reads. A new or changed metric is a row there.
 
 ## Agent skills
 

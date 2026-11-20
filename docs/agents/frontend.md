@@ -12,3 +12,27 @@ Which directory of `frontend/src/` holds what. Open it to find where a module li
 - `locales/en/`, `locales/ko/` — UI strings
 - `onboarding/` — every Tutorial and Tip decision, free of React, with storage injected (`storage.ts`: `OnboardingStorage`, `browserStorage`, `readStored`/`writeStored`): `tutorial` (the six steps, `tutorialStep`), `spotlight` (what each step spotlights, which elements stay usable, what Tab and Escape do), `milestones` (what the Tutorial reports to `/api/tutorial/milestones`), `tips` + `seenTips`, `banner` (the /problems banner rule)
 - `hooks/` — data hooks (useProblems, useProblem, useSubmissions, useSubmissionWatch, useReviewState, useRoadmap, …), `useDocumentMeta` (a route's title, description, canonical, Open Graph, JSON-LD and noindex, from the pure `lib/headMeta` and `lib/jsonLd`; `useDocumentTitle` delegates to it), `usePersistedDraft`, `useKeyboardShortcuts`, `useTutorial`
+
+## Tech stack
+
+- React 19, TypeScript, Vite
+- Tailwind CSS v4 with `@tailwindcss/typography`
+- Axios (HTTP client with JWT interceptor)
+- Monaco Editor (`@monaco-editor/react`)
+- React Router v6, React Context for auth state
+
+## Routes
+
+Declared in `frontend/src/App.tsx`.
+
+| Path | Page | Auth |
+|------|------|------|
+| `/login` | LoginPage | No |
+| `/auth/callback/:provider` | OAuthCallbackPage | No |
+| `/` | Redirect to `/problems` | No |
+| `/problems` | ProblemListPage | No |
+| `/problems/:slug` | ProblemDetailPage | No (submit requires auth) |
+| `/profile` | ProfilePage | Yes |
+| `/github/callback` | GitHubCallbackPage (GitHub App install redirect; links the Solution Repository named on the profile card, with a retry on failure) | Yes |
+| `/dev/diagrams` | DiagramGalleryPage (Vite dev mode only, see Diagrams in CLAUDE.md; 404 in a production build) | ADMIN |
+| `*` | NotFoundPage | No |
