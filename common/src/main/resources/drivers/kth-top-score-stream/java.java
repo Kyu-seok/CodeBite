@@ -11,7 +11,7 @@ public class Main {
         // Parse operations: ["TopKStream","record",...]
         List<String> ops = new ArrayList<>();
         for (String s : opsLine.substring(1, opsLine.length() - 1).split(",")) {
-            ops.record(s.trim().replaceAll("\"", ""));
+            ops.add(s.trim().replaceAll("\"", ""));
         }
 
         // Parse args: [[3,[4,5,8,2]],[3],[5],...]
@@ -28,7 +28,7 @@ public class Main {
             } else if (c == ']') {
                 depth--;
                 if (depth == 0) {
-                    rawArgs.record(inner.substring(start + 1, i));
+                    rawArgs.add(inner.substring(start + 1, i));
                 }
             }
         }
