@@ -224,13 +224,12 @@ if [[ -n "$branch_db" ]]; then
   fi
 fi
 
-# What scripts/dev-branch-servers.sh orphans lists, counted by its one indented line per database;
-# it looks only in the Kafka and Redis that run. Not this checkout's drift, so the exit code and
+# How many databases scripts/dev-branch-servers.sh orphans lists (orphans --count); it looks only
+# in the Kafka and Redis that run. Not this checkout's drift, so the exit code and
 # the OK line stay. Without Postgres, or when the listing fails, the lines above have said why.
 if [[ $postgres_down -eq 0 ]]; then
-  orphans=$("$here/scripts/dev-branch-servers.sh" orphans 2>/dev/null </dev/null || true)
-  left=$(grep -c '^  codebite_' <<<"$orphans" || true)
-  if (( left > 0 )); then
+  left=$("$here/scripts/dev-branch-servers.sh" orphans --count 2>/dev/null </dev/null || true)
+  if [[ "$left" =~ ^[0-9]+$ ]] && (( left > 0 )); then
     echo "branch databases: LEFTOVER  $left left behind (a database whose worktree is gone, or a dropped one's Kafka topics or Redis index); list them: scripts/dev-branch-servers.sh orphans"
   fi
 fi

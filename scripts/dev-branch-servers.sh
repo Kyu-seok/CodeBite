@@ -18,6 +18,7 @@
 #                                           and the command that drops it later, skips it)
 #   scripts/dev-branch-servers.sh orphans   list the branch databases whose worktree is gone, and the dropped ones
 #                                           whose Kafka topics and groups or Redis index a skipped drop left behind
+#   scripts/dev-branch-servers.sh orphans --count  only how many databases orphans lists, as a number (dev-status reads it)
 #   scripts/dev-branch-servers.sh drop [<name>]  with a name, drop one of those, from any checkout
 #   scripts/dev-branch-servers.sh name      print the branch database name
 #
@@ -845,6 +846,15 @@ cmd_orphans() {
   if [[ -n "$down" ]]; then echo "Redis indexes not looked at: $down"; fi
 }
 
+# How many databases cmd_orphans lists, each once whatever it left: the number alone.
+cmd_orphans_count() {
+  require_postgres
+  local list leftovers
+  list=$(orphan_databases)
+  leftovers=$(orphan_leftovers) || exit 1
+  printf '%s\n%s\n' "$list" "$leftovers" | cut -f1 | LC_ALL=C sort -u | awk 'NF { n++ } END { print n + 0 }'
+}
+
 # Drops branch database $1 by name, from any checkout, when its worktree is gone, or what it left
 # in Kafka and Redis when it is gone too; a live worktree's is dropped from that worktree, and
 # any other database or name is never touched.
@@ -883,7 +893,7 @@ usage() {
 }
 
 main() {
-  local cmd=${1:-start} detach=false orphan=""
+  local cmd=${1:-start} detach=false orphan="" count=false
   case "$cmd" in
     start)
       case "${2:-}" in
@@ -892,7 +902,13 @@ main() {
         *) usage; exit 2 ;;
       esac ;;
     drop) orphan=${2:-} ;;
-    restart | stop | status | migrate | orphans | name) [[ $# -le 1 ]] || { usage; exit 2; } ;;
+    orphans)
+      case "${2:-}" in
+        '') ;;
+        --count) count=true ;;
+        *) usage; exit 2 ;;
+      esac ;;
+    restart | stop | status | migrate | name) [[ $# -le 1 ]] || { usage; exit 2; } ;;
     *) usage; exit 2 ;;
   esac
   (( $# <= 2 )) || { usage; exit 2; }
@@ -909,7 +925,7 @@ main() {
     stop) stop_all ;;
     status) cmd_status ;;
     drop) if [[ -n "$orphan" ]]; then cmd_drop_orphan "$orphan"; else cmd_drop; fi ;;
-    orphans) cmd_orphans ;;
+    orphans) if $count; then cmd_orphans_count; else cmd_orphans; fi ;;
     name) echo "$db" ;;
   esac
 }
