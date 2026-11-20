@@ -14,8 +14,10 @@
 #                                           migrations on it, starting no server: for reading a problem
 #                                           (CODEBITE_DB=<it> scripts/problem-text.sh) as the branch has it
 #   scripts/dev-branch-servers.sh drop      drop the branch database, Kafka topics and groups, Redis index
-#                                           (a Kafka or Redis container that isn't running: says what is left behind, skips it)
-#   scripts/dev-branch-servers.sh orphans   list the branch databases whose worktree is gone
+#                                           (a Kafka or Redis container that isn't running: says what is left behind
+#                                           and the command that drops it later, skips it)
+#   scripts/dev-branch-servers.sh orphans   list the branch databases whose worktree is gone, and the dropped ones
+#                                           whose Kafka topics and groups or Redis index a skipped drop left behind
 #   scripts/dev-branch-servers.sh drop [<name>]  with a name, drop one of those, from any checkout
 #   scripts/dev-branch-servers.sh name      print the branch database name
 #
@@ -24,8 +26,9 @@
 #   database  codebite_<branch>_<hash of this worktree's path> in the codebite-postgres container,
 #             migrated by the backend on start (or by migrate, with no server); its COMMENT names this worktree, and drop refuses a
 #             database whose comment names another
-#   Kafka     topics and consumer groups prefixed with that name (app.kafka.topic.*, app.kafka.group-prefix),
-#             so neither side takes a share of the other's submissions or results
+#   Kafka     topics and consumer groups prefixed with that name and a dash (app.kafka.topic.*,
+#             app.kafka.group-prefix), so neither side takes a share of the other's submissions or
+#             results; the shared servers' own names never start with a branch database name (kafka_owner)
 #   Redis     a database index of its own (a fresh database's user ids collide with the shared one's),
 #             claimed by an owner key holding the database name; drop flushes only that index, never 0
 #   processes only those started with CODEBITE_DEV_BRANCH=<this database> are ever stopped
@@ -59,6 +62,31 @@ branch_db_name() {
   s=${s:0:45}  # 63 - "codebite_" - "_" - 8 hex digits
   while [[ "$s" == *_ ]]; do s=${s%_}; done
   printf 'codebite_%s_%s\n' "$s" "$hash"
+}
+
+# The branch database of the checkout at $1 (its top level): named for its branch, or for its
+# directory when detached.
+checkout_database() {
+  local branch
+  branch=$(git -C "$1" branch --show-current)
+  branch_db_name "${branch:-$(basename "$1")}" "$1"
+}
+
+# Whether $1 has the shape branch_db_name gives: codebite_, runs of a-z0-9 joined by single
+# underscores, _ and 8 hex digits, at most 63 characters. The letters are spelled out, since a
+# range like a-z can take in other characters in some locales.
+is_branch_db_name() {
+  local w=abcdefghijklmnopqrstuvwxyz0123456789
+  local pattern="^codebite_[$w]+(_[$w]+)*_[0123456789abcdef]{8}\$"
+  [[ ${#1} -le 63 && "$1" =~ $pattern ]]
+}
+
+# The branch database whose Kafka topic or consumer group $1 is (start names each <database>-<name>,
+# and a database name has no dash); empty for any other name. The shared servers' own have no
+# branch database name before their first dash: submission-events, codebite-worker.
+kafka_owner() {
+  local db=${1%%-*}
+  if [[ "$1" == "$db"-?* ]] && is_branch_db_name "$db"; then echo "$db"; fi
 }
 
 # The COMMENT a branch database carries: the worktree that made it.
@@ -309,18 +337,26 @@ kafka_bin() {
   docker exec codebite-kafka "/opt/kafka/bin/$tool" --bootstrap-server localhost:9092 "$@"
 }
 
+# The topics (kafka-topics.sh as $1) or consumer groups (kafka-consumer-groups.sh) of branch
+# database $2, by kafka_owner.
+kafka_names_of() {
+  local name owner
+  { kafka_bin "$1" --list 2>/dev/null || true; } | while read -r name; do
+    owner=$(kafka_owner "$name")
+    if [[ -n "$owner" && "$owner" == "$2" ]]; then echo "$name"; fi
+  done
+}
+
 # Sets the globals the subcommands read: root (this checkout), main (the main checkout), db (the
 # branch database), prefix (its Kafka topic and group prefix), state (the ports, pids and logs)
 # port_locks (every start's port claims) and state_base (every branch database's state).
 setup() {
   root=$(git rev-parse --show-toplevel)
   main=$(main_checkout)
-  local branch
-  branch=$(git -C "$root" branch --show-current)
   state_base="${TMPDIR:-/tmp}"
   state_base="${state_base%/}/codebite-dev-branch"
   port_locks="$state_base/.ports"
-  use_database "$(branch_db_name "${branch:-$(basename "$root")}" "$root")"
+  use_database "$(checkout_database "$root")"
 }
 
 # Sets db to branch database $1, and the globals named for it: prefix and state.
@@ -410,9 +446,16 @@ stop_all() {
   return 0
 }
 
+# Exits, saying in one line what to start or wait for, unless Postgres in codebite-postgres answers.
 require_postgres() {
-  docker exec codebite-postgres pg_isready -q -U codebite \
-    || { echo "codebite-postgres is not running: docker compose -f infra/docker-compose.yml up -d" >&2; exit 1; }
+  local down
+  down=$(db_down_reason)
+  if [[ -z "$down" ]]; then
+    docker exec codebite-postgres pg_isready -q -U codebite && return 0
+    down="codebite-postgres runs but doesn't accept connections yet; rerun in a few seconds"
+  fi
+  echo "dev-branch-servers.sh: $down" >&2
+  exit 1
 }
 
 # Exits, saying what to start, unless the Kafka and the Redis container both run; a Docker daemon
@@ -627,13 +670,14 @@ cmd_drop() {
     echo "the branch servers are running; stop them first: scripts/dev-branch-servers.sh stop" >&2
     exit 1
   fi
+  require_postgres
   local comment
   comment=$(db_owner_comment "$root")
   case "$(database_verdict "$(database_state)" "$comment")" in
     create)
       # Nothing was ever started here (start makes the state directory, start and migrate the
-      # database): nothing to look for in Kafka or Redis.
-      if [[ ! -d "$state" ]]; then
+      # database), or an earlier drop skipped a stopped Kafka or Redis: only that is looked for.
+      if [[ ! -d "$state" && -z "$(leftovers_of_db)" ]]; then
         echo "database $db: none; nothing to drop"
         return 0
       fi
@@ -643,7 +687,16 @@ cmd_drop() {
       echo "database $db isn't this worktree's (its comment isn't '$comment'); dropping nothing" >&2
       exit 1 ;;
   esac
-  drop_branch_data
+  drop_branch_data "scripts/dev-branch-servers.sh drop in this worktree, or drop $db once the worktree is gone"
+}
+
+# $db's Kafka topics and groups and Redis index, in whichever of the two containers runs.
+leftovers_of_db() {
+  if [[ "$(container_state codebite-kafka)" == running ]]; then
+    kafka_names_of kafka-topics.sh "$db"
+    kafka_names_of kafka-consumer-groups.sh "$db"
+  fi
+  if [[ "$(container_state codebite-redis)" == running ]]; then owned_redis_index; fi
 }
 
 drop_database() {
@@ -653,22 +706,23 @@ drop_database() {
 
 # Deletes $db's Kafka topics and groups, flushes its Redis index and removes its state and port
 # claims: everything but the database. A container that doesn't run is asked once and its cleanup
-# skipped with one line, so the rest still happens and the drop still succeeds.
+# skipped with one line ending in $1, the command that cleans up later, so the rest still happens
+# and the drop still succeeds.
 drop_branch_data() {
-  local topics groups g
-  if container_runs_or_says codebite-kafka "topics and groups prefixed ${prefix%-} left behind, and no later drop finds them"; then
-    topics=$(kafka_bin kafka-topics.sh --list | grep "^$prefix" || true)
+  local later=$1 topics groups g
+  if container_runs_or_says codebite-kafka "topics and groups prefixed ${prefix%-} left behind; once it runs: $later"; then
+    topics=$(kafka_names_of kafka-topics.sh "$db")
     if [[ -n "$topics" ]]; then
       kafka_bin kafka-topics.sh --delete --topic "$(echo "$topics" | paste -sd, -)" >/dev/null
       echo "Kafka topics: deleted $(echo "$topics" | paste -sd' ' -)"
     fi
-    groups=$(kafka_bin kafka-consumer-groups.sh --list 2>/dev/null | grep "^$prefix" || true)
+    groups=$(kafka_names_of kafka-consumer-groups.sh "$db")
     for g in $groups; do
       kafka_bin kafka-consumer-groups.sh --delete --group "$g" >/dev/null 2>&1 || true
     done
     if [[ -n "$groups" ]]; then echo "Kafka groups: deleted $(echo "$groups" | paste -sd' ' -)"; fi
   fi
-  if container_runs_or_says codebite-redis "the Redis index of $db left claimed, and no later drop finds it"; then
+  if container_runs_or_says codebite-redis "the Redis index of $db left claimed; once it runs: $later"; then
     flush_owned_redis_index
   fi
   release_ports
@@ -692,26 +746,97 @@ orphan_databases() {
   return 0
 }
 
-cmd_orphans() {
-  local list
-  list=$(orphan_databases)
-  if [[ -z "$list" ]]; then
-    echo "no branch database outlives its worktree"
-    return 0
-  fi
-  echo "branch databases whose worktree is gone:"
-  printf '%s\n' "$list" | while IFS=$'\t' read -r name path; do
-    echo "  $name  (was $path)"
+# The branch database of each worktree of this repository whose directory is still there (rev-parse fails
+# in a removed one).
+live_worktree_databases() {
+  local key path top
+  git -C "$main" worktree list --porcelain | while read -r key path; do
+    [[ "$key" == worktree ]] || continue
+    top=$(git -C "$path" rev-parse --show-toplevel 2>/dev/null) || continue
+    checkout_database "$top"
   done
-  echo "drop one, with its Kafka topics and Redis index: scripts/dev-branch-servers.sh drop <name>"
 }
 
-# Drops branch database $1 by name, from any checkout, when its worktree is gone; a live
-# worktree's is dropped from that worktree, and any other database is never touched.
+# What branch databases that are gone left behind (a drop skips a stopped Kafka or Redis): one
+# "<database>\ttopic", "<database>\tgroup" or "<database>\tredis <index>" line for each Kafka
+# topic, consumer group and Redis index 1-15 whose name (kafka_owner) or owner key names a branch
+# database that doesn't exist and is no live worktree's. Looks only in the containers that run.
+orphan_leftovers() {
+  local known name what i owner
+  known=$(psql_admin "SELECT datname FROM pg_database"; live_worktree_databases)
+  {
+    if [[ "$(container_state codebite-kafka)" == running ]]; then
+      for what in topic:kafka-topics.sh group:kafka-consumer-groups.sh; do
+        { kafka_bin "${what#*:}" --list 2>/dev/null || true; } | while read -r name; do
+          owner=$(kafka_owner "$name")
+          if [[ -n "$owner" ]]; then printf '%s\t%s\n' "$owner" "${what%%:*}"; fi
+        done
+      done
+    fi
+    if [[ "$(container_state codebite-redis)" == running ]]; then
+      for (( i = 1; i <= 15; i++ )); do
+        owner=$(redis_cmd "$i" GET "$REDIS_OWNER_KEY")
+        if is_branch_db_name "$owner"; then printf '%s\tredis %s\n' "$owner" "$i"; fi
+      done
+    fi
+  } | while IFS=$'\t' read -r name what; do
+    grep -qxF -- "$name" <<<"$known" || printf '%s\t%s\n' "$name" "$what"
+  done
+}
+
+cmd_orphans() {
+  require_postgres
+  local list leftovers down
+  list=$(orphan_databases)
+  leftovers=$(orphan_leftovers)
+  if [[ -z "$list$leftovers" ]]; then
+    echo "no branch database outlives its worktree, and no dropped one left Kafka topics or a Redis index"
+  else
+    if [[ -n "$list" ]]; then
+      echo "branch databases whose worktree is gone:"
+      printf '%s\n' "$list" | while IFS=$'\t' read -r name path; do
+        echo "  $name  (was $path)"
+      done
+    fi
+    if [[ -n "$leftovers" ]]; then
+      echo "branch databases already dropped whose Kafka topics or Redis index are left:"
+      printf '%s\n' "$leftovers" | LC_ALL=C sort | awk -F'\t' '
+        function many(n, what) { return n " " what (n > 1 ? "s" : "") }
+        function flush(  s) {
+          if (db == "") return
+          if (t) s = many(t, "Kafka topic")
+          if (g) s = s (s == "" ? "" : ", ") many(g, "Kafka group")
+          if (r != "") s = s (s == "" ? "" : ", ") "Redis index " r
+          print "  " db "  (" s ")"
+        }
+        $1 != db { flush(); db = $1; t = 0; g = 0; r = "" }
+        $2 == "topic" { t++ }
+        $2 == "group" { g++ }
+        $2 ~ /^redis / { r = r (r == "" ? "" : ", ") substr($2, 7) }
+        END { flush() }'
+    fi
+    echo "drop one, with its Kafka topics and Redis index: scripts/dev-branch-servers.sh drop <name>"
+  fi
+  down=$(container_down_reason codebite-kafka)
+  if [[ -n "$down" ]]; then echo "Kafka topics and groups not looked at: $down"; fi
+  down=$(container_down_reason codebite-redis)
+  if [[ -n "$down" ]]; then echo "Redis indexes not looked at: $down"; fi
+}
+
+# Drops branch database $1 by name, from any checkout, when its worktree is gone, or what it left
+# in Kafka and Redis when it is gone too; a live worktree's is dropped from that worktree, and
+# any other database or name is never touched.
 cmd_drop_orphan() {
-  local name=$1
-  if ! orphan_databases | cut -f1 | grep -qx -- "$name"; then
-    echo "$name isn't a branch database whose worktree is gone (scripts/dev-branch-servers.sh orphans lists those); dropping nothing" >&2
+  local name=$1 gone=false
+  require_postgres
+  # Captured, not piped to grep -q: under pipefail, its early exit can fail the pipe it ends.
+  if grep -qxF -- "$name" <<<"$(orphan_databases | cut -f1)"; then
+    :
+  elif grep -qxF -- "$name" <<<"$(orphan_leftovers | cut -f1)"; then
+    gone=true
+  else
+    echo "$name isn't a branch database whose worktree is gone, nor one already dropped that left Kafka topics or a Redis index" \
+      "(scripts/dev-branch-servers.sh orphans lists both); dropping nothing" >&2
     exit 1
   fi
   use_database "$name"
@@ -721,8 +846,8 @@ cmd_drop_orphan() {
     echo "servers of $db still run (pids $(branch_pids | paste -sd' ' -)); dropping nothing" >&2
     exit 1
   fi
-  drop_database
-  drop_branch_data
+  if $gone; then echo "database $db: none (dropped before)"; else drop_database; fi
+  drop_branch_data "scripts/dev-branch-servers.sh drop $db"
 }
 
 usage() {
