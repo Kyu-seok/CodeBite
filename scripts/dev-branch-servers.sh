@@ -14,6 +14,7 @@
 #                                           migrations on it, starting no server: for reading a problem
 #                                           (CODEBITE_DB=<it> scripts/problem-text.sh) as the branch has it
 #   scripts/dev-branch-servers.sh drop      drop the branch database, Kafka topics and groups, Redis index
+#                                           (a Kafka or Redis container that isn't running: says what is left behind, skips it)
 #   scripts/dev-branch-servers.sh orphans   list the branch databases whose worktree is gone
 #   scripts/dev-branch-servers.sh drop [<name>]  with a name, drop one of those, from any checkout
 #   scripts/dev-branch-servers.sh name      print the branch database name
@@ -414,6 +415,31 @@ require_postgres() {
     || { echo "codebite-postgres is not running: docker compose -f infra/docker-compose.yml up -d" >&2; exit 1; }
 }
 
+# Exits, saying what to start, unless the Kafka and the Redis container both run; a Docker daemon
+# that doesn't answer is said once.
+require_kafka_and_redis() {
+  local container down refused=false
+  for container in codebite-kafka codebite-redis; do
+    down=$(container_down_reason "$container")
+    [[ -z "$down" ]] && continue
+    echo "dev-branch-servers.sh: $down" >&2
+    refused=true
+    [[ "$down" == "$(docker_down_message)" ]] && break
+  done
+  if $refused; then exit 1; fi
+}
+
+# Whether container $1 runs, for a cleanup that needs it; when it doesn't, says in one line that
+# $2 is left as it is, and returns 1.
+container_runs_or_says() {
+  case "$(container_state "$1")" in
+    running) return 0 ;;
+    stopped) echo "$1 isn't running: $2" >&2 ;;
+    *) echo "the Docker daemon doesn't answer: $2" >&2 ;;
+  esac
+  return 1
+}
+
 # Creates the branch database, marked this worktree's, when it doesn't exist ($1 says what
 # migrates it); exits when it exists but is another worktree's.
 ensure_database() {
@@ -455,10 +481,7 @@ cmd_start() {
     exit 1
   fi
   require_postgres
-  if ! docker exec codebite-kafka true || ! docker exec codebite-redis true; then
-    echo "codebite-kafka or codebite-redis is not running" >&2
-    exit 1
-  fi
+  require_kafka_and_redis
   ensure_database "the backend migrates it on start"
 
   local redis_db
@@ -629,20 +652,25 @@ drop_database() {
 }
 
 # Deletes $db's Kafka topics and groups, flushes its Redis index and removes its state and port
-# claims: everything but the database.
+# claims: everything but the database. A container that doesn't run is asked once and its cleanup
+# skipped with one line, so the rest still happens and the drop still succeeds.
 drop_branch_data() {
   local topics groups g
-  topics=$(kafka_bin kafka-topics.sh --list | grep "^$prefix" || true)
-  if [[ -n "$topics" ]]; then
-    kafka_bin kafka-topics.sh --delete --topic "$(echo "$topics" | paste -sd, -)" >/dev/null
-    echo "Kafka topics: deleted $(echo "$topics" | paste -sd' ' -)"
+  if container_runs_or_says codebite-kafka "topics and groups prefixed ${prefix%-} left behind, and no later drop finds them"; then
+    topics=$(kafka_bin kafka-topics.sh --list | grep "^$prefix" || true)
+    if [[ -n "$topics" ]]; then
+      kafka_bin kafka-topics.sh --delete --topic "$(echo "$topics" | paste -sd, -)" >/dev/null
+      echo "Kafka topics: deleted $(echo "$topics" | paste -sd' ' -)"
+    fi
+    groups=$(kafka_bin kafka-consumer-groups.sh --list 2>/dev/null | grep "^$prefix" || true)
+    for g in $groups; do
+      kafka_bin kafka-consumer-groups.sh --delete --group "$g" >/dev/null 2>&1 || true
+    done
+    if [[ -n "$groups" ]]; then echo "Kafka groups: deleted $(echo "$groups" | paste -sd' ' -)"; fi
   fi
-  groups=$(kafka_bin kafka-consumer-groups.sh --list 2>/dev/null | grep "^$prefix" || true)
-  for g in $groups; do
-    kafka_bin kafka-consumer-groups.sh --delete --group "$g" >/dev/null 2>&1 || true
-  done
-  [[ -n "$groups" ]] && echo "Kafka groups: deleted $(echo "$groups" | paste -sd' ' -)"
-  flush_owned_redis_index
+  if container_runs_or_says codebite-redis "the Redis index of $db left claimed, and no later drop finds it"; then
+    flush_owned_redis_index
+  fi
   release_ports
   rm -rf "$state"
 }

@@ -27,20 +27,44 @@ env_value() {
   { ps eww -o command= -p "$1" 2>/dev/null || true; } | tr ' ' '\n' | sed -n "s/^$2=//p" | head -n 1
 }
 
-# Why no database in the codebite-postgres container can be reached, as what to start; empty when
-# the container runs. One docker inspect then, and a docker info only to tell a daemon that doesn't
-# answer from a container that is stopped or was never created. Reads nothing from stdin, which may
-# hold the caller's query.
-db_down_reason() {
+# The one place that tells a Docker daemon that doesn't answer from a container that doesn't run.
+# Prints what container $1 (codebite-postgres, codebite-kafka, codebite-redis) is: running,
+# stopped (stopped, or never created) or daemon (the Docker daemon doesn't answer, so no container
+# runs). One docker inspect, and a docker info only when that doesn't say running. Reads nothing
+# from stdin, which may hold the caller's query.
+container_state() {
   local running
-  running=$(docker inspect -f '{{.State.Running}}' codebite-postgres 2>/dev/null </dev/null) || true
+  running=$(docker inspect -f '{{.State.Running}}' "$1" 2>/dev/null </dev/null) || true
   if [[ "$running" == true ]]; then
-    return 0
+    echo running
   elif docker info >/dev/null 2>&1 </dev/null; then
-    echo "the codebite-postgres container isn't running; start it: docker compose -f infra/docker-compose.yml up -d postgres"
+    echo stopped
   else
-    echo "the Docker daemon doesn't answer; start Docker Desktop (open -a Docker) and rerun"
+    echo daemon
   fi
+}
+
+# The command that starts container $1: its compose service is its name without the codebite- prefix.
+container_start_command() {
+  echo "docker compose -f infra/docker-compose.yml up -d ${1#codebite-}"
+}
+
+docker_down_message() {
+  echo "the Docker daemon doesn't answer; start Docker Desktop (open -a Docker) and rerun"
+}
+
+# Why container $1 can't be used, as what to start; empty when it runs.
+container_down_reason() {
+  case "$(container_state "$1")" in
+    running) ;;
+    stopped) echo "the $1 container isn't running; start it: $(container_start_command "$1")" ;;
+    *) docker_down_message ;;
+  esac
+}
+
+# Why no database in the codebite-postgres container can be reached; empty when the container runs.
+db_down_reason() {
+  container_down_reason codebite-postgres
 }
 
 # psql on the local database $1 (the codebite-postgres container), the rest of the arguments
