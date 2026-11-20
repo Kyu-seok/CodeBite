@@ -14,11 +14,12 @@ functions are not compared.
 
 Exits 1 and prints one COPY line per function, naming the files that define it; exits 2 when a
 file doesn't parse. Tracers are Python 3.12 (a quote nested in an f-string), so an older python3
-hands over to python3.12, or $CODEBITE_PYTHON312.
+hands over to $CODEBITE_PYTHON312 or python3.12, whichever is first a 3.12 or newer.
 """
 import ast
 import os
 import shutil
+import subprocess
 import sys
 from collections import defaultdict
 from pathlib import Path
@@ -47,9 +48,26 @@ def copies(directory):
         except SyntaxError as error:
             stop(f"{path.name}:{error.lineno}: does not parse: {error.msg}")
         for node in tree.body:
-            if isinstance(node, ast.FunctionDef):
+            if isinstance(node, ast.FunctionDef) and path.name not in found[same_function_key(node)]:
                 found[same_function_key(node)].append(path.name)
     return sorted((key[0], names) for key, names in found.items() if len(names) > 1)
+
+
+def python_312():
+    """A Python 3.12 or newer to hand over to, each candidate asked its version as judge-local.py's
+    python_tool does: an older or missing one named by CODEBITE_PYTHON312 would hand over forever."""
+    for candidate in (os.environ.get("CODEBITE_PYTHON312"), "python3.12"):
+        path = candidate and shutil.which(candidate)
+        if not path:
+            continue
+        try:
+            newer = subprocess.run([path, "-c", "import sys; print(sys.version_info >= (3, 12))"],
+                                   capture_output=True, text=True, timeout=30).stdout.strip()
+        except (OSError, subprocess.TimeoutExpired):
+            continue
+        if newer == "True":
+            return path
+    stop("tracers are Python 3.12 and none was found (install python3.12, or set CODEBITE_PYTHON312)")
 
 
 def joined(names):
@@ -58,9 +76,7 @@ def joined(names):
 
 def main():
     if sys.version_info < (3, 12):
-        python = os.environ.get("CODEBITE_PYTHON312") or shutil.which("python3.12")
-        if not python:
-            stop("tracers are Python 3.12 and python3.12 is not on PATH")
+        python = python_312()
         os.execv(python, [python, "-I", os.path.abspath(__file__), *sys.argv[1:]])
     directory = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).resolve().parent / "walkthroughs"
     found = copies(directory)

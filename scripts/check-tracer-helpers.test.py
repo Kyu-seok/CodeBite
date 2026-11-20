@@ -2,7 +2,7 @@
 
 Run: python3 -I scripts/check-tracer-helpers.test.py
 """
-import shutil, subprocess, sys, tempfile, unittest
+import os, shutil, subprocess, sys, tempfile, unittest
 from pathlib import Path
 
 SCRIPT = Path(__file__).with_name("check-tracer-helpers.py")
@@ -18,8 +18,9 @@ class CheckTracerHelpers(unittest.TestCase):
     def write(self, name, text):
         (self.dir / name).write_text(text, encoding="utf-8")
 
-    def check(self):
-        run = subprocess.run([sys.executable, "-I", str(SCRIPT), str(self.dir)], capture_output=True, text=True)
+    def check(self, **env):
+        run = subprocess.run([sys.executable, "-I", str(SCRIPT), str(self.dir)], capture_output=True, text=True,
+                             env={**os.environ, **env}, timeout=60)
         return run.returncode, run.stdout
 
     def test_two_tracers_sharing_a_body_fail_naming_both_and_codebite(self):
@@ -34,7 +35,6 @@ class CheckTracerHelpers(unittest.TestCase):
         self.write("two-sum.py", "def show(x):\n    return str(x)\n")
         self.write("three-sum.py", 'def show(x):\n    return "none" if x is None else str(x)\n')
         self.assertEqual(self.check(), (0, ""))
-
 
     def test_layout_comments_and_a_docstring_do_not_make_a_copy_a_different_function(self):
         self.write("two-sum.py", ORDINAL)
@@ -76,6 +76,20 @@ class CheckTracerHelpers(unittest.TestCase):
         code, out = self.check()
         self.assertEqual(code, 1)
         self.assertIn("COPY  q: three-sum.py and two-sum.py", out)
+
+    def test_one_file_defining_a_function_twice_is_not_a_copy(self):
+        self.write("two-sum.py", ORDINAL + "\n\n" + ORDINAL)
+        self.assertEqual(self.check(), (0, ""))
+
+    def test_a_python_312_named_by_the_environment_that_is_older_or_missing_is_passed_over(self):
+        if sys.version_info >= (3, 12) or not shutil.which("python3.12"):
+            self.skipTest("needs an older python3 running the test and a python3.12 to hand over to")
+        self.write("two-sum.py", ORDINAL)
+        self.write("three-sum.py", ORDINAL)
+        for named in (sys.executable, "no-such-python"):
+            code, out = self.check(CODEBITE_PYTHON312=named)
+            self.assertEqual(code, 1, named)
+            self.assertIn("COPY  ordinal", out)
 
     def test_a_tracer_that_does_not_parse_exits_2_naming_it(self):
         self.write("two-sum.py", "def solve(:\n")

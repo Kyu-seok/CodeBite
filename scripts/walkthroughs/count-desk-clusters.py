@@ -14,7 +14,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import cell_name, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import cell_name, listed_cells, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, move, stack  # noqa: E402
 
 SLUG = "count-desk-clusters"
@@ -105,7 +105,7 @@ def solve(board, run):
                     leaving.clear()
                     continue
                 n = len(added)
-                listed = ", ".join(f"({cell_name(p)})" for p in added)
+                listed = listed_cells(added)
                 frame({"en": f"Pop ({here}): {n} {plural(n, 'desk', 'desks')} next to it, {listed}, "
                              f"{plural(n, 'joins', 'join')} cluster {k}.",
                        "ko": f"({here}) 책상을 꺼냅니다. 맞닿은 책상 {n}개가 그룹 {k}번에 들어갑니다: {listed}."},

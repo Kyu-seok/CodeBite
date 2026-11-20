@@ -70,7 +70,7 @@ class CaptionHelpers(unittest.TestCase):
     def test_an_unreached_cost_shows_as_infinity_and_a_reached_one_as_itself(self):
         self.assertEqual([or_infinity(float("inf")), or_infinity(0), or_infinity(7)], ["∞", 0, 7])
 
-    def test_a_grid_cell_is_written_in_brackets(self):
+    def test_a_grid_cell_is_written_in_parentheses(self):
         self.assertEqual(cell_at(1, 2), "(1,2)")
 
     def test_a_bag_tag_names_its_size_in_both_languages(self):
