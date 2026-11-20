@@ -1524,6 +1524,8 @@ class WalkthroughsMatchSamplesTest {
             "a code expression on a grid             | grid tag   | leftFlags = 10",
             "a code expression with a negative value | array tag  | low_sum = -3",
             "a code expression with a list           | stack tag  | seen = [1, 2]",
+            "a code expression whose value is a name | span label | best = nums[2]",
+            "a code expression whose value is a word | span label | mode = fast",
     })
     void aPlainTagOrSpanLabelTheRuleAllowsPasses(String allowed, String place, String label) throws Exception {
         ObjectNode walkthrough = tagsFixture(place, label);
@@ -1535,7 +1537,6 @@ class WalkthroughsMatchSamplesTest {
     @CsvSource(delimiter = '|', quoteCharacter = '`', value = {
             "an input value only inside another word | array tag  | ring       | view \"a\": tag \"ring\"",
             "an input value in another case          | array tag  | Morning    | view \"a\": tag \"Morning\"",
-            "a code expression whose value is a word | span label | mode = fast | view \"a\": span \"w\" label \"mode = fast\"",
             "a word that is not a name before =      | span label | the sum = 3 | view \"a\": span \"w\" label \"the sum = 3\"",
     })
     void aWordNotAnInputValueOrCodeExpressionIsCaught(String breakage, String place, String label, String expected) throws Exception {
@@ -1806,7 +1807,7 @@ class WalkthroughsMatchSamplesTest {
     /** Two or more letters in a row, in any script ({@code \p{L}}: Hangul too, not a digit or a superscript ²). */
     private static final Pattern TWO_LETTERS = Pattern.compile("\\p{L}{2,}");
     /** {@code <identifier> = <value>}: a code name, then the value it holds. */
-    private static final Pattern CODE_EXPRESSION = Pattern.compile("[A-Za-z_$][A-Za-z0-9_$]*\\s*=\\s*(\\S.*)");
+    private static final Pattern CODE_EXPRESSION = Pattern.compile("[A-Za-z_$][A-Za-z0-9_$]*\\s*=\\s*\\S.*");
 
     /**
      * Reports {@code label}, a tag or a span's label first seen {@code at}, unless it is Text or a plain string that
@@ -1817,16 +1818,16 @@ class WalkthroughsMatchSamplesTest {
      * <li>an input value: it occurs in the run's {@code input} (the line the run shows, given extra runs too) as a
      * whole token, with no letter, digit or {@code _} right before or after that occurrence, matching case
      * ({@code morning} in {@code words = ["morning","wire"]}, but not {@code ring} or {@code Morning});</li>
-     * <li>a code expression: {@code <identifier> = <value>} ({@link #CODE_EXPRESSION}) whose value has no word, as in
-     * {@code carry = 16} or {@code seen = [1, 2]}, not {@code mode = fast}.</li>
+     * <li>a code expression: {@code <identifier> = <value>} ({@link #CODE_EXPRESSION}), one name before the
+     * {@code =}, as in {@code carry = 16} or {@code best = nums[2]}, not {@code the sum = 3}; the caption explains
+     * it.</li>
      * </ol>
      */
     private static void plainTag(String at, String place, JsonNode label, String input, Map<String, String> found) {
         if (label == null || !label.isTextual()) return;
         String text = label.asText();
         if (!TWO_LETTERS.matcher(text).find() || inInput(text, input)) return;
-        Matcher code = CODE_EXPRESSION.matcher(text);
-        if (code.matches() && !TWO_LETTERS.matcher(code.group(1)).find()) return;
+        if (CODE_EXPRESSION.matcher(text).matches()) return;
         String line = place + " " + quote(text);
         found.putIfAbsent(line, at + line + " is a plain string with a word in it: write {\"en\": ..., \"ko\": ...}, "
                 + "unless it is an input value or <name> = <value>");
