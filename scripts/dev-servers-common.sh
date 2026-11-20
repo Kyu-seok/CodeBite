@@ -72,14 +72,15 @@ newest_migration() {
 }
 
 # What follows a database's name when it can't be read: what to start when Docker or the container
-# is down (db_down_reason), and otherwise that the container runs, so the database is what's missing.
+# is down (db_down_reason), and otherwise that the container runs: the database is missing or empty, or
+# Postgres in a container just started doesn't answer yet.
 db_unreachable_message() {
   local down
   down=$(db_down_reason)
   if [[ -n "$down" ]]; then
     echo "not reachable: $down"
   else
-    echo "not readable though the codebite-postgres container runs: no such database, or no migration has run in it"
+    echo "not readable though the codebite-postgres container runs: no such database, no migration has run in it, or Postgres is still starting (rerun in a few seconds)"
   fi
 }
 

@@ -104,7 +104,7 @@ mkdir "$tmp/bare"
   code=0
   PATH="$tmp/bin:$PATH" STUB_VERSION='' require_current_db nope "$tmp/bare" db-sql.sh 2>"$tmp/err" || code=$?
   [[ $code == 2 ]] || fail "a database that can't be read should return 2, got $code"
-  [[ "$(cat "$tmp/err")" == "db-sql.sh: database nope not readable though the codebite-postgres container runs: no such database, or no migration has run in it" ]] \
+  [[ "$(cat "$tmp/err")" == "db-sql.sh: database nope not readable though the codebite-postgres container runs: no such database, no migration has run in it, or Postgres is still starting (rerun in a few seconds)" ]] \
     || fail "a missing database should not be told to start Docker: $(cat "$tmp/err")"
   code=0
   PATH="$tmp/bin:$PATH" STUB_DOCKER=down require_current_db codebite "$tmp/bare" db-sql.sh 2>"$tmp/err" || code=$?
