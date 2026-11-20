@@ -55,6 +55,9 @@ if touches '^scripts/|^\.shellcheckrc$'; then
   else
     echo "pre-commit: shellcheck not installed, skipping (CI still runs it)"
   fi
+  # A helper copied from one Walkthrough tracer into another instead of moved into codebite.py.
+  echo "pre-commit: tracer helpers"
+  python3 -I scripts/check-tracer-helpers.py
   echo "pre-commit: script tests"
   scripts/run-script-tests.sh
 fi

@@ -13,6 +13,7 @@ listed and listed_cells (values or grid cells joined with commas), centre_text (
 and bag_text (the fewest-bags tables' cell tag).
 The solution's own node classes are shared too: TreeNode with build_tree (a Level-Order Array) and tree_values
 (back to one), and ListNode with build_list; node_order places a graph's nodes as its description's Diagram does.
+A helper two tracers need goes here: scripts/check-tracer-helpers.py fails on one defined in two files.
     wt.write(walkthrough_path("rotting-donuts"))
 
 The samples come through scripts/db-sql.sh, so the local database (or CODEBITE_DB's) must be at this
