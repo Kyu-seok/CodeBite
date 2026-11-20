@@ -23,7 +23,7 @@ Which package of `common/` holds what. Open it to find where a class lives or wh
 - `github/entity/` — GitHubLink, GitHubLinkStatus (ACTIVE/BROKEN/UNLINKED), GitHubImportState, SolutionCommit, SolutionCommitStatus (PENDING/COMMITTED/FAILED)
 - `github/repository/` — GitHubLinkRepository (`findCurrentByUserId` = the user's current link, ACTIVE or BROKEN), SolutionCommitRepository
 - `judge/` — Language (the codes CodeBite accepts, each with its Judge0 id and file extension), JudgeClient, JudgeClientImpl, JudgeService (a plain Judge0 client: `execute`, `executeBatch`), DTOs
-- `judge/program/` — ProblemAssets (backend only; `assemble` → Program or `NoDriverException`, `recall` for a stored submission, `starters`, `slugsWithDriver`), Program (the assembled source, its Language and Judge0 id; `diagnostics` maps Judge0's errors onto the user's lines; `toEvent`/`fromEvent` for the `SubmissionEvent`), UserCodeLineMapper (package-private); `JavaDriversCompileTest` compiles every Java Driver with its Starter Code in memory at `--release 13`, its breakage cases under test resources `problem-assets/java-drivers/`
+- `judge/program/` — ProblemAssets (backend only; `assemble` → Program or `NoDriverException`, `recall` for a stored submission, `starters`, `slugsWithDriver`), Program (the assembled source, its Language and Judge0 id; `diagnostics` maps Judge0's errors onto the user's lines; `toEvent`/`fromEvent` for the `SubmissionEvent`), UserCodeLineMapper (package-private)
 - `judge/parser/` — one JudgeErrorParser per Language, in combined-file lines
 - `judge/grader/` — TestInput, CaseVerdict, Verdict, Grader (grades a Program: `grade`, `gradeUntilFailure`)
 - `config/` — JudgeClientConfig

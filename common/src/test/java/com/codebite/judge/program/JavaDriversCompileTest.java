@@ -113,7 +113,9 @@ class JavaDriversCompileTest {
             return Optional.of(slug + ": no Java Starter Code");
         }
         String source = assets.assemble(slug, Language.JAVA, starter).source();
-        int starterFirstLine = Program.newlines(source, source.indexOf(starter)) + 1;
+        int starterAt = source.indexOf(starter);
+        assertThat(starterAt).as(slug + ": its Starter Code, verbatim, in the assembled Program").isNotNegative();
+        int starterFirstLine = Program.newlines(source, starterAt) + 1;
         int starterLastLine = starterFirstLine + Program.newlines(starter, starter.length());
 
         DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
