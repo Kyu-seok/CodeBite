@@ -14,7 +14,7 @@
 #                                           migrations on it, starting no server: for reading a problem
 #                                           (CODEBITE_DB=<it> scripts/problem-text.sh) as the branch has it
 #   scripts/dev-branch-servers.sh drop      drop the branch database, Kafka topics and groups, Redis index
-#                                           (a Kafka or Redis container that isn't running: says so, skips it)
+#                                           (a Kafka or Redis container that isn't running: says what is left behind, skips it)
 #   scripts/dev-branch-servers.sh orphans   list the branch databases whose worktree is gone
 #   scripts/dev-branch-servers.sh drop [<name>]  with a name, drop one of those, from any checkout
 #   scripts/dev-branch-servers.sh name      print the branch database name
@@ -656,7 +656,7 @@ drop_database() {
 # skipped with one line, so the rest still happens and the drop still succeeds.
 drop_branch_data() {
   local topics groups g
-  if container_runs_or_says codebite-kafka "topics and groups prefixed ${prefix%-} not dropped"; then
+  if container_runs_or_says codebite-kafka "topics and groups prefixed ${prefix%-} left behind, and no later drop finds them"; then
     topics=$(kafka_bin kafka-topics.sh --list | grep "^$prefix" || true)
     if [[ -n "$topics" ]]; then
       kafka_bin kafka-topics.sh --delete --topic "$(echo "$topics" | paste -sd, -)" >/dev/null
@@ -668,7 +668,7 @@ drop_branch_data() {
     done
     if [[ -n "$groups" ]]; then echo "Kafka groups: deleted $(echo "$groups" | paste -sd' ' -)"; fi
   fi
-  if container_runs_or_says codebite-redis "the Redis index of $db not flushed"; then
+  if container_runs_or_says codebite-redis "the Redis index of $db left claimed, and no later drop finds it"; then
     flush_owned_redis_index
   fi
   release_ports

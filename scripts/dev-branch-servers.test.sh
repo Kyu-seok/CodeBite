@@ -311,8 +311,8 @@ mkdir -p "$state_base/codebite_gone_1"
 out=$(cmd_drop_orphan codebite_gone_1 2>&1) && code=0 || code=$?
 check "drop with Kafka and Redis stopped still succeeds" "$code" 0
 check "drop with Kafka and Redis stopped says what it skipped" "$out" "database codebite_gone_1: dropped
-codebite-kafka isn't running: topics and groups prefixed codebite_gone_1 not dropped
-codebite-redis isn't running: the Redis index of codebite_gone_1 not flushed"
+codebite-kafka isn't running: topics and groups prefixed codebite_gone_1 left behind, and no later drop finds them
+codebite-redis isn't running: the Redis index of codebite_gone_1 left claimed, and no later drop finds it"
 calls=$(cat "$fake/calls")
 [[ "$calls" == *'DROP DATABASE IF EXISTS "codebite_gone_1"'* ]] || { echo "FAIL: the database wasn't dropped with Kafka and Redis stopped: $calls"; fail=1; }
 [[ "$calls" != *docker* ]] || { echo "FAIL: drop called docker on a stopped container: $calls"; fail=1; }
@@ -326,7 +326,7 @@ out=$(cmd_drop_orphan codebite_gone_1 2>&1) && code=0 || code=$?
 # A Docker daemon that doesn't answer is named as such.
 container_state() { echo daemon; }
 out=$(cmd_drop_orphan codebite_gone_1 2>&1) && code=0 || code=$?
-[[ "$out" == *"the Docker daemon doesn't answer: topics and groups prefixed codebite_gone_1 not dropped"* ]] \
+[[ "$out" == *"the Docker daemon doesn't answer: topics and groups prefixed codebite_gone_1 left behind, and no later drop finds them"* ]] \
   || { echo "FAIL: drop with the daemon down should say so: $out"; fail=1; }
 unset -f docker
 
