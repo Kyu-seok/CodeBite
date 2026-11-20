@@ -38,7 +38,7 @@ Copy `common/src/main/java/db/migration/V198__add_grid_diagrams_batch2.java` to 
 
 The migration inserts each block under `**Example N:**` and `**예시 N:**` through `V183.injectDiagram`, and fails when either marker is missing, so a reworded description can't silently go without its Diagram.
 
-A migration that replaces an existing block fails when that text has changed, so an edit through the admin page would stop the deploy. Before merging one, run `scripts/prod-text.sh <slug> --contains <file holding the old block>` for each, or `scripts/prod-text.sh --matches-db <slug>...` on a database at `origin/master`'s migrations for a batch, and paste the command and its output verbatim under the PR body's Evidence heading.
+A migration that replaces an existing block fails when that text has changed, so an edit through the admin page would stop the deploy. Before merging one, run `scripts/prod-text.sh <slug> --contains <file holding the old block>` for each, or `scripts/prod-text.sh --matches-db <slug>...` for a batch, and paste it under the PR body's Evidence heading: `.claude/skills/restate-problem/SKILL.md` step 6 says which database `--matches-db` needs and what the paste holds.
 
 ## 3. Verify
 
