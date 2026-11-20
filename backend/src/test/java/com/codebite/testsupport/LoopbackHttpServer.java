@@ -8,11 +8,8 @@ import java.net.InetSocketAddress;
 /**
  * A JDK {@link HttpServer} on 127.0.0.1 and a free port, for tests that stand in for an HTTP API.
  *
- * <p>Never bind the wildcard address and call it {@code localhost}: the JDK binds with
- * {@code SO_REUSEADDR}, so the kernel may hand a wildcard listener a port another process already
- * listens on at 127.0.0.1 (macOS hands out ephemeral ports in sequence and reaches every port
- * again), and requests then go to that process (#247). A 127.0.0.1 listener never shares its port
- * with another 127.0.0.1 listener.
+ * <p>Not the wildcard address: the JDK binds it as IPv6 {@code ::}, and macOS can then hand out a
+ * port another process holds on 127.0.0.1, which gets the requests sent to 127.0.0.1 (#247).
  */
 public final class LoopbackHttpServer {
 
