@@ -10,6 +10,8 @@
 #   DOWN       the Docker daemon doesn't answer, so none of the three runs
 #   BEHIND     the database lacks a migration this checkout has; the backend applies it on start
 #   UNREACHABLE  Judge0 doesn't answer, so every Run and Submit fails; known before a UI check is planned
+#   LEFTOVER   branch databases whose worktree is gone, or dropped ones whose Kafka topics or Redis index
+#              stayed (a drop skips a stopped Kafka or Redis); each holds one of the 15 Redis indexes
 #   MAPPING    a row of the main checkout's gitignored docs/PROBLEMS_MAPPING.md disagrees with the database
 #
 # Branch servers (scripts/dev-branch-servers.sh: own ports, database, Kafka topics) are named as
@@ -219,6 +221,16 @@ if [[ -n "$branch_db" ]]; then
       echo "  BEHIND  this checkout has migrations up to V$ours; scripts/dev-branch-servers.sh migrate applies them (restart, when its servers run)"
       problems=1
     fi
+  fi
+fi
+
+# How many databases scripts/dev-branch-servers.sh orphans lists (orphans --count); it looks only
+# in the Kafka and Redis that run. Not this checkout's drift, so the exit code and
+# the OK line stay. Without Postgres, or when the listing fails, the lines above have said why.
+if [[ $postgres_down -eq 0 ]]; then
+  left=$("$here/scripts/dev-branch-servers.sh" orphans --count 2>/dev/null </dev/null || true)
+  if [[ "$left" =~ ^[0-9]+$ ]] && (( left > 0 )); then
+    echo "branch databases: LEFTOVER  $left left behind (a database whose worktree is gone, or a dropped one's Kafka topics or Redis index); list them: scripts/dev-branch-servers.sh orphans"
   fi
 fi
 

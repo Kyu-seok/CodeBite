@@ -71,10 +71,6 @@ services:
     build:
       context: ..
       dockerfile: backend/Dockerfile
-      # No provenance attestation: BuildKit stamps a new one on every build, which gives a fully
-      # cached image a new id, so scripts/deploy-prod.sh would roll unchanged code and compose would
-      # recreate unchanged services.
-      provenance: false
     image: codebite-backend
     restart: unless-stopped
     deploy:
@@ -120,10 +116,6 @@ services:
     build:
       context: ..
       dockerfile: worker/Dockerfile
-      # No provenance attestation: BuildKit stamps a new one on every build, which gives a fully
-      # cached image a new id, so scripts/deploy-prod.sh would roll unchanged code and compose would
-      # recreate unchanged services.
-      provenance: false
     image: codebite-worker
     restart: unless-stopped
     stop_grace_period: 30s
@@ -151,10 +143,6 @@ services:
   nginx:
     build:
       context: ../frontend
-      # No provenance attestation: BuildKit stamps a new one on every build, which gives a fully
-      # cached image a new id, so scripts/deploy-prod.sh would roll unchanged code and compose would
-      # recreate unchanged services.
-      provenance: false
     image: codebite-nginx
     container_name: codebite-nginx
     restart: unless-stopped

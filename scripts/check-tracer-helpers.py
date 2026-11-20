@@ -14,11 +14,10 @@ functions are not compared.
 
 Exits 1 and prints one COPY line per function, naming the files that define it; exits 2 when a
 file doesn't parse. Tracers are Python 3.12 (a quote nested in an f-string), so an older python3
-hands over to $CODEBITE_PYTHON312 or python3.12, whichever is first a 3.12 or newer.
+hands over to the one scripts/python312.sh finds.
 """
 import ast
 import os
-import shutil
 import subprocess
 import sys
 from collections import defaultdict
@@ -54,20 +53,12 @@ def copies(directory):
 
 
 def python_312():
-    """A Python 3.12 or newer to hand over to, each candidate asked its version as judge-local.py's
-    python_tool does: an older or missing one named by CODEBITE_PYTHON312 would hand over forever."""
-    for candidate in (os.environ.get("CODEBITE_PYTHON312"), "python3.12"):
-        path = candidate and shutil.which(candidate)
-        if not path:
-            continue
-        try:
-            newer = subprocess.run([path, "-c", "import sys; print(sys.version_info >= (3, 12))"],
-                                   capture_output=True, text=True, timeout=30).stdout.strip()
-        except (OSError, subprocess.TimeoutExpired):
-            continue
-        if newer == "True":
-            return path
-    stop("tracers are Python 3.12 and none was found (install python3.12, or set CODEBITE_PYTHON312)")
+    """The Python 3.12 or newer to hand over to: the finder asks each candidate its version, so the
+    handover never lands on an older one and starts again."""
+    found = subprocess.run([str(Path(__file__).with_name("python312.sh"))], capture_output=True, text=True)
+    if found.returncode != 0:
+        stop(f"tracers are Python 3.12: {found.stderr.strip()}")
+    return found.stdout.strip()
 
 
 def joined(names):

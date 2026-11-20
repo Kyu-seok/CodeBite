@@ -7,6 +7,10 @@
 # fails scripts/copy-walkthrough-kit.py --check; and it refuses a PR body (open PR or --body-file) with
 # an unticked task-list line outside a fenced block, unless --allow-unticked names it. It merges
 # under the PR's own title and number, refusing a subject over 72 characters before CI.
+# Several branches ship in order and stop at the first failure. With the script in the main
+# checkout and origin's master ahead, it fast-forwards a clean master (before shipping and after a
+# merge) and starts again from a changed script, and refuses a checkout it can't fast-forward
+# whose script differs from origin/master's.
 # shellcheck disable=SC2016,SC2034,SC2329 # check() evals its single-quoted conditions (and the variables they read) later
 set -euo pipefail
 
@@ -14,7 +18,8 @@ script="$(cd "$(dirname "$0")" && pwd)/ship-branch.sh"
 dir=$(mktemp -d)
 trap 'rm -rf "$dir"' EXIT
 mkdir "$dir/bin"
-# The stub logs each call on one line. `pr list` answers GH_STUB_PR (a number, or nothing);
+# The stub logs each call on one line. `pr list --head <branch>` answers GH_STUB_PR_<branch>, else
+# GH_STUB_PR (a number, or nothing);
 # the first GH_STUB_NOCHECKS `pr checks` calls answer "no checks reported" and exit 1; after
 # that a check passes, or fails when GH_STUB_FAIL_CHECK is set; `pr create` answers a URL;
 # `pr view` answers GH_STUB_TITLE (default "feat: thing") when asked for the title, else
@@ -23,7 +28,7 @@ cat > "$dir/bin/gh" <<'STUB'
 #!/usr/bin/env bash
 echo "$*" >> "$GH_STUB_LOG"
 case "$1 $2" in
-  "pr list") [[ -n "${GH_STUB_PR:-}" ]] && echo "$GH_STUB_PR"; exit 0 ;;
+  "pr list") per="GH_STUB_PR_$4"; n=${!per:-${GH_STUB_PR:-}}; [[ -n $n ]] && echo "$n"; exit 0 ;;
   "pr create") echo "https://github.com/Kyu-seok/CodeBite/pull/9"; exit 0 ;;
   "pr view")
     if [[ $* == *"--json title"* ]]; then printf '%s\n' "${GH_STUB_TITLE-feat: thing}"; else printf '%s\n' "${GH_STUB_BODY:-}"; fi
@@ -33,6 +38,15 @@ case "$1 $2" in
     if (( count <= ${GH_STUB_NOCHECKS:-0} )); then echo "no checks reported on the branch"; exit 1; fi
     if [[ -n "${GH_STUB_FAIL_CHECK:-}" ]]; then echo "backend-test	fail	1m"; exit 1; fi
     echo "backend-test	pass	1m"; exit 0 ;;
+  "pr merge")
+    # With GH_STUB_UPSTREAM (a clone of origin), the merge lands a commit on origin's master, as
+    # GitHub's squash does; GH_STUB_MERGE_SCRIPT, a file, lands in it as scripts/ship-branch.sh.
+    if [[ -n "${GH_STUB_UPSTREAM:-}" ]]; then
+      cd "$GH_STUB_UPSTREAM" && git pull -q origin master 2>/dev/null
+      if [[ -n "${GH_STUB_MERGE_SCRIPT:-}" ]]; then cp "$GH_STUB_MERGE_SCRIPT" scripts/ship-branch.sh; git add scripts; fi
+      git -c user.name=t -c user.email=t@t commit -q --allow-empty -m "merged $3" && git push -q origin HEAD:master 2>/dev/null
+    fi
+    exit 0 ;;
   *) exit 0 ;;
 esac
 STUB
@@ -87,12 +101,13 @@ KIT
 }
 
 fail=0
-# run <cwd> <args...>: sets out, err, status and log for one call of the script from <cwd>.
+# run <cwd> <args...>: sets out, err, status and log for one call of the script (or of $ship, the
+# main checkout's own copy) from <cwd>.
 run() {
   local cwd=$1; shift
   : > "$dir/log"; rm -f "$dir/count"
   status=0
-  out=$(cd "$cwd" && unset WALKTHROUGH_KIT && PATH="$dir/bin:$PATH" GH_STUB_LOG="$dir/log" GH_STUB_COUNT="$dir/count" SHIP_BRANCH_POLL=0 "$script" "$@" 2> "$dir/err") || status=$?
+  out=$(cd "$cwd" && unset WALKTHROUGH_KIT && PATH="$dir/bin:$PATH" GH_STUB_LOG="$dir/log" GH_STUB_COUNT="$dir/count" SHIP_BRANCH_POLL=0 "${ship:-$script}" "$@" 2> "$dir/err") || status=$?
   err=$(cat "$dir/err"); log=$(cat "$dir/log")
 }
 check() { if ! eval "$2"; then echo "FAIL: $1"; echo "  out=$out status=$status err=$err"; echo "  log=$log"; fail=1; fi; }
@@ -228,6 +243,125 @@ run "$main" feat --title "feat: thing" --body-file "$dir/unticked.md"
 check "a --body-file with an unticked box is refused before the push and the PR" \
   '[[ $status == 1 && $err == *"- [ ] run prod-text.sh"* ]] && ! remote_has feat && ! grep -q "^pr create" <<<"$log" && local_has feat && [[ -d $dir/wt ]]'
 
+# Several branches ship in the order given, each through its own PR.
+second_branch() {
+  git -C "$main" branch -q -f feat2 master
+  git -C "$main" push -q -f origin feat2 2>/dev/null
+}
+reset_branch
+second_branch
+GH_STUB_PR_feat=7 GH_STUB_PR_feat2=8 run "$main" feat feat2
+check "two branches merge in the order given" \
+  '[[ $status == 0 && $(grep "^pr merge" <<<"$log" | paste -sd"|" -) == "pr merge 7 --squash --subject feat: thing (#7)|pr merge 8 --squash --subject feat: thing (#8)" ]]'
+check "both branches are cleaned up" '! remote_has feat && ! local_has feat && ! remote_has feat2 && ! local_has feat2 && [[ ! -d $dir/wt ]]'
+
+reset_branch
+second_branch
+GH_STUB_PR_feat=7 GH_STUB_PR_feat2=8 GH_STUB_FAIL_CHECK=1 run "$main" feat feat2
+check "when the first branch fails it exits 1 and names the branch not reached" \
+  '[[ $status == 1 && $err == *"backend-test"* && $err == *"not reached: feat2"* ]]'
+check "the branch not reached is untouched" \
+  '! grep -q -e "--head feat2" -e "^pr [a-z]* 8" <<<"$log" && remote_has feat2 && local_has feat2 && remote_has feat && local_has feat'
+
+run "$main" feat master
+check "master among several branches is refused before any gh call" '[[ $status == 2 && -z $log ]]'
+
+run "$main" feat feat2 --title "feat: thing" --body-file "$dir/body.md"
+check "--title and --body-file are refused with more than one branch" \
+  '[[ $status == 2 && $err == *"one branch"* && -z $log ]]'
+git -C "$main" branch -q -D feat2; git -C "$main" push -q origin --delete feat2
+
+# From here the main checkout has the script as its own scripts/ship-branch.sh, and origin's
+# master moves under it: `upstream`, a second clone, pushes what another session merged.
+git clone -q "$dir/origin.git" "$dir/upstream" 2>/dev/null
+upstream="$dir/upstream"
+cat > "$dir/marker.sh" <<'MARKER'
+#!/usr/bin/env bash
+echo "NEWER SCRIPT $*"
+MARKER
+chmod +x "$dir/marker.sh"
+# push_upstream <subject> [<file to land as scripts/ship-branch.sh>]
+push_upstream() {
+  git -C "$upstream" pull -q origin master 2>/dev/null
+  if [[ -n ${2:-} ]]; then mkdir -p "$upstream/scripts"; cp "$2" "$upstream/scripts/ship-branch.sh"; git -C "$upstream" add scripts; fi
+  git -C "$upstream" -c user.name=t -c user.email=t@t commit -q --allow-empty -m "$1"
+  git -C "$upstream" push -q origin HEAD:master 2>/dev/null
+}
+# current_main: the main checkout on master, clean, at origin's master with the real script.
+current_main() {
+  git -C "$main" checkout -q -f master
+  git -C "$main" branch -q -D side 2>/dev/null || true
+  push_upstream "the real script" "$script"
+  git -C "$main" fetch -q origin
+  git -C "$main" reset -q --hard origin/master
+}
+at_origin_master() { [[ $(git -C "$main" rev-parse HEAD) == "$(git -C "$dir/origin.git" rev-parse master)" ]]; }
+ship="$main/scripts/ship-branch.sh"
+
+current_main
+reset_branch
+push_upstream "a newer script" "$dir/marker.sh"
+GH_STUB_PR=7 run "$main" feat feat2 --allow-unticked
+check "a clean master behind origin is fast-forwarded and the newer script runs instead, with the same arguments" \
+  '[[ $status == 0 && $out == "NEWER SCRIPT feat feat2 --allow-unticked" ]] && at_origin_master'
+check "the older script asked gh nothing and left the branch alone" '[[ -z $log ]] && remote_has feat && local_has feat'
+
+# A checkout that can't be fast-forwarded ships only while its script is origin/master's.
+current_main
+second_branch
+git -C "$main" switch -q -c side
+push_upstream "a newer script" "$dir/marker.sh"
+GH_STUB_PR=7 run "$main" feat feat2
+check "on another branch with an older script it exits 1 with the command that updates the checkout" \
+  '[[ $status == 1 && $err == *"scripts/ship-branch.sh differs from origin/master"* && $err == *"git switch master && git merge --ff-only origin/master"* && $(wc -l <<<"$err") -eq 1 ]]'
+check "it refused before any gh call or push, and left the checkout where it was" \
+  '[[ -z $log && $out != *"NEWER SCRIPT"* ]] && remote_has feat && local_has feat && [[ $(git -C "$main" branch --show-current) == side ]]'
+
+current_main
+push_upstream "a newer script" "$dir/marker.sh"
+echo "edited" >> "$main/scripts/ship-branch.sh"
+GH_STUB_PR=7 run "$main" feat
+check "with local changes and an older script it exits 1 with the command that updates the checkout" \
+  '[[ $status == 1 && $err == *"git stash && git merge --ff-only origin/master"* && -z $log ]] && remote_has feat'
+
+current_main
+git -C "$main" -c user.name=t -c user.email=t@t commit -q --allow-empty -m "local only"
+push_upstream "a newer script" "$dir/marker.sh"
+GH_STUB_PR=7 run "$main" feat
+check "diverged from origin with an older script it exits 1 with the command that updates the checkout" \
+  '[[ $status == 1 && $err == *"git rebase origin/master"* && -z $log ]] && remote_has feat'
+
+current_main
+git -C "$main" switch -q -c side
+push_upstream "another session's merge"
+GH_STUB_PR=7 run "$main" feat
+check "on another branch whose script is origin/master's it ships" \
+  '[[ $status == 0 && $(git -C "$main" branch --show-current) == side ]] && grep -q "^pr merge 7 " <<<"$log" && ! remote_has feat'
+git -C "$main" branch -q -D feat2; git -C "$main" push -q origin --delete feat2
+
+# After a merge the checkout follows origin's master, so the next session starts from current files.
+current_main
+reset_branch
+GH_STUB_PR=7 GH_STUB_UPSTREAM=$upstream run "$main" feat
+check "after a merge the main checkout is at origin/master, the merge included" \
+  '[[ $status == 0 && -z $err && $(git -C "$main" log -1 --format=%s) == "merged 7" ]] && at_origin_master'
+
+reset_branch
+git -C "$main" switch -q -c side
+GH_STUB_PR=7 GH_STUB_UPSTREAM=$upstream run "$main" feat
+check "after a merge, a checkout it can't fast-forward is left alone and said to be behind" \
+  '[[ $status == 0 && $out == *"merged #7"* && $err == *"is on side"* && $err == *"behind origin/master"* && $(git -C "$main" log -1 --format=%s) == "merged 7" ]]'
+
+# A merge that changes the script itself: the branches after it ship with the merged script.
+current_main
+reset_branch
+second_branch
+GH_STUB_PR_feat=7 GH_STUB_PR_feat2=8 GH_STUB_UPSTREAM=$upstream GH_STUB_MERGE_SCRIPT="$dir/marker.sh" run "$main" feat feat2
+check "after a merge that changed the script, the next branch ships with the merged script" \
+  '[[ $status == 0 && $out == *"merged #7"*"NEWER SCRIPT feat2" ]] && at_origin_master && ! remote_has feat && remote_has feat2 && ! grep -q -e "--head feat2" <<<"$log"'
+git -C "$main" branch -q -D feat2; git -C "$main" push -q origin --delete feat2
+
+ship=""
 run "$main"
 check "no branch prints usage" '[[ $status == 2 && $err == usage:* ]]'
 

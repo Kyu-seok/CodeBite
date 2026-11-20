@@ -5,8 +5,8 @@ import unittest
 
 sys.dont_write_bytecode = True
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "walkthroughs"))
-from codebite import (bag_text, build_list, cell_at, driver_list, josa, or_infinity, plural, quote,  # noqa: E402
-                      run_label)
+from codebite import (bag_text, build_list, cell_at, driver_list, heap_moves, josa, or_infinity, plural,  # noqa: E402
+                      quote, run_label)
 
 DESCRIPTION = "Intro.\n\n**Example 1:**\n```\nInput: x = 1\n```\n\n**Example 2:**\n```\nInput: x = 2\n```\n"
 
@@ -85,6 +85,37 @@ class BuildList(unittest.TestCase):
 
     def test_no_values_give_no_nodes(self):
         self.assertEqual(build_list([]), [])
+
+
+class HeapMoves(unittest.TestCase):
+    """A heap list as the last frame drew it against the list now, entries compared by identity."""
+
+    def setUp(self):
+        self.a, self.b, self.c, self.d = (1, "a"), (2, "b"), (3, "c"), (4, "d")
+
+    def moves(self, heap, drawn, fresh=()):
+        return heap_moves("heap", heap, drawn, lambda e: f"<{e[0]}>", fresh)
+
+    def test_an_entry_still_at_its_node_has_no_move(self):
+        self.assertEqual(self.moves([self.a, self.b], [self.a, self.b]), [])
+
+    def test_an_entry_at_a_new_node_moves_from_its_old_one_with_its_text(self):
+        self.assertEqual(self.moves([self.b, self.a, self.c], [self.a, self.b, self.c]),
+                         [{"from": {"view": "heap", "at": 1}, "to": {"view": "heap", "at": 0}, "value": "<2>"},
+                          {"from": {"view": "heap", "at": 0}, "to": {"view": "heap", "at": 1}, "value": "<1>"}])
+
+    def test_an_entry_whose_old_node_is_gone_is_moved_in_with_no_source(self):
+        # a pop: a left, and the last entry c, lifted to the top, came from node 2, which the heap no longer has
+        self.assertEqual(self.moves([self.c, self.b], [self.a, self.b, self.c]),
+                         [{"to": {"view": "heap", "at": 0}, "value": "<3>"}])
+
+    def test_a_fresh_entry_is_left_to_the_caller_and_the_entries_it_displaced_still_move(self):
+        self.assertEqual(self.moves([self.a, self.d, self.b], [self.b, self.d], fresh=[self.a]),
+                         [{"from": {"view": "heap", "at": 0}, "to": {"view": "heap", "at": 2}, "value": "<2>"}])
+
+    def test_an_equal_entry_that_is_another_object_is_not_the_same_entry(self):
+        twin = tuple([1, "a"])
+        self.assertEqual(self.moves([twin], [self.a]), [{"to": {"view": "heap", "at": 0}, "value": "<1>"}])
 
 
 if __name__ == "__main__":

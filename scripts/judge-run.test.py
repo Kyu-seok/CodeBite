@@ -8,7 +8,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 SCRIPT = Path(__file__).with_name("judge-run.py")
-SPACING = 0.3  # JUDGE_RUN_SPACING for the tests, in place of 5.5 s
+SPACING = 0.3  # JUDGE_RUN_SPACING for the test of the spacing, in place of 5.5 s; the others wait 0
 
 
 def accepted():
@@ -73,7 +73,8 @@ class Stub:
 
         self.server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
         self.url = f"http://127.0.0.1:{self.server.server_address[1]}/api"
-        threading.Thread(target=self.server.serve_forever, daemon=True).start()
+        # shutdown() returns at serve_forever's next poll: the default 0.5 s was half of every test.
+        threading.Thread(target=self.server.serve_forever, kwargs={"poll_interval": 0.01}, daemon=True).start()
 
     def close(self):
         self.server.shutdown()
@@ -111,7 +112,7 @@ class JudgeRun(unittest.TestCase):
         argv = [sys.executable, "-I", str(SCRIPT), str(self.root), *args]
         if backend:
             argv += ["--backend", self.stub.url]
-        env = dict(os.environ, JUDGE_RUN_SPACING=str(SPACING), **env)
+        env = {**os.environ, "JUDGE_RUN_SPACING": "0", **env}
         done = subprocess.run(argv, capture_output=True, text=True, env=env, timeout=60)
         return done.returncode, done.stdout + done.stderr
 
@@ -244,7 +245,7 @@ class JudgeRun(unittest.TestCase):
     # --- the Run cooldown ------------------------------------------------------------------------
 
     def test_runs_are_spaced_past_the_cooldown(self):
-        self.run_script("piggy-bank-total")
+        self.run_script("piggy-bank-total", JUDGE_RUN_SPACING=str(SPACING))
         times = [t for t, *_ in self.stub.posts()]
         gaps = [b - a for a, b in zip(times, times[1:])]
         self.assertEqual(len(gaps), 3)
