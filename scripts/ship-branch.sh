@@ -15,10 +15,10 @@
 # it names it and leaves everything in place.
 #
 # Before anything is pushed or waited on, it reads the PR body (the open PR's, or --body-file's
-# for a PR it opens) and refuses, printing them, any unticked task-list lines (`- [ ]` or `* [ ]`
-# after optional indentation, outside fenced code blocks): a step left for the user, such as a
-# production comparison, can't merge silently. --allow-unticked merges anyway and prints the
-# lines it let through.
+# for a PR it opens) and refuses, printing them, any unticked task-list lines (`- [ ]`, `* [ ]`,
+# `+ [ ]`, `1. [ ]` or `1) [ ]` after optional indentation, outside fenced code blocks; see
+# unticked_lines): a step left for the user, such as a production comparison, can't merge
+# silently. --allow-unticked merges anyway and prints the lines it let through.
 #
 # Why it waits before watching: for the first seconds after a PR opens, `gh pr checks` answers
 # "no checks reported" and exits 1, which `--watch` would take for a finished run.
@@ -50,11 +50,29 @@ drop_branch_database() {
   fi
 }
 
-# Prints the unticked task-list lines of the PR body on stdin: `- [ ]` or `* [ ]` after optional
-# indentation, outside ``` and ~~~ fences. A line with other text first (a quoted diff's `-- [ ]`)
-# is not one.
+# Prints the unticked task-list lines of the PR body on stdin: a list marker (`-`, `*`, `+`, `1.`,
+# `1)`) after optional indentation, then spaces or tabs and `[ ]`. A line with other text first (a
+# quoted diff's `-- [ ]`, a quote's `> - [ ]`) is not one, nor is a line inside a fenced code
+# block. A fence opens on 3 or more backticks or tildes (a backtick fence's info string has no
+# backtick, so ```x``` is inline code) and closes only on a line of the same character, at least
+# as long, with nothing after it; an unclosed fence runs to the end, as GitHub renders it.
 unticked_lines() {
-  awk '{ sub(/\r$/, "") } /^[[:space:]]*(```|~~~)/ { fenced = !fenced; next } !fenced && /^[[:space:]]*[-*] \[ \]/'
+  awk '
+    { sub(/\r$/, "") }
+    fence != "" {
+      if (match($0, /^[[:space:]]*(`+|~+)[[:space:]]*$/)) {
+        run = $0; gsub(/[[:space:]]/, "", run)
+        if (substr(run, 1, 1) == substr(fence, 1, 1) && length(run) >= length(fence)) fence = ""
+      }
+      next
+    }
+    match($0, /^[[:space:]]*(`+|~+)/) {
+      run = substr($0, RSTART, RLENGTH); sub(/^[[:space:]]*/, "", run)
+      info = substr($0, RSTART + RLENGTH)
+      if (length(run) >= 3 && !(run ~ /^`/ && info ~ /`/)) { fence = run; next }
+    }
+    /^[[:space:]]*([-*+]|[0-9]+[.)])[[:space:]]+\[ \]/
+  '
 }
 
 # Refuses PR #$1 (or "the new PR") when the body on stdin has unticked lines, unless

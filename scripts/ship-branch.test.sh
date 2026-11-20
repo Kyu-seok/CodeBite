@@ -166,14 +166,36 @@ GH_STUB_PR=7 GH_STUB_BODY=$'## Checks\n- [x] tests pass\n* [X] lint' run "$main"
 check "a body with only ticked boxes merges as before" '[[ $status == 0 && -z $err ]] && grep -qx "pr merge 7 --squash" <<<"$log"'
 
 reset_branch
-GH_STUB_PR=7 GH_STUB_BODY=$'Template:\n```markdown\n- [ ] in a fence\n```\n~~~\n  * [ ] tilde fence\n~~~\n```diff\n-- [ ] quoted diff line in a fence\n```\n-- [ ] quoted diff line\n> - [ ] quoted' run "$main" feat
+GH_STUB_PR=7 GH_STUB_BODY=$'Template:\n```markdown\n- [ ] in a fence\n```\n~~~\n  * [ ] tilde fence\n~~~\n```diff\n-- [ ] quoted diff line in a fence\n```\n-- [ ] quoted diff line\n> - [ ] quoted\nsee 1. [ ] later\n```\n- [ ] in an unclosed fence' run "$main" feat
 check "boxes in fenced blocks and quoted diff lines don't stop the merge" '[[ $status == 0 ]] && grep -qx "pr merge 7 --squash" <<<"$log"'
 
+# A fence closes only on a line of its own character, at least as long, with nothing after it; so
+# a box after a closed fence, or after an inner line that only looks like a fence, still stops it.
 reset_branch
+for shape in \
+  "a closed fence"$'\n```\n- [ ] in the fence\n```' \
+  "a four-backtick fence with a three-backtick line"$'\n````\n```\n````' \
+  "a backtick fence with a tilde line"$'\n```\n~~~\n```' \
+  "a tilde fence with a backtick line"$'\n~~~\n```\n~~~' \
+  "a backtick fence with a longer closing line"$'\n```sh\n``` x\n`````' \
+  "one-line inline code"$'\n```foo```'; do
+  GH_STUB_PR=7 GH_STUB_BODY="${shape#*$'\n'}"$'\n- [ ] after the fence' run "$main" feat
+  check "a box after ${shape%%$'\n'*} stops the merge" \
+    '[[ $status == 1 && $err == *"- [ ] after the fence"* && $err != *"in the fence"* ]] && ! grep -q "pr merge" <<<"$log"'
+done
+
+# GitHub renders these as unticked tasks too; text before the marker makes it not a task.
+for line in '+ [ ] plus' '1. [ ] ordered' '12) [ ] ordered paren' '-   [ ] spaces' $'*\t[ ] tab'; do
+  GH_STUB_PR=7 GH_STUB_BODY=$'## Notes\n'"$line" run "$main" feat
+  check "an unticked '$line' stops the merge" '[[ $status == 1 && $err == *"$line"* ]] && ! grep -q "pr merge" <<<"$log"'
+done
+
+reset_branch
+git -C "$main" push -q origin --delete feat
 printf '%s\n' '# Summary' '- [ ] run prod-text.sh' > "$dir/unticked.md"
 run "$main" feat --title "feat: thing" --body-file "$dir/unticked.md"
 check "a --body-file with an unticked box is refused before the push and the PR" \
-  '[[ $status == 1 && $err == *"- [ ] run prod-text.sh"* ]] && ! grep -q "^pr create" <<<"$log" && local_has feat && [[ -d $dir/wt ]]'
+  '[[ $status == 1 && $err == *"- [ ] run prod-text.sh"* ]] && ! remote_has feat && ! grep -q "^pr create" <<<"$log" && local_has feat && [[ -d $dir/wt ]]'
 
 run "$main"
 check "no branch prints usage" '[[ $status == 2 && $err == usage:* ]]'
