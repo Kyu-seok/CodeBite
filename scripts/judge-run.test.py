@@ -30,12 +30,14 @@ def compile_error():
 
 class Stub:
     """A backend: Run answers come from `runs` (a function of the language, or a list consumed in
-    order), problem details from `problems`; every request is logged with the time it arrived."""
+    order), problem details from `problems`; every request is logged with the time it arrived, and
+    its User-Agent in `agents`. An answer whose body is bytes is sent as it is, not as JSON."""
 
     def __init__(self):
         self.runs = lambda language: accepted()
         self.problems = {}
         self.log = []
+        self.agents = []
         stub = self
 
         class Handler(BaseHTTPRequestHandler):
@@ -43,9 +45,10 @@ class Stub:
                 pass
 
             def answer(self, status, body):
-                data = json.dumps(body).encode()
+                raw = isinstance(body, bytes)
+                data = body if raw else json.dumps(body).encode()
                 self.send_response(status)
-                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Type", "text/html" if raw else "application/json")
                 self.send_header("Content-Length", str(len(data)))
                 self.end_headers()
                 self.wfile.write(data)
@@ -53,6 +56,7 @@ class Stub:
             def do_POST(self):
                 body = json.loads(self.rfile.read(int(self.headers["Content-Length"])))
                 stub.log.append((time.monotonic(), "POST", self.path, body))
+                stub.agents.append(self.headers["User-Agent"])
                 if isinstance(stub.runs, list):
                     self.answer(*stub.runs.pop(0))
                 else:
@@ -60,6 +64,7 @@ class Stub:
 
             def do_GET(self):
                 stub.log.append((time.monotonic(), "GET", self.path, None))
+                stub.agents.append(self.headers["User-Agent"])
                 slug = self.path.rsplit("/", 1)[-1]
                 if slug in stub.problems:
                     self.answer(200, {"slug": stub.problems[slug], "title": "Piggy Bank Total"})
@@ -208,6 +213,33 @@ class JudgeRun(unittest.TestCase):
         self.stub.runs = [(404, {"status": 404, "message": "Problem not found"}), wrong_on_second()]
         code, out = self.run_script("piggy-bank-total", "other-problem", "--languages", "python")
         self.assertEqual(code, 2, out)
+
+    # --- the client and the proxy in front of the backend ------------------------------------------
+
+    def test_every_request_names_this_client_not_python_urllib(self):
+        self.stub.problems = {"old-piggy": "piggy-bank-total"}
+        self.run_script("piggy-bank-total", "--former", "old-piggy", "--languages", "python")
+        self.assertEqual(self.stub.agents, ["codebite-judge-run", "codebite-judge-run"])
+
+    def test_a_403_without_a_json_body_is_the_proxy_refusing_this_client(self):
+        cloudflare_page = b"<!DOCTYPE html><title>Attention Required! | Cloudflare</title>"
+        for body in (b"", cloudflare_page, b"[]"):
+            with self.subTest(body=body[:20]):
+                self.stub.log.clear()
+                self.stub.runs = lambda language: (403, body)
+                code, out = self.run_script("piggy-bank-total", "--languages", "java,python")
+                self.assertEqual(code, 2, out)
+                self.assertIn("a proxy in front of the backend refused this client", out)
+                self.assertIn("codebite-judge-run", out)
+                self.assertNotIn("HTTP 403:", out)
+                self.assertEqual(len(self.stub.posts()), 1, "the proxy refuses every later Run too")
+
+    def test_a_403_with_a_json_body_is_the_backends_answer(self):
+        self.stub.runs = lambda language: (403, {"status": 403, "message": "Access denied"})
+        code, out = self.run_script("piggy-bank-total", "--languages", "java")
+        self.assertEqual(code, 1, out)
+        self.assertRegex(out, r"java +HTTP 403: Access denied")
+        self.assertNotIn("proxy", out)
 
     # --- the Run cooldown ------------------------------------------------------------------------
 
