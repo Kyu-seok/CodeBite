@@ -16,7 +16,7 @@
 # {source_code, language_id, stdin}, source and stdin base64 (stdin empty without --stdin), no
 # compiler options or limits, so Judge0 uses its defaults as it does for CodeBite (C++ is GCC 9.2
 # at gnu++14). Then GET /submissions/<token>?base64_encoded=true every 150 ms until the status
-# leaves In Queue and Processing, for up to 30 s, as JudgeService polls.
+# leaves In Queue and Processing, for up to 30 s (JUDGE_PROBE_WAIT seconds), as JudgeService polls.
 #
 # The target is the Judge0 JUDGE0_URL names. Unset, the script exits 2 saying to set it. A
 # JUDGE0_URL naming production's Judge0 (192.168.219.200 or mini, the server whose Judge0 the dev
@@ -31,7 +31,8 @@
 # Exits 0 when Judge0 says Accepted (it compiled and ran), 1 for any other verdict on the code
 # (Compilation Error, a Runtime Error, Time Limit Exceeded), and 2 when nothing was judged: usage, an
 # unknown language, no JUDGE0_URL, a production URL without --production, or a Judge0 that doesn't
-# answer, answers with an HTTP error or not JSON, takes over 30 s, or reports its own Internal Error.
+# answer, answers with an HTTP error, not JSON or no status, takes over 30 s, or reports its own
+# Internal Error.
 # A 2 prints one line on stderr and no status, so it never reads as a rejection. A warning in the
 # compile output doesn't change the exit: CodeBite fails code only on Judge0's status.
 set -euo pipefail
@@ -99,8 +100,8 @@ work=$(mktemp -d "${TMPDIR:-/tmp}/judge-probe.XXXXXX")
 trap 'rm -rf "$work"' EXIT
 
 unreachable() { echo "judge-probe.sh: $1; nothing was judged" >&2; exit 2; }
-# call <GET|POST> <path> <answer file> <field>: one request, its answer JSON holding <field>; a
-# POST's body is stdin. Timeouts are JudgeClientConfig's: 5 s to connect, 10 s for the answer.
+# call <GET|POST> <path> <answer file> <field>: one request, its answer JSON holding <field> (a
+# string, or an object with a numeric id, as a status is); a POST's body is stdin. Timeouts are JudgeClientConfig's: 5 s to connect, 10 s for the answer.
 call() {
   local method=$1 path=$2 out=$3 field=$4 ok=1
   local -a options=(-fsS --connect-timeout 5 -m 10)
@@ -113,7 +114,10 @@ call() {
     curl "${options[@]}" "$base$path" > "$out" 2> "$work/curl.err" || ok=
   fi
   [[ -n "$ok" ]] || unreachable "no answer from Judge0 at $where ($(tail -n 1 "$work/curl.err"))"
-  python3 -I -c 'import json, sys; assert sys.argv[1] in json.load(sys.stdin)' "$field" < "$out" 2>/dev/null \
+  python3 -I -c '
+import json, sys
+value = json.load(sys.stdin)[sys.argv[1]]
+assert isinstance(value, str) or isinstance(value["id"], int)' "$field" < "$out" 2>/dev/null \
     || unreachable "Judge0 at $where answered $path with something other than Judge0's JSON"
 }
 
@@ -129,12 +133,12 @@ token=$(python3 -I -c 'import json, sys; print(json.load(sys.stdin)["token"])' <
 [[ "$token" =~ ^[0-9a-f-]+$ ]] || unreachable "Judge0 at $where answered with a token that isn't one: $token"
 
 status_id() { python3 -I -c 'import json, sys; print(json.load(sys.stdin)["status"]["id"])' < "$work/result.json"; }
-polls=0
+wait_seconds=${JUDGE_PROBE_WAIT:-30}
+deadline=$((SECONDS + wait_seconds))
 while :; do
   call GET "/submissions/$token?base64_encoded=true" "$work/result.json" status < /dev/null
   case $(status_id) in 1 | 2) ;; *) break ;; esac
-  polls=$((polls + 1))
-  (( polls < 200 )) || unreachable "Judge0 at $where still hadn't judged it after 30 s"
+  (( SECONDS < deadline )) || unreachable "Judge0 at $where still hadn't judged it after $wait_seconds s"
   sleep 0.15
 done
 status=$(status_id)

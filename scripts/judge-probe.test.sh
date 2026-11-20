@@ -10,8 +10,10 @@ tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT
 mkdir "$tmp/bin"
 # STUB_JUDGE0 is how the Judge0 behaves: accepted (the default), compile-error, down (connection
-# refused), http-error (a 502), not-json or internal-error (Judge0's own failure, status 13). A POST answers a token; a GET answers the result. Every
-# call is logged to curl.log (CURL_LOG names another), and a POST's body is kept in body.json.
+# refused), http-error (a 502), not-json, internal-error (Judge0's own failure, status 13),
+# no-status (a result whose status is null) or stuck (In Queue for ever). A POST answers a token; a
+# GET answers the result. Every call is logged to curl.log (CURL_LOG names another), and a POST's
+# body is kept in body.json.
 cat > "$tmp/bin/curl" <<'STUB'
 #!/usr/bin/env bash
 log=$STUB_DIR/${CURL_LOG:-curl.log}
@@ -27,6 +29,10 @@ if [[ "$*" == *"-X POST"* ]]; then
   exit 0
 fi
 b64() { printf '%s' "$1" | base64 | tr -d '\n'; }
+case "${STUB_JUDGE0:-accepted}" in
+  no-status) echo '{"status":null,"stdout":null,"stderr":null,"compile_output":null}'; exit 0 ;;
+  stuck) echo '{"status":{"id":1,"description":"In Queue"},"stdout":null,"stderr":null,"compile_output":null}'; exit 0 ;;
+esac
 # The first poll finds the submission still In Queue, as Judge0 usually answers.
 if [[ ! -e "$STUB_DIR/polled" ]]; then
   touch "$STUB_DIR/polled"
@@ -105,13 +111,14 @@ STUB_JUDGE0=compile-error JUDGE0_URL=http://judge0.example:2358 run cpp "$tmp/bi
 grep -q '^status: Compilation Error' "$tmp/out" || fail "should print the compile-error status: $(cat "$tmp/out")"
 grep -q "error: 'optional' in namespace 'std'" "$tmp/out" || fail "should print the compile output: $(cat "$tmp/out")"
 
-# A Judge0 that doesn't answer, answers with an HTTP error or with something other than Judge0's
-# JSON, or fails inside (Internal Error): exit 2, one line on stderr naming the URL, and no status, so it never reads as a
-# rejection.
-for behaviour in down http-error not-json internal-error; do
+# A Judge0 that doesn't answer, answers with an HTTP error, with something other than Judge0's JSON
+# or with a result that has no status, fails inside (Internal Error) or never leaves In Queue
+# (JUDGE_PROBE_WAIT is the seconds it is given, 30 by default): exit 2, one line on stderr naming
+# the URL, and no status, so it never reads as a rejection.
+for behaviour in down http-error not-json no-status internal-error stuck; do
   reset
   code=0
-  STUB_JUDGE0=$behaviour JUDGE0_URL=http://judge0.example:2358 run cpp "$tmp/bind.cpp" > "$tmp/out" 2> "$tmp/err" || code=$?
+  JUDGE_PROBE_WAIT=1 STUB_JUDGE0=$behaviour JUDGE0_URL=http://judge0.example:2358 run cpp "$tmp/bind.cpp" > "$tmp/out" 2> "$tmp/err" || code=$?
   [[ "$code" -eq 2 ]] || fail "$behaviour: should exit 2, got $code: $(cat "$tmp/out" "$tmp/err")"
   grep -q '^judge-probe.sh: .*http://judge0.example:2358' "$tmp/err" || fail "$behaviour: should say which Judge0 failed: $(cat "$tmp/err")"
   [[ ! -s "$tmp/out" ]] || fail "$behaviour: should print no status: $(cat "$tmp/out")"
