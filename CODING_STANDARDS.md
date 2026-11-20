@@ -33,3 +33,9 @@ The same holds for the wrong data a guard test feeds its check: it builds a smal
 A Diagram's `highlight` or `highlight_path` marks part of its example's answer, or the inputs the example asks about. A count or a time as the answer usually means no highlight. `.claude/skills/add-diagram/SKILL.md` has the rule; tests check only that a highlight exists in the Diagram.
 
 _Example:_ `lca-bst` highlights `p` and `q`; `count-desk-clusters`, whose answer is a count, highlights nothing.
+
+## views.md states each rule once
+
+`.claude/skills/add-walkthrough/views.md` has one section per Roadmap Category, in Roadmap order, after "Every view" and "Recursion and the call stack". Each bullet is one rule: a shape, how it is drawn, and the tracers that draw it. A Walkthrough that finds a new pattern edits the bullet it refines, or adds one bullet beside it in its category's section. It never adds a section named for a ticket or a second section for a category, and never states a rule another bullet already states: a bullet that needs another section's rule names that section. Two bullets stating one rule drift into two rules, and a reader can't tell which one holds.
+
+_Example:_ the Heap section's "A heap that only orders a search" points to Advanced Graphs, where the rule is. When each ticket of #364 appended a section of its own ("Greedy (#375)", "Dynamic Programming, part 2 (#376)"), the file ended with two Dynamic Programming sections and four heap rules that disagreed.
