@@ -6,6 +6,8 @@
 #              change on this checkout's branch isn't in it; restart it from here
 #   STALE      the source changed after the process started; bootRun doesn't reload, so restart it
 #   PROD       it carries a value from the production infra/.env (see scripts/dev-env.sh)
+#   STOPPED    the codebite-postgres, codebite-kafka or codebite-redis container isn't running
+#   DOWN       the Docker daemon doesn't answer, so none of the three runs
 #   BEHIND     the database lacks a migration this checkout has; the backend applies it on start
 #   UNREACHABLE  Judge0 doesn't answer, so every Run and Submit fails; known before a UI check is planned
 #   MAPPING    a row of the main checkout's gitignored docs/PROBLEMS_MAPPING.md disagrees with the database
@@ -119,6 +121,32 @@ for pid in $pids; do
   report_checkout "$(checkout_of "$pid" "$(app_pattern frontend)")" "$(env_value "$pid" CODEBITE_DEV_BRANCH)"
 done
 
+# The containers the servers need, each with what fails while it doesn't run. A daemon that
+# doesn't answer is said once, for all three.
+stopped=0
+postgres_down=0
+for entry in \
+  "codebite-postgres|no database, so the backend and worker don't start and the database scripts refuse" \
+  "codebite-kafka|every Submit stays PENDING" \
+  "codebite-redis|the Run and Submit cooldowns and the token blacklist fail"; do
+  container=${entry%%|*}
+  case "$(container_state "$container")" in
+    running) ;;
+    stopped)
+      echo "$container: STOPPED  ${entry#*|}; start it: $(container_start_command "$container")"
+      stopped=1
+      [[ "$container" == codebite-postgres ]] && postgres_down=1 ;;
+    *)
+      echo "docker: DOWN  no Postgres, Kafka or Redis: $(docker_down_message)"
+      stopped=1
+      postgres_down=1
+      break ;;
+  esac
+done
+if [[ $stopped -eq 0 ]]; then
+  echo "containers: codebite-postgres, codebite-kafka and codebite-redis run"
+fi
+
 db=$(flyway_version codebite)
 ours=$(newest_migration "$here")
 if in_main_checkout; then
@@ -126,7 +154,9 @@ if in_main_checkout; then
 else
   start_hint="the shared backend runs $main; scripts/dev-branch-servers.sh migrates a database of this branch's own"
 fi
-if [[ -z "$db" ]]; then
+if [[ $postgres_down -eq 1 ]]; then
+  echo "database: not reachable (see above)"
+elif [[ -z "$db" ]]; then
   echo "database: $(db_unreachable_message)"
 elif (( db < ours )); then
   echo "database: at V$db"
@@ -200,7 +230,8 @@ if [[ -f "$mapping" && -n "$db" ]] && (( db >= ours )); then
     | python3 -I "$here/scripts/check-problems-mapping.py" "$mapping" || problems=1
 fi
 
-if [[ $found -eq 1 && $problems -eq 0 ]]; then
+# A stopped container keeps the OK line away and leaves the exit code as the rest decides it.
+if [[ $found -eq 1 && $problems -eq 0 && $stopped -eq 0 ]]; then
   echo "OK: running code, config and database match this checkout"
 fi
 exit "$problems"
