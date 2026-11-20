@@ -20,6 +20,12 @@
 # unticked_lines): a step left for the user, such as a production comparison, can't merge
 # silently. --allow-unticked merges anyway and prints the lines it let through.
 #
+# The squash commit's subject is the PR's title as GitHub has it (read back from the PR, so a
+# reused or renamed PR is covered) followed by " (#<n>)"; without it GitHub takes a one-commit
+# PR's subject from the commit. The body is left to GitHub (this repo: the commits' messages).
+# A subject over 72 characters is refused, naming its length, before CI is waited on: the
+# commit-msg hook never sees a server-side squash.
+#
 # Why it waits before watching: for the first seconds after a PR opens, `gh pr checks` answers
 # "no checks reported" and exits 1, which `--watch` would take for a finished run.
 # SHIP_BRANCH_POLL is the seconds between those looks (default 10).
@@ -113,6 +119,15 @@ else
 fi
 echo "ship-branch: PR #$n"
 
+# The squash subject is the PR's title as it stands (a reused PR may have been renamed) and its
+# number. GitHub's squash runs no commit-msg hook, so its 72-character limit is checked here,
+# before CI is waited on.
+subject="$(gh pr view "$n" --json title --jq .title) (#$n)"
+if (( ${#subject} > 72 )); then
+  echo "ship-branch: the squash subject \"$subject\" is ${#subject} characters, over 72; nothing merged. Shorten the title (gh pr edit $n --title …) and run again" >&2
+  exit 1
+fi
+
 # CI can't see the walkthrough kit (it lives only on this machine), so the kit check that needs it
 # (the recorded kit commit is on the kit's main) runs here, on the branch's tree, with the kit
 # beside the main checkout.
@@ -139,7 +154,7 @@ if ! gh pr checks "$n" --watch --interval 20 >/dev/null 2>&1; then
   exit 1
 fi
 
-gh pr merge "$n" --squash
+gh pr merge "$n" --squash --subject "$subject"
 git push -q origin --delete "$branch"
 if [[ -n $worktree ]]; then
   drop_branch_database "$worktree"
