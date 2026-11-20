@@ -352,8 +352,8 @@
     },
     {
      "caption": {
-      "en": "\"1\" leaves 4 digits, too many for 1 segment; \"16\" as segment 3 is a dead end: place(start=5) finds no segment 4 (\"8\" would leave 2 digits after segment 4, \"81\" would leave 1 digit after segment 4, \"811\" is over 255), so \"16\" comes straight back off.",
-      "ko": "\"1\" 조각 뒤로 숫자 4개가 남아 조각 1개에 너무 많음, \"16\" 조각을 3번째 조각으로 놓으면 place(start=5) 호출에서 4번째 조각을 찾지 못하는(\"8\" 조각은 4번째 조각 뒤로 숫자 2개를 남김, \"81\" 조각은 4번째 조각 뒤로 숫자 1개를 남김, \"811\" 조각은 255 초과) 막다른 길이므로, 바로 다시 뗍니다."
+      "en": "\"1\" leaves 4 digits, too many for 1 segment; \"16\" as segment 3 is a dead end: the 1 call below it, place(start=5), not drawn, tries 3 lengths and finds no segment 4 (\"8\" would leave 2 digits after segment 4, \"81\" would leave 1 digit after segment 4, \"811\" is over 255), so \"16\" comes straight back off.",
+      "ko": "\"1\" 조각 뒤로 숫자 4개가 남아 조각 1개에 너무 많음, \"16\" 조각을 3번째 조각으로 놓으면 그 아래 place(start=5) 호출 1개(그리지 않음)에서 길이 3가지를 시도해도 4번째 조각을 찾지 못하는(\"8\" 조각은 4번째 조각 뒤로 숫자 2개를 남김, \"81\" 조각은 4번째 조각 뒤로 숫자 1개를 남김, \"811\" 조각은 255 초과) 막다른 길이므로, 바로 다시 뗍니다."
      },
      "views": {
       "digits": {
@@ -985,8 +985,8 @@
     },
     {
      "caption": {
-      "en": "\"1\" leaves 4 digits, too many for 1 segment; \"16\" as segment 3 is a dead end: place(start=5) finds no segment 4 (\"8\" would leave 2 digits after segment 4, \"81\" would leave 1 digit after segment 4, \"811\" is over 255), so \"16\" comes straight back off.",
-      "ko": "\"1\" 조각 뒤로 숫자 4개가 남아 조각 1개에 너무 많음, \"16\" 조각을 3번째 조각으로 놓으면 place(start=5) 호출에서 4번째 조각을 찾지 못하는(\"8\" 조각은 4번째 조각 뒤로 숫자 2개를 남김, \"81\" 조각은 4번째 조각 뒤로 숫자 1개를 남김, \"811\" 조각은 255 초과) 막다른 길이므로, 바로 다시 뗍니다."
+      "en": "\"1\" leaves 4 digits, too many for 1 segment; \"16\" as segment 3 is a dead end: the 1 call below it, place(start=5), not drawn, tries 3 lengths and finds no segment 4 (\"8\" would leave 2 digits after segment 4, \"81\" would leave 1 digit after segment 4, \"811\" is over 255), so \"16\" comes straight back off.",
+      "ko": "\"1\" 조각 뒤로 숫자 4개가 남아 조각 1개에 너무 많음, \"16\" 조각을 3번째 조각으로 놓으면 그 아래 place(start=5) 호출 1개(그리지 않음)에서 길이 3가지를 시도해도 4번째 조각을 찾지 못하는(\"8\" 조각은 4번째 조각 뒤로 숫자 2개를 남김, \"81\" 조각은 4번째 조각 뒤로 숫자 1개를 남김, \"811\" 조각은 255 초과) 막다른 길이므로, 바로 다시 뗍니다."
      },
      "views": {
       "digits": {
@@ -1539,8 +1539,8 @@
     },
     {
      "caption": {
-      "en": "\"6\" as segment 3 is a dead end: place(start=5) finds no segment 4 (\"8\" would leave 2 digits after segment 4, \"81\" would leave 1 digit after segment 4, \"811\" is over 255), so \"6\" comes straight back off.",
-      "ko": "\"6\" 조각을 3번째 조각으로 놓으면 place(start=5) 호출에서 4번째 조각을 찾지 못하는(\"8\" 조각은 4번째 조각 뒤로 숫자 2개를 남김, \"81\" 조각은 4번째 조각 뒤로 숫자 1개를 남김, \"811\" 조각은 255 초과) 막다른 길이므로, 바로 다시 뗍니다."
+      "en": "\"6\" as segment 3 is a dead end: the 1 call below it, place(start=5), not drawn, tries 3 lengths and finds no segment 4 (\"8\" would leave 2 digits after segment 4, \"81\" would leave 1 digit after segment 4, \"811\" is over 255), so \"6\" comes straight back off.",
+      "ko": "\"6\" 조각을 3번째 조각으로 놓으면 그 아래 place(start=5) 호출 1개(그리지 않음)에서 길이 3가지를 시도해도 4번째 조각을 찾지 못하는(\"8\" 조각은 4번째 조각 뒤로 숫자 2개를 남김, \"81\" 조각은 4번째 조각 뒤로 숫자 1개를 남김, \"811\" 조각은 255 초과) 막다른 길이므로, 바로 다시 뗍니다."
      },
      "views": {
       "digits": {
@@ -3005,8 +3005,8 @@
     },
     {
      "caption": {
-      "en": "\"6\" as segment 3 is a dead end: place(start=5) finds no segment 4 (\"8\" would leave 2 digits after segment 4, \"81\" would leave 1 digit after segment 4, \"811\" is over 255), so \"6\" comes straight back off.",
-      "ko": "\"6\" 조각을 3번째 조각으로 놓으면 place(start=5) 호출에서 4번째 조각을 찾지 못하는(\"8\" 조각은 4번째 조각 뒤로 숫자 2개를 남김, \"81\" 조각은 4번째 조각 뒤로 숫자 1개를 남김, \"811\" 조각은 255 초과) 막다른 길이므로, 바로 다시 뗍니다."
+      "en": "\"6\" as segment 3 is a dead end: the 1 call below it, place(start=5), not drawn, tries 3 lengths and finds no segment 4 (\"8\" would leave 2 digits after segment 4, \"81\" would leave 1 digit after segment 4, \"811\" is over 255), so \"6\" comes straight back off.",
+      "ko": "\"6\" 조각을 3번째 조각으로 놓으면 그 아래 place(start=5) 호출 1개(그리지 않음)에서 길이 3가지를 시도해도 4번째 조각을 찾지 못하는(\"8\" 조각은 4번째 조각 뒤로 숫자 2개를 남김, \"81\" 조각은 4번째 조각 뒤로 숫자 1개를 남김, \"811\" 조각은 255 초과) 막다른 길이므로, 바로 다시 뗍니다."
      },
      "views": {
       "digits": {
@@ -5683,8 +5683,8 @@
     },
     {
      "caption": {
-      "en": "\"1\" as segment 3 is a dead end: place(start=3) finds no segment 4 (\"0\" would leave 2 digits after segment 4, \"02\" has a leading zero), so \"1\" comes straight back off.",
-      "ko": "\"1\" 조각을 3번째 조각으로 놓으면 place(start=3) 호출에서 4번째 조각을 찾지 못하는(\"0\" 조각은 4번째 조각 뒤로 숫자 2개를 남김, \"02\" 조각은 앞자리가 0) 막다른 길이므로, 바로 다시 뗍니다."
+      "en": "\"1\" as segment 3 is a dead end: the 1 call below it, place(start=3), not drawn, tries 2 lengths and finds no segment 4 (\"0\" would leave 2 digits after segment 4, \"02\" has a leading zero), so \"1\" comes straight back off.",
+      "ko": "\"1\" 조각을 3번째 조각으로 놓으면 그 아래 place(start=3) 호출 1개(그리지 않음)에서 길이 2가지를 시도해도 4번째 조각을 찾지 못하는(\"0\" 조각은 4번째 조각 뒤로 숫자 2개를 남김, \"02\" 조각은 앞자리가 0) 막다른 길이므로, 바로 다시 뗍니다."
      },
      "views": {
       "digits": {

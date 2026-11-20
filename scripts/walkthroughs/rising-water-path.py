@@ -17,7 +17,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import josa, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import heap_moves, josa, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, level_order_tree, move  # noqa: E402
 
 SLUG = "rising-water-path"
@@ -52,18 +52,9 @@ def solve(elevation, run):
     drawn = []  # the heap list as the last frame drew it
 
     def resorted(fresh=()):
-        """A move for each entry heapq put somewhere new since the last frame: from the node it was at, or, when that
-        node is gone (the last entry lifted to the root after a pop), into its node with its text. `fresh` entries
-        are moved in by the caller, from their tiles."""
-        out = []
-        for j, e in enumerate(heap):
-            if (j < len(drawn) and drawn[j] is e) or any(e is f for f in fresh):
-                continue
-            i = next((k for k, d in enumerate(drawn) if d is e), None)
-            text = f"({e[0]}, {e[1]}, {e[2]})"
-            out.append(move(at("heap", i), at("heap", j), value=text) if i is not None and i < len(heap)
-                       else move(dst=at("heap", j), value=text))
-        return out
+        """A move for each entry heapq put somewhere new since the last frame; `fresh` entries are moved in by the
+        caller, from their tiles."""
+        return heap_moves("heap", heap, drawn, lambda e: f"({e[0]}, {e[1]}, {e[2]})", fresh)
 
     def frame(caption, cell_marks=None, heap_marks=None, high_marks=None, moves=None, **answer):
         queued = [(r, c) for _, r, c in heap]
