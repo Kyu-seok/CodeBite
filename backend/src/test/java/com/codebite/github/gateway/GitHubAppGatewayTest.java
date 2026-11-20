@@ -1,6 +1,7 @@
 package com.codebite.github.gateway;
 
 import com.codebite.config.GitHubAppProperties;
+import com.codebite.testsupport.LoopbackHttpServer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpServer;
@@ -15,7 +16,6 @@ import org.springframework.web.client.RestClient;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.PublicKey;
@@ -41,7 +41,7 @@ class GitHubAppGatewayTest {
 
     @BeforeEach
     void setUp() throws IOException {
-        server = HttpServer.create(new InetSocketAddress(0), 0);
+        server = LoopbackHttpServer.create();
         server.createContext("/", exchange -> {
             String key = exchange.getRequestMethod() + " " + exchange.getRequestURI().getPath();
             String body = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
@@ -55,7 +55,7 @@ class GitHubAppGatewayTest {
             }
         });
         server.start();
-        baseUrl = "http://localhost:" + server.getAddress().getPort();
+        baseUrl = LoopbackHttpServer.baseUrl(server);
 
         respond("POST /login/oauth/access_token", 200, "{\"access_token\":\"user-token\",\"token_type\":\"bearer\"}");
         respond("GET /user", 200, "{\"id\":583231,\"login\":\"octocat\",\"type\":\"User\"}");

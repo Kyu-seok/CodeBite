@@ -1,6 +1,7 @@
 package com.codebite.github.gateway;
 
 import com.codebite.config.GitHubAppProperties;
+import com.codebite.testsupport.LoopbackHttpServer;
 import com.sun.net.httpserver.HttpServer;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.ObjectId;
@@ -19,7 +20,6 @@ import org.springframework.web.client.RestClient;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -56,7 +56,7 @@ class GitHubAppGatewayBatchPushTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        server = HttpServer.create(new InetSocketAddress(0), 0);
+        server = LoopbackHttpServer.create();
         server.createContext("/app/installations/77/access_tokens", exchange -> {
             tokenMints.incrementAndGet();
             byte[] bytes = "{\"token\":\"installation-token\"}".getBytes(StandardCharsets.UTF_8);
@@ -67,7 +67,7 @@ class GitHubAppGatewayBatchPushTest {
             }
         });
         server.start();
-        apiBaseUrl = "http://localhost:" + server.getAddress().getPort();
+        apiBaseUrl = LoopbackHttpServer.baseUrl(server);
 
         remote = temp.resolve("remotes").resolve(REPO + ".git");
         Files.createDirectories(remote);

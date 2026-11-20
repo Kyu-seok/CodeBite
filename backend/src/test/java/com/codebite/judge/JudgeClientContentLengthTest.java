@@ -1,6 +1,7 @@
 package com.codebite.judge;
 
 import com.codebite.judge.dto.JudgeRequest;
+import com.codebite.testsupport.LoopbackHttpServer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.sun.net.httpserver.HttpServer;
@@ -17,7 +18,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -27,13 +27,13 @@ import static org.junit.jupiter.api.Assertions.*;
 class JudgeClientContentLengthTest {
 
     private HttpServer server;
-    private int port;
+    private String baseUrl;
     private final ConcurrentMap<String, List<String>> capturedHeaders = new ConcurrentHashMap<>();
 
     @BeforeEach
     void setUp() throws IOException {
-        server = HttpServer.create(new InetSocketAddress(0), 0);
-        port = server.getAddress().getPort();
+        server = LoopbackHttpServer.create();
+        baseUrl = LoopbackHttpServer.baseUrl(server);
 
         server.createContext("/submissions", exchange -> {
             exchange.getRequestHeaders().forEach(capturedHeaders::put);
@@ -82,7 +82,7 @@ class JudgeClientContentLengthTest {
 
         HttpEntity<byte[]> entity = new HttpEntity<>(body, headers);
 
-        String url = "http://localhost:" + port + "/submissions?base64_encoded=true";
+        String url = baseUrl + "/submissions?base64_encoded=true";
         try {
             restTemplate.postForObject(url, entity, String.class);
         } catch (Exception ignored) {
