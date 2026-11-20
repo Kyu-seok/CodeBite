@@ -1457,6 +1457,92 @@ class WalkthroughsMatchSamplesTest {
         assertEquals(List.of(), mismatches("fixture", walkthrough, samples(1)));
     }
 
+    /**
+     * One run, input {@code words = ["morning","wire"], carry = 0}, of an array {@code a} (a tag and a span), a grid
+     * {@code m}, a stack {@code s}, a queue {@code q} and a graph {@code n}, each tagged with Text, and the tag or span
+     * label at {@code place} ("array tag", "span label", "grid tag", "stack tag", "queue tag" or "node tag") set to
+     * {@code label}.
+     */
+    private static ObjectNode tagsFixture(String place, String label) throws Exception {
+        ObjectNode walkthrough = walkthrough("""
+                        [{'id': 'a', 'type': 'array'}, {'id': 'm', 'type': 'grid'}, {'id': 's', 'type': 'stack'},
+                         {'id': 'q', 'type': 'queue'}, {'id': 'n', 'type': 'graph'}]""", """
+                        [{'views': {'a': {'values': [1, 2, 3], 'tags': [[0, {'en': 'lo', 'ko': 'lo (아래)'}]],
+                                          'spans': {'w': {'from': 0, 'to': 1, 'label': {'en': 'window', 'ko': '창'}}}},
+                                    'm': {'cells': [[1, 2]], 'tags': [[0, 1, {'en': 'here', 'ko': '여기'}]]},
+                                    's': {'values': [3], 'tags': [[0, {'en': 'top', 'ko': '맨 위'}]]},
+                                    'q': {'values': [4], 'tags': [[0, {'en': 'front', 'ko': '앞'}]]},
+                                    'n': {'nodes': [{'id': 0, 'tag': {'en': 'start', 'ko': '시작'}}], 'edges': []}}}]""");
+        ((ObjectNode) walkthrough.get("runs").get(0)).put("input", "words = [\"morning\",\"wire\"], carry = 0");
+        JsonNode views = walkthrough.at("/runs/0/frames/0/views");
+        JsonNode text = JSON.getNodeFactory().textNode(label);
+        switch (place) {
+            case "array tag" -> ((ArrayNode) views.at("/a/tags/0")).set(1, text);
+            case "span label" -> ((ObjectNode) views.at("/a/spans/w")).set("label", text);
+            case "grid tag" -> ((ArrayNode) views.at("/m/tags/0")).set(2, text);
+            case "stack tag" -> ((ArrayNode) views.at("/s/tags/0")).set(1, text);
+            case "queue tag" -> ((ArrayNode) views.at("/q/tags/0")).set(1, text);
+            case "node tag" -> ((ObjectNode) views.at("/n/nodes/0")).set("tag", text);
+            default -> throw new IllegalArgumentException(place);
+        }
+        return walkthrough;
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @CsvSource(delimiter = '|', quoteCharacter = '`', value = {
+            "a word tagging an array cell     | array tag  | here     | view \"a\": tag \"here\"",
+            "a word labelling a span          | span label | high     | view \"a\": span \"w\" label \"high\"",
+            "a word tagging a grid cell       | grid tag   | mid      | view \"m\": tag \"mid\"",
+            "a word tagging a stack position  | stack tag  | top      | view \"s\": tag \"top\"",
+            "a word tagging a queue position  | queue tag  | front    | view \"q\": tag \"front\"",
+            "a word tagging a graph node      | node tag   | start    | view \"n\": tag \"start\"",
+            "a two-letter word                | array tag  | lo       | view \"a\": tag \"lo\"",
+            "a unit after a number            | array tag  | 2km/h    | view \"a\": tag \"2km/h\"",
+            "a word beside math               | array tag  | ∏ size   | view \"a\": tag \"∏ size\"",
+            "a Korean word                    | array tag  | 높음     | view \"a\": tag \"높음\"",
+    })
+    void aPlainTagOrSpanLabelIsCaught(String breakage, String place, String label, String expected) throws Exception {
+        List<String> found = plainLabels("fixture", tagsFixture(place, label));
+        assertTrue(found.stream().anyMatch(m -> m.equals("fixture: run 1 (Example 1) frame 1 of 1 " + expected.strip()
+                        + " is a plain string with a word in it: write {\"en\": ..., \"ko\": ...}, unless it is an input value "
+                        + "or <name> = <value>")),
+                breakage + " was not caught as \"" + expected + "\": " + found);
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @CsvSource(delimiter = '|', quoteCharacter = '`', value = {
+            "no word: a number                       | array tag  | 12",
+            "no word: a one-letter name              | span label | i",
+            "no word: one-letter math                | grid tag   | b²",
+            "no word: a one-letter name and a value  | stack tag  | k = 3",
+            "no word: a single Hangul letter         | queue tag  | 합",
+            "an input value                          | array tag  | morning",
+            "an input value labelling a span         | span label | wire",
+            "an input value tagging a graph node     | node tag   | morning",
+            "an input value in a code expression     | span label | carry = 0",
+            "a code expression                       | span label | carry = 16",
+            "a code expression on a grid             | grid tag   | leftFlags = 10",
+            "a code expression with a negative value | array tag  | low_sum = -3",
+            "a code expression with a list           | stack tag  | seen = [1, 2]",
+            "a code expression whose value is a name | span label | best = nums[2]",
+            "a code expression whose value is a word | span label | mode = fast",
+    })
+    void aPlainTagOrSpanLabelTheRuleAllowsPasses(String allowed, String place, String label) throws Exception {
+        ObjectNode walkthrough = tagsFixture(place, label);
+        assertEquals(List.of(), plainLabels("fixture", walkthrough), allowed);
+        assertEquals(List.of(), mismatches("fixture", walkthrough, samples(1)), allowed);
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @CsvSource(delimiter = '|', quoteCharacter = '`', value = {
+            "an input value only inside another word | array tag  | ring       | view \"a\": tag \"ring\"",
+            "an input value in another case          | array tag  | Morning    | view \"a\": tag \"Morning\"",
+            "a word that is not a name before =      | span label | the sum = 3 | view \"a\": span \"w\" label \"the sum = 3\"",
+    })
+    void aWordNotAnInputValueOrCodeExpressionIsCaught(String breakage, String place, String label, String expected) throws Exception {
+        aPlainTagOrSpanLabelIsCaught(breakage, place, label, expected);
+    }
+
     // --- the checks --------------------------------------------------------------------------------
 
     /** Everything wrong with {@code slug}'s Walkthrough, each line naming the Slug; samples null: no problem. */
@@ -1687,7 +1773,7 @@ class WalkthroughsMatchSamplesTest {
         JsonNode runs = walkthrough.path("runs");
         for (int r = 0; r < runs.size(); r++) {
             JsonNode run = runs.get(r), frames = run.path("frames");
-            String name = runName(run, r);
+            String name = runName(run, r), input = run.path("input").asText("");
             Map<String, JsonNode> states = new LinkedHashMap<>();
             states.put(name + " setup", run.path("setup"));
             for (int f = 0; f < frames.size(); f++) {
@@ -1703,11 +1789,62 @@ class WalkthroughsMatchSamplesTest {
                         s.path("rows").forEach(row -> plainLabel(at, place + "row label", row.get("label"), found));
                     }
                     case "tree" -> s.path("tags").forEach(tag -> plainLabel(at, place + "tag", tag.get(1), found));
+                    case "grid" -> s.path("tags").forEach(tag -> plainTag(at, place + "tag", tag.get(2), input, found));
+                    case "array" -> {
+                        s.path("tags").forEach(tag -> plainTag(at, place + "tag", tag.get(1), input, found));
+                        s.path("spans").fields().forEachRemaining(span -> plainTag(at,
+                                place + "span " + quote(span.getKey()) + " label", span.getValue().get("label"), input, found));
+                    }
+                    case "stack", "queue" -> s.path("tags").forEach(tag -> plainTag(at, place + "tag", tag.get(1), input, found));
+                    case "graph" -> s.path("nodes").forEach(node -> plainTag(at, place + "tag", node.get("tag"), input, found));
                     default -> { }
                 }
             }));
         }
         return List.copyOf(found.values());
+    }
+
+    /** Two or more letters in a row, in any script ({@code \p{L}}: Hangul too, not a digit or a superscript ²). */
+    private static final Pattern TWO_LETTERS = Pattern.compile("\\p{L}{2,}");
+    /** {@code <identifier> = <value>}: a code name, then the value it holds. */
+    private static final Pattern CODE_EXPRESSION = Pattern.compile("[A-Za-z_$][A-Za-z0-9_$]*\\s*=\\s*\\S.*");
+
+    /**
+     * Reports {@code label}, a tag or a span's label first seen {@code at}, unless it is Text or a plain string that
+     * reads the same in both languages, one of the add-walkthrough skill's three cases:
+     * <ol>
+     * <li>no word: no run of two or more letters ({@link #TWO_LETTERS}), as in a number, a symbol, {@code b²} or a
+     * one-letter name;</li>
+     * <li>an input value: it occurs in the run's {@code input} (the line the run shows, given extra runs too) as a
+     * whole token, with no letter, digit or {@code _} right before or after that occurrence, matching case
+     * ({@code morning} in {@code words = ["morning","wire"]}, but not {@code ring} or {@code Morning});</li>
+     * <li>a code expression: {@code <identifier> = <value>} ({@link #CODE_EXPRESSION}), one name before the
+     * {@code =}, as in {@code carry = 16} or {@code best = nums[2]}, not {@code the sum = 3}; the caption explains
+     * it.</li>
+     * </ol>
+     */
+    private static void plainTag(String at, String place, JsonNode label, String input, Map<String, String> found) {
+        if (label == null || !label.isTextual()) return;
+        String text = label.asText();
+        if (!TWO_LETTERS.matcher(text).find() || inInput(text, input)) return;
+        if (CODE_EXPRESSION.matcher(text).matches()) return;
+        String line = place + " " + quote(text);
+        found.putIfAbsent(line, at + line + " is a plain string with a word in it: write {\"en\": ..., \"ko\": ...}, "
+                + "unless it is an input value or <name> = <value>");
+    }
+
+    /** Whether {@code text} occurs in {@code input} with no letter, digit or {@code _} right before or after it. */
+    private static boolean inInput(String text, String input) {
+        for (int i = input.indexOf(text); i >= 0; i = input.indexOf(text, i + 1)) {
+            int end = i + text.length();
+            if ((i == 0 || !wordCharacter(input.codePointBefore(i)))
+                    && (end == input.length() || !wordCharacter(input.codePointAt(end)))) return true;
+        }
+        return false;
+    }
+
+    private static boolean wordCharacter(int c) {
+        return Character.isLetterOrDigit(c) || c == '_';
     }
 
     /** Reports {@code label}, a {@code place} first seen {@code at}, unless it is Text or a plain string {@link #plainLabels} allows. */

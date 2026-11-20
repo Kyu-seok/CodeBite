@@ -68,7 +68,7 @@ def solve(menu, target, run):
                         "marks": {"lit": lit, "path": list(path),
                                   "dim": [i for i in range(n) if i not in lit] if done and not path else []}},
                   menu={"cells": menu,
-                        "tags": [cell(i) + ["mid"] for i in lit] if not done else [],
+                        "tags": [cell(i) + [{"en": "mid", "ko": "mid(중간)"}] for i in lit] if not done else [],
                         "marks": {"lit": [cell(i) for i in lit], "path": [cell(i) for i in path],
                                   "dim": [cell(i) for i in range(n) if i not in in_range and i not in lit
                                           and i not in path]}},

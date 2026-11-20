@@ -44,7 +44,7 @@ def solve(menu, target, run):
     def frame(caption, lit=(), bad=(), path=(), **answer):
         run.frame(caption,
                   menu={"cells": menu, "shade": [list(c) for c in walk],
-                        "tags": [[r, c, "here"] for r, c in lit],
+                        "tags": [[r, c, {"en": "here", "ko": "여기"}] for r, c in lit],
                         "marks": {"dim": [list(c) for c in gone if c not in bad],
                                   "bad": [list(c) for c in bad], "lit": [list(c) for c in lit],
                                   "path": [list(c) for c in path]}},

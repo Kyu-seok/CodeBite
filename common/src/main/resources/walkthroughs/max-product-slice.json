@@ -56,13 +56,19 @@
         "high": {
          "from": 0,
          "to": 0,
-         "label": "high",
+         "label": {
+          "en": "high",
+          "ko": "high (최대 곱)"
+         },
          "mark": "good"
         },
         "low": {
          "from": 0,
          "to": 0,
-         "label": "low",
+         "label": {
+          "en": "low",
+          "ko": "low (최소 곱)"
+         },
          "below": true
         }
        },
@@ -138,13 +144,19 @@
         "high": {
          "from": 1,
          "to": 1,
-         "label": "high",
+         "label": {
+          "en": "high",
+          "ko": "high (최대 곱)"
+         },
          "mark": "good"
         },
         "low": {
          "from": 0,
          "to": 1,
-         "label": "low",
+         "label": {
+          "en": "low",
+          "ko": "low (최소 곱)"
+         },
          "below": true
         }
        },
@@ -242,13 +254,19 @@
         "high": {
          "from": 2,
          "to": 2,
-         "label": "high",
+         "label": {
+          "en": "high",
+          "ko": "high (최대 곱)"
+         },
          "mark": "good"
         },
         "low": {
          "from": 0,
          "to": 2,
-         "label": "low",
+         "label": {
+          "en": "low",
+          "ko": "low (최소 곱)"
+         },
          "below": true
         }
        },
@@ -357,13 +375,19 @@
         "high": {
          "from": 0,
          "to": 3,
-         "label": "high",
+         "label": {
+          "en": "high",
+          "ko": "high (최대 곱)"
+         },
          "mark": "good"
         },
         "low": {
          "from": 2,
          "to": 3,
-         "label": "low",
+         "label": {
+          "en": "low",
+          "ko": "low (최소 곱)"
+         },
          "below": true
         }
        },
@@ -471,13 +495,19 @@
         "high": {
          "from": 0,
          "to": 4,
-         "label": "high",
+         "label": {
+          "en": "high",
+          "ko": "high (최대 곱)"
+         },
          "mark": "good"
         },
         "low": {
          "from": 2,
          "to": 4,
-         "label": "low",
+         "label": {
+          "en": "low",
+          "ko": "low (최소 곱)"
+         },
          "below": true
         }
        },
@@ -661,13 +691,19 @@
         "high": {
          "from": 0,
          "to": 0,
-         "label": "high",
+         "label": {
+          "en": "high",
+          "ko": "high (최대 곱)"
+         },
          "mark": "good"
         },
         "low": {
          "from": 0,
          "to": 0,
-         "label": "low",
+         "label": {
+          "en": "low",
+          "ko": "low (최소 곱)"
+         },
          "below": true
         }
        },
@@ -741,13 +777,19 @@
         "high": {
          "from": 1,
          "to": 1,
-         "label": "high",
+         "label": {
+          "en": "high",
+          "ko": "high (최대 곱)"
+         },
          "mark": "good"
         },
         "low": {
          "from": 1,
          "to": 1,
-         "label": "low",
+         "label": {
+          "en": "low",
+          "ko": "low (최소 곱)"
+         },
          "below": true
         }
        },
@@ -855,13 +897,19 @@
         "high": {
          "from": 2,
          "to": 2,
-         "label": "high",
+         "label": {
+          "en": "high",
+          "ko": "high (최대 곱)"
+         },
          "mark": "good"
         },
         "low": {
          "from": 1,
          "to": 2,
-         "label": "low",
+         "label": {
+          "en": "low",
+          "ko": "low (최소 곱)"
+         },
          "below": true
         }
        },
@@ -967,13 +1015,19 @@
         "high": {
          "from": 1,
          "to": 3,
-         "label": "high",
+         "label": {
+          "en": "high",
+          "ko": "high (최대 곱)"
+         },
          "mark": "good"
         },
         "low": {
          "from": 2,
          "to": 3,
-         "label": "low",
+         "label": {
+          "en": "low",
+          "ko": "low (최소 곱)"
+         },
          "below": true
         }
        },

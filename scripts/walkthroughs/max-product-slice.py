@@ -54,8 +54,8 @@ def solve(nums, run):
     def frame(caption, i, num_marks=None, val_marks=None, moves=None, slices=True, **answer):
         spans = {}
         if slices:
-            spans = {"high": span(high_from, i, "high", mark="good"),
-                     "low": span(low_from, i, "low", below=True)}
+            spans = {"high": span(high_from, i, {"en": "high", "ko": "high (최대 곱)"}, mark="good"),
+                     "low": span(low_from, i, {"en": "low", "ko": "low (최소 곱)"}, below=True)}
         run.frame(caption,
                   nums={"values": nums, "pointers": {"i": i if slices else None}, "spans": spans,
                         "marks": num_marks or {}, "unread": list(range(i + 1, n)) if slices else []},
