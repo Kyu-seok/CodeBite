@@ -16,8 +16,8 @@ Runs go JUDGE_RUN_SPACING seconds apart (5.5, past the backend's 5 s per-IP Run 
 Exits 0 when every judged Language was Accepted (each problem judged in at least one) and every
 Former Slug resolves; a Language NOT JUDGED leaves the exit code alone. Exits 1 on any other
 verdict, an HTTP error, a Former Slug that doesn't resolve or a problem with no judged Language,
-and 2 when the backend can't be reached, keeps answering 429 or lacks a problem (404); the worst
-wins.
+and 2 when the backend can't be reached, a proxy in front of it refuses this client (a 403 without
+the backend's JSON body), it keeps answering 429 or lacks a problem (404); the worst wins.
 """
 import json, os, re, subprocess, sys, time, urllib.error, urllib.request
 from enum import IntEnum
@@ -27,6 +27,8 @@ LANGUAGES = {"python": "py", "java": "java", "javascript": "js", "cpp": "cpp"}  
 SPACING = float(os.environ.get("JUDGE_RUN_SPACING", "5.5"))
 MAX_WAITS = int(os.environ.get("JUDGE_RUN_MAX_WAITS", "12"))
 RUN_TIMEOUT_S = 180
+# Cloudflare in front of code-bite.com refuses urllib's default Python-urllib/3.x (#420).
+USER_AGENT = "codebite-judge-run"
 USAGE = ("usage: scripts/judge-run.sh <slug> [--former <old-slug>] [<slug> ...] "
          "[--languages python,java,javascript,cpp] [--backend <url>]")
 
@@ -35,7 +37,7 @@ class Outcome(IntEnum):
     """A problem's result, worst wins; its value is the exit code."""
     PASSED = 0  # every judged Language Accepted, every Former Slug resolves
     FAILED = 1  # another verdict, an HTTP error, a Former Slug that doesn't resolve, or nothing judged
-    ABSENT = 2  # the backend lacks the problem, or can't be reached (Unreachable)
+    ABSENT = 2  # the backend lacks the problem, can't be reached, or a proxy refuses this client (Unreachable)
 
 
 class Unreachable(Exception):
@@ -105,10 +107,12 @@ def api_base(backend):
 
 
 def request(url, body=None):
-    """(status, parsed JSON or None); raises Unreachable when there is no HTTP answer at all."""
+    """(status, parsed JSON or None); raises Unreachable when there is no HTTP answer at all, or a
+    proxy in front of the backend refuses this client."""
     data = json.dumps(body).encode() if body is not None else None
     req = urllib.request.Request(url, data=data, method="POST" if body is not None else "GET",
-                                 headers={"Content-Type": "application/json", "Accept": "application/json"})
+                                 headers={"Content-Type": "application/json", "Accept": "application/json",
+                                          "User-Agent": USER_AGENT})
     try:
         with urllib.request.urlopen(req, timeout=RUN_TIMEOUT_S) as response:
             status, raw = response.status, response.read()
@@ -120,9 +124,14 @@ def request(url, body=None):
         raise Unreachable(f"the backend at {url} is down ({why}); "
                           f"start the branch servers again: scripts/dev-branch-servers.sh restart") from None
     try:
-        return status, json.loads(raw) if raw else None
+        parsed = json.loads(raw) if raw else None
     except ValueError:
-        return status, None
+        parsed = None
+    # The backend's own 403 carries its JSON error; an empty or HTML one comes from the proxy.
+    if status == 403 and parsed is None:
+        raise Unreachable(f"{url} answered HTTP 403 without the backend's JSON body: a proxy in front of "
+                          f"the backend refused this client (User-Agent {USER_AGENT}), so nothing was judged")
+    return status, parsed
 
 
 def message(body):
