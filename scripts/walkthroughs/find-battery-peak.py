@@ -3,7 +3,8 @@
 a binary search over indices that climbs toward the higher neighbour, recording one frame per probe of mid on
 each sample Test Case. The readings are bars, so the climb shows; the search range is a span over
 readings[low..high] with the bars outside it faded, readings[mid] and readings[mid + 1] are lit as the pair
-compared, and the side kept is a dashed span under the range.
+compared, and the side kept is a dashed span under the range. The Driver checks the index returned and
+prints VALID for a peak, so that is each run's answer.
 
     CODEBITE_DB=<database> scripts/walkthroughs/find-battery-peak.py
 
@@ -15,7 +16,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import josa, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, span  # noqa: E402
 
 SLUG = "find-battery-peak"
@@ -87,10 +88,10 @@ def solve(readings, run):
     left = f"readings[{low - 1}] = {readings[low - 1]}" if low > 0 else "−∞"
     right = f"readings[{low + 1}] = {readings[low + 1]}" if low + 1 < n else "−∞"
     frame({"en": f"low = high = {low}: the range is one reading, and readings[{low}] = {readings[low]} beats both "
-                 f"neighbours, {left} and {right}. The answer is index {low}.",
+                 f"neighbours, {left} and {right}. Return index {low}: it is a peak, so the judge prints VALID.",
            "ko": f"low = high = {low}: 범위가 한 칸이고, readings[{low}] = {readings[low]}의 양 이웃 {left}, {right}보다 "
-                 f"큽니다. 답은 인덱스 {low}입니다."},
-          path=[low], done=True, answer=str(low))
+                 f"큽니다. 인덱스 {josa(low, '을를')} 반환하고, 정점이므로 채점기는 VALID를 출력합니다."},
+          path=[low], done=True, answer="VALID")
 
 
 for number, sample in enumerate(sample_cases(SLUG), start=1):

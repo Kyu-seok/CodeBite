@@ -26,6 +26,7 @@ class ProblemGuaranteesTest {
 
     /** One per problem whose Test Cases have been checked against its statement. */
     static final List<ProblemGuarantee> GUARANTEES = List.of(
+            new FindBatteryPeakGuarantee(),
             new SnackDrawerPairGuarantee(),
             new TwoMenuSumGuarantee());
 
