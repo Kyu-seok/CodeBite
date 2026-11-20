@@ -277,6 +277,7 @@ kafka_bin() {
 }
 flush_owned_redis_index() { echo "redis flush $db" >> "$fake/calls"; }
 branch_pids() { :; }
+container_state() { echo running; }
 check "orphans lists a database whose worktree is gone" "$(orphan_databases)" "codebite_gone_1	$fake/gone-wt"
 out=$(cmd_orphans)
 [[ "$out" == *codebite_gone_1* && "$out" != *codebite_live_2* ]] || { echo "FAIL: orphans printed: $out"; fail=1; }
@@ -295,12 +296,61 @@ calls=$(cat "$fake/calls")
 [[ "$calls" == *"--delete --topic codebite_gone_1-submission-events"* && "$calls" != *"topic codebite_live_2"* ]] \
   || { echo "FAIL: drop should delete only the orphan's topics: $calls"; fail=1; }
 [[ "$calls" == *"redis flush codebite_gone_1"* ]] || { echo "FAIL: drop should flush the orphan's Redis index: $calls"; fail=1; }
+# Kafka and Redis stopped: the database is still dropped, and each skipped cleanup is one line,
+# with no docker call that could only print "container ... is not running".
+container_state() { case "$1" in codebite-postgres) echo running ;; *) echo stopped ;; esac; }
+# The script's own kafka_bin and Redis functions again, over a docker that only fails; the other
+# fakes stay.
+kept=$(declare -f psql_admin branch_pids container_state)
+# shellcheck source=SCRIPTDIR/dev-branch-servers.sh
+source "$script"
+eval "$kept"
+docker() { echo "docker $*" >> "$fake/calls"; echo "Error response from daemon: container 3f2a9c is not running" >&2; return 1; }
+mkdir -p "$state_base/codebite_gone_1"
+: > "$fake/calls"
+out=$(cmd_drop_orphan codebite_gone_1 2>&1) && code=0 || code=$?
+check "drop with Kafka and Redis stopped still succeeds" "$code" 0
+check "drop with Kafka and Redis stopped says what it skipped" "$out" "database codebite_gone_1: dropped
+codebite-kafka isn't running: topics and groups prefixed codebite_gone_1 not dropped
+codebite-redis isn't running: the Redis index of codebite_gone_1 not flushed"
+calls=$(cat "$fake/calls")
+[[ "$calls" == *'DROP DATABASE IF EXISTS "codebite_gone_1"'* ]] || { echo "FAIL: the database wasn't dropped with Kafka and Redis stopped: $calls"; fail=1; }
+[[ "$calls" != *docker* ]] || { echo "FAIL: drop called docker on a stopped container: $calls"; fail=1; }
+[[ ! -d "$state_base/codebite_gone_1" ]] || { echo "FAIL: drop with Kafka and Redis stopped left its state directory"; fail=1; }
+# Only Redis stopped: Kafka is still cleaned.
+container_state() { case "$1" in codebite-redis) echo stopped ;; *) echo running ;; esac; }
+: > "$fake/calls"
+out=$(cmd_drop_orphan codebite_gone_1 2>&1) && code=0 || code=$?
+[[ "$out" == *"codebite-redis isn't running"* && "$out" != *"codebite-kafka isn't running"* && "$(cat "$fake/calls")" == *"docker exec codebite-kafka"* ]] \
+  || { echo "FAIL: with only Redis stopped, Kafka should still be cleaned: $out / $(cat "$fake/calls")"; fail=1; }
+# A Docker daemon that doesn't answer is named as such.
+container_state() { echo daemon; }
+out=$(cmd_drop_orphan codebite_gone_1 2>&1) && code=0 || code=$?
+[[ "$out" == *"the Docker daemon doesn't answer: topics and groups prefixed codebite_gone_1 not dropped"* ]] \
+  || { echo "FAIL: drop with the daemon down should say so: $out"; fail=1; }
+unset -f docker
+
+# start refuses, saying what to start, when Kafka or Redis doesn't run; a daemon that doesn't
+# answer is said once.
+container_state() { case "$1" in codebite-postgres) echo running ;; *) echo stopped ;; esac; }
+out=$( (require_kafka_and_redis) 2>&1) && code=0 || code=$?
+check "start refused with Kafka and Redis stopped" "$code" 1
+check "start names what to start" "$out" "dev-branch-servers.sh: the codebite-kafka container isn't running; start it: docker compose -f infra/docker-compose.yml up -d kafka
+dev-branch-servers.sh: the codebite-redis container isn't running; start it: docker compose -f infra/docker-compose.yml up -d redis"
+container_state() { echo daemon; }
+out=$( (require_kafka_and_redis) 2>&1) && code=0 || code=$?
+check "start refused with Docker down" "$code" 1
+check "start names Docker once" "$out" "dev-branch-servers.sh: the Docker daemon doesn't answer; start Docker Desktop (open -a Docker) and rerun"
+container_state() { echo running; }
+out=$( (require_kafka_and_redis) 2>&1) && code=0 || code=$?
+check "start goes on with Kafka and Redis running" "$code/$out" "0/"
+
 branch_pids() { echo 301; }
 : > "$fake/calls"
 out=$(cmd_drop_orphan codebite_gone_1 2>&1) && code=0 || code=$?
 check "drop by name refused while its servers run" "$code" 1
 [[ "$(cat "$fake/calls")" != *DROP* ]] || { echo "FAIL: dropped an orphan whose servers run"; fail=1; }
-unset -f psql_admin kafka_bin flush_owned_redis_index branch_pids
+unset -f psql_admin branch_pids container_state
 # shellcheck source=SCRIPTDIR/dev-branch-servers.sh
 source "$script"
 
