@@ -18,7 +18,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import josa, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import bag_text, josa, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, move  # noqa: E402
 
 SLUG = "fewest-square-candy-bags"
@@ -35,10 +35,6 @@ wt = Walkthrough(
                                                     "ko": "사탕 개수별 최소 봉지 수"}},
     ],
 )
-
-
-def bag(size):
-    return {"en": f"bag {size}", "ko": f"봉지 {size}"}
 
 
 def solve(candies, run):
@@ -78,7 +74,7 @@ def solve(candies, run):
                      f"{src}개의 {best - 1}개에 크기 {size} 봉지를 더한 {best}개입니다."},
               amount=amount, cells={"lit": [amount - s for s in tried], "good": [amount]},
               square_marks={"lit": list(range(len(tried))), "dim": list(range(len(tried), len(squares)))},
-              tags=[[amount - s, bag(s)] for s in tried], unread=list(range(amount + 1, candies + 1)),
+              tags=[[amount - s, bag_text(s)] for s in tried], unread=list(range(amount + 1, candies + 1)),
               moves=[move(at("fewest", src), at("fewest", amount), value=f"{best - 1}+1")])
     chain, amount = [], candies
     while amount > 0:
@@ -92,7 +88,7 @@ def solve(candies, run):
            "ko": f"사탕 {candies}개에는 봉지가 {k}개 필요합니다. 각 칸이 온 칸을 거슬러 가면 "
                  f"{' + '.join(map(str, used))} = {josa(candies, '이가')} 됩니다."},
           cells={"path": chain}, square_marks={"path": sorted({squares.index(s) for s in used})},
-          tags=[[a - won[a], bag(won[a])] for a in chain[:-1]], answer=str(k))
+          tags=[[a - won[a], bag_text(won[a])] for a in chain[:-1]], answer=str(k))
 
 
 for number, sample in enumerate(sample_cases(SLUG), start=1):

@@ -15,7 +15,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import josa, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import josa, or_infinity, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, move  # noqa: E402
 
 SLUG = "connect-water-bowls"
@@ -36,10 +36,6 @@ wt = Walkthrough(
         {"id": "total", "type": "output", "title": {"en": "total hose length", "ko": "호스 총 길이"}},
     ],
 )
-
-
-def show(x):
-    return "∞" if x == INF else x
 
 
 def solve(bowls, run):
@@ -67,7 +63,7 @@ def solve(bowls, run):
         marks = {"path": joined, "lit": list(lit_nodes), "good": list(good_nodes)}
         run.frame(caption,
                   bowls={"nodeMarks": marks, "edgeMarks": edge_marks},
-                  best={"values": [show(c) for c in best], "marks": best_marks or {"path": joined}},
+                  best={"values": [or_infinity(c) for c in best], "marks": best_marks or {"path": joined}},
                   total={"values": [total], "marks": {"path": [0]} if path else {}},
                   moves=moves, **answer)
 
@@ -105,8 +101,8 @@ def solve(bowls, run):
                 old = best[i]
                 best[i] = cost
                 via[i] = node
-                frame({"en": f"Hose {node}–{i}: {calc}, shorter than best[{i}] = {show(old)}, so best[{i}] becomes {cost}.",
-                       "ko": f"호스 {node}–{i}: {calc}. best[{i}] = {show(old)}보다 짧으므로 best[{i}] 값을 "
+                frame({"en": f"Hose {node}–{i}: {calc}, shorter than best[{i}] = {or_infinity(old)}, so best[{i}] becomes {cost}.",
+                       "ko": f"호스 {node}–{i}: {calc}. best[{i}] = {or_infinity(old)}보다 짧으므로 best[{i}] 값을 "
                              f"{josa(cost, '(으)로')} 바꿉니다."},
                       lit_nodes=[node], good_nodes=[i], good_edge=e,
                       best_marks={"path": [v for v in range(n) if in_tree[v]], "good": [i]},

@@ -8,9 +8,12 @@ sample runs pinned to them (docs/adr/0011).
     run.frame(..., answer=driver_list(result))         # a list, printed as the Driver prints one
 
 Captions share driver_list, driver_value, plural and ordinal (English), josa (a Korean particle after a number),
-listed and listed_cells (values or grid cells joined with commas) and centre_text (an expand-around-centre centre).
+quote (a string in single quotes), or_infinity (∞ for an unreached cost), cell_name and cell_at (a grid cell),
+listed and listed_cells (values or grid cells joined with commas), centre_text (an expand-around-centre centre)
+and bag_text (the fewest-bags tables' cell tag).
 The solution's own node classes are shared too: TreeNode with build_tree (a Level-Order Array) and tree_values
-(back to one), and ListNode; node_order places a graph's nodes as its description's Diagram does.
+(back to one), and ListNode with build_list; node_order places a graph's nodes as its description's Diagram does.
+A helper two tracers need goes here: scripts/check-tracer-helpers.py fails on one defined in two files.
     wt.write(walkthrough_path("rotting-donuts"))
 
 The samples come through scripts/db-sql.sh, so the local database (or CODEBITE_DB's) must be at this
@@ -118,6 +121,15 @@ class ListNode:
         self.val, self.next = val, None
 
 
+def build_list(values):
+    """The solution's linked list of `values` as its ListNodes in order, each linked to the next: nodes[0] is the
+    head, and no values give []."""
+    nodes = [ListNode(v) for v in values]
+    for a, b in zip(nodes, nodes[1:]):
+        a.next = b
+    return nodes
+
+
 def plural(n, one, many):
     """`one` when n is 1, else `many`: f"{n} {plural(n, 'window', 'windows')}"."""
     return one if n == 1 else many
@@ -152,9 +164,29 @@ def listed(values, show=str):
     return ", ".join(show(v) for v in values)
 
 
+def quote(text):
+    """`text` in single quotes, as a caption names a string: 'aba'."""
+    return f"'{text}'"
+
+
+def or_infinity(x):
+    """A cost as a cell or caption shows it: "∞" for float("inf"), the cost a relaxation hasn't reached, else x."""
+    return "∞" if x == float("inf") else x
+
+
+def bag_text(size):
+    """The tag on a cell one candy bag of `size` back, in the fewest-bags tables."""
+    return {"en": f"bag {size}", "ko": f"봉지 {size}"}
+
+
 def cell_name(cell):
     """A grid cell (row, col) as captions and queue values write it: "1,2"."""
     return f"{cell[0]},{cell[1]}"
+
+
+def cell_at(r, c):
+    """Grid cell (r, c) as a caption writes it: "(1,2)"."""
+    return f"({r},{c})"
 
 
 def listed_cells(cells):

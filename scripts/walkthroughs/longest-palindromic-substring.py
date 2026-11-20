@@ -17,7 +17,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import centre_text, josa, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import centre_text, josa, plural, quote, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, span  # noqa: E402
 
 SLUG = "longest-palindromic-substring"
@@ -32,10 +32,6 @@ wt = Walkthrough(
         {"id": "s", "type": "array", "title": {"en": "s", "ko": "s (문자열)"}},
     ],
 )
-
-
-def q(text):
-    return f"'{text}'"
 
 
 def letters(k):
@@ -72,12 +68,12 @@ def solve(s, run):
             sub = s[left:right + 1]
             off_end = left - 1 < 0 or right + 1 >= n
             if left == right:
-                en = f"{where['en']}: {q(sub)} alone is a palindrome."
-                ko = f"{where['ko']}: 한 글자 {q(sub)}도 회문입니다."
+                en = f"{where['en']}: {quote(sub)} alone is a palindrome."
+                ko = f"{where['ko']}: 한 글자 {quote(sub)}도 회문입니다."
             else:
-                en = f"{where['en']}: letters {left} and {right} are both {q(s[left])}, so {q(sub)} is a palindrome."
-                ko = (f"{where['ko']}: 글자 {josa(left, '과와')} {right}의 글자가 같으므로({q(s[left])}) "
-                      f"{q(sub)} 부분은 회문입니다.")
+                en = f"{where['en']}: letters {left} and {right} are both {quote(s[left])}, so {quote(sub)} is a palindrome."
+                ko = (f"{where['ko']}: 글자 {josa(left, '과와')} {right}의 글자가 같으므로({quote(s[left])}) "
+                      f"{quote(sub)} 부분은 회문입니다.")
             best_mark = None
             if off_end:  # the loop ends here, and the length is compared at once
                 length = right - left + 1
@@ -100,22 +96,22 @@ def solve(s, run):
                 en_end, ko_end = "so there is no palindrome here.", "여기서는 회문이 없습니다."
             elif length > longest:
                 longest, best, best_mark = length, grown, "good"
-                en_end = f"so this centre stops at {q(s[left + 1:right])}, and {length} beats the longest so far."
-                ko_end = (f"이 가운데는 {q(s[left + 1:right])} 부분에서 멈추고, {josa(length, '은는')} 지금까지의 "
+                en_end = f"so this centre stops at {quote(s[left + 1:right])}, and {length} beats the longest so far."
+                ko_end = (f"이 가운데는 {quote(s[left + 1:right])} 부분에서 멈추고, {josa(length, '은는')} 지금까지의 "
                           "최장보다 깁니다.")
             else:
-                en_end = (f"so this centre stops at {q(s[left + 1:right])}, and {length} doesn't beat the longest, "
+                en_end = (f"so this centre stops at {quote(s[left + 1:right])}, and {length} doesn't beat the longest, "
                           f"{longest}.")
-                ko_end = (f"이 가운데는 {q(s[left + 1:right])} 부분에서 멈추고, {josa(length, '은는')} 최장 "
+                ko_end = (f"이 가운데는 {quote(s[left + 1:right])} 부분에서 멈추고, {josa(length, '은는')} 최장 "
                           f"{longest}보다 길지 않습니다.")
-            frame({"en": f"{where['en']}: letter {left} is {q(s[left])} but letter {right} is {q(s[right])}, "
+            frame({"en": f"{where['en']}: letter {left} is {quote(s[left])} but letter {right} is {quote(s[right])}, "
                          f"{en_end}",
-                   "ko": f"{where['ko']}: 글자 {left}의 {q(s[left])}, 글자 {right}의 {q(s[right])}. 서로 다르므로 "
+                   "ko": f"{where['ko']}: 글자 {left}의 {quote(s[left])}, 글자 {right}의 {quote(s[right])}. 서로 다르므로 "
                          f"{ko_end}"},
                   left=left, right=right, grown=grown, marks={"bad": [left, right]}, best_mark=best_mark)
-    frame({"en": f"Every centre is done: the longest palindrome is {q(s[best[0]:best[1] + 1])}, "
+    frame({"en": f"Every centre is done: the longest palindrome is {quote(s[best[0]:best[1] + 1])}, "
                  f"{longest} {plural(longest, 'letter', 'letters')}. Answer: {longest}.",
-           "ko": f"모든 가운데를 마쳤습니다. 가장 긴 회문은 {q(s[best[0]:best[1] + 1])} 부분으로 {longest}글자이고, "
+           "ko": f"모든 가운데를 마쳤습니다. 가장 긴 회문은 {quote(s[best[0]:best[1] + 1])} 부분으로 {longest}글자이고, "
                  f"답은 {longest}입니다."},
           marks={"path": list(range(best[0], best[1] + 1)),
                  "dim": [i for i in range(n) if not best[0] <= i <= best[1]]},

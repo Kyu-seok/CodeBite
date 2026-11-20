@@ -19,7 +19,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import driver_list, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import cell_at, driver_list, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Tree, Walkthrough, at, move  # noqa: E402
 
 SLUG = "word-search-ii"
@@ -40,10 +40,6 @@ wt = Walkthrough(
          "empty": {"en": "none yet", "ko": "아직 없음"}},
     ],
 )
-
-
-def cell(r, c):
-    return f"({r},{c})"
 
 
 def listed(items, ko=False):
@@ -136,10 +132,10 @@ def solve(board, words, run):
         leaving = [(r, c, t) for r, c, t, _, _ in returns]
         pruned = [t for _, _, t, p, _ in returns if p]
         dead = [[r, c] for r, c, _, _, f in returns if not f]
-        names = [f"'{letters[r][c]}' {cell(r, c)}" for r, c, _, _, _ in returns]
+        names = [f"'{letters[r][c]}' {cell_at(r, c)}" for r, c, _, _, _ in returns]
         back = path[-1] if path else None
-        to = ({"en": f" back at the call on '{letters[back[0]][back[1]]}' {cell(back[0], back[1])}",
-               "ko": f" '{letters[back[0]][back[1]]}' {cell(back[0], back[1])} 칸의 호출로 돌아갑니다"} if back else
+        to = ({"en": f" back at the call on '{letters[back[0]][back[1]]}' {cell_at(back[0], back[1])}",
+               "ko": f" '{letters[back[0]][back[1]]}' {cell_at(back[0], back[1])} 칸의 호출로 돌아갑니다"} if back else
               {"en": " back at the scan", "ko": " 칸 훑기로 돌아갑니다"})
         if len(returns) == 1:
             who = {"en": f"The call on {names[0]} returns", "ko": f"{names[0]} 칸의 호출이 끝나고"}
@@ -150,8 +146,8 @@ def solve(board, words, run):
         need = sorted(k for k in nodes_by_id[t0] if k != "$")
         if not f0 and need:
             needs = " or ".join(f"'{k}'" for k in need)
-            why = {"en": f" (no neighbour of {cell(r0, c0)} holds {needs})",
-                   "ko": f"{cell(r0, c0)} 칸의 이웃에 {' 또는 '.join(chr(39) + k + chr(39) for k in need)} 글자가 없어 "}
+            why = {"en": f" (no neighbour of {cell_at(r0, c0)} holds {needs})",
+                   "ko": f"{cell_at(r0, c0)} 칸의 이웃에 {' 또는 '.join(chr(39) + k + chr(39) for k in need)} 글자가 없어 "}
         else:
             why = {"en": "", "ko": ""}
         if pruned:
@@ -194,9 +190,9 @@ def solve(board, words, run):
             if 0 <= nr < rows and 0 <= nc < cols and board[nr][nc] in node:
                 nxt = board[nr][nc]
                 search(nr, nc, node, {
-                    "en": f"From {cell(r, c)}, the neighbour {cell(nr, nc)} holds '{nxt}', a child of this node: "
+                    "en": f"From {cell_at(r, c)}, the neighbour {cell_at(nr, nc)} holds '{nxt}', a child of this node: "
                           f"step onto it.",
-                    "ko": f"{cell(r, c)} 칸의 이웃 {cell(nr, nc)} 칸에 있는 '{nxt}' 글자가 이 노드의 자식이므로 그 칸으로 "
+                    "ko": f"{cell_at(r, c)} 칸의 이웃 {cell_at(nr, nc)} 칸에 있는 '{nxt}' 글자가 이 노드의 자식이므로 그 칸으로 "
                           f"갑니다."})
         board[r][c] = letter
         path.pop()
@@ -209,9 +205,9 @@ def solve(board, words, run):
         for c in range(cols):
             if board[r][c] in trie:
                 search(r, c, trie, {
-                    "en": f"The scan reaches {cell(r, c)}: '{board[r][c]}' is a child of the root, so a word may start "
+                    "en": f"The scan reaches {cell_at(r, c)}: '{board[r][c]}' is a child of the root, so a word may start "
                           f"here. Step onto it and mark it \"#\".",
-                    "ko": f"보드를 훑다가 {cell(r, c)} 칸에 닿았습니다. '{board[r][c]}' 글자가 루트의 자식이라 여기서 "
+                    "ko": f"보드를 훑다가 {cell_at(r, c)} 칸에 닿았습니다. '{board[r][c]}' 글자가 루트의 자식이라 여기서 "
                           f"단어가 시작될 수 있으니, 이 칸으로 가서 \"#\" 표시를 합니다."})
     flush_returns()
 

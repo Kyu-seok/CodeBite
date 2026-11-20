@@ -14,7 +14,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import driver_list, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import driver_list, or_infinity, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, move  # noqa: E402
 
 SLUG = "cheapest-courier-route"
@@ -34,10 +34,6 @@ wt = Walkthrough(
         {"id": "state", "type": "vars"},
     ],
 )
-
-
-def show(x):
-    return "∞" if x == INF else x
 
 
 def arrow(route):
@@ -92,10 +88,10 @@ def solve(n, links, src, dst, k, run):
                 node_marks["good"] = [b]
                 now_marks["good"] = [b]
         run.frame(caption,
-                  cafes={"values": {str(v): show(shown[v]) for v in range(n)},
+                  cafes={"values": {str(v): or_infinity(shown[v]) for v in range(n)},
                          "nodeMarks": node_marks, "edgeMarks": edge_marks},
-                  last={"values": [show(c) for c in last_row], "marks": last_marks},
-                  now={"values": [show(c) for c in updated], "marks": now_marks},
+                  last={"values": [or_infinity(c) for c in last_row], "marks": last_marks},
+                  now={"values": [or_infinity(c) for c in updated], "marks": now_marks},
                   state={"items": [{"label": {"en": "round", "ko": "라운드"}, "value": f"{rnd} / {rounds}"},
                                    {"label": {"en": "legs allowed", "ko": "허용 구간 수"}, "value": rounds}]},
                   moves=list(moves), **answer)
@@ -130,17 +126,17 @@ def solve(n, links, src, dst, k, run):
                 old = updated[b]
                 updated[b] = cost[a] + w
                 new_via[b] = (a, rnd)
-                frame({"en": f"Link {a}→{b}: {cost[a]} + {w} = {updated[b]} beats {show(old)}, "
+                frame({"en": f"Link {a}→{b}: {cost[a]} + {w} = {updated[b]} beats {or_infinity(old)}, "
                              f"so cafe {b} costs {updated[b]} now.",
-                       "ko": f"링크 {a}→{b}: {cost[a]} + {w} = {updated[b]}. 기존 값 {show(old)}보다 작으므로 "
+                       "ko": f"링크 {a}→{b}: {cost[a]} + {w} = {updated[b]}. 기존 값 {or_infinity(old)}보다 작으므로 "
                              f"카페 {b}의 비용을 이 값으로 바꿉니다."},
                       rnd, leg=i, improved=True,
                       moves=[move(at("last", a), at("cafes", [a, b])),
                              move(at("cafes", [a, b]), at("now", b), value=updated[b])])
             else:
-                frame({"en": f"Link {a}→{b}: {cost[a]} + {w} = {cost[a] + w} doesn't beat {show(updated[b])}, "
+                frame({"en": f"Link {a}→{b}: {cost[a]} + {w} = {cost[a] + w} doesn't beat {or_infinity(updated[b])}, "
                              f"so cafe {b} keeps it.",
-                       "ko": f"링크 {a}→{b}: {cost[a]} + {w} = {cost[a] + w}. 기존 값 {show(updated[b])}보다 작지 않으므로 "
+                       "ko": f"링크 {a}→{b}: {cost[a]} + {w} = {cost[a] + w}. 기존 값 {or_infinity(updated[b])}보다 작지 않으므로 "
                              f"카페 {b}의 비용은 그대로입니다."},
                       rnd, leg=i,
                       moves=[move(at("last", a), at("cafes", [a, b])), move(at("cafes", [a, b]), value=cost[a] + w)])
@@ -192,7 +188,7 @@ def solve(n, links, src, dst, k, run):
         ko += (f" 더 싼 경로 {arrow(route)}(비용 {cheaper})의 경우 구간 {more}개가 필요해 maxStops = {k}일 때 허용되는 "
                f"{rounds}개를 넘습니다.")
     # a cafe the route left earlier shows the cost it left with: from the last-round row when that holds it
-    shows = [move(at("last", v), at("cafes", v)) if used[v] == last_row[v] else move(dst=at("cafes", v), value=show(used[v]))
+    shows = [move(at("last", v), at("cafes", v)) if used[v] == last_row[v] else move(dst=at("cafes", v), value=or_infinity(used[v]))
              for v in path if used[v] != updated[v]]
     frame({"en": en, "ko": ko}, rounds, path=path, used=used, moves=shows, answer=str(cost[dst]))
 

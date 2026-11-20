@@ -15,7 +15,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import ListNode, driver_list, josa, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import ListNode, build_list, driver_list, josa, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, linked_list, move, node_id  # noqa: E402
 
 SLUG = "merge-leaderboard-runs"
@@ -38,16 +38,9 @@ wt = Walkthrough(
 )
 
 
-def build(values):
-    nodes = [ListNode(v) for v in values]
-    for a, b in zip(nodes, nodes[1:]):
-        a.next = b
-    return nodes
-
-
 def solve(a_values, b_values, run):
     """Solution.mergeRuns with a frame per line. Returns the answer as the Driver prints it."""
-    a_nodes, b_nodes = build(a_values), build(b_values)
+    a_nodes, b_nodes = build_list(a_values), build_list(b_values)
     dummy = ListNode("")  # the solution's dummy holds 0; its value is never read, so it is drawn empty
     order = [dummy] + a_nodes + b_nodes
     run_a = a_nodes[0] if a_nodes else None
