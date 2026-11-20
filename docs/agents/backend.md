@@ -26,3 +26,14 @@ Each feature package holds `controller/`, `service/` and `dto/` (the `*Request` 
 - `github/gateway/FakeGitHubGateway`, swapped in by `config/TestGitHubConfig`; `config/TestKafkaConfig` runs Imports synchronously
 - `problem/MigratedDatabase` for tests that read migrated rows (H2 keeps `E'…\n…'` escapes literally)
 - `testsupport/LoopbackHttpServer` for a test that stands in for an HTTP API with a JDK `HttpServer`: it binds 127.0.0.1, never the wildcard address (#247)
+
+## Tech stack
+
+- Java 17, Spring Boot 3.2.5, Gradle 8.5 (wrapper)
+- Spring Security (stateless JWT auth, OAuth via Google/GitHub)
+- Spring Data JPA + Flyway migrations
+- PostgreSQL 15 (dev/prod), H2 in PostgreSQL mode (tests)
+- Redis 7 (JWT token blacklist, user profile cache)
+- Spring Kafka (submission event producer)
+- Spring Boot Actuator + Micrometer Prometheus (metrics)
+- jjwt 0.12.5 for JWT token handling
