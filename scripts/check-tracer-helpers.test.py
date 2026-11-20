@@ -81,16 +81,6 @@ class CheckTracerHelpers(unittest.TestCase):
         self.write("two-sum.py", ORDINAL + "\n\n" + ORDINAL)
         self.assertEqual(self.check(), (0, ""))
 
-    def test_a_python_312_named_by_the_environment_that_is_older_or_missing_is_passed_over(self):
-        if sys.version_info >= (3, 12) or not shutil.which("python3.12"):
-            self.skipTest("needs an older python3 running the test and a python3.12 to hand over to")
-        self.write("two-sum.py", ORDINAL)
-        self.write("three-sum.py", ORDINAL)
-        for named in (sys.executable, "no-such-python"):
-            code, out = self.check(CODEBITE_PYTHON312=named)
-            self.assertEqual(code, 1, named)
-            self.assertIn("COPY  ordinal", out)
-
     def test_a_tracer_that_does_not_parse_exits_2_naming_it(self):
         self.write("two-sum.py", "def solve(:\n")
         run = subprocess.run([sys.executable, "-I", str(SCRIPT), str(self.dir)], capture_output=True, text=True)

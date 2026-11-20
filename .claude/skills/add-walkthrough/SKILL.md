@@ -78,7 +78,7 @@ The backend reads `walkthroughs/` once at startup, so restart the branch servers
 node scripts/walkthrough-app-check.mjs <vite url> <backend api url> <scratchpad>/shots/<slug>-app <slug>
 ```
 
-It drives `/problems/<slug>` signed out and signed in, at 1440 and 390, dark and light, English and Korean: the tab, the reveal, the player's theme, language and labels, sideways scroll, ←/→ stepping only while the player has focus and never from the editor, the run kept across a tab switch, and no tab on a problem without a Walkthrough. Read its shots, the `-3b-last` ones above all: the last frame is where a wrong answer path or an unexplained value shows. When the description has a Diagram, hold `<slug>-diagram-beside-frame-1440` to step 3's Diagram look.
+It drives `/problems/<slug>` signed out and signed in, at 1440 and 390, dark and light, English and Korean: the tab, the reveal, the player's theme, language and labels, sideways scroll, ←/→ stepping only while the player has focus and never from the editor, the run kept across a tab switch, and no tab on a problem without a Walkthrough. Read its shots, the `-3b-last` ones above all: the last frame is where a wrong answer path or an unexplained value shows. When the description has a Diagram, hold `<slug>-diagram-beside-frame-1440` to step 3's Diagram look. A line `FAIL <pass>: <what> did not show within 15 s` is a pass that stopped there, with the page as it stood in `<pass>-stopped.png`: read that shot before running again.
 
 Done when the check exits 0 and the shots show the drawing as the capture.mjs sheets did. Stop the servers with `scripts/dev-branch-servers.sh stop`.
 

@@ -2,7 +2,7 @@
 
 Run: python3 -I scripts/replay-judge0-python.test.py
 """
-import importlib.util, os, shutil, stat, tempfile, unittest
+import importlib.util, os, shutil, stat, subprocess, tempfile, unittest
 from pathlib import Path
 
 spec = importlib.util.spec_from_file_location("replay", Path(__file__).with_name("replay-judge0-python.py"))
@@ -96,12 +96,12 @@ class ReplayTest(unittest.TestCase):
         self.assertEqual(sleeps, [2.5])
 
 
-# The local judge's tests run real tiny programs on a local Python 3.12.
-PYTHON_312 = os.environ.get("CODEBITE_PYTHON312") or shutil.which("python3.12") or "/opt/homebrew/bin/python3.12"
+# The local judge's tests run real tiny programs on a local Python 3.12, the one scripts/python312.sh finds.
+PYTHON_312 = subprocess.run([str(Path(__file__).with_name("python312.sh"))], capture_output=True, text=True).stdout.strip()
 ECHO_DOUBLE = "print(int(input()) * 2)"
 
 
-@unittest.skipUnless(os.path.exists(PYTHON_312), f"needs Python 3.12 at {PYTHON_312}")
+@unittest.skipUnless(PYTHON_312, "needs a Python 3.12 or newer (scripts/python312.sh found none)")
 class LocalJudgeTest(unittest.TestCase):
 
     def verdicts(self, source, cases, time_limit=5):
