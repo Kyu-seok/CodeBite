@@ -20,6 +20,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.startsWith;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -111,6 +113,27 @@ class ProblemIntegrationTest {
                 .andExpect(jsonPath("$.starterCode.cpp").isNotEmpty())
                 .andExpect(jsonPath("$.sampleTestCases").isArray())
                 .andExpect(jsonPath("$.sampleTestCases.length()").value(2));
+    }
+
+    @Test
+    void getProblemBySlug_inEnglish_comesFromTheProblem() throws Exception {
+        mockMvc.perform(get("/api/problems/snack-drawer-pair").header("Accept-Language", "en"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("Snack Drawer Pair"))
+                .andExpect(jsonPath("$.description").value(startsWith(
+                        "The array `snacks` lists the calories of each snack")))
+                .andExpect(jsonPath("$.constraints").value(containsString(
+                        "`2 <= snacks.length <= 80000`")));
+    }
+
+    @Test
+    void getProblemBySlug_inKorean_comesFromTheTranslation() throws Exception {
+        mockMvc.perform(get("/api/problems/snack-drawer-pair").header("Accept-Language", "ko"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("간식 서랍 짝 찾기"))
+                .andExpect(jsonPath("$.slug").value("snack-drawer-pair"))
+                .andExpect(jsonPath("$.constraints").value(containsString(
+                        "`2 <= snacks.length <= 80000`")));
     }
 
     @Test

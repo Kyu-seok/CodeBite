@@ -51,6 +51,15 @@ public final class MigratedDatabase {
         return result;
     }
 
+    /** Runs one statement that returns no rows, such as an INSERT, and returns the rows it changed. */
+    public int execute(String sql, Object... params) throws SQLException {
+        try (Connection connection = DriverManager.getConnection(url, "sa", "");
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            for (int i = 0; i < params.length; i++) statement.setObject(i + 1, params[i]);
+            return statement.executeUpdate();
+        }
+    }
+
     /** The first column of every row. */
     public List<String> strings(String sql, Object... params) throws SQLException {
         return query(sql, row -> row.getString(1), params);
