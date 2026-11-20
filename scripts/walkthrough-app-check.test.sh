@@ -2,7 +2,8 @@
 # Checks scripts/walkthrough-app-check.mjs without a real Chrome or servers: it parses, it refuses
 # missing arguments with its usage and exit 2 before starting anything, and against a fake Chrome that
 # accepts the DevTools socket but never answers, it fails naming the command and leaves no Chrome behind;
-# against one whose page never draws, every wait that runs out is a named failed check, never a stack trace;
+# against one whose page never draws, every wait that runs out is a named failed check, never a stack trace
+# (the side-by-side shot's waits too);
 # and diagramBeside, which decides whether a problem gets the description's Diagrams beside the first frame.
 set -uo pipefail
 script="$(cd "$(dirname "$0")" && pwd)/walkthrough-app-check.mjs"
@@ -45,9 +46,11 @@ const server = createServer((_req, res) => {
 server.on('upgrade', (req, socket) => {
   const accept = createHash('sha1').update(req.headers['sec-websocket-key'] + '258EAFA5-E914-47DA-95CA-C5AB0DC85B11').digest('base64');
   socket.write(`HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: ${accept}\r\n\r\n`);
-  if (process.env.FAKE_CHROME !== 'blank') return socket.on('data', () => {}); // read every command, answer none
+  if (!process.env.FAKE_CHROME) return socket.on('data', () => {}); // read every command, answer none
   // blank: a Chrome whose page never draws anything. Every expression is false, every other command
-  // an empty result, a screenshot one byte.
+  // an empty result, a screenshot one byte. ready: every expression is true, except one that holds
+  // $FAKE_CHROME_NEVER, which stays false.
+  const answer = expression => process.env.FAKE_CHROME === 'ready' && !expression.includes(process.env.FAKE_CHROME_NEVER);
   const reply = obj => {
     const body = Buffer.from(JSON.stringify(obj));
     const head = body.length < 126 ? Buffer.from([0x81, body.length]) : Buffer.from([0x81, 126, body.length >> 8, body.length & 255]);
@@ -66,8 +69,8 @@ server.on('upgrade', (req, socket) => {
       const opcode = buf[0] & 15;
       buf = buf.subarray(at + 4 + len);
       if (opcode !== 1) continue;
-      const { id, method } = JSON.parse(text);
-      reply({ id, result: method === 'Runtime.evaluate' ? { result: { type: 'boolean', value: false } }
+      const { id, method, params } = JSON.parse(text);
+      reply({ id, result: method === 'Runtime.evaluate' ? { result: { type: 'boolean', value: answer(params.expression) } }
         : method === 'Page.captureScreenshot' ? { data: 'AA==' } : {} });
     }
   });
@@ -96,5 +99,25 @@ out=$(CHROME_PATH="$dir/silent-chrome.mjs" FAKE_CHROME=blank WALKTHROUGH_WAIT_MS
 [[ "$out" == *"FAIL in-1440-light-ko: "* && "$out" == *"FAIL no-walkthrough: "* ]] \
   || { echo "FAIL: a pass that stops must not stop the ones after it (got: $out)"; fail=1; }
 if /usr/bin/grep -qE '^ +at |Error:|Node\.js v' <<<"$out"; then echo "FAIL: a failed check must not come with a stack trace (got: $out)"; fail=1; fi
+
+# The side-by-side shot's own waits (the blank page it is laid out on, its images) fail a named check
+# like the passes' waits. An API that answers a description with a Diagram, and a Chrome that says yes
+# to everything but the one wait.
+cat > "$dir/api.mjs" <<'JS'
+import { createServer } from 'node:http';
+import { writeFileSync } from 'node:fs';
+const body = JSON.stringify({ token: 't', content: [], description: '```diagram-graph\nedges: [[0,1]]\n```\n' });
+const server = createServer((_req, res) => { res.setHeader('content-type', 'application/json'); res.end(body); });
+server.listen(0, '127.0.0.1', () => writeFileSync(process.argv[2], String(server.address().port)));
+JS
+node "$dir/api.mjs" "$dir/api.port" & api=$!
+trap '{ kill "$api" && wait "$api"; } 2>/dev/null; rm -rf "$dir"' EXIT
+for _ in $(seq 50); do [[ -s "$dir/api.port" ]] && break; sleep 0.1; done
+for never in "about:blank|the blank page for the side-by-side shot" "document.images|the side-by-side shot's images"; do
+  out=$(CHROME_PATH="$dir/silent-chrome.mjs" FAKE_CHROME=ready FAKE_CHROME_NEVER="${never%%|*}" WALKTHROUGH_WAIT_MS=50 \
+    timeout 60 node "$script" http://127.0.0.1:1 "http://127.0.0.1:$(cat "$dir/api.port")/api" "$dir/ready" some-slug 2>&1); code=$?
+  [[ $code == 1 && "$out" == *"FAIL diagram-beside: ${never#*|} did not show within 0.05 s"* ]] \
+    || { echo "FAIL: the side-by-side shot's wait for ${never%%|*} must fail a named check when it runs out (got $code: $out)"; fail=1; }
+done
 (( fail )) && exit 1
 echo "PASS: walkthrough-app-check.mjs parses, refuses missing arguments, times out a silent Chrome, fails a named check when a wait runs out, and picks its Diagram shot"
