@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # PreToolUse hook (Bash): refuses `gh pr merge` with --delete-branch / -d.
-# Branches here live in worktrees (CLAUDE.md, "Parallel sessions"), and gh's
+# Branches here live in worktrees (docs/agents/parallel-sessions.md), and gh's
 # local branch cleanup removes the worktree too, along with any server or
 # uncommitted work running from it. Also refuses `gradlew --stop`: the Gradle
 # daemons are shared by every session and by the merge gate.
