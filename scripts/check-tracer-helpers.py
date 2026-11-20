@@ -57,7 +57,7 @@ def python_312():
     handover never lands on an older one and starts again."""
     found = subprocess.run([str(Path(__file__).with_name("python312.sh"))], capture_output=True, text=True)
     if found.returncode != 0:
-        stop(f"tracers are Python 3.12: {found.stderr.strip().removeprefix('python312: ')}")
+        stop(f"tracers are Python 3.12: {found.stderr.strip()}")
     return found.stdout.strip()
 
 

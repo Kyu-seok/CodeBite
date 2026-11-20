@@ -41,7 +41,7 @@ def python_tool():
     """A Python 3.12 or newer, like the id 100 image: the one scripts/python312.sh finds."""
     found = subprocess.run([str(Path(__file__).with_name("python312.sh"))], capture_output=True, text=True)
     if found.returncode != 0:
-        raise Missing(found.stderr.strip().removeprefix("python312: "))
+        raise Missing(found.stderr.strip())
     return found.stdout.strip()
 
 
