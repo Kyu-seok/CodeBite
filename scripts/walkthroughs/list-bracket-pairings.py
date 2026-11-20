@@ -6,7 +6,9 @@ makes 64 calls, too many to draw as a tree, so the call stack stands beside the 
 card per open call, each bracket moving from its call into the prefix.
 
 One frame per call made, one per string found, and one per return to a call that then tries ")": the calls that
-returned leave together in that frame, their brackets dropped from the prefix.
+returned leave together in that frame, their brackets dropped from the prefix. That is 92 frames for pairCount = 4, so
+only the first two strings are drawn in full, which shows a return and the ")" tried after it (#388). Each further
+string is one frame: the return and the calls that lead to it run undrawn, and its caption says how many they were.
 
     CODEBITE_DB=<database> scripts/walkthroughs/list-bracket-pairings.py
 
@@ -17,7 +19,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import driver_list, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import driver_list, ordinal, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, call, move  # noqa: E402
 
 SLUG = "list-bracket-pairings"
@@ -37,13 +39,21 @@ wt = Walkthrough(
 )
 
 
+FULL = 2  # the strings drawn in full, a frame per call and return
+
+
 def solve(pair_count, run):
     """Solution.listBracketPairings with a frame per call, per string found and per return to a call that tries
-    ")". Returns the answer as the Driver prints it."""
+    ")" for the first FULL strings, then a frame per string. Returns the answer as the Driver prints it."""
     size = 2 * pair_count
     prefix = []
     cards = []  # (opened, closed) per open call, bottom first
     sequences = []
+
+    skipped = {"steps": 0, "back": None}  # the frames not drawn since the last one, and the call they went back to
+
+    def folding():
+        return len(sequences) >= FULL
 
     def frame(caption, prefix_marks=None, call_marks=None, leaving=0, result_marks=None, moves=None, **answer):
         run.frame(caption,
@@ -70,6 +80,9 @@ def solve(pair_count, run):
         prefix.append(bracket)
         child = (o + 1, c) if bracket == "(" else (o, c + 1)
         cards.append(child)
+        if folding():
+            skipped["steps"] += 1
+            return
         frame({"en": f"{why['en']}: add {bracket} and call build(opened={child[0]}, closed={child[1]}).",
                "ko": f"{why['ko']} {bracket} 괄호를 붙이고 다음 호출 build(opened={child[0]}, closed={child[1]})에 넘깁니다."},
               prefix_marks={"good": [len(prefix) - 1]}, call_marks={"lit": [depth + 1]},
@@ -81,6 +94,28 @@ def solve(pair_count, run):
         depth = len(cards) - 1
         if len(prefix) == size:
             text = "".join(prefix)
+            if folding():
+                # The last frame drew the string before this one in full. Every bracket moves in from the call that
+                # added it, the ones kept too: the answer test reads a prefix whose tail matches the last one's
+                # further left as shifted, and asks for a move into the brackets in front of it. The calls from
+                # `back` up are new, and each is called from the bracket below it as add() draws it.
+                back, steps, k = skipped["back"], skipped["steps"], len(sequences) + 1
+                skipped.update(steps=0, back=None)
+                o, c = cards[back]
+                moves = [move(at("calls", j), at("prefix", j), value=prefix[j]) for j in range(size)]
+                moves += [move(at("prefix", j), at("calls", j + 1), value=f"{cards[j + 1][0]},{cards[j + 1][1]}")
+                          for j in range(back, size)]
+                sequences.append(text)
+                frame({"en": f"Skipping {steps} steps like the ones before: build(opened={o}, closed={c}) is back from "
+                             f"its ( branch and tries ), and the calls after it fill the prefix again, so {text} is "
+                             f"the {ordinal(k)} string.",
+                       "ko": f"앞과 같은 {steps}단계를 건너뜁니다. build(opened={o}, closed={c}) 호출이 ( 쪽에서 돌아와 ) "
+                             f"괄호를 시도하고 이어지는 호출이 접두사를 다시 채워, {text} 문자열이 {k}번째로 목록에 "
+                             f"들어갑니다."},
+                      prefix_marks={"good": list(range(back, size))}, call_marks={"lit": [back], "good": [depth]},
+                      result_marks={"good": [k - 1]},
+                      moves=moves + [move(at("calls", depth), at("result", k - 1), value=text)])
+                return
             sequences.append(text)
             frame({"en": f"The prefix is full, {size} brackets: {text} is well-formed, so it goes into the list.",
                    "ko": f"접두사가 괄호 {size}개로 다 찼습니다. {text} 문자열은 올바르므로 목록에 넣습니다."},
@@ -99,13 +134,18 @@ def solve(pair_count, run):
             if tried_open:
                 found = len(sequences) - before
                 gone, moves, emptied = unwind(depth)
-                frame({"en": f"build(opened={opened}, closed={closed}) is back from its ( branch with {found} "
-                             f"{plural(found, 'string', 'strings')} found; now closed {closed} < opened {opened}, so it "
-                             f"tries ).",
-                       "ko": f"build(opened={opened}, closed={closed}) 호출이 ( 쪽 호출에서 문자열 {found}개를 찾고 "
-                             f"돌아왔습니다. 이제 closed {closed} < opened {opened}이므로 ) 괄호를 시도합니다."},
-                      prefix_marks={"bad": emptied}, call_marks={"lit": [depth]}, leaving=gone, moves=moves)
-                del cards[depth + 1:]
+                if folding():
+                    skipped["steps"] += 1
+                    skipped["back"] = depth
+                    del cards[depth + 1:]
+                else:
+                    frame({"en": f"build(opened={opened}, closed={closed}) is back from its ( branch with {found} "
+                                 f"{plural(found, 'string', 'strings')} found; now closed {closed} < opened {opened}, so "
+                                 f"it tries ).",
+                           "ko": f"build(opened={opened}, closed={closed}) 호출이 ( 쪽 호출에서 문자열 {found}개를 찾고 "
+                                 f"돌아왔습니다. 이제 closed {closed} < opened {opened}이므로 ) 괄호를 시도합니다."},
+                          prefix_marks={"bad": emptied}, call_marks={"lit": [depth]}, leaving=gone, moves=moves)
+                    del cards[depth + 1:]
             add(")", {"en": f"closed {closed} < opened {opened}",
                       "ko": f"closed {closed} < opened {opened}이므로"})
             build(opened, closed + 1)
