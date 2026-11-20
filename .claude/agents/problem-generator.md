@@ -6,7 +6,7 @@ description: Generate a complete problem definition — SQL migration, driver co
 # Problem Generator Agent
 
 You generate complete problem definitions for CodeBite, a code practice platform. Each problem needs:
-1. A Flyway SQL migration (problem + test cases + English translation)
+1. A Flyway SQL migration (problem + test cases; the English text goes on `problems` only)
 2. Driver code for 4 languages (Java, Python, C++, JavaScript)
 3. Starter code for 4 languages
 
@@ -129,19 +129,10 @@ VALUES
     ((SELECT id FROM problems WHERE slug = '{slug}'), '{input3}', '{output3}', TRUE, 3),
     ((SELECT id FROM problems WHERE slug = '{slug}'), '{input4}', '{output4}', FALSE, 4),
     ((SELECT id FROM problems WHERE slug = '{slug}'), '{input5}', '{output5}', FALSE, 5);
-
--- English translation
-INSERT INTO problem_translations (problem_id, locale, title, description, constraints)
-VALUES (
-    (SELECT id FROM problems WHERE slug = '{slug}'),
-    'en',
-    '{Title}',
-    '{same description}',
-    '{constraints}'
-);
 ```
 
 **Critical SQL rules:**
+- Never insert a `problem_translations` row with locale `en`: English lives only on `problems`, and the database refuses an `en` row (V594). The Korean row comes from `translation-agent`
 - Escape single quotes as `''` in ALL string values
 - Use `(SELECT id FROM problems WHERE slug = '...')` for foreign keys, never hardcoded IDs
 - Multi-line test case inputs: use `E'line1\nline2'` PostgreSQL syntax or keep on single lines where possible

@@ -77,15 +77,7 @@ grep -r "'ko'" common/src/main/resources/db/migration/*.sql | grep -l "${slug}"
 - PASS: Found Korean translation for this slug
 - FAIL: No Korean translation found
 
-### 7. English Translation Exists
-Search for English translation:
-```bash
-grep -r "'en'" common/src/main/resources/db/migration/*.sql | grep -l "${slug}"
-```
-- PASS: Found English translation for this slug
-- FAIL: No English translation found
-
-### 8. Problem Number Assigned
+### 7. Problem Number Assigned
 Search for problem_number assignment:
 ```bash
 grep -r "problem_number" common/src/main/resources/db/migration/*.sql | grep "${slug}"
@@ -105,18 +97,17 @@ For a single problem:
 [PASS] Method signature: twoSum (consistent across all languages)
 [PASS] Test cases: 3 sample, 2 hidden (5 total)
 [FAIL] Korean translation: NOT FOUND
-[PASS] English translation: found
 [PASS] Problem number: #1
 
-Summary: 7/8 checks passed, 1 failed
+Summary: 6/7 checks passed, 1 failed
 ```
 
 For multiple problems, use a table format:
 ```
-| Slug         | SQL | Drivers | Starters | Methods | Tests | Korean | English | ProbNum |
-|-------------|-----|---------|----------|---------|-------|--------|---------|---------|
-| pair-sum    | OK  | 4/4     | 4/4      | OK      | 3s+2h | OK     | OK      | #1      |
-| find-dupes  | OK  | 4/4     | 4/4      | OK      | 3s+2h | MISS   | OK      | #2      |
+| Slug         | SQL | Drivers | Starters | Methods | Tests | Korean | ProbNum |
+|-------------|-----|---------|----------|---------|-------|--------|---------|
+| pair-sum    | OK  | 4/4     | 4/4      | OK      | 3s+2h | OK     | #1      |
+| find-dupes  | OK  | 4/4     | 4/4      | OK      | 3s+2h | MISS   | #2      |
 ```
 
 At the end, provide a summary of:
