@@ -40,8 +40,10 @@ done
 [[ $branch != master ]] || { echo "ship-branch: master is not shipped" >&2; exit 2; }
 
 # Stops the branch servers worktree $1 ran with scripts/dev-branch-servers.sh and drops their
-# database, Kafka topics and Redis index, from inside it: once it is gone only the main checkout's
-# `dev-branch-servers.sh orphans` finds them. A failure (Docker down, say) only warns.
+# database, Kafka topics and Redis index, from inside it: once it is gone,
+# `dev-branch-servers.sh orphans` finds whatever is left. A failure (Postgres or Docker down, say)
+# only warns. A stopped Kafka or Redis is no failure: drop drops the rest and says in one line
+# what it left and the drop <name> that deletes it later, so no warning is added to that.
 drop_branch_database() {
   local script="$1/scripts/dev-branch-servers.sh"
   [[ -x $script ]] || return 0
