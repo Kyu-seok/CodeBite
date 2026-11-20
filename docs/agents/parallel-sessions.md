@@ -22,6 +22,6 @@ The compose containers (`codebite-postgres`, `codebite-kafka`, `codebite-redis`)
 The pre-commit hook refuses commits on `master`, and the commit-msg hook a subject over 72 characters.
 
 ## Merging
-- Merge with `scripts/ship-branch.sh <branch>…` from the main checkout: it stops on unticked `- [ ]` in the PR unless `--allow-unticked`, waits for CI, squash-merges, deletes the branch (remote, local, worktree, database).
+- Merge with `scripts/ship-branch.sh <branch>…` from the main checkout: it stops on unticked `- [ ]` in the PR unless `--allow-unticked`, waits for CI, squash-merges, deletes the branch (remote, local, worktree, database). Its header says what it refuses and how it keeps itself current.
 - A project hook refuses `gh pr merge --delete-branch`, which deletes live worktrees.
 - Merge finished ticket branches into an integration branch with `scripts/merge-ticket.sh <branch> <title> [<branch> <title> ...]`, run from the integration worktree: one call merges them in order, runs the checks a clean merge skips and pushes only when green (its header has the details), so an orchestrator runs it directly and needs a subagent only for a conflict.
