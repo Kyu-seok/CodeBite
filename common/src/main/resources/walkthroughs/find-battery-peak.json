@@ -26,7 +26,7 @@
     "ko": "예시 1"
    },
    "input": "readings = [11,18,22,19,15]",
-   "expected": "2",
+   "expected": "VALID",
    "frames": [
     {
      "caption": {
@@ -169,8 +169,8 @@
     },
     {
      "caption": {
-      "en": "low = high = 2: the range is one reading, and readings[2] = 22 beats both neighbours, readings[1] = 18 and readings[3] = 19. The answer is index 2.",
-      "ko": "low = high = 2: 범위가 한 칸이고, readings[2] = 22의 양 이웃 readings[1] = 18, readings[3] = 19보다 큽니다. 답은 인덱스 2입니다."
+      "en": "low = high = 2: the range is one reading, and readings[2] = 22 beats both neighbours, readings[1] = 18 and readings[3] = 19. Return index 2: it is a peak, so the judge prints VALID.",
+      "ko": "low = high = 2: 범위가 한 칸이고, readings[2] = 22의 양 이웃 readings[1] = 18, readings[3] = 19보다 큽니다. 인덱스 2를 반환하고, 정점이므로 채점기는 VALID를 출력합니다."
      },
      "views": {
       "readings": {
@@ -200,7 +200,7 @@
        }
       }
      },
-     "answer": "2"
+     "answer": "VALID"
     }
    ],
    "sampleInput": "[11,18,22,19,15]"
@@ -211,7 +211,7 @@
     "ko": "예시 2"
    },
    "input": "readings = [3,7,12,25,20,14,9]",
-   "expected": "3",
+   "expected": "VALID",
    "frames": [
     {
      "caption": {
@@ -413,8 +413,8 @@
     },
     {
      "caption": {
-      "en": "low = high = 3: the range is one reading, and readings[3] = 25 beats both neighbours, readings[2] = 12 and readings[4] = 20. The answer is index 3.",
-      "ko": "low = high = 3: 범위가 한 칸이고, readings[3] = 25의 양 이웃 readings[2] = 12, readings[4] = 20보다 큽니다. 답은 인덱스 3입니다."
+      "en": "low = high = 3: the range is one reading, and readings[3] = 25 beats both neighbours, readings[2] = 12 and readings[4] = 20. Return index 3: it is a peak, so the judge prints VALID.",
+      "ko": "low = high = 3: 범위가 한 칸이고, readings[3] = 25의 양 이웃 readings[2] = 12, readings[4] = 20보다 큽니다. 인덱스 3을 반환하고, 정점이므로 채점기는 VALID를 출력합니다."
      },
      "views": {
       "readings": {
@@ -448,7 +448,7 @@
        }
       }
      },
-     "answer": "3"
+     "answer": "VALID"
     }
    ],
    "sampleInput": "[3,7,12,25,20,14,9]"

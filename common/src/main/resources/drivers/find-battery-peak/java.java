@@ -10,7 +10,14 @@ public class Main {
         String[] parts = inner.split(",");
         int[] nums = new int[parts.length];
         for (int i = 0; i < parts.length; i++) nums[i] = Integer.parseInt(parts[i].trim());
-        int result = new Solution().pinpointPeak(nums);
-        System.out.println(result);
+        // The solution gets a copy: one that edits the array must not change what is checked.
+        int result = new Solution().pinpointPeak(nums.clone());
+        System.out.println(isReturnedPeak(nums, result) ? "VALID" : "INVALID:" + result);
+    }
+
+    private static boolean isReturnedPeak(int[] readings, int i) {
+        int n = readings.length;
+        if (i < 0 || i >= n) return false;
+        return (i == 0 || readings[i] > readings[i - 1]) && (i == n - 1 || readings[i] > readings[i + 1]);
     }
 }

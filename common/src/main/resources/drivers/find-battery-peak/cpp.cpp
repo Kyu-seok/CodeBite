@@ -6,6 +6,12 @@ using namespace std;
 
 {USER_CODE}
 
+static bool isReturnedPeak(const vector<int>& readings, int i) {
+    int n = readings.size();
+    if (i < 0 || i >= n) return false;
+    return (i == 0 || readings[i] > readings[i - 1]) && (i == n - 1 || readings[i] > readings[i + 1]);
+}
+
 int main() {
     string numsLine;
     getline(cin, numsLine);
@@ -16,7 +22,13 @@ int main() {
     while (getline(ss, token, ',')) {
         nums.push_back(stoi(token));
     }
-    int result = Solution().pinpointPeak(nums);
-    cout << result << endl;
+    // The solution gets a copy: one that edits the array must not change what is checked.
+    vector<int> numsCopy = nums;
+    int result = Solution().pinpointPeak(numsCopy);
+    if (isReturnedPeak(nums, result)) {
+        cout << "VALID" << endl;
+    } else {
+        cout << "INVALID:" << result << endl;
+    }
     return 0;
 }

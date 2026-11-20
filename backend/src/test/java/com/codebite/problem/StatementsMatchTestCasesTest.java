@@ -56,7 +56,7 @@ class StatementsMatchTestCasesTest {
      * decision that a Driver works this way.
      */
     private static final Set<String> DRIVER_PRINTS_ANOTHER_FORM = Set.of(
-            "dedupe-textbook-shelf", "order-group-tasks", "space-cookie-bakes");
+            "dedupe-textbook-shelf", "find-battery-peak", "order-group-tasks", "space-cookie-bakes");
 
     private static final Set<String> CONSTRAINTS_NAME_NO_PARAMETER = Set.of();
 
