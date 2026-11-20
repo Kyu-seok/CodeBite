@@ -441,8 +441,8 @@
     },
     {
      "caption": {
-      "en": "heappop: the top, 1 from q1, is the earliest front left. The last entry, 4, takes the top and sifts down past 2 in the same step.",
-      "ko": "heappop: 맨 위의 q1의 1이 남은 앞 노드 중 가장 이릅니다. 마지막 항목 4가 맨 위를 채운 뒤 같은 단계에서 2 아래로 내려갑니다."
+      "en": "heappop: the top, 1 from q1, is the earliest front left. The last entry, 4, takes the top and in the same step sifts down 1 swap, past 2.",
+      "ko": "heappop: 맨 위의 q1의 1이 남은 앞 노드 중 가장 이릅니다. 마지막 항목 4가 맨 위를 채운 뒤 같은 단계에서 자리 바꿈 1번으로 2 아래로 내려갑니다."
      },
      "views": {
       "nodes": {
@@ -1198,8 +1198,8 @@
     },
     {
      "caption": {
-      "en": "heappop: the top, 3 from q1, is the earliest front left. The last entry, 5, takes the top and sifts down past 4 in the same step.",
-      "ko": "heappop: 맨 위의 q1의 3이 남은 앞 노드 중 가장 이릅니다. 마지막 항목 5가 맨 위를 채운 뒤 같은 단계에서 4 아래로 내려갑니다."
+      "en": "heappop: the top, 3 from q1, is the earliest front left. The last entry, 5, takes the top and in the same step sifts down 1 swap, past 4.",
+      "ko": "heappop: 맨 위의 q1의 3이 남은 앞 노드 중 가장 이릅니다. 마지막 항목 5가 맨 위를 채운 뒤 같은 단계에서 자리 바꿈 1번으로 4 아래로 내려갑니다."
      },
      "views": {
       "nodes": {
@@ -1584,8 +1584,8 @@
     },
     {
      "caption": {
-      "en": "heappop: the top, 4 from q2, is the earliest front left. The last entry, 7, takes the top and sifts down past 5 in the same step.",
-      "ko": "heappop: 맨 위의 q2의 4가 남은 앞 노드 중 가장 이릅니다. 마지막 항목 7이 맨 위를 채운 뒤 같은 단계에서 5 아래로 내려갑니다."
+      "en": "heappop: the top, 4 from q2, is the earliest front left. The last entry, 7, takes the top and in the same step sifts down 1 swap, past 5.",
+      "ko": "heappop: 맨 위의 q2의 4가 남은 앞 노드 중 가장 이릅니다. 마지막 항목 7이 맨 위를 채운 뒤 같은 단계에서 자리 바꿈 1번으로 5 아래로 내려갑니다."
      },
      "views": {
       "nodes": {
@@ -2344,8 +2344,8 @@
     },
     {
      "caption": {
-      "en": "heappop: the top, 6 from q2, is the earliest front left. The last entry, 8, takes the top and sifts down past 7 in the same step.",
-      "ko": "heappop: 맨 위의 q2의 6이 남은 앞 노드 중 가장 이릅니다. 마지막 항목 8이 맨 위를 채운 뒤 같은 단계에서 7 아래로 내려갑니다."
+      "en": "heappop: the top, 6 from q2, is the earliest front left. The last entry, 8, takes the top and in the same step sifts down 1 swap, past 7.",
+      "ko": "heappop: 맨 위의 q2의 6이 남은 앞 노드 중 가장 이릅니다. 마지막 항목 8이 맨 위를 채운 뒤 같은 단계에서 자리 바꿈 1번으로 7 아래로 내려갑니다."
      },
      "views": {
       "nodes": {
@@ -5619,8 +5619,8 @@
     },
     {
      "caption": {
-      "en": "heappop: the top, 1 from q0, is the earliest front left. The last entry, 3, takes the top and sifts down past 2 in the same step.",
-      "ko": "heappop: 맨 위의 q0의 1이 남은 앞 노드 중 가장 이릅니다. 마지막 항목 3이 맨 위를 채운 뒤 같은 단계에서 2 아래로 내려갑니다."
+      "en": "heappop: the top, 1 from q0, is the earliest front left. The last entry, 3, takes the top and in the same step sifts down 1 swap, past 2.",
+      "ko": "heappop: 맨 위의 q0의 1이 남은 앞 노드 중 가장 이릅니다. 마지막 항목 3이 맨 위를 채운 뒤 같은 단계에서 자리 바꿈 1번으로 2 아래로 내려갑니다."
      },
      "views": {
       "nodes": {
@@ -5972,8 +5972,8 @@
     },
     {
      "caption": {
-      "en": "heappop: the top, 2 from q1, is the earliest front left. The last entry, 4, takes the top and sifts down past 3 in the same step.",
-      "ko": "heappop: 맨 위의 q1의 2가 남은 앞 노드 중 가장 이릅니다. 마지막 항목 4가 맨 위를 채운 뒤 같은 단계에서 3 아래로 내려갑니다."
+      "en": "heappop: the top, 2 from q1, is the earliest front left. The last entry, 4, takes the top and in the same step sifts down 1 swap, past 3.",
+      "ko": "heappop: 맨 위의 q1의 2가 남은 앞 노드 중 가장 이릅니다. 마지막 항목 4가 맨 위를 채운 뒤 같은 단계에서 자리 바꿈 1번으로 3 아래로 내려갑니다."
      },
      "views": {
       "nodes": {
@@ -6328,8 +6328,8 @@
     },
     {
      "caption": {
-      "en": "heappop: the top, 3 from q2, is the earliest front left. The last entry, 5, takes the top and sifts down past 4 in the same step.",
-      "ko": "heappop: 맨 위의 q2의 3이 남은 앞 노드 중 가장 이릅니다. 마지막 항목 5가 맨 위를 채운 뒤 같은 단계에서 4 아래로 내려갑니다."
+      "en": "heappop: the top, 3 from q2, is the earliest front left. The last entry, 5, takes the top and in the same step sifts down 1 swap, past 4.",
+      "ko": "heappop: 맨 위의 q2의 3이 남은 앞 노드 중 가장 이릅니다. 마지막 항목 5가 맨 위를 채운 뒤 같은 단계에서 자리 바꿈 1번으로 4 아래로 내려갑니다."
      },
      "views": {
       "nodes": {
@@ -6684,8 +6684,8 @@
     },
     {
      "caption": {
-      "en": "heappop: the top, 4 from q0, is the earliest front left. The last entry, 6, takes the top and sifts down past 5 in the same step.",
-      "ko": "heappop: 맨 위의 q0의 4가 남은 앞 노드 중 가장 이릅니다. 마지막 항목 6이 맨 위를 채운 뒤 같은 단계에서 5 아래로 내려갑니다."
+      "en": "heappop: the top, 4 from q0, is the earliest front left. The last entry, 6, takes the top and in the same step sifts down 1 swap, past 5.",
+      "ko": "heappop: 맨 위의 q0의 4가 남은 앞 노드 중 가장 이릅니다. 마지막 항목 6이 맨 위를 채운 뒤 같은 단계에서 자리 바꿈 1번으로 5 아래로 내려갑니다."
      },
      "views": {
       "nodes": {

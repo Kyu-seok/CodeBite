@@ -59,7 +59,8 @@ find_in "$tmp/notpython"
 interpreter "$tmp/none/python3" 3.9
 CODEBITE_PYTHON312="$tmp/elsewhere/python3.9" find_in "$tmp/none"
 [[ "$code" == 2 && -z "$out" ]] || fail "no 3.12 or newer should exit 2 printing no path, got '$out' (exit $code)"
-[[ "$err" == *"install python3.12"* && "$err" == *"CODEBITE_PYTHON312"* && $(wc -l <<<"$err") -eq 1 ]] \
-  || fail "exit 2 should say in one line to install python3.12 or set CODEBITE_PYTHON312, got '$err'"
+# The line as a caller repeats it after its own name: no prefix of the finder's for anyone to strip.
+[[ "$err" == "no Python 3.12 or newer found: install python3.12 or set CODEBITE_PYTHON312 to one" ]] \
+  || fail "exit 2 should say in one line, with no prefix, to install python3.12 or set CODEBITE_PYTHON312, got '$err'"
 
 echo "python312.test.sh: all passed"

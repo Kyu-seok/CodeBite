@@ -6,7 +6,8 @@
 #
 # Tries $CODEBITE_PYTHON312 (a path or a name on PATH), then python3.12, then python3, and asks each
 # its version: one that is missing, older or not a Python is passed over, never handed back. Exits 2
-# with one line on stderr when none is left. Shell builtins only, so it runs on any PATH.
+# with one line on stderr when none is left, with no prefix: a caller puts it after its own name.
+# Shell builtins only, so it runs on any PATH.
 set -uo pipefail
 
 for candidate in "${CODEBITE_PYTHON312:-}" python3.12 python3; do
@@ -20,5 +21,5 @@ for candidate in "${CODEBITE_PYTHON312:-}" python3.12 python3; do
   fi
 done
 
-echo "python312: no Python 3.12 or newer found: install python3.12 or set CODEBITE_PYTHON312 to one" >&2
+echo "no Python 3.12 or newer found: install python3.12 or set CODEBITE_PYTHON312 to one" >&2
 exit 2

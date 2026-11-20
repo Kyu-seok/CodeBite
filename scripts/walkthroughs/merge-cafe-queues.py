@@ -3,7 +3,7 @@
 of each queue's front node, run on each sample Test Case with heapq's heapify, push and pop written out as the textbook
 sift-down and sift-up (the heap pops the same entries in the same order). A pop or a push is one frame together with
 its sift, as is heapify (#388): the heap is drawn as the sift leaves it, each entry it moved going from its old node
-to its new one, and the caption names the entries the sift passed. Every node keeps its
+to its new one, and the caption names the entries the sift passed and counts its swaps. Every node keeps its
 place in one row, the queues one after another behind a dummy node; each pop re-points tail's arrow at the smallest
 front and moves tail there, and that node's next joins the heap. The heap is a tree, each entry its time tagged with
 its queue, and the list read from dummy.next is the answer.
@@ -18,7 +18,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import ListNode, driver_list, josa, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import ListNode, driver_list, heap_moves, josa, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, level_order_tree, linked_list, move, node_id  # noqa: E402
 
 SLUG = "merge-cafe-queues"
@@ -78,18 +78,10 @@ def solve(queues, run):
                   result={"values": list(result), "marks": {"path": list(range(len(result)))}}, moves=moves, **answer)
         drawn[:] = heap
 
-    def sifted(fresh=None):
-        """A move for each entry a sift put somewhere new since the last frame: from the node it was at, or, when
-        that node is gone (the last entry lifted to the top by a pop), into its node. `fresh` is the entry a push
-        added, which the caller moves in from its list node."""
-        out = []
-        for j, e in enumerate(heap):
-            if (j < len(drawn) and drawn[j] is e) or e is fresh:
-                continue
-            i = next((k for k, d in enumerate(drawn) if d is e), None)
-            out.append(move(at("heap", i), at("heap", j), value=str(e[0])) if i is not None and i < len(heap)
-                       else move(dst=at("heap", j), value=str(e[0])))
-        return out
+    def sifted(fresh=()):
+        """A move for each entry a sift put somewhere new since the last frame; a `fresh` entry, which a push
+        added, is moved in by the caller from its list node."""
+        return heap_moves("heap", heap, drawn, lambda e: str(e[0]), fresh)
 
     def less(x, y):
         return (x[0], x[1]) < (y[0], y[1])
@@ -123,6 +115,10 @@ def solve(queues, run):
     def past(values):
         return ", ".join(str(v) for v in values)
 
+    def swapped(n):
+        """How much of a sift one frame folds: its swaps, counted."""
+        return {"en": f"{n} {plural(n, 'swap', 'swaps')}", "ko": f"자리 바꿈 {n}번"}
+
     k = len(queues)
     shown = "; ".join(f"{q(i)} {driver_list(v)}" for i, v in enumerate(queues))
     frame({"en": f"{k} queues: {shown}. They sit in one row behind a dummy node, with tail on dummy.",
@@ -141,7 +137,7 @@ def solve(queues, run):
     if swaps:
         moved = sifted()
         frame({"en": f"heapify sifts each parent down, drawn as one step: after {swaps} "
-                     f"{'swap' if swaps == 1 else 'swaps'} the smallest front, {heap[0][0]} from {q(heap[0][1])}, is "
+                     f"{plural(swaps, 'swap', 'swaps')} the smallest front, {heap[0][0]} from {q(heap[0][1])}, is "
                      f"on top.",
                "ko": f"heapify가 부모를 차례로 아래로 내리는 과정을 한 단계로 그립니다. 자리 바꿈 {swaps}번 끝에 가장 작은 "
                      f"앞 노드인 {q(heap[0][1])}의 {josa(heap[0][0], '이가')} 맨 위에 옵니다."},
@@ -156,10 +152,11 @@ def solve(queues, run):
             heap[0] = last
             passed = sift_down(0)
             if passed:
-                then = {"en": f"The last entry, {last[0]}, takes the top and sifts down past {past(passed)} in the "
-                              f"same step.",
-                        "ko": f"마지막 항목 {josa(last[0], '이가')} 맨 위를 채운 뒤 같은 단계에서 {past(passed)} 아래로 "
-                              f"내려갑니다."}
+                count = swapped(len(passed))
+                then = {"en": f"The last entry, {last[0]}, takes the top and in the same step sifts down "
+                              f"{count['en']}, past {past(passed)}.",
+                        "ko": f"마지막 항목 {josa(last[0], '이가')} 맨 위를 채운 뒤 같은 단계에서 {count['ko']}으로 "
+                              f"{past(passed)} 아래로 내려갑니다."}
             else:
                 then = {"en": f"The last entry, {last[0]}, takes the top and stays there.",
                         "ko": f"마지막 항목 {josa(last[0], '이가')} 맨 위를 채우고 그대로 있습니다."}
@@ -198,8 +195,10 @@ def solve(queues, run):
             passed = sift_up(len(heap) - 1)
             j = heap.index(entry)
             if passed:
-                where = {"en": f"at the end of the heap and sifts it up past {past(passed)} in the same step",
-                         "ko": f"힙의 맨 끝에 넣고 같은 단계에서 {past(passed)} 위로 올립니다"}
+                count = swapped(len(passed))
+                where = {"en": f"at the end of the heap and in the same step sifts it up {count['en']}, past "
+                               f"{past(passed)}",
+                         "ko": f"힙의 맨 끝에 넣고 같은 단계에서 {count['ko']}으로 {past(passed)} 위로 올립니다"}
             elif j:
                 where = {"en": f"at the end of the heap, where it stays under {heap[(j - 1) // 2][0]}",
                          "ko": f"힙의 맨 끝에 넣고, {heap[(j - 1) // 2][0]} 아래 그대로 둡니다"}
@@ -210,7 +209,7 @@ def solve(queues, run):
                    "ko": f"{q(top[1])}에서 {node.val} 뒤에 {josa(nxt.val, '이가')} 있으므로 heappush로 "
                          f"{where['ko']}."},
                   list_marks={"lit": [nid(nxt)]}, heap_marks={"good": [j]},
-                  moves=[move(at("nodes", nid(nxt)), at("heap", j), value=str(nxt.val))] + sifted(fresh=entry))
+                  moves=[move(at("nodes", nid(nxt)), at("heap", j), value=str(nxt.val))] + sifted(fresh=[entry]))
         elif heap:
             frame({"en": f"{node.val} is the last of {q(top[1])}, so nothing joins the heap.",
                    "ko": f"{josa(node.val, '은는')} {q(top[1])}의 마지막이라 힙에 넣을 것이 없습니다."},

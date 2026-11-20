@@ -13,6 +13,7 @@ listed and listed_cells (values or grid cells joined with commas), centre_text (
 and bag_text (the fewest-bags tables' cell tag).
 The solution's own node classes are shared too: TreeNode with build_tree (a Level-Order Array) and tree_values
 (back to one), and ListNode with build_list; node_order places a graph's nodes as its description's Diagram does.
+heap_moves gives a heap tree's moves since the last frame, for a tracer that draws a heap as its list leaves it.
 A helper two tracers need goes here: scripts/check-tracer-helpers.py fails on one defined in two files.
     wt.write(walkthrough_path("rotting-donuts"))
 
@@ -24,7 +25,7 @@ import os
 import re
 import subprocess
 
-from walkthrough_trace import level_order_tree
+from walkthrough_trace import at, level_order_tree, move
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
@@ -128,6 +129,22 @@ def build_list(values):
     for a, b in zip(nodes, nodes[1:]):
         a.next = b
     return nodes
+
+
+def heap_moves(view, heap, drawn, text, fresh=()):
+    """A move in tree view `view` for each entry of the list `heap` that sits somewhere new since the last frame,
+    which drew the list `drawn`: from the node it was at, or, when that node is gone (the last entry lifted to the
+    root by a pop), into its node. `text(entry)` is the chip's text. Entries are told apart by identity, so equal
+    entries stay distinct. `fresh` entries, pushed since that frame, get no move here: the caller moves each in
+    from where it came."""
+    out = []
+    for j, e in enumerate(heap):
+        if (j < len(drawn) and drawn[j] is e) or any(e is f for f in fresh):
+            continue
+        i = next((k for k, d in enumerate(drawn) if d is e), None)
+        out.append(move(at(view, i), at(view, j), value=text(e)) if i is not None and i < len(heap)
+                   else move(dst=at(view, j), value=text(e)))
+    return out
 
 
 def plural(n, one, many):

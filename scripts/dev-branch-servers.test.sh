@@ -526,6 +526,11 @@ branch databases already dropped whose Kafka topics or Redis index are left:
   codebite_gone_33333333  (2 Kafka topics, 1 Kafka group, Redis index 1)
 drop one, with its Kafka topics and Redis index: scripts/dev-branch-servers.sh drop <name>"
 [[ ! -f "$fx/redis0-touched" ]] || { echo "FAIL: orphans read Redis index 0"; fail=1; }
+# orphans --count is that list as one number for dev-status: each database once, whatever it left.
+out=$(cmd_orphans_count 2>&1) && code=0 || code=$?
+check "orphans --count counts each database once" "$code
+$out" "0
+3"
 
 # drop <name> takes only a name orphans lists: never a live database or worktree's, a lookalike,
 # a shared name, an owner key's odd value, a pattern, or a listed name on a line of several.
@@ -607,6 +612,7 @@ printf '%s\n' "${shared_topics}" > "$fx/topics"; : > "$fx/groups"; rm -f "$fx"/r
 : > "$fx/owned"
 check "orphans with nothing left" "$(cmd_orphans 2>&1)" \
   "no branch database outlives its worktree, and no dropped one left Kafka topics or a Redis index"
+check "orphans --count with nothing left" "$(cmd_orphans_count 2>&1)" 0
 kafka_state=stopped
 check "orphans with nothing found and Kafka stopped claims nothing about Kafka" "$(cmd_orphans 2>&1)" \
   "nothing found: no branch database outlives its worktree, and no dropped one left what could be looked at
@@ -616,7 +622,7 @@ kafka_state=running
 # With Postgres or the Docker daemon down, orphans and drop say so, in one line, and exit 1:
 # not a docker error followed by "none".
 pg_state=stopped
-for cmd in cmd_orphans cmd_drop 'cmd_drop_orphan codebite_gone_33333333'; do
+for cmd in cmd_orphans cmd_orphans_count cmd_drop 'cmd_drop_orphan codebite_gone_33333333'; do
   # shellcheck disable=SC2086  # the name is a word of its own
   out=$(root=/work/wt-x; $cmd 2>&1) && code=0 || code=$?
   check "$cmd with Postgres stopped" "$code
@@ -717,7 +723,7 @@ $(cd "$fake/wt-detached" && "$script" name)"
 
 out=$("$script" bogus 2>&1) && code=0 || code=$?
 check "unknown subcommand" "$code" 2
-for cmd in '[start [--detach]]' restart stop status migrate 'drop [<name>]' orphans name; do
+for cmd in '[start [--detach]]' restart stop status migrate 'drop [<name>]' orphans 'orphans --count' name; do
   [[ "$out" == *"dev-branch-servers.sh $cmd"* ]] || { echo "FAIL: usage lacks $cmd: $out"; fail=1; }
 done
 

@@ -99,9 +99,13 @@ async function waitFor(expression, ms = WAIT) {
   }
 }
 // For what the next steps read: waits like waitFor, and stops the pass when it doesn't show. `seen` is an
-// expression for what the page has instead, added to the failed check.
-async function shown(what, expression, { seen } = {}) {
-  if (await waitFor(expression)) return;
+// expression for what the page has instead, added to the failed check. `ok` is the passed check's line once
+// it shows (or a function giving it, to read the page then); without one, showing prints nothing.
+async function shown(what, expression, { seen, ok } = {}) {
+  if (await waitFor(expression)) {
+    if (ok) check(true, typeof ok === 'function' ? await ok() : ok);
+    return;
+  }
   const instead = seen ? await js(seen).catch(() => null) : null;
   throw new Stopped(`${what} did not show within ${WAIT / 1000} s${instead ? ` (${instead})` : ''}`);
 }
@@ -138,8 +142,9 @@ async function token(username) {
 // never on a page the app is already running on: there the last pass's signed-in app, once its GET /auth/me
 // answered, wrote that user's language and theme back over this pass's, and an English pass then waited for
 // "Description" on a Korean page until it gave up (#432; a backend or Vite under load widened the gap).
+// `ok` is the passed check's line once the tabs show.
 let opens = 0;
-async function open({ width, theme, lang, jwt }, slug = SLUG) {
+async function open({ width, theme, lang, jwt }, slug = SLUG, ok) {
   await c.send('Emulation.setDeviceMetricsOverride', { width, height: width < 600 ? 844 : 900, deviceScaleFactor: 1, mobile: width < 600 });
   await c.send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: 'reduce' }] });
   const id = ++opens; // marks the new document: the last pass's page has tabs too, until this one replaces it
@@ -147,7 +152,7 @@ async function open({ width, theme, lang, jwt }, slug = SLUG) {
     localStorage.clear(); localStorage.setItem('theme', ${JSON.stringify(theme)}); localStorage.setItem('i18nextLng', ${JSON.stringify(lang)});
     ${jwt ? `localStorage.setItem('token', ${JSON.stringify(jwt)});` : ''} window.__appCheckOpen = ${id}; }` });
   await c.send('Page.navigate', { url: `${VITE}/problems/${slug}` });
-  try { await shown('tabs', `window.__appCheckOpen === ${id} && !!document.querySelector('[role=tab]')`); }
+  try { await shown('tabs', `window.__appCheckOpen === ${id} && !!document.querySelector('[role=tab]')`, { ok }); }
   // Once only: a later load in the same pass keeps what the app stored since.
   finally { await c.send('Page.removeScriptToEvaluateOnNewDocument', { identifier }); }
 }
@@ -157,15 +162,16 @@ const tabWith = text => `[...document.querySelectorAll('[role=tab]')].find(e => 
 
 // Opens the Walkthrough tab and reveals the player, in language strings `s`: waits for the tab, clicks it, waits for
 // the intro's reveal button, clicks it, and waits for the player; a stage that doesn't show stops the pass.
-// `atTab()` runs once the tab shows, `atIntro()` once the reveal button does, so a caller checks and shoots each stage.
-async function openPlayer(s, { atTab = async () => {}, atIntro = async () => {} } = {}) {
-  await shown('the Walkthrough tab', `!!${tabWith(s.tab)}`, { seen: tabTexts });
+// `atTab()` runs once the tab shows, `atIntro()` once the reveal button does, so a caller checks and shoots each stage;
+// `ok` holds the passed check's line for each stage that should print one: `tab`, `intro` and `player`.
+async function openPlayer(s, { atTab = async () => {}, atIntro = async () => {}, ok = {} } = {}) {
+  await shown('the Walkthrough tab', `!!${tabWith(s.tab)}`, { seen: tabTexts, ok: ok.tab });
   await atTab();
   await clickText('[role=tab]', s.tab);
-  await shown('the reveal button', `[...document.querySelectorAll('button')].some(b => b.textContent.includes(${JSON.stringify(s.reveal)}))`);
+  await shown('the reveal button', `[...document.querySelectorAll('button')].some(b => b.textContent.includes(${JSON.stringify(s.reveal)}))`, { ok: ok.intro });
   await atIntro();
   await clickText('button', s.reveal);
-  await shown('the player', `!!document.querySelector('.wt-count')`);
+  await shown('the player', `!!document.querySelector('.wt-count')`, { ok: ok.player });
 }
 
 const L = { en: { tab: 'Walkthrough', reveal: "Show how it's solved", desc: 'Description', next: 'Next step' },
@@ -183,13 +189,12 @@ for (const r of runs) await section(r.name, () => pass(r));
 async function pass(r) {
   const s = L[r.lang];
   const jwt = r.user ? await token(`${r.user}${Date.now() % 100000}`) : null; // a fresh user: no stored theme
-  await open({ ...r, jwt });
-  check(true, `${r.name}: page loads`);
-  await shown(`tabs in ${r.lang}`, `!!${tabWith(s.desc)}`, { seen: tabTexts }); // the first tab can show before the language does on a slow render
-  check(true, `${r.name}: tabs in ${r.lang} (${await js(`${tabWith(s.desc)}.textContent.trim()`)})`);
+  await open({ ...r, jwt }, SLUG, `${r.name}: page loads`);
+  await shown(`tabs in ${r.lang}`, `!!${tabWith(s.desc)}`, { seen: tabTexts, // the first tab can show before the language does on a slow render
+    ok: async () => `${r.name}: tabs in ${r.lang} (${await js(`${tabWith(s.desc)}.textContent.trim()`)})` });
   await openPlayer(s, {
+    ok: { tab: `${r.name}: Walkthrough tab shows`, intro: `${r.name}: intro with the reveal button`, player: `${r.name}: player mounts after the reveal` },
     async atTab() {
-      check(true, `${r.name}: Walkthrough tab shows`);
       const fit = await js(`(() => { const t = ${tabWith(s.tab)};
         const list = t.parentElement, l = list.getBoundingClientRect(), b = t.getBoundingClientRect();
         return { right: Math.round(b.right), listRight: Math.round(l.right), scroll: list.scrollWidth, client: list.clientWidth, row: Math.round(list.parentElement.getBoundingClientRect().width) }; })()`);
@@ -198,12 +203,10 @@ async function pass(r) {
       await shot(`${r.name}-1-tabs`);
     },
     async atIntro() {
-      check(true, `${r.name}: intro with the reveal button`);
       check(!(await js(`!!document.querySelector('.wt')`)), `${r.name}: no player before the reveal`);
       await shot(`${r.name}-2-intro`);
     },
   });
-  check(true, `${r.name}: player mounts after the reveal`);
   const theme = await js(`document.querySelector('.wt').dataset.theme`);
   const pageTheme = await js(`document.documentElement.classList.contains('dark') ? 'dark' : 'light'`);
   check(theme === pageTheme && theme === r.theme, `${r.name}: player theme ${theme}, page ${pageTheme}`);
@@ -247,8 +250,7 @@ async function pass(r) {
   await clickText('[role=tab]', s.desc);
   check(await waitFor(`!document.querySelector('.wt')`), `${r.name}: description tab hides the player`);
   await clickText('[role=tab]', s.tab);
-  await shown('the player, back on its tab with no reveal', `!!document.querySelector('.wt-count')`);
-  check(true, `${r.name}: back on the tab, no reveal needed`);
+  await shown('the player, back on its tab with no reveal', `!!document.querySelector('.wt-count')`, { ok: `${r.name}: back on the tab, no reveal needed` });
   const back = await js(`[document.querySelector('.wt-runbtn[aria-selected=true]').textContent, document.querySelector('.wt-count').textContent].join(' @ ')`);
   check(place === back, `${r.name}: same run and step after a tab switch (${place} / ${back})`);
 
@@ -297,9 +299,9 @@ await section('diagram-beside', async () => {
     <div style="display:flex;flex-direction:column;gap:12px"><b>Description: ${beside.kinds.join(', ')}</b>${diagrams.map(d => img(d, d.width)).join('')}</div>
     <div style="display:flex;flex-direction:column;gap:12px"><b>Walkthrough: first frame</b>${img(frame, frame.width)}</div></body>`;
   await c.send('Page.navigate', { url: 'about:blank' });
-  await waitFor(`location.href === 'about:blank' && document.readyState === 'complete'`);
+  await shown('the blank page for the side-by-side shot', `location.href === 'about:blank' && document.readyState === 'complete'`);
   await js(`(() => { document.open(); document.write(${JSON.stringify(html)}); document.close(); return true; })()`);
-  await waitFor(`[...document.images].every(i => i.complete)`);
+  await shown("the side-by-side shot's images", `[...document.images].every(i => i.complete)`);
   const size = await js(`(() => { const b = document.body.getBoundingClientRect(); return { width: Math.ceil(b.width), height: Math.ceil(b.height) }; })()`);
   const { data } = await c.send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: true, clip: { x: 0, y: 0, ...size, scale: 1 } });
   writeFileSync(join(OUT, beside.name + '.png'), Buffer.from(data, 'base64'));
