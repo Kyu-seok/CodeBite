@@ -24,6 +24,12 @@ A guard that decides by parsing text (Markdown, SQL, a log) can also pass wrongl
 
 _Example:_ `scripts/ship-branch.sh`'s unticked-box check first toggled "inside a code block" on any fence line, so a three-backtick line inside a four-backtick fence hid every real `- [ ]` after it and the PR would have merged (#248). `scripts/ship-branch.test.sh` now puts an unticked box after each such fence shape and expects the merge refused.
 
+## A lookup that permits a delete fails closed
+
+When "it isn't there" is what lets code delete, drop or flush something, a lookup that failed or came back empty for another reason is told apart from one that answered "absent", and stops the run. Read as absent, one failed query makes everything that exists look gone. A test feeds the lookup's failure and expects nothing deleted.
+
+_Example:_ `existing_databases` in `scripts/dev-branch-servers.sh` exits when the database list fails or lacks `postgres`. Before, a failed list read as "no database exists", and `drop <name>` would have deleted a live branch database's Kafka topics and flushed its Redis index (#418).
+
 ## A test makes the missing asset it needs
 
 A test that needs a problem without some optional asset (a Walkthrough, a Diagram, a Solution, a Driver for a language) makes that state itself: it renames the problem to a Slug no file is named for, deletes the row, or uses a fixture. It doesn't name a real problem that lacks the asset today, since filling the gaps is ongoing work and the next ticket turns such a test red.
