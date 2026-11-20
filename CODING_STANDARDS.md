@@ -20,6 +20,10 @@ A test that guards data (every migrated Diagram, every Test Case) has cases show
 
 _Example:_ `DiagramsMatchExamplesTest.aWrongDiagramIsCaught` holds a wrong Diagram for each way one could slip through: one row of a grid, a pinned Diagram under the wrong example, `after` copied from the input.
 
+A guard that decides by parsing text (Markdown, SQL, a log) can also pass wrongly by losing its place: one line read as opening or closing a block, and everything after it is skipped. Its tests include input that is nested, unbalanced or malformed in a way that could make the guard skip what it should catch, and show the thing after it still caught.
+
+_Example:_ `ship-branch.sh`'s unticked-box check first toggled "inside a code block" on any fence line, so a three-backtick line inside a four-backtick fence hid every real `- [ ]` after it and the PR would have merged (#248). `ship-branch.test.sh` now puts an unticked box after each such fence shape and expects the merge refused.
+
 ## A test makes the missing asset it needs
 
 A test that needs a problem without some optional asset (a Walkthrough, a Diagram, a Solution, a Driver for a language) makes that state itself: it renames the problem to a Slug no file is named for, deletes the row, or uses a fixture. It doesn't name a real problem that lacks the asset today, since filling the gaps is ongoing work and the next ticket turns such a test red.
