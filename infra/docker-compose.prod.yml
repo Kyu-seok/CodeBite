@@ -140,10 +140,23 @@ services:
     networks:
       - codebite
 
-  nginx:
+  # The frontend's built files and the script that publishes them into the volume nginx serves
+  # (docs/adr/0014). Behind a profile, so `up` never starts it: scripts/deploy-prod.sh builds it
+  # with `--profile publish build` and publishes with `run --rm frontend`.
+  frontend:
     build:
       context: ../frontend
-    image: codebite-nginx
+    image: codebite-frontend
+    profiles: [publish]
+    network_mode: none
+    volumes:
+      - codebite-frontend:/srv/frontend
+
+  # A stock image: a deploy never replaces this container for a frontend or nginx.conf change, only
+  # reloads it. Changing this definition (the tag included) does replace it, about 2 s with nothing
+  # listening on port 80.
+  nginx:
+    image: nginx:1.31-alpine
     container_name: codebite-nginx
     restart: unless-stopped
     depends_on:
@@ -152,7 +165,10 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      # The directory, not the file: git replaces nginx.conf on a pull, and a container that
+      # mounted the file itself keeps reading the old one.
+      - ./nginx:/etc/nginx/conf.d:ro
+      - codebite-frontend:/srv/frontend:ro
     networks:
       - codebite
 
@@ -281,6 +297,7 @@ volumes:
   codebite-grafana:
   codebite-loki:
   codebite-kafka:
+  codebite-frontend:
   judge0-pgdata:
   judge0-redis:
 
