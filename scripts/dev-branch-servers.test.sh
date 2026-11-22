@@ -839,8 +839,11 @@ out=$(await_detached "$up" "$log" 2>&1) && code=0 || code=$?
 { kill "$up"; wait "$up"; } 2>/dev/null || true
 check "detached start up" "$code" 0
 [[ "$out" == *"Branch servers for feat/x:"* ]] || { echo "FAIL: a detached start should print the summary: $out"; fail=1; }
-sh -c 'echo "backend: exited before it came up"; exit 1' > "$log" 2>&1 &
-out=$(await_detached $! "$log" 2>&1) && code=0 || code=$?
+# A log of its own: this start's redirection runs in the background, so the log above could still
+# hold the first start's summary when await_detached first reads it.
+died_log="$fake/start-died.log"
+sh -c 'echo "backend: exited before it came up"; exit 1' > "$died_log" 2>&1 &
+out=$(await_detached $! "$died_log" 2>&1) && code=0 || code=$?
 check "detached start died" "$code" 1
 [[ "$out" == *"exited before it came up"* ]] || { echo "FAIL: a failed detached start should show its log: $out"; fail=1; }
 # A detached start that waits for another worktree's servers: the line saying whose is passed on
