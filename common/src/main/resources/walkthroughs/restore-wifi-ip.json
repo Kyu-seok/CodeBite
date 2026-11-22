@@ -177,8 +177,8 @@
     },
     {
      "caption": {
-      "en": "Take \"9\" as segment 2 and call place(start=2) for segment 3.",
-      "ko": "\"9\" 조각을 2번째 조각으로 놓고, 3번째 조각을 위해 place(start=2) 호출에 넘깁니다."
+      "en": "\"9\" as segment 2 is a dead end: the 2 calls below it, not drawn, try \"216\" and reach no address, so \"9\" comes back off.",
+      "ko": "\"9\" 조각을 2번째 조각으로 놓으면 그 아래 호출 2개(그리지 않음)에서 \"216\" 조각을 시도해도 주소가 나오지 않는 막다른 길이므로, 다시 뗍니다."
      },
      "views": {
       "digits": {
@@ -205,7 +205,7 @@
         }
        },
        "marks": {
-        "good": [
+        "bad": [
          1
         ]
        }
@@ -238,7 +238,7 @@
         }
        ],
        "marks": {
-        "lit": [
+        "bad": [
          2
         ]
        }
@@ -259,214 +259,6 @@
         "at": 2
        },
        "value": "9"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "\"2\" leaves 5 digits, too many for 1 segment; \"21\" leaves 4 digits, too many for 1 segment; take \"216\" as segment 3 and call place(start=5) for segment 4.",
-      "ko": "\"2\" 조각 뒤로 숫자 5개가 남아 조각 1개에 너무 많음, \"21\" 조각 뒤로 숫자 4개가 남아 조각 1개에 너무 많음. \"216\" 조각을 3번째 조각으로 놓고, 4번째 조각을 위해 place(start=5) 호출에 넘깁니다."
-     },
-     "views": {
-      "digits": {
-       "values": [
-        "1",
-        "9",
-        "2",
-        "1",
-        "6",
-        "8",
-        "1",
-        "1"
-       ],
-       "spans": {
-        "s1": {
-         "from": 0,
-         "to": 0,
-         "label": "1"
-        },
-        "s2": {
-         "from": 1,
-         "to": 1,
-         "label": "9"
-        },
-        "s3": {
-         "from": 2,
-         "to": 4,
-         "label": "216"
-        }
-       },
-       "marks": {
-        "good": [
-         2,
-         3,
-         4
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "place",
-         "args": {
-          "start": 0
-         },
-         "note": {
-          "en": "no segment yet",
-          "ko": "아직 조각 없음"
-         }
-        },
-        {
-         "name": "place",
-         "args": {
-          "start": 1
-         },
-         "note": "1"
-        },
-        {
-         "name": "place",
-         "args": {
-          "start": 2
-         },
-         "note": "1.9"
-        },
-        {
-         "name": "place",
-         "args": {
-          "start": 5
-         },
-         "note": "1.9.216"
-        }
-       ],
-       "marks": {
-        "lit": [
-         3
-        ]
-       }
-      },
-      "result": {
-       "values": [],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "digits",
-        "at": 2
-       },
-       "to": {
-        "view": "calls",
-        "at": 3
-       },
-       "value": "216"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "place(start=5), place(start=2) return, each taking its segment back off; back in place(start=1), which tries a longer segment. place(start=5) ran out of lengths: \"8\" would leave 2 digits after segment 4, \"81\" would leave 1 digit after segment 4, \"811\" is over 255.",
-      "ko": "place(start=5), place(start=2) 호출이 조각을 다시 떼고 끝나며, place(start=1) 호출로 돌아와 더 긴 조각을 시도합니다. 더 시도할 길이가 없는 호출: place(start=5)(\"8\" 조각은 4번째 조각 뒤로 숫자 2개를 남김, \"81\" 조각은 4번째 조각 뒤로 숫자 1개를 남김, \"811\" 조각은 255 초과)."
-     },
-     "views": {
-      "digits": {
-       "values": [
-        "1",
-        "9",
-        "2",
-        "1",
-        "6",
-        "8",
-        "1",
-        "1"
-       ],
-       "spans": {
-        "s1": {
-         "from": 0,
-         "to": 0,
-         "label": "1"
-        },
-        "s2": {
-         "from": 1,
-         "to": 1,
-         "label": "9"
-        },
-        "s3": {
-         "from": 2,
-         "to": 4,
-         "label": "216"
-        }
-       },
-       "marks": {
-        "bad": [
-         1,
-         2,
-         3,
-         4,
-         5,
-         6,
-         7
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "place",
-         "args": {
-          "start": 0
-         },
-         "note": {
-          "en": "no segment yet",
-          "ko": "아직 조각 없음"
-         }
-        },
-        {
-         "name": "place",
-         "args": {
-          "start": 1
-         },
-         "note": "1"
-        },
-        {
-         "name": "place",
-         "args": {
-          "start": 2
-         },
-         "note": "1.9"
-        },
-        {
-         "name": "place",
-         "args": {
-          "start": 5
-         },
-         "note": "1.9.216"
-        }
-       ],
-       "marks": {
-        "dim": [
-         2,
-         3
-        ]
-       }
-      },
-      "result": {
-       "values": [],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 3
-       }
-      },
-      {
-       "from": {
-        "view": "calls",
-        "at": 2
-       }
       }
      ]
     },
@@ -560,8 +352,8 @@
     },
     {
      "caption": {
-      "en": "\"1\" leaves 4 digits, too many for 1 segment; take \"16\" as segment 3 and call place(start=5) for segment 4.",
-      "ko": "\"1\" 조각 뒤로 숫자 4개가 남아 조각 1개에 너무 많음. \"16\" 조각을 3번째 조각으로 놓고, 4번째 조각을 위해 place(start=5) 호출에 넘깁니다."
+      "en": "\"1\" leaves 4 digits, too many for 1 segment; \"16\" as segment 3 is a dead end: the 1 call below it, place(start=5), not drawn, tries 3 lengths and finds no segment 4 (\"8\" would leave 2 digits after segment 4, \"81\" would leave 1 digit after segment 4, \"811\" is over 255), so \"16\" comes straight back off.",
+      "ko": "\"1\" 조각 뒤로 숫자 4개가 남아 조각 1개에 너무 많음, \"16\" 조각을 3번째 조각으로 놓으면 그 아래 place(start=5) 호출 1개(그리지 않음)에서 길이 3가지를 시도해도 4번째 조각을 찾지 못하는(\"8\" 조각은 4번째 조각 뒤로 숫자 2개를 남김, \"81\" 조각은 4번째 조각 뒤로 숫자 1개를 남김, \"811\" 조각은 255 초과) 막다른 길이므로, 바로 다시 뗍니다."
      },
      "views": {
       "digits": {
@@ -593,7 +385,7 @@
         }
        },
        "marks": {
-        "good": [
+        "bad": [
          3,
          4
         ]
@@ -634,7 +426,7 @@
         }
        ],
        "marks": {
-        "lit": [
+        "bad": [
          3
         ]
        }
@@ -655,104 +447,6 @@
         "at": 3
        },
        "value": "16"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "place(start=5) returns, taking its segment back off; back in place(start=3), which tries a longer segment. place(start=5) ran out of lengths: \"8\" would leave 2 digits after segment 4, \"81\" would leave 1 digit after segment 4, \"811\" is over 255.",
-      "ko": "place(start=5) 호출이 조각을 다시 떼고 끝나며, place(start=3) 호출로 돌아와 더 긴 조각을 시도합니다. 더 시도할 길이가 없는 호출: place(start=5)(\"8\" 조각은 4번째 조각 뒤로 숫자 2개를 남김, \"81\" 조각은 4번째 조각 뒤로 숫자 1개를 남김, \"811\" 조각은 255 초과)."
-     },
-     "views": {
-      "digits": {
-       "values": [
-        "1",
-        "9",
-        "2",
-        "1",
-        "6",
-        "8",
-        "1",
-        "1"
-       ],
-       "spans": {
-        "s1": {
-         "from": 0,
-         "to": 0,
-         "label": "1"
-        },
-        "s2": {
-         "from": 1,
-         "to": 2,
-         "label": "92"
-        },
-        "s3": {
-         "from": 3,
-         "to": 4,
-         "label": "16"
-        }
-       },
-       "marks": {
-        "bad": [
-         3,
-         4,
-         5,
-         6,
-         7
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "place",
-         "args": {
-          "start": 0
-         },
-         "note": {
-          "en": "no segment yet",
-          "ko": "아직 조각 없음"
-         }
-        },
-        {
-         "name": "place",
-         "args": {
-          "start": 1
-         },
-         "note": "1"
-        },
-        {
-         "name": "place",
-         "args": {
-          "start": 3
-         },
-         "note": "1.92"
-        },
-        {
-         "name": "place",
-         "args": {
-          "start": 5
-         },
-         "note": "1.92.16"
-        }
-       ],
-       "marks": {
-        "dim": [
-         3
-        ]
-       }
-      },
-      "result": {
-       "values": [],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 3
-       }
       }
      ]
     },
@@ -1291,8 +985,8 @@
     },
     {
      "caption": {
-      "en": "\"1\" leaves 4 digits, too many for 1 segment; take \"16\" as segment 3 and call place(start=5) for segment 4.",
-      "ko": "\"1\" 조각 뒤로 숫자 4개가 남아 조각 1개에 너무 많음. \"16\" 조각을 3번째 조각으로 놓고, 4번째 조각을 위해 place(start=5) 호출에 넘깁니다."
+      "en": "\"1\" leaves 4 digits, too many for 1 segment; \"16\" as segment 3 is a dead end: the 1 call below it, place(start=5), not drawn, tries 3 lengths and finds no segment 4 (\"8\" would leave 2 digits after segment 4, \"81\" would leave 1 digit after segment 4, \"811\" is over 255), so \"16\" comes straight back off.",
+      "ko": "\"1\" 조각 뒤로 숫자 4개가 남아 조각 1개에 너무 많음, \"16\" 조각을 3번째 조각으로 놓으면 그 아래 place(start=5) 호출 1개(그리지 않음)에서 길이 3가지를 시도해도 4번째 조각을 찾지 못하는(\"8\" 조각은 4번째 조각 뒤로 숫자 2개를 남김, \"81\" 조각은 4번째 조각 뒤로 숫자 1개를 남김, \"811\" 조각은 255 초과) 막다른 길이므로, 바로 다시 뗍니다."
      },
      "views": {
       "digits": {
@@ -1324,7 +1018,7 @@
         }
        },
        "marks": {
-        "good": [
+        "bad": [
          3,
          4
         ]
@@ -1365,7 +1059,7 @@
         }
        ],
        "marks": {
-        "lit": [
+        "bad": [
          3
         ]
        }
@@ -1388,106 +1082,6 @@
         "at": 3
        },
        "value": "16"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "place(start=5) returns, taking its segment back off; back in place(start=3), which tries a longer segment. place(start=5) ran out of lengths: \"8\" would leave 2 digits after segment 4, \"81\" would leave 1 digit after segment 4, \"811\" is over 255.",
-      "ko": "place(start=5) 호출이 조각을 다시 떼고 끝나며, place(start=3) 호출로 돌아와 더 긴 조각을 시도합니다. 더 시도할 길이가 없는 호출: place(start=5)(\"8\" 조각은 4번째 조각 뒤로 숫자 2개를 남김, \"81\" 조각은 4번째 조각 뒤로 숫자 1개를 남김, \"811\" 조각은 255 초과)."
-     },
-     "views": {
-      "digits": {
-       "values": [
-        "1",
-        "9",
-        "2",
-        "1",
-        "6",
-        "8",
-        "1",
-        "1"
-       ],
-       "spans": {
-        "s1": {
-         "from": 0,
-         "to": 1,
-         "label": "19"
-        },
-        "s2": {
-         "from": 2,
-         "to": 2,
-         "label": "2"
-        },
-        "s3": {
-         "from": 3,
-         "to": 4,
-         "label": "16"
-        }
-       },
-       "marks": {
-        "bad": [
-         3,
-         4,
-         5,
-         6,
-         7
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "place",
-         "args": {
-          "start": 0
-         },
-         "note": {
-          "en": "no segment yet",
-          "ko": "아직 조각 없음"
-         }
-        },
-        {
-         "name": "place",
-         "args": {
-          "start": 2
-         },
-         "note": "19"
-        },
-        {
-         "name": "place",
-         "args": {
-          "start": 3
-         },
-         "note": "19.2"
-        },
-        {
-         "name": "place",
-         "args": {
-          "start": 5
-         },
-         "note": "19.2.16"
-        }
-       ],
-       "marks": {
-        "dim": [
-         3
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "1.92.168.11"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 3
-       }
       }
      ]
     },
@@ -1945,8 +1539,8 @@
     },
     {
      "caption": {
-      "en": "Take \"6\" as segment 3 and call place(start=5) for segment 4.",
-      "ko": "\"6\" 조각을 3번째 조각으로 놓고, 4번째 조각을 위해 place(start=5) 호출에 넘깁니다."
+      "en": "\"6\" as segment 3 is a dead end: the 1 call below it, place(start=5), not drawn, tries 3 lengths and finds no segment 4 (\"8\" would leave 2 digits after segment 4, \"81\" would leave 1 digit after segment 4, \"811\" is over 255), so \"6\" comes straight back off.",
+      "ko": "\"6\" 조각을 3번째 조각으로 놓으면 그 아래 place(start=5) 호출 1개(그리지 않음)에서 길이 3가지를 시도해도 4번째 조각을 찾지 못하는(\"8\" 조각은 4번째 조각 뒤로 숫자 2개를 남김, \"81\" 조각은 4번째 조각 뒤로 숫자 1개를 남김, \"811\" 조각은 255 초과) 막다른 길이므로, 바로 다시 뗍니다."
      },
      "views": {
       "digits": {
@@ -1978,7 +1572,7 @@
         }
        },
        "marks": {
-        "good": [
+        "bad": [
          4
         ]
        }
@@ -2018,7 +1612,7 @@
         }
        ],
        "marks": {
-        "lit": [
+        "bad": [
          3
         ]
        }
@@ -2042,106 +1636,6 @@
         "at": 3
        },
        "value": "6"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "place(start=5) returns, taking its segment back off; back in place(start=4), which tries a longer segment. place(start=5) ran out of lengths: \"8\" would leave 2 digits after segment 4, \"81\" would leave 1 digit after segment 4, \"811\" is over 255.",
-      "ko": "place(start=5) 호출이 조각을 다시 떼고 끝나며, place(start=4) 호출로 돌아와 더 긴 조각을 시도합니다. 더 시도할 길이가 없는 호출: place(start=5)(\"8\" 조각은 4번째 조각 뒤로 숫자 2개를 남김, \"81\" 조각은 4번째 조각 뒤로 숫자 1개를 남김, \"811\" 조각은 255 초과)."
-     },
-     "views": {
-      "digits": {
-       "values": [
-        "1",
-        "9",
-        "2",
-        "1",
-        "6",
-        "8",
-        "1",
-        "1"
-       ],
-       "spans": {
-        "s1": {
-         "from": 0,
-         "to": 1,
-         "label": "19"
-        },
-        "s2": {
-         "from": 2,
-         "to": 3,
-         "label": "21"
-        },
-        "s3": {
-         "from": 4,
-         "to": 4,
-         "label": "6"
-        }
-       },
-       "marks": {
-        "bad": [
-         4,
-         5,
-         6,
-         7
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "place",
-         "args": {
-          "start": 0
-         },
-         "note": {
-          "en": "no segment yet",
-          "ko": "아직 조각 없음"
-         }
-        },
-        {
-         "name": "place",
-         "args": {
-          "start": 2
-         },
-         "note": "19"
-        },
-        {
-         "name": "place",
-         "args": {
-          "start": 4
-         },
-         "note": "19.21"
-        },
-        {
-         "name": "place",
-         "args": {
-          "start": 5
-         },
-         "note": "19.21.6"
-        }
-       ],
-       "marks": {
-        "dim": [
-         3
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "1.92.168.11",
-        "19.2.168.11"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 3
-       }
       }
      ]
     },
@@ -3511,8 +3005,8 @@
     },
     {
      "caption": {
-      "en": "Take \"6\" as segment 3 and call place(start=5) for segment 4.",
-      "ko": "\"6\" 조각을 3번째 조각으로 놓고, 4번째 조각을 위해 place(start=5) 호출에 넘깁니다."
+      "en": "\"6\" as segment 3 is a dead end: the 1 call below it, place(start=5), not drawn, tries 3 lengths and finds no segment 4 (\"8\" would leave 2 digits after segment 4, \"81\" would leave 1 digit after segment 4, \"811\" is over 255), so \"6\" comes straight back off.",
+      "ko": "\"6\" 조각을 3번째 조각으로 놓으면 그 아래 place(start=5) 호출 1개(그리지 않음)에서 길이 3가지를 시도해도 4번째 조각을 찾지 못하는(\"8\" 조각은 4번째 조각 뒤로 숫자 2개를 남김, \"81\" 조각은 4번째 조각 뒤로 숫자 1개를 남김, \"811\" 조각은 255 초과) 막다른 길이므로, 바로 다시 뗍니다."
      },
      "views": {
       "digits": {
@@ -3544,7 +3038,7 @@
         }
        },
        "marks": {
-        "good": [
+        "bad": [
          4
         ]
        }
@@ -3584,7 +3078,7 @@
         }
        ],
        "marks": {
-        "lit": [
+        "bad": [
          3
         ]
        }
@@ -3611,109 +3105,6 @@
         "at": 3
        },
        "value": "6"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "place(start=5) returns, taking its segment back off; back in place(start=4), which tries a longer segment. place(start=5) ran out of lengths: \"8\" would leave 2 digits after segment 4, \"81\" would leave 1 digit after segment 4, \"811\" is over 255.",
-      "ko": "place(start=5) 호출이 조각을 다시 떼고 끝나며, place(start=4) 호출로 돌아와 더 긴 조각을 시도합니다. 더 시도할 길이가 없는 호출: place(start=5)(\"8\" 조각은 4번째 조각 뒤로 숫자 2개를 남김, \"81\" 조각은 4번째 조각 뒤로 숫자 1개를 남김, \"811\" 조각은 255 초과)."
-     },
-     "views": {
-      "digits": {
-       "values": [
-        "1",
-        "9",
-        "2",
-        "1",
-        "6",
-        "8",
-        "1",
-        "1"
-       ],
-       "spans": {
-        "s1": {
-         "from": 0,
-         "to": 2,
-         "label": "192"
-        },
-        "s2": {
-         "from": 3,
-         "to": 3,
-         "label": "1"
-        },
-        "s3": {
-         "from": 4,
-         "to": 4,
-         "label": "6"
-        }
-       },
-       "marks": {
-        "bad": [
-         4,
-         5,
-         6,
-         7
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "place",
-         "args": {
-          "start": 0
-         },
-         "note": {
-          "en": "no segment yet",
-          "ko": "아직 조각 없음"
-         }
-        },
-        {
-         "name": "place",
-         "args": {
-          "start": 3
-         },
-         "note": "192"
-        },
-        {
-         "name": "place",
-         "args": {
-          "start": 4
-         },
-         "note": "192.1"
-        },
-        {
-         "name": "place",
-         "args": {
-          "start": 5
-         },
-         "note": "192.1.6"
-        }
-       ],
-       "marks": {
-        "dim": [
-         3
-        ]
-       }
-      },
-      "result": {
-       "values": [
-        "1.92.168.11",
-        "19.2.168.11",
-        "19.21.68.11",
-        "19.216.8.11",
-        "19.216.81.1"
-       ],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 3
-       }
       }
      ]
     },
@@ -6292,8 +5683,8 @@
     },
     {
      "caption": {
-      "en": "Take \"1\" as segment 3 and call place(start=3) for segment 4.",
-      "ko": "\"1\" 조각을 3번째 조각으로 놓고, 4번째 조각을 위해 place(start=3) 호출에 넘깁니다."
+      "en": "\"1\" as segment 3 is a dead end: the 1 call below it, place(start=3), not drawn, tries 2 lengths and finds no segment 4 (\"0\" would leave 2 digits after segment 4, \"02\" has a leading zero), so \"1\" comes straight back off.",
+      "ko": "\"1\" 조각을 3번째 조각으로 놓으면 그 아래 place(start=3) 호출 1개(그리지 않음)에서 길이 2가지를 시도해도 4번째 조각을 찾지 못하는(\"0\" 조각은 4번째 조각 뒤로 숫자 2개를 남김, \"02\" 조각은 앞자리가 0) 막다른 길이므로, 바로 다시 뗍니다."
      },
      "views": {
       "digits": {
@@ -6323,7 +5714,7 @@
         }
        },
        "marks": {
-        "good": [
+        "bad": [
          2
         ]
        }
@@ -6363,7 +5754,7 @@
         }
        ],
        "marks": {
-        "lit": [
+        "bad": [
          3
         ]
        }
@@ -6384,101 +5775,6 @@
         "at": 3
        },
        "value": "1"
-      }
-     ]
-    },
-    {
-     "caption": {
-      "en": "place(start=3) returns, taking its segment back off; back in place(start=2), which tries a longer segment. place(start=3) ran out of lengths: \"0\" would leave 2 digits after segment 4, \"02\" has a leading zero.",
-      "ko": "place(start=3) 호출이 조각을 다시 떼고 끝나며, place(start=2) 호출로 돌아와 더 긴 조각을 시도합니다. 더 시도할 길이가 없는 호출: place(start=3)(\"0\" 조각은 4번째 조각 뒤로 숫자 2개를 남김, \"02\" 조각은 앞자리가 0)."
-     },
-     "views": {
-      "digits": {
-       "values": [
-        "1",
-        "0",
-        "1",
-        "0",
-        "2",
-        "3"
-       ],
-       "spans": {
-        "s1": {
-         "from": 0,
-         "to": 0,
-         "label": "1"
-        },
-        "s2": {
-         "from": 1,
-         "to": 1,
-         "label": "0"
-        },
-        "s3": {
-         "from": 2,
-         "to": 2,
-         "label": "1"
-        }
-       },
-       "marks": {
-        "bad": [
-         2,
-         3,
-         4,
-         5
-        ]
-       }
-      },
-      "calls": {
-       "calls": [
-        {
-         "name": "place",
-         "args": {
-          "start": 0
-         },
-         "note": {
-          "en": "no segment yet",
-          "ko": "아직 조각 없음"
-         }
-        },
-        {
-         "name": "place",
-         "args": {
-          "start": 1
-         },
-         "note": "1"
-        },
-        {
-         "name": "place",
-         "args": {
-          "start": 2
-         },
-         "note": "1.0"
-        },
-        {
-         "name": "place",
-         "args": {
-          "start": 3
-         },
-         "note": "1.0.1"
-        }
-       ],
-       "marks": {
-        "dim": [
-         3
-        ]
-       }
-      },
-      "result": {
-       "values": [],
-       "marks": {}
-      }
-     },
-     "moves": [
-      {
-       "from": {
-        "view": "calls",
-        "at": 3
-       }
       }
      ]
     },

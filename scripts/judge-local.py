@@ -38,18 +38,11 @@ def assemble(root, slug, language, code):
 
 
 def python_tool():
-    """A Python 3.12 or newer, like the id 100 image: CODEBITE_PYTHON312, python3.12 or python3."""
-    for candidate in (os.environ.get("CODEBITE_PYTHON312"), shutil.which("python3.12"), shutil.which("python3")):
-        if not candidate:
-            continue
-        try:
-            out = subprocess.run([candidate, "-c", "import sys; print(sys.version_info >= (3, 12))"],
-                                 capture_output=True, text=True, timeout=30).stdout.strip()
-        except (OSError, subprocess.TimeoutExpired):
-            continue
-        if out == "True":
-            return candidate
-    raise Missing("no Python 3.12 or newer (set CODEBITE_PYTHON312, or install python3.12)")
+    """A Python 3.12 or newer, like the id 100 image: the one scripts/python312.sh finds."""
+    found = subprocess.run([str(Path(__file__).with_name("python312.sh"))], capture_output=True, text=True)
+    if found.returncode != 0:
+        raise Missing(found.stderr.strip())
+    return found.stdout.strip()
 
 
 def tool(name, env=None):

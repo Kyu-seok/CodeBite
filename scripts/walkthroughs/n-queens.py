@@ -6,7 +6,10 @@ is too big to draw whole, so the call stack stands beside the board: one card pe
 queens attack shaded, each queen moving from its call onto the board.
 
 One frame per queen placed and one per queen lifted, not per square checked: the attacked squares are shaded, so
-the columns a call skips show on the board without a frame each. n = 5 still takes over a hundred frames.
+the columns a call skips show on the board without a frame each. That is over a hundred frames for n = 5, so a run is
+drawn in full only until it has shown an arrangement found and a dead end backed out of (#388). From there the search
+runs on undrawn, its steps counted: each further arrangement is one frame, whose caption says how many queens were
+lifted and placed to reach it, and one more frame covers the search left after the last arrangement.
 
     CODEBITE_DB=<database> scripts/walkthroughs/n-queens.py
 
@@ -18,7 +21,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import driver_list, josa, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import driver_list, ordinal, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, call, move  # noqa: E402
 
 SLUG = "n-queens"
@@ -40,7 +43,8 @@ wt = Walkthrough(
 
 
 def solve(n, run):
-    """Solution.solveNQueens with a frame per queen placed and lifted. Returns the answer as the Driver prints it."""
+    """Solution.solveNQueens with a frame per queen placed and lifted until the run has shown an arrangement and a
+    dead end, then a frame per arrangement. Returns the answer as the Driver prints it."""
     board = [["" for _ in range(n)] for _ in range(n)]
     boards = []
     queens = []           # queens[row] = column
@@ -51,7 +55,17 @@ def solve(n, run):
         return [[r, c] for r in range(n) for c in range(n)
                 if board[r][c] == "" and (c in columns or r - c in diagonals or r + c in anti_diagonals)]
 
+    shown = {"arrangement": False, "dead end": False}   # what the frames drawn in full have taught so far
+    drawn = []            # the queens as the last frame drew them: drawn[row] = column
+    cards = [0]           # how many calls the last frame drew
+    skipped = {"placed": 0, "lifted": 0}                 # the steps taken since the last frame, not drawn
+
+    def folding():
+        return all(shown.values())
+
     def frame(caption, marks=None, call_marks=None, moves=None, done=False, **answer):
+        drawn[:] = queens
+        cards[0] = len(stack)
         run.frame(caption,
                   board={"cells": [row[:] for row in board], "marks": marks or {}, "shade": [] if done else attacked()},
                   stack={"calls": [dict(c) for c in stack], "marks": call_marks or {}},
@@ -65,10 +79,43 @@ def solve(n, run):
            "ko": f"빈 {n}×{n} 판입니다. 첫 호출 place(row=0)에서 0행의 열을 하나씩 시도합니다."},
           call_marks={"lit": [0]}, moves=[move(dst=at("stack", 0))])
 
+    def catch_up():
+        """The moves that take the board from the last frame drawn to the queens as they stand, and the squares left:
+        each queen no longer where it was drawn is lifted, and each one new is placed by its row's call, which calls
+        the next row when that call's card isn't drawn yet."""
+        kept = 0
+        while kept < min(len(drawn), len(queens)) and drawn[kept] == queens[kept]:
+            kept += 1
+        left = [[r, drawn[r]] for r in range(kept, len(drawn))]
+        moves = [move(at("board", cell), value="Q") for cell in left]
+        for r in range(kept, len(queens)):
+            moves.append(move(at("stack", r), at("board", [r, queens[r]]), value="Q"))
+            if r + 1 >= cards[0]:
+                moves.append(move(at("board", [r, queens[r]]), at("stack", r + 1), value=f"row={r + 1}"))
+        return moves, left
+
+    def skipped_steps():
+        lifted, placed = skipped["lifted"], skipped["placed"]
+        skipped.update(placed=0, lifted=0)
+        return lifted, placed
+
     def place(row):
         if row == n:
             boards.append(["." * c + "Q" + "." * (n - c - 1) for c in queens])
             found.append(list(queens))
+            if folding():
+                moves, left = catch_up()
+                lifted, placed = skipped_steps()
+                k = len(found)
+                frame({"en": f"Skipping ahead, the search goes on the same way: after {lifted} more "
+                             f"{plural(lifted, 'queen', 'queens')} lifted and {placed} placed, every row has a queen "
+                             f"again, so columns {driver_list(queens)} are the {ordinal(k)} arrangement.",
+                       "ko": f"같은 방식으로 이어지는 탐색을 건너뜁니다. 퀸을 {lifted}번 들어 올리고 {placed}번 놓은 뒤 다시 모든 "
+                             f"행에 퀸이 놓였으니, 열 {driver_list(queens)} 배치가 {k}번째로 답에 들어갑니다."},
+                      marks={"good": [[i, c] for i, c in enumerate(queens)], "bad": left}, call_marks={"good": [row]},
+                      moves=moves + [move(at("stack", row), at("result", k - 1), value=driver_list(queens))])
+                return
+            shown["arrangement"] = True
             frame({"en": f"place(row={row}) is past the last row: every row has a queen, so columns "
                          f"{driver_list(queens)} are an arrangement.",
                    "ko": f"place(row={row})에서는 마지막 행을 지났습니다. 모든 행에 퀸이 있으니 열 {driver_list(queens)} 배치가 "
@@ -86,12 +133,16 @@ def solve(n, run):
             board[row][column] = "Q"
             stack[row] = call("place", row=row, note={"en": f"queen at col {column}", "ko": f"{column}열에 퀸"})
             stack.append(call("place", row=row + 1))
-            frame({"en": f"Row {row}, column {column} is not attacked: place a queen there and call "
-                         f"place(row={row + 1}).",
-                   "ko": f"{row}행 {column}열은 공격받지 않으므로 퀸을 두고 다음 행의 호출 place(row={row + 1})에 넘깁니다."},
-                  marks={"good": [[row, column]]}, call_marks={"lit": [row + 1]},
-                  moves=[move(at("stack", row), at("board", [row, column]), value="Q"),
-                         move(at("board", [row, column]), at("stack", row + 1), value=f"row={row + 1}")])
+            if folding():
+                skipped["placed"] += 1
+            else:
+                frame({"en": f"Row {row}, column {column} is not attacked: place a queen there and call "
+                             f"place(row={row + 1}).",
+                       "ko": f"{row}행 {column}열은 공격받지 않으므로 퀸을 두고 다음 행의 호출 place(row={row + 1})에 "
+                             f"넘깁니다."},
+                      marks={"good": [[row, column]]}, call_marks={"lit": [row + 1]},
+                      moves=[move(at("stack", row), at("board", [row, column]), value="Q"),
+                             move(at("board", [row, column]), at("stack", row + 1), value=f"row={row + 1}")])
             before = len(found)
             place(row + 1)
             queens.pop()
@@ -99,6 +150,11 @@ def solve(n, run):
             diagonals.remove(row - column)
             anti_diagonals.remove(row + column)
             board[row][column] = ""
+            if folding():
+                skipped["lifted"] += 1
+                stack.pop()
+                stack[row] = call("place", row=row)
+                continue
             if row + 1 == n:
                 why = {"en": f"place(row={row + 1}) returns with its arrangement",
                        "ko": f"place(row={row + 1}) 호출이 배치를 남기고 돌아갑니다"}
@@ -116,10 +172,26 @@ def solve(n, run):
                    "ko": why["ko"] + f". {row}행은 {column}열의 퀸을 들어 올리고, " + then["ko"] + "."},
                   marks={"bad": [[row, column]]}, call_marks={mark: [row + 1]},
                   moves=[move(at("board", [row, column]), value="Q")])
+            shown["dead end"] = shown["dead end"] or mark == "bad"
             stack.pop()
             stack[row] = call("place", row=row)
 
     place(0)
+    if folding():
+        moves, left = catch_up()
+        lifted, placed = skipped_steps()
+        if placed:
+            rest = {"en": f"{lifted} more {plural(lifted, 'queen', 'queens')} lifted and {placed} placed find no "
+                          f"further arrangement, and the board is empty again",
+                    "ko": f"퀸을 {lifted}번 더 들어 올리고 {placed}번 더 놓아도 새 배치는 나오지 않고, 판은 다시 비었습니다"}
+        else:
+            rest = {"en": f"no column is left to try, so the calls return one by one, lifting the last {lifted} "
+                          f"{plural(lifted, 'queen', 'queens')}, and the board is empty again",
+                    "ko": f"더 시도할 열이 없어 호출이 차례로 돌아가며 남은 퀸 {lifted}개를 들어 올리고, 판은 다시 "
+                          f"비었습니다"}
+        frame({"en": f"Skipping the rest of the search: {rest['en']}.",
+               "ko": f"나머지 탐색을 건너뜁니다. {rest['ko']}."},
+              marks={"bad": left}, call_marks={"lit": [0]}, moves=moves)
     stack.pop()
     boards.sort()
     printed = json.dumps(boards, separators=(",", ":"))

@@ -17,7 +17,7 @@ from collections import defaultdict
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import driver_list, josa, node_order, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import driver_list, heap_moves, josa, node_order, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, level_order_tree, move  # noqa: E402
 
 SLUG = "guild-chat-relay"
@@ -55,18 +55,9 @@ def solve(links, n, src, run):
     drawn = []  # the heap list as the last frame drew it
 
     def resorted(fresh=()):
-        """A move for each entry heapq put somewhere new since the last frame: from the node it was at, or, when that
-        node is gone (the last entry lifted to the root after a pop), into its node with its text. `fresh` entries
-        are moved in by the caller, from their relays."""
-        out = []
-        for j, e in enumerate(heap):
-            if (j < len(drawn) and drawn[j] is e) or any(e is f for f in fresh):
-                continue
-            i = next((k for k, d in enumerate(drawn) if d is e), None)
-            text = f"({e[0]}, {e[1]})"
-            out.append(move(at("heap", i), at("heap", j), value=text) if i is not None and i < len(heap)
-                       else move(dst=at("heap", j), value=text))
-        return out
+        """A move for each entry heapq put somewhere new since the last frame; `fresh` entries are moved in by the
+        caller, from their relays."""
+        return heap_moves("heap", heap, drawn, lambda e: f"({e[0]}, {e[1]})", fresh)
 
     def frame(caption, heap_marks=None, lit=(), good=(), lit_edges=(), good_edges=(), end=None, moves=None, **answer):
         node_marks, edge_marks = {"lit": list(lit), "good": list(good)}, {"lit": [edge(*e) for e in lit_edges],

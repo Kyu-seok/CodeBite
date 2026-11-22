@@ -2,7 +2,8 @@
 # Checks scripts/deploy-prod.sh's decisions against a stub docker: the backend rolls unless every
 # old replica runs the new image under the same compose config hash, and always on a manual run,
 # with no old replicas, or when a replica can't be inspected; the health wait passes once every new
-# replica answers and gives up after its attempts.
+# replica answers and gives up after its attempts; every compose call builds without BuildKit's
+# default attestation, which gives a fully cached image a new id on every build (#403).
 set -euo pipefail
 
 script="$(cd "$(dirname "$0")" && pwd)/deploy-prod.sh"
@@ -10,12 +11,13 @@ dir=$(mktemp -d)
 trap 'rm -rf "$dir"' EXIT
 mkdir "$dir/bin"
 # `docker inspect` answers STATE_<id> ("image hash"), or fails when it is unset. `docker exec <id>`
-# succeeds when <id> is listed in $dir/up.
+# succeeds when <id> is listed in $dir/up. `docker compose` records whether default attestations are off.
 cat > "$dir/bin/docker" <<'STUB'
 #!/usr/bin/env bash
 case $1 in
   inspect) v="STATE_${!#}"; [[ -n ${!v:-} ]] || exit 1; echo "${!v}" ;;
   exec) grep -qx "$2" "$STUB_DIR/up" 2>/dev/null ;;
+  compose) echo "${BUILDX_NO_DEFAULT_ATTESTATIONS:-unset}" > "$STUB_DIR/attestations-off" ;;
   *) exit 1 ;;
 esac
 STUB
@@ -36,6 +38,10 @@ rolls "no old replicas" push img1 h1
 rolls "one replica on another image" push img1 h1 a c
 rolls "one replica under another config" push img1 h1 a d
 rolls "a replica that can't be inspected" push img1 h1 a gone
+
+"${COMPOSE[@]}" build
+[[ $(cat "$dir/attestations-off") == 1 ]] \
+  || { echo "FAIL: compose build: expected BUILDX_NO_DEFAULT_ATTESTATIONS=1, so a cached image keeps its id"; fail=1; }
 
 sleep() { :; }
 printf 'n1\nn2\n' > "$dir/up"
