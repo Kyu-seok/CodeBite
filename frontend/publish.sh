@@ -25,7 +25,7 @@ html=$site/html
 work=$(mktemp -d)
 trap 'rm -rf "$work"' EXIT
 (cd "$src" && find . -type f -print0) > "$work/names"
-LC_ALL=C sort -z "$work/names" > "$work/sorted"
+LC_ALL=C sort --zero-terminated "$work/names" > "$work/sorted"
 (cd "$src" && xargs -0 cksum) < "$work/sorted" > "$work/sums"
 sum=$(cksum < "$work/sums")
 id=$(echo "$sum" | tr ' ' '-')
