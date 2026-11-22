@@ -15,6 +15,7 @@ writes common/src/main/resources/walkthroughs/merge-cafe-queues.json.
 import json
 import os
 import sys
+from functools import partial
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
@@ -57,8 +58,7 @@ def solve(queues, run):
     st = {"tail": dummy, "draw": None}
     drawn = []  # the heap list as the last frame drew it
 
-    def nid(node):
-        return node_id(order, node)
+    nid = partial(node_id, order)
 
     def q(i):
         return f"q{i}"

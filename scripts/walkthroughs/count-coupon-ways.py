@@ -15,10 +15,11 @@ writes common/src/main/resources/walkthroughs/count-coupon-ways.json.
 import json
 import os
 import sys
+from functools import partial
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import plural, sample_cases, sample_run, table_frame, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, move  # noqa: E402
 
 SLUG = "count-coupon-ways"
@@ -62,8 +63,7 @@ def solve(amount, coins, run):
     grid += [[f"+{c}"] + [UNSET] * (amount + 1) for c in coins]
     ways = [1] + [0] * amount
 
-    def frame(caption, marks=None, moves=None, **answer):
-        run.frame(caption, table={"cells": grid, "marks": marks or {}}, moves=moves, **answer)
+    frame = partial(table_frame, run, grid)
 
     frame({"en": f"Spend {amount} with coupons {coins}. With no coupons, only a total of 0 can be made, one way (use "
                  "none); every other total has 0.",

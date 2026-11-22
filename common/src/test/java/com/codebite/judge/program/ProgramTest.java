@@ -52,6 +52,63 @@ class ProgramTest {
         });
     }
 
+    // --- A real Java Driver: only its imports above the user's code, its Library below (#412) ---
+
+    private static final ProblemAssets DRIVERS = new ProblemAssets();
+
+    /** Opens with an import; line 4 lacks its semicolon and line 5 dereferences null. */
+    private static final String ADD_SCORE_LISTS = """
+            import java.util.stream.*;
+            class Solution {
+                public ListNode addScoreLists(ListNode l1, ListNode l2) {
+                    int carry = 0
+                    return l1.next.next.next.next;
+                }
+            }""";
+
+    @Test
+    void diagnostics_onARealJavaDriver_aCompileErrorNamesTheUsersOwnLine() {
+        Program program = DRIVERS.assemble("add-score-lists", Language.JAVA, ADD_SCORE_LISTS);
+
+        List<CodeError> errors = program.diagnostics("Main.java:6: error: ';' expected\n1 error", null);
+
+        assertThat(errors).extracting(CodeError::line).containsExactly(4);
+    }
+
+    @Test
+    void diagnostics_onARealJavaDriver_aRuntimeErrorNamesTheUsersOwnLine() {
+        Program program = DRIVERS.assemble("add-score-lists", Language.JAVA, ADD_SCORE_LISTS);
+
+        List<CodeError> errors = program.diagnostics(null, """
+                Exception in thread "main" java.lang.NullPointerException
+                \tat Solution.addScoreLists(Main.java:7)
+                \tat Main.main(Main.java:56)
+                """);
+
+        // The user's frame on its own line; the Main frame, below the user's code, on the last.
+        assertThat(errors).extracting(CodeError::line).containsExactly(5, 7);
+        assertThat(errors).allSatisfy(e -> {
+            assertThat(e.inUserCode()).isTrue();
+            assertThat(e.message()).isEqualTo("java.lang.NullPointerException");
+        });
+    }
+
+    @Test
+    void diagnostics_onARealJavaDriver_aFrameInsideTheLibraryIsReportedAsAMainFrameIs() {
+        Program program = DRIVERS.assemble("add-score-lists", Language.JAVA, ADD_SCORE_LISTS);
+
+        List<CodeError> errors = program.diagnostics(null, """
+                Exception in thread "main" java.lang.OutOfMemoryError: Java heap space
+                \tat ListNode.toJsonArray(Main.java:40)
+                \tat Main.main(Main.java:56)
+                """);
+
+        // Neither frame is the user's: both land on the last line of their code, with the message.
+        assertThat(errors).extracting(CodeError::line).containsExactly(7, 7);
+        assertThat(errors).allSatisfy(e ->
+                assertThat(e.message()).isEqualTo("java.lang.OutOfMemoryError: Java heap space"));
+    }
+
     @Test
     void diagnostics_areEmptyWhenJudge0ReportsNothing() {
         assertThat(ASSETS.assemble("two-line", Language.JAVA, "a").diagnostics(null, null)).isEmpty();

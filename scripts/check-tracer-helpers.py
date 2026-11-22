@@ -10,15 +10,12 @@ with its docstring dropped or reworded is still a copy. A local helper may share
 another tracer's (show, tag, solve) as long as it does something else. Methods are not compared;
 a function nested in one is.
 
-Nested copies that were there before the check looked for them are listed in the tracer
-directory's nested-copies.known, one `name: file, file` line each (# starts a comment). A listed
-copy passes while exactly those files share it: one more file copying it fails as a COPY, and a
-line whose files no longer share the function fails as STALE, so the list only shrinks.
+No copy is let through: a nested function that closes over the tracer's own state moves into
+codebite.py taking that state as parameters, and the tracer binds it (functools.partial).
 
     scripts/check-tracer-helpers.py [tracer directory]
 
-Exits 1 and prints one COPY line per function, naming the files that define it (and one STALE
-line per list entry to remove); exits 2 when a
+Exits 1 and prints one COPY line per function, naming the files that define it; exits 2 when a
 file doesn't parse. Tracers are Python 3.12 (a quote nested in an f-string), so an older python3
 hands over to the one scripts/python312.sh finds.
 """
@@ -42,9 +39,6 @@ def same_function_key(node):
     if isinstance(body[0], ast.Expr) and isinstance(getattr(body[0].value, "value", None), str):
         body = body[1:]
     return node.name, ast.dump(node.args), "".join(ast.dump(statement) for statement in body)
-
-
-KNOWN_NESTED = "nested-copies.known"
 
 
 def functions(tree):
@@ -77,21 +71,6 @@ def copies(directory):
                  for nested in (False, True))
 
 
-def known_nested(directory):
-    """[(name, [file names])] as nested-copies.known lists them; none when there is no list."""
-    listed = []
-    path = directory / KNOWN_NESTED
-    for number, line in enumerate(path.read_text(encoding="utf-8").splitlines() if path.exists() else [], 1):
-        line = line.split("#")[0].strip()
-        if not line:
-            continue
-        name, colon, names = line.partition(":")
-        if not colon or not names.strip():
-            stop(f"{KNOWN_NESTED}:{number}: expected `name: file, file`")
-        listed.append((name.strip(), sorted(n.strip() for n in names.split(","))))
-    return listed
-
-
 def python_312():
     """The Python 3.12 or newer to hand over to: the finder asks each candidate its version, so the
     handover never lands on an older one and starts again."""
@@ -111,10 +90,7 @@ def main():
         os.execv(python, [python, "-I", os.path.abspath(__file__), *sys.argv[1:]])
     directory = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).resolve().parent / "walkthroughs"
     top_level, nested = copies(directory)
-    listed = known_nested(directory)
-    new_nested = [(name, names) for name, names in nested if (name, sorted(names)) not in listed]
-    stale = [entry for entry in listed if entry not in [(name, sorted(names)) for name, names in nested]]
-    for kind, found in (("function", top_level), ("nested function", new_nested)):
+    for kind, found in (("function", top_level), ("nested function", nested)):
         for name, names in found:
             if SHARED in names:
                 tracers = [n for n in names if n != SHARED]
@@ -123,9 +99,7 @@ def main():
             else:
                 print(f"  COPY  {name}: {joined(names)} define the same {kind}; "
                       f"move it into {SHARED} and import it from there")
-    for name, names in stale:
-        print(f"  STALE  {KNOWN_NESTED} lists {name}: {', '.join(names)}, which no longer share it; remove the line")
-    return 1 if top_level or new_nested or stale else 0
+    return 1 if top_level or nested else 0
 
 
 if __name__ == "__main__":

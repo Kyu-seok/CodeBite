@@ -2,11 +2,23 @@
 import os
 import sys
 import unittest
+from collections import deque
 
 sys.dont_write_bytecode = True
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "walkthroughs"))
-from codebite import (bag_text, build_list, cell_at, driver_list, heap_moves, josa, or_infinity, plural,  # noqa: E402
-                      quote, run_label)
+from codebite import (ListNode, bag_text, bit_digits, bit_text, build_list, cell_at, driver_list,  # noqa: E402
+                      halving_find, heap_moves, hold_to_best, josa, node_name, node_object, or_infinity, plural, quote,
+                      record_return, run_label, table_cell, table_frame, task_frame, union_root)
+
+class RecordedRun:
+    """A run that keeps the frames it is given, as (caption, the rest by keyword)."""
+
+    def __init__(self):
+        self.frames = []
+
+    def frame(self, caption, **state):
+        self.frames.append((caption, state))
+
 
 DESCRIPTION = "Intro.\n\n**Example 1:**\n```\nInput: x = 1\n```\n\n**Example 2:**\n```\nInput: x = 2\n```\n"
 
@@ -75,6 +87,122 @@ class CaptionHelpers(unittest.TestCase):
 
     def test_a_bag_tag_names_its_size_in_both_languages(self):
         self.assertEqual(bag_text(4), {"en": "bag 4", "ko": "봉지 4"})
+
+
+class Bits(unittest.TestCase):
+    def test_a_number_is_written_in_binary_padded_to_the_width(self):
+        self.assertEqual([bit_text(5, 4), bit_text(0, 3), bit_text(6, 3)], ["0101", "000", "110"])
+
+    def test_a_number_wider_than_the_width_keeps_all_its_bits(self):
+        self.assertEqual(bit_text(9, 2), "1001")
+
+    def test_the_digits_come_as_numbers_highest_place_first(self):
+        self.assertEqual(bit_digits(5, 4), [0, 1, 0, 1])
+
+
+class TableCell(unittest.TestCase):
+    def test_a_table_entry_sits_one_row_and_one_column_in_past_the_headers(self):
+        self.assertEqual([table_cell(0, 0), table_cell(2, 5)], [[1, 1], [3, 6]])
+
+
+class TableFrame(unittest.TestCase):
+    def test_a_frame_draws_the_grid_in_the_table_view_with_its_marks_moves_and_answer(self):
+        run = RecordedRun()
+        table_frame(run, [["", "a"], ["b", 1]], "filled", marks={"good": [[1, 1]]}, moves=["a move"], answer="1")
+        self.assertEqual(run.frames, [("filled", {"table": {"cells": [["", "a"], ["b", 1]], "marks": {"good": [[1, 1]]}},
+                                                  "moves": ["a move"], "answer": "1"})])
+
+    def test_a_frame_with_no_marks_or_moves_draws_the_grid_bare(self):
+        run = RecordedRun()
+        table_frame(run, [[0]], "start")
+        self.assertEqual(run.frames, [("start", {"table": {"cells": [[0]], "marks": {}}, "moves": None})])
+
+
+class TaskFrame(unittest.TestCase):
+    """Three tasks, 1 waiting on 0 and 2 on 1, with task 0 placed first in the order."""
+
+    def frame(self, ready, **given):
+        run = RecordedRun()
+        task_frame(run, 3, [[1, 0], [2, 1]], [0, 1, 1], [0], deque(ready), "step", **given)
+        (caption, state), = run.frames
+        self.assertEqual(caption, "step")
+        return state
+
+    def test_tasks_are_drawn_in_diagram_order_with_their_waits_and_a_placed_one_tagged_and_dimmed(self):
+        self.assertEqual(self.frame([1], node_lit=[1]), {
+            "tasks": {"nodes": [{"id": 1}, {"id": 0, "tag": {"en": "#1", "ko": "1번째"}}, {"id": 2}],
+                      "values": {"0": 0, "1": 1, "2": 1},
+                      "nodeMarks": {"dim": [0], "path": [], "bad": [], "good": [], "lit": [1]},
+                      "edgeMarks": {"bad": [], "lit": []}},
+            "ready": {"values": [1], "marks": {"lit": [], "good": []}},
+            "done": {"values": [0], "marks": {}},
+            "moves": None})
+
+    def test_the_task_leaving_the_queue_is_still_drawn_at_its_front(self):
+        self.assertEqual(self.frame([1], leaving=0, queue_lit=[0])["ready"],
+                         {"values": [0, 1], "marks": {"lit": [0], "good": []}})
+
+    def test_a_final_path_lights_the_order_and_dims_no_task(self):
+        state = self.frame([], node_path=[0], answer="[0]")
+        self.assertEqual([state["tasks"]["nodeMarks"]["dim"], state["tasks"]["nodeMarks"]["path"], state["done"],
+                          state["answer"]], [[], [0], {"values": [0], "marks": {"path": [0]}}, "[0]"])
+
+    def test_marked_edges_and_moves_pass_through(self):
+        state = self.frame([], edge_lit=[1], edge_bad=[0], moves=["a move"])
+        self.assertEqual([state["tasks"]["edgeMarks"], state["moves"]], [{"bad": [0], "lit": [1]}, ["a move"]])
+
+
+class UnionFind(unittest.TestCase):
+    """parent = [0, 0, 1, 2]: the chain 3 → 2 → 1 → 0."""
+
+    def test_the_root_is_found_without_changing_a_parent(self):
+        parent = [0, 0, 1, 2]
+        self.assertEqual([union_root(parent, 3), union_root(parent, 0), parent], [0, 0, [0, 0, 1, 2]])
+
+    def test_find_halves_the_path_and_records_where_it_stood_and_what_it_rewrote(self):
+        parent, writes, visited = [0, 0, 1, 2], [], []
+        self.assertEqual(halving_find(parent, 3, writes, visited), 0)
+        # 3 jumps over 2 to 1 (parent[3], read from cell 2, becomes 1); 1's parent is already the root
+        self.assertEqual([parent, visited, writes], [[0, 0, 1, 1], [3, 1, 0], [(2, 3, 1)]])
+
+    def test_find_on_a_root_stands_only_on_it(self):
+        parent, writes, visited = [0, 1], [], []
+        self.assertEqual([halving_find(parent, 1, writes, visited), visited, writes], [1, [1], []])
+
+
+class HoldToBest(unittest.TestCase):
+    def test_a_longer_window_becomes_the_best_and_says_so(self):
+        self.assertEqual(hold_to_best(2, 5, 3, (0, 2)), (True, 4, (2, 5), "a new best, 4", "best = 4로 갱신"))
+
+    def test_a_window_no_longer_than_the_best_leaves_it(self):
+        self.assertEqual(hold_to_best(2, 4, 3, (0, 2)), (False, 3, (0, 2), "best stays 3", "best = 3 그대로"))
+
+    def test_the_first_window_beats_no_best(self):
+        self.assertEqual(hold_to_best(0, 0, 0, None), (True, 1, (0, 0), "a new best, 1", "best = 1로 갱신"))
+
+
+class ListNodeNames(unittest.TestCase):
+    def test_a_node_is_named_by_its_value_and_the_dummy_as_dummy(self):
+        dummy, node = ListNode(""), ListNode(7)
+        self.assertEqual([node_name(node, dummy), node_name(dummy, dummy)], ["7", "dummy"])
+
+    def test_a_node_equal_to_the_dummy_but_another_object_is_named_by_its_value(self):
+        self.assertEqual(node_name(ListNode(""), ListNode("")), "")
+
+    def test_a_node_as_a_korean_object_takes_the_particle_its_value_is_read_with(self):
+        # 삼을, 사를
+        self.assertEqual([node_object(ListNode(3)), node_object(ListNode(4))], ["3을", "4를"])
+
+    def test_no_node_is_null_as_a_korean_object(self):
+        self.assertEqual(node_object(None), "null을")
+
+
+class RecordReturn(unittest.TestCase):
+    def test_a_returned_value_joins_the_result_as_json_and_its_place_comes_back(self):
+        result = []
+        self.assertEqual([record_return(result, None), record_return(result, 12), record_return(result, True)],
+                         [0, 1, 2])
+        self.assertEqual(result, ["null", "12", "true"])
 
 
 class BuildList(unittest.TestCase):

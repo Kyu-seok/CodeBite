@@ -15,10 +15,11 @@ import json
 import os
 import sys
 from collections import deque
+from functools import partial
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import driver_list, josa, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import driver_list, josa, record_return, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, move  # noqa: E402
 
 SLUG = "click-tally-window"
@@ -61,9 +62,7 @@ def solve(ops, args, run):
                   result={"values": result, "marks": {"path": list(range(len(result)))} if path else {"good": fresh}},
                   moves=moves, **answer)
 
-    def returned(value):
-        result.append(json.dumps(value))
-        return len(result) - 1
+    returned = partial(record_return, result)
 
     returned(None)
     frame({"en": "ClickTally() starts with an empty queue of clicks. It returns null.",

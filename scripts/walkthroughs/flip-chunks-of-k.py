@@ -13,10 +13,11 @@ writes common/src/main/resources/walkthroughs/flip-chunks-of-k.json.
 import json
 import os
 import sys
+from functools import partial
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import ListNode, driver_list, josa, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import ListNode, driver_list, josa, node_name, node_object, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, linked_list, move, node_id  # noqa: E402
 
 SLUG = "flip-chunks-of-k"
@@ -48,8 +49,7 @@ def solve(values, k, run):
     dummy.next = nodes[0]
     order = [dummy] + nodes
 
-    def nid(node):
-        return node_id(order, node)
+    nid = partial(node_id, order)
 
     def frame(caption, ptr, marks, link=None, cut=None, moves=None, result=(), **answer):
         state = {**linked_list(order), "pointers": {name: nid(v) for name, v in ptr.items()}, "marks": marks}
@@ -60,15 +60,10 @@ def solve(values, k, run):
         run.frame(caption, list=state, result={"values": list(result), "marks": {"path": list(range(len(result)))}},
                   state={"items": [{"label": "k", "value": k}]}, moves=moves, **answer)
 
-    def name(node):
-        return "dummy" if node is dummy else str(node.val)
+    name = partial(node_name, dummy=dummy)
 
     def val(node, null="null"):
         return null if node is None else str(node.val)
-
-    def obj(node):
-        """`node` as the object of a Korean verb: null을, or the value with 을/를."""
-        return "null을" if node is None else josa(node.val, "을를")
 
     frame({"en": f"{len(nodes)} nodes from {nodes[0].val} to {nodes[-1].val}, and k = {k}. dummy goes before the head, "
                  f"and before starts there.",
@@ -124,7 +119,7 @@ def solve(values, k, run):
             turned = prev
             if old is turned.next:
                 what = {"en": f"{turned.val}'s next is already {val(turned.next)}, so its arrow stays",
-                        "ko": f"{turned.val}의 화살표는 이미 {obj(turned.next)} 가리키므로 그대로입니다"}
+                        "ko": f"{turned.val}의 화살표는 이미 {node_object(turned.next)} 가리키므로 그대로입니다"}
             else:
                 what = {"en": f"{turned.val}'s arrow turns to {val(turned.next)}",
                         "ko": f"{turned.val}의 화살표가 {val(turned.next)} 쪽으로 돌아갑니다"}

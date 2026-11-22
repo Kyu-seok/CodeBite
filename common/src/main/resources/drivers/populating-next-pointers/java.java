@@ -1,5 +1,7 @@
 import java.util.*;
 
+{USER_CODE}
+
 class Node {
     public int val;
     public Node left;
@@ -15,8 +17,6 @@ class Node {
         this.next = next;
     }
 }
-
-{USER_CODE}
 
 public class Main {
     static Node buildTree(String input) {

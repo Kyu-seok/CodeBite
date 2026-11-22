@@ -15,10 +15,11 @@ import json
 import os
 import sys
 from collections import Counter
+from functools import partial
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import plural, sample_cases, sample_run, table_frame, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, move  # noqa: E402
 
 SLUG = "ticket-plus-or-minus"
@@ -74,8 +75,7 @@ def solve(tickets, target, run):
     ways = Counter({0: 1})
     grid[1][col[0]] = 1
 
-    def frame(caption, marks=None, moves=None, **answer):
-        run.frame(caption, table={"cells": grid, "marks": marks or {}}, moves=moves, **answer)
+    frame = partial(table_frame, run, grid)
 
     frame({"en": f"{len(tickets)} tickets, target {target}. Before any ticket the total is 0, reached one way.",
            "ko": f"티켓 {len(tickets)}장, 목표 {target}. 티켓을 하나도 쓰지 않으면 합계는 0이고, 방법은 1가지입니다."},

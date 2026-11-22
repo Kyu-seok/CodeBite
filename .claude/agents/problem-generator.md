@@ -145,9 +145,9 @@ Create 4 driver files at `common/src/main/resources/drivers/{slug}/`:
 ```java
 import java.util.*;
 
-// {{LIB:JsonOutput}}  ← only if needed for array/list output
-
 {USER_CODE}
+
+// {{LIB:JsonOutput}}  ← only if needed for array/list output; below {USER_CODE}, since Java allows no import after a class and the user's code may open with one
 
 public class Main {
     public static void main(String[] args) {
@@ -203,6 +203,7 @@ const lines = input.split('\n');
 **Driver code rules:**
 - Exactly one `{USER_CODE}` placeholder per file
 - Java main class must be `Main`
+- Java: only `import` lines come before `{USER_CODE}`; every `{{LIB:...}}` marker and helper class goes below it (`JavaDriversCompileTest` fails otherwise). C++ markers stay above it
 - Use `// {{LIB:JsonOutput}}` (Java/C++) when outputting arrays/lists — provides `JsonOutput.intArray()`, `JsonOutput.stringArray()`, etc.
 - Use `// {{LIB:ListNode}}` (Java/C++) for linked list problems — provides `ListNode.fromArray()`, `ListNode.toArrayString()`
 - Use `// {{LIB:TreeNode}}` (Java/C++) for tree problems — provides `TreeNode.fromArray()`, `TreeNode.toArrayString()`

@@ -12,10 +12,11 @@ writes common/src/main/resources/walkthroughs/interleave-clip-chain.json.
 import json
 import os
 import sys
+from functools import partial
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import ListNode, driver_list, josa, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import ListNode, driver_list, josa, node_object, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, linked_list, move, node_id  # noqa: E402
 
 SLUG = "interleave-clip-chain"
@@ -42,11 +43,7 @@ def solve(values, run):
         a.next = b
     head = order[0]
 
-    def nid(node):
-        return node_id(order, node)
-
-    def obj(node):
-        return "null을" if node is None else josa(node.val, "을를")
+    nid = partial(node_id, order)
 
     def ro(node):
         return "null로" if node is None else josa(node.val, "(으)로")
@@ -129,7 +126,7 @@ def solve(values, run):
         frame({"en": f"Save next1 = {to(next1)} and next2 = {to(next2)}, then first.next = second: {first.val} now "
                      f"points to {second.val}.",
                "ko": f"next1 = {to(next1)}, next2 = {ro(next2)} 기억해 두고, first.next = second로 {first.val}의 화살표가 "
-               f"{obj(second)} 가리킵니다."},
+               f"{node_object(second)} 가리킵니다."},
               {"first": first, "second": second, "next1": next1, "next2": next2}, {"lit": [nid(first)]},
               link=first, cut=(first, old))
         old = second.next
@@ -137,7 +134,7 @@ def solve(values, run):
         frame({"en": f"second.next = next1: {second.val} now points to {to(next1)}"
                      + (", so the middle clip comes last." if next1 is not None and next1.next is None and next2 is None
                         else "."),
-               "ko": f"second.next = next1: {second.val}의 화살표가 {obj(next1)} 가리킵니다."},
+               "ko": f"second.next = next1: {second.val}의 화살표가 {node_object(next1)} 가리킵니다."},
               {"first": first, "second": second, "next1": next1, "next2": next2}, {"lit": [nid(second)]},
               link=second, cut=(second, old))
         first, second = next1, next2
