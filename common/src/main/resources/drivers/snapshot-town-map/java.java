@@ -1,8 +1,8 @@
 import java.util.*;
 
-// {{LIB:Node}}
-
 {USER_CODE}
+
+// {{LIB:Node}}
 
 public class Main {
     public static void main(String[] args) {

@@ -38,10 +38,11 @@ A Driver is the hidden per-problem source that turns the user's solution into a 
 
 **Example** (`drivers/two-sum/java.java`):
 ```java
-// {{LIB:JsonOutput}}
 import java.util.*;
 
 {USER_CODE}
+
+// {{LIB:JsonOutput}}
 
 public class Main {
     public static void main(String[] args) {

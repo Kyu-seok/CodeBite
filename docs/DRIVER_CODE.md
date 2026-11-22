@@ -135,12 +135,15 @@ Problems involving linked lists, trees, or graphs need shared data structure def
 
 1. A driver file includes a marker comment:
    ```java
-   // {{LIB:ListNode}}
+   import java.util.*;
 
    {USER_CODE}
 
+   // {{LIB:ListNode}}
+
    public class Main { ... }
    ```
+   In a Java Driver nothing but the Driver's own `import` lines comes before `{USER_CODE}`; markers and helper classes go below it, because Java allows no `import` after a class and the user's code may open with one (`JavaDriversCompileTest` fails on a Driver that breaks this). A Java Library has no imports of its own: one it needs goes with the Driver's imports at the top. C++ keeps its markers above `{USER_CODE}`, where an `#include` after a class is legal.
 
 2. `ProblemAssets` scans the template for `// {{LIB:ClassName}}` patterns.
 
@@ -182,9 +185,9 @@ class ListNode {
 ```java
 import java.util.*;
 
-// {{LIB:ListNode}}
-
 {USER_CODE}
+
+// {{LIB:ListNode}}
 
 public class Main {
     public static void main(String[] args) {
@@ -264,7 +267,7 @@ When adding a new problem, create one driver file per supported language:
 
 5. **Print the result to stdout:** Must match the `expected_output` in the test case exactly (after trimming)
 
-6. **Add `// {{LIB:ClassName}}`** if the problem uses shared data structures
+6. **Add `// {{LIB:ClassName}}`** if the problem uses shared data structures: below `{USER_CODE}` in Java, above it in C++
 
 ### Checklist
 
@@ -272,7 +275,7 @@ When adding a new problem, create one driver file per supported language:
 - [ ] Reads all inputs from stdin in the correct order
 - [ ] Output format matches expected output in test cases
 - [ ] No extra whitespace or newlines in output (use `trim()` on expected output comparison)
-- [ ] If using shared utilities, `// {{LIB:ClassName}}` marker is present
+- [ ] If using shared utilities, `// {{LIB:ClassName}}` marker is present (Java: below `{USER_CODE}`, with only imports above it)
 - [ ] Starter code shows the class/method signature the driver expects
 
 ## Test Case Input/Output Format
