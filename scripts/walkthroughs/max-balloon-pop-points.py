@@ -15,10 +15,11 @@ writes common/src/main/resources/walkthroughs/max-balloon-pop-points.json.
 import json
 import os
 import sys
+from functools import partial
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import josa, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import josa, sample_cases, sample_run, table_frame, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, move  # noqa: E402
 
 SLUG = "max-balloon-pop-points"
@@ -64,8 +65,7 @@ def solve(balloons, run):
     def cell(left, right):
         return [left + 1, right + 1]
 
-    def frame(caption, marks=None, moves=None, **answer):
-        run.frame(caption, table={"cells": grid, "marks": marks or {}}, moves=moves, **answer)
+    frame = partial(table_frame, run, grid)
 
     frame({"en": f"Padded row: {values}. A cell with no balloon between its two walls (right = left + 1) scores 0.",
            "ko": f"양 끝을 채운 줄: {values}. 두 벽 사이에 풍선이 없는 칸(right = left + 1)은 0점입니다."},

@@ -12,10 +12,11 @@ writes common/src/main/resources/walkthroughs/merge-leaderboard-runs.json.
 import json
 import os
 import sys
+from functools import partial
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import ListNode, build_list, driver_list, josa, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import ListNode, build_list, driver_list, josa, node_name, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, linked_list, move, node_id  # noqa: E402
 
 SLUG = "merge-leaderboard-runs"
@@ -48,8 +49,7 @@ def solve(a_values, b_values, run):
     tail = dummy
     ptr = {}
 
-    def nid(node):
-        return node_id(order, node)
+    nid = partial(node_id, order)
 
     def frame(caption, marks, link=None, cut=None, moves=None, result=(), **answer):
         ptr.update(dummy=dummy, tail=tail, runA=run_a, runB=run_b)
@@ -67,8 +67,7 @@ def solve(a_values, b_values, run):
         return {"en": f"{name} holds {driver_list([n.val for n in nodes])}",
                 "ko": f"{name} = {driver_list([n.val for n in nodes])}"}
 
-    def name(node):
-        return "dummy" if node is dummy else str(node.val)
+    name = partial(node_name, dummy=dummy)
 
     da, db = describe("runA", a_nodes), describe("runB", b_nodes)
     frame({"en": f"{da['en']} and {db['en']}. tail starts at a new dummy node, whose arrow is null.",

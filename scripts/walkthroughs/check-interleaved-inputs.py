@@ -19,7 +19,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import sample_cases, sample_run, table_cell, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, move  # noqa: E402
 
 SLUG = "check-interleaved-inputs"
@@ -63,9 +63,6 @@ def solve(a_text, b_text, merged, run):
                   merged={"values": letters, "pointers": {"k": k}, "marks": merged_marks or {}},
                   moves=moves, **answer)
 
-    def cell(i, j):
-        return [i + 1, j + 1]
-
     if n + m != len(merged):
         frame({"en": f"A has {n} letters and B {m}, but merged has {len(merged)}: it can't use each exactly once. "
                      "Answer: false.",
@@ -78,7 +75,7 @@ def solve(a_text, b_text, merged, run):
                  "the lengths fit. Two empty prefixes make the empty merged prefix: ✓.",
            "ko": f"A = \"{a_text}\", B = \"{b_text}\", merged = \"{merged}\": {n} + {m} = {len(merged)}글자로 길이가 "
                  "맞습니다. 빈 앞부분 둘은 빈 merged 앞부분을 만듭니다: ✓."},
-          marks={"good": [cell(0, 0)]})
+          marks={"good": [table_cell(0, 0)]})
     for i in range(n + 1):
         for j in range(m + 1):
             if (i, j) == (0, 0):
@@ -92,34 +89,34 @@ def solve(a_text, b_text, merged, run):
             reads, parts_en, parts_ko = [], [], []
             if i > 0:
                 a = a_text[i - 1]
-                reads += [cell(i - 1, j), [i + 1, 0]]
+                reads += [table_cell(i - 1, j), [i + 1, 0]]
                 parts_en.append(f"above is {'✓' if ok[(i - 1, j)] else '✗'} and A's next letter is '{a}'")
                 parts_ko.append(f"위 칸은 {'✓' if ok[(i - 1, j)] else '✗'}, A의 다음 글자는 '{a}'")
             if j > 0:
                 b = b_text[j - 1]
-                reads += [cell(i, j - 1), [0, j + 1]]
+                reads += [table_cell(i, j - 1), [0, j + 1]]
                 parts_en.append(f"left is {'✓' if ok[(i, j - 1)] else '✗'} and B's next letter is '{b}'")
                 parts_ko.append(f"왼쪽 칸은 {'✓' if ok[(i, j - 1)] else '✗'}, B의 다음 글자는 '{b}'")
             if from_a:
-                src, verdict_en, verdict_ko = cell(i - 1, j), f"A's '{letter}' goes here: ✓", f"A의 '{letter}' 글자를 놓을 수 있어 ✓"
+                src, verdict_en, verdict_ko = table_cell(i - 1, j), f"A's '{letter}' goes here: ✓", f"A의 '{letter}' 글자를 놓을 수 있어 ✓"
             elif from_b:
-                src, verdict_en, verdict_ko = cell(i, j - 1), f"B's '{letter}' goes here: ✓", f"B의 '{letter}' 글자를 놓을 수 있어 ✓"
+                src, verdict_en, verdict_ko = table_cell(i, j - 1), f"B's '{letter}' goes here: ✓", f"B의 '{letter}' 글자를 놓을 수 있어 ✓"
             else:
-                src = cell(i - 1, j) if i > 0 else cell(i, j - 1)
+                src = table_cell(i - 1, j) if i > 0 else table_cell(i, j - 1)
                 verdict_en, verdict_ko = "neither gives it: ✗", "어느 쪽으로도 만들 수 없어 ✗"
             frame({"en": f"merged[{k}] = '{letter}': {'; '.join(parts_en)}. So {verdict_en}.",
                    "ko": f"merged[{k}] = '{letter}': {', '.join(parts_ko)}입니다. 따라서 {verdict_ko}입니다."},
-                  marks={"lit": reads, "good" if ok[(i, j)] else "bad": [cell(i, j)]}, k=k, merged_marks={"lit": [k]},
-                  moves=[move(at("table", src), at("table", cell(i, j)), value="✓" if ok[(i, j)] else "✗",
+                  marks={"lit": reads, "good" if ok[(i, j)] else "bad": [table_cell(i, j)]}, k=k, merged_marks={"lit": [k]},
+                  moves=[move(at("table", src), at("table", table_cell(i, j)), value="✓" if ok[(i, j)] else "✗",
                               mark=None if ok[(i, j)] else "bad")])
     if not ok[(n, m)]:
         frame({"en": f"The corner is ✗: no way of taking A's and B's letters in order spells \"{merged}\". Answer: false.",
                "ko": f"오른쪽 아래 칸이 ✗입니다. A와 B의 글자를 순서대로 어떻게 가져와도 \"{merged}\" 문자열이 되지 "
                      "않으므로 답은 false입니다."},
-              marks={"bad": [cell(n, m)]}, answer="false")
+              marks={"bad": [table_cell(n, m)]}, answer="false")
         return
     # walk back along the ✓ cells: each step up placed A's letter, each step left B's
-    path, taken, (i, j) = [cell(n, m)], [], (n, m)
+    path, taken, (i, j) = [table_cell(n, m)], [], (n, m)
     while (i, j) != (0, 0):
         letter = merged[i + j - 1]
         if i > 0 and ok[(i - 1, j)] and a_text[i - 1] == letter:
@@ -128,7 +125,7 @@ def solve(a_text, b_text, merged, run):
         else:
             taken.append(("B", letter))
             j -= 1
-        path.append(cell(i, j))
+        path.append(table_cell(i, j))
     taken.reverse()
     if taken:
         order = ", ".join(f"{ch} ({side})" for side, ch in taken)

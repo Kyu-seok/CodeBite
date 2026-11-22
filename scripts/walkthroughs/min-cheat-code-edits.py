@@ -17,10 +17,11 @@ writes common/src/main/resources/walkthroughs/min-cheat-code-edits.json.
 import os
 import string
 import sys
+from functools import partial
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import plural, sample_cases, sample_run, table_cell, table_frame, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, move  # noqa: E402
 
 SLUG = "min-cheat-code-edits"
@@ -57,11 +58,7 @@ def solve(source, target, run):
     grid += [[a] + [UNSET] * (m + 1) for a in source]
     came = {}  # (i, j) -> (i', j') the cell its value was taken from
 
-    def cell(i, j):
-        return [i + 1, j + 1]
-
-    def frame(caption, marks=None, moves=None, **answer):
-        run.frame(caption, table={"cells": grid, "marks": marks or {}}, moves=moves, **answer)
+    frame = partial(table_frame, run, grid)
 
     previous = list(range(m + 1))
     for j, v in enumerate(previous):
@@ -72,7 +69,7 @@ def solve(source, target, run):
                  "(that many inserts); the left column is erasing each source prefix (that many deletes).",
            "ko": f"\"{source}\" → \"{target}\": 맨 윗행은 빈 코드에서 target 앞부분을 만드는 수(그만큼 "
                  "끼워 넣기), 맨 왼쪽 열은 source 앞부분을 모두 지우는 수(그만큼 지우기)입니다."},
-          marks={"good": [cell(0, j) for j in range(m + 1)] + [cell(i, 0) for i in range(1, n + 1)]})
+          marks={"good": [table_cell(0, j) for j in range(m + 1)] + [table_cell(i, 0) for i in range(1, n + 1)]})
     for i, a in enumerate(source, 1):
         current = [i]
         for j, b in enumerate(target, 1):
@@ -85,8 +82,8 @@ def solve(source, target, run):
                 frame({"en": f"'{a}' = '{b}': the letters match, so this costs no keystroke beyond the diagonal: "
                              f"{diag}.",
                        "ko": f"'{a}' = '{b}': 두 글자가 같으므로 대각선 값에서 키 입력이 더 들지 않습니다: {diag}."},
-                      marks={"lit": letters + [cell(i - 1, j - 1)], "good": [cell(i, j)]},
-                      moves=[move(at("table", cell(i - 1, j - 1)), at("table", cell(i, j)), value=str(diag))])
+                      marks={"lit": letters + [table_cell(i - 1, j - 1)], "good": [table_cell(i, j)]},
+                      moves=[move(at("table", table_cell(i - 1, j - 1)), at("table", table_cell(i, j)), value=str(diag))])
             else:
                 left = current[j - 1]
                 best = min(diag, up, left)
@@ -99,15 +96,15 @@ def solve(source, target, run):
                              f"{EDITS[edit]['en']}, {best} + 1 = {best + 1}.",
                        "ko": f"'{a}' ≠ '{b}': 바꾸기 ↖ {diag}, 지우기 ↑ {up}, 끼워 넣기 ← {left} 중 가장 작은 "
                              f"{EDITS[edit]['ko']}에 1을 더해 {best} + 1 = {best + 1}입니다."},
-                      marks={"lit": letters + [cell(i - 1, j - 1), cell(i - 1, j), cell(i, j - 1)],
-                             "good": [cell(i, j)]},
-                      moves=[move(at("table", cell(*src)), at("table", cell(i, j)), value=f"{best}+1")])
+                      marks={"lit": letters + [table_cell(i - 1, j - 1), table_cell(i - 1, j), table_cell(i, j - 1)],
+                             "good": [table_cell(i, j)]},
+                      moves=[move(at("table", table_cell(*src)), at("table", table_cell(i, j)), value=f"{best}+1")])
         previous = current
     answer = previous[-1]
     # walk back from the corner along the cells each value came from: the cheapest edit script
     path, steps, (i, j) = [], [], (n, m)
     while (i, j) != (0, 0):
-        path.append(cell(i, j))
+        path.append(table_cell(i, j))
         if i == 0:
             steps.append(("insert", target[j - 1]))
             i, j = i, j - 1
@@ -123,7 +120,7 @@ def solve(source, target, run):
             elif (pi, pj) == (i, j - 1):
                 steps.append(("insert", target[j - 1]))
             i, j = pi, pj
-    path.append(cell(0, 0))
+    path.append(table_cell(0, 0))
     steps.reverse()
     script_en = ", ".join(f"{EDITS[e]['en']} '{x}'" for e, x in steps)
     script_ko = ", ".join(f"'{x}' {EDITS[e]['ko']}" for e, x in steps)

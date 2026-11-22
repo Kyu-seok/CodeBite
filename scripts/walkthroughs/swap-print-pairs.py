@@ -12,6 +12,7 @@ writes common/src/main/resources/walkthroughs/swap-print-pairs.json.
 import json
 import os
 import sys
+from functools import partial
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
@@ -46,8 +47,7 @@ def solve(values, run):
     order = [dummy] + nodes
     ptr = {"dummy": dummy, "before": dummy}
 
-    def nid(node):
-        return node_id(order, node)
+    nid = partial(node_id, order)
 
     def frame(caption, lit=(), link=None, cut=None, marks=None, moves=None, result=(), **answer):
         state = {**linked_list(order), "pointers": {k: nid(v) for k, v in ptr.items()},

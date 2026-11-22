@@ -89,25 +89,13 @@ class CheckTracerHelpers(unittest.TestCase):
         self.assertEqual(code, 1)
         self.assertIn("COPY  nid: three-sum.py and two-sum.py define the same nested function", out)
 
-    def test_a_listed_nested_copy_passes(self):
+    def test_no_list_lets_a_nested_copy_pass(self):
+        # nested-copies.known let the copies from before the check pass until #435 moved the last one
         self.nested_in("two-sum.py", "three-sum.py")
-        self.write("nested-copies.known", "# cleared by #999\nnid: three-sum.py, two-sum.py\n")
-        self.assertEqual(self.check(), (0, ""))
-
-    def test_a_third_tracer_copying_a_listed_nested_function_fails(self):
-        self.nested_in("two-sum.py", "three-sum.py", "four-sum.py")
         self.write("nested-copies.known", "nid: three-sum.py, two-sum.py\n")
         code, out = self.check()
         self.assertEqual(code, 1)
-        self.assertIn("COPY  nid: four-sum.py, three-sum.py and two-sum.py define the same nested function", out)
-
-    def test_a_listed_nested_copy_that_is_gone_fails_as_stale(self):
-        self.nested_in("two-sum.py")
-        self.write("nested-copies.known", "nid: three-sum.py, two-sum.py\n")
-        code, out = self.check()
-        self.assertEqual(code, 1)
-        self.assertEqual(out, "  STALE  nested-copies.known lists nid: three-sum.py, two-sum.py, "
-                              "which no longer share it; remove the line\n")
+        self.assertIn("COPY  nid: three-sum.py and two-sum.py define the same nested function", out)
 
     def test_a_tracer_in_python_312_syntax_is_read(self):
         # Tracers run on python3.12 and nest a quote inside an f-string; this machine's python3 is 3.9.

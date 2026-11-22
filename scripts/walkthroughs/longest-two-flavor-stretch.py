@@ -16,7 +16,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import josa, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import hold_to_best, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, map_entries, move, span  # noqa: E402
 
 SLUG = "longest-two-flavor-stretch"
@@ -63,15 +63,6 @@ def solve(treats, run):
                           "marks": marks or ({"dim": list(window)} if done else {})},
                   moves=moves, **answer)
 
-    def measure():
-        """Hold the stretch left..right up to best: whether it beats it, and the caption's verdict in each language."""
-        nonlocal best, best_span
-        beaten = right - left + 1 > best
-        if beaten:
-            best, best_span = right - left + 1, (left, right)
-            return True, f"a new best, {best}", f"best = {josa(best, '(으)로')} 갱신"
-        return False, f"best stays {best}", f"best = {best} 그대로"
-
     frame({"en": f"{n} {plural(n, 'treat', 'treats')}, and the stretch may hold at most {LIMIT} flavors, one per "
                  f"slot. It starts empty; treats join from the left.",
            "ko": f"간식 {n}개, 구간에는 맛이 최대 {LIMIT}가지, 한 칸에 하나씩 들어갑니다. 빈 구간에서 시작해 왼쪽부터 "
@@ -95,7 +86,7 @@ def solve(treats, run):
                 tail_en = tail_ko = ""
                 if fits:
                     length = right - left + 1
-                    beaten, verdict_en, verdict_ko = measure()
+                    beaten, best, best_span, verdict_en, verdict_ko = hold_to_best(left, right, best, best_span)
                     tail_en = f" Back to {LIMIT} flavors: stretch length {length}, {verdict_en}."
                     tail_ko = f" 다시 맛 {LIMIT}가지: 구간 길이 {length}, {verdict_ko}."
                 count = f"{window[out] + 1} → {window[out]}"
@@ -110,7 +101,7 @@ def solve(treats, run):
                     del window[out]
             continue
         length = right - left + 1
-        beaten, verdict_en, verdict_ko = measure()
+        beaten, best, best_span, verdict_en, verdict_ko = hold_to_best(left, right, best, best_span)
         kinds = len(window)
         frame({"en": f"treats[{right}] = {flavor} joins: {kinds} {plural(kinds, 'flavor', 'flavors')}, "
                      f"within {LIMIT}. Stretch length {length}: {verdict_en}.",
