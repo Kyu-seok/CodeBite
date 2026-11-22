@@ -4,7 +4,8 @@
 # period after they stop being current and are removed after it; an asset that was current for
 # months is kept from the day it is replaced, not the day it was built; a file outside assets/
 # that the new build lacks goes at once; a build already published changes nothing; a build
-# without index.html publishes nothing.
+# without index.html publishes nothing; a file with a space in its name counts toward the build id;
+# a build id that can't be computed publishes nothing.
 set -euo pipefail
 
 publish="$(cd "$(dirname "$0")/.." && pwd)/frontend/publish.sh"
@@ -53,6 +54,21 @@ check "after the keep period: the build just replaced stays" test -f "$html/asse
 mkdir "$dir/broken"; echo x > "$dir/broken/robots.txt"
 check "a build without index.html: refused" bash -c "! sh '$publish' '$dir/broken' '$site' >/dev/null 2>&1"
 check "a build without index.html: the last build still served" grep -q "index of three" "$html/index.html"
+
+# A file name with a space counts toward the build id like any other: a change inside it is a new build.
+build four app-4.js; echo "v1" > "$dir/four/og image.txt"
+sh "$publish" "$dir/four" "$site" >/dev/null
+echo "v2" > "$dir/four/og image.txt"
+out=$(sh "$publish" "$dir/four" "$site")
+check "a changed file with a space in its name: says published" grep -q "^Frontend published" <<<"$out"
+check "a changed file with a space in its name: served" grep -q "v2" "$html/og image.txt"
+
+# A build id that can't be computed stops the publish before a file moves (cksum fails here).
+mkdir "$dir/bin"; printf '#!/bin/sh\nexit 1\n' > "$dir/bin/cksum"; chmod +x "$dir/bin/cksum"
+build five app-5.js
+check "the build id can't be computed: refused" bash -c "! PATH='$dir/bin':\$PATH sh '$publish' '$dir/five' '$site' >/dev/null 2>&1"
+check "the build id can't be computed: the last build still served" grep -q "index of four" "$html/index.html"
+check "the build id can't be computed: no asset of the new build lands" test ! -e "$html/assets/app-5.js"
 
 (( fail )) && exit 1
 echo "PASS: publish.sh swaps a build in under nginx and keeps replaced assets for the keep period"

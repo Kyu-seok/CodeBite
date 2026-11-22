@@ -8,8 +8,11 @@
 # is push or workflow_dispatch (a manual run always rolls the backend, to pick up infra/.env).
 # Builds the images, starts three new backend replicas beside the three old ones, drains the old
 # ones once the new answer /api/health, then publishes the frontend build under the running nginx
-# and updates the other services (docs/adr/0014). Rolls back to <previous-commit> when nginx.conf
-# fails its test, or the new replicas or the final check stay unhealthy.
+# and updates the other services (docs/adr/0014). Goes back to <previous-commit> when nginx.conf
+# fails its test (nothing was changed yet), when the new replicas never answer (they are removed,
+# the old ones kept), and when the frontend publish fails or the final check stays unhealthy: by
+# then the backend has rolled, so roll_back brings up the previous backend and publishes the
+# previous frontend build.
 #
 # Everything runs inside main(): a rollback checks out an older copy of this very file, and bash
 # reads a script as it goes, but a function is read whole before it runs.
@@ -69,22 +72,25 @@ wait_healthy() {
 # --name because `run` would otherwise take the service's container_name, which is in use.
 # With no nginx running (a first bring-up) there is nothing serving to protect and no grafana yet
 # for the config to resolve, so the config is first tested when nginx starts.
+# Only a `ps` that answered with nothing skips the test: one that failed says nothing about nginx.
 check_nginx_conf() {
-  [[ -n $("${COMPOSE[@]}" ps -q nginx) ]] || { echo "--- No nginx running: not tested ---"; return 0; }
+  local running
+  running=$("${COMPOSE[@]}" ps -q nginx) \
+    || { echo "--- Could not ask compose whether nginx is running: config not tested ---"; return 1; }
+  [[ -n $running ]] || { echo "--- No nginx running: not tested ---"; return 0; }
   "${COMPOSE[@]}" run --rm --no-deps --name codebite-nginx-conftest nginx nginx -t
 }
 
-# Publishes the built frontend into the volume nginx serves (frontend/publish.sh: assets first,
-# index.html last), brings every other service up to date, and leaves nginx running: a reload
-# when something it serves or proxies changed, nothing otherwise. Only a change to the nginx
-# service itself (its image, its compose definition) replaces the container, about 2 s with no
-# listener on port 80, and the log says which of the three it was.
-# update_front [<reason to reload>...]
-update_front() {
-  local why="" reason out nginx_before all_before
-  for reason in "$@"; do why="$why, $reason"; done
-  nginx_before=$("${COMPOSE[@]}" ps -q nginx)
+# The one way a deploy reloads the running nginx.
+reload_nginx() {
+  "${COMPOSE[@]}" exec -T nginx nginx -s reload
+}
 
+# Publishes the built frontend into the volume nginx serves (frontend/publish.sh: assets first,
+# index.html last) and sets front_published to yes or no. Fails when the publish does, with nginx
+# still serving the previous build; main then rolls back.
+publish_front() {
+  local out
   echo "--- Publishing the frontend build ---"
   out=$("${COMPOSE[@]}" run --rm frontend) || {
     echo "$out"
@@ -92,7 +98,19 @@ update_front() {
     return 1
   }
   echo "$out"
-  [[ $out != *"Frontend published"* ]] || why="$why, frontend published"
+  front_published=no
+  [[ $out != *"Frontend published"* ]] || front_published=yes
+}
+
+# After the publish: brings every other service up to date and leaves nginx running: a reload
+# when something it serves or proxies changed, nothing otherwise. Only a change to the nginx
+# service itself (its image, its compose definition) replaces the container, about 2 s with no
+# listener on port 80, and the log says which of the three it was.
+# update_front [<reason to reload>...]
+update_front() {
+  local why="" reason nginx_before all_before
+  for reason in "$@"; do why="$why, $reason"; done
+  nginx_before=$("${COMPOSE[@]}" ps -q nginx)
 
   all_before=$("${COMPOSE[@]}" ps -q | sort)
   "${COMPOSE[@]}" up -d --remove-orphans
@@ -104,7 +122,7 @@ update_front() {
   elif [[ $("${COMPOSE[@]}" ps -q nginx) != "$nginx_before" ]]; then
     echo "--- nginx: recreated (its image or service definition changed) ---"
   elif [[ -n $why ]]; then
-    "${COMPOSE[@]}" exec -T nginx nginx -s reload
+    reload_nginx
     echo "--- nginx: kept running, reloaded (${why#, }) ---"
   else
     echo "--- nginx: kept running, no reload (nothing it serves or proxies changed) ---"
@@ -114,13 +132,38 @@ update_front() {
 # After `git checkout <previous-commit>`: the previous build back under nginx, whole (the same
 # publish, so index.html is swapped last and both builds' assets stay). A previous commit from
 # before the frontend had a service of its own bakes the files into nginx instead, and the
-# `up --build` that follows restores that.
+# `up --build` that follows restores that. Its caller tests its status, so errexit is off in here:
+# each step is checked, and a failed one stops the restore (never a publish from a stale image).
 restore_front() {
   local services
-  services=$("${COMPOSE[@]}" --profile publish config --services)
+  services=$("${COMPOSE[@]}" --profile publish config --services) \
+    || { echo "--- Restore: could not list the previous commit's services ---"; return 1; }
   grep -qx frontend <<<"$services" || return 0
-  "${COMPOSE[@]}" --profile publish build frontend
-  "${COMPOSE[@]}" run --rm frontend
+  "${COMPOSE[@]}" --profile publish build frontend \
+    || { echo "--- Restore: could not build the previous frontend image ---"; return 1; }
+  "${COMPOSE[@]}" run --rm frontend \
+    || { echo "--- Restore: could not publish the previous frontend build ---"; return 1; }
+}
+
+# The rollback once the backend has rolled: the previous commit's backend and other services, and
+# its frontend build under nginx. Ends the deploy as failed.
+# roll_back <previous-commit> <what failed>
+roll_back() {
+  local prev=$1
+  echo "--- $2 — Rolling back to $prev ---"
+  git checkout "$prev"
+  restore_front \
+    || echo "--- WARNING: PREVIOUS FRONTEND BUILD NOT RESTORED (above): nginx serves whatever build was last published, which may be the new one over the previous backend ---"
+  "${COMPOSE[@]}" up -d --build --remove-orphans
+  reload_nginx || true
+  echo "--- Rollback complete, waiting for recovery ---"
+  sleep 30
+  if curl -sf http://localhost/api/health >/dev/null 2>&1; then
+    echo "--- Rollback healthy ---"
+  else
+    echo "--- WARNING: Rollback also unhealthy ---"
+  fi
+  exit 1
 }
 
 main() {
@@ -179,7 +222,7 @@ main() {
       done
       git checkout "$prev"
       "${COMPOSE[@]}" up -d --no-deps --scale backend=3 backend
-      docker exec codebite-nginx nginx -s reload 2>/dev/null || true
+      reload_nginx 2>/dev/null || true
       exit 1
     fi
 
@@ -197,6 +240,11 @@ main() {
 
   # Back to 3 replicas, then the frontend and every other service.
   "${COMPOSE[@]}" up -d --no-deps --scale backend=3 backend
+  local front_published
+  if ! publish_front; then
+    roll_back "$prev" "FRONTEND PUBLISH FAILED"
+  fi
+  [[ $front_published == no ]] || reload+=("frontend published")
   update_front ${reload[@]+"${reload[@]}"}
 
   echo "--- Final health check ---"
@@ -212,19 +260,7 @@ main() {
   done
 
   if [[ $healthy == false ]]; then
-    echo "--- HEALTH CHECK FAILED — Rolling back to $prev ---"
-    git checkout "$prev"
-    restore_front || echo "--- WARNING: could not publish the previous frontend build ---"
-    "${COMPOSE[@]}" up -d --build --remove-orphans
-    "${COMPOSE[@]}" exec -T nginx nginx -s reload || true
-    echo "--- Rollback complete, waiting for recovery ---"
-    sleep 30
-    if curl -sf http://localhost/api/health >/dev/null 2>&1; then
-      echo "--- Rollback healthy ---"
-    else
-      echo "--- WARNING: Rollback also unhealthy ---"
-    fi
-    exit 1
+    roll_back "$prev" "HEALTH CHECK FAILED"
   fi
 
   docker image prune -f

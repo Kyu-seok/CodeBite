@@ -19,8 +19,16 @@ html=$site/html
 
 [ -f "$src/index.html" ] || { echo "publish.sh: no index.html in $src" >&2; exit 1; }
 
-# The build's names and contents; the same sources build to the same id.
-id=$(cd "$src" && find . -type f | LC_ALL=C sort | xargs cksum | cksum | tr ' ' '-')
+# The build's names and contents; the same sources build to the same id. One step at a time, each
+# into a file: sh has no pipefail, and a pipeline would hide a find or cksum that failed and give a
+# wrong id. Names are null-delimited, so one with a space stays one name.
+work=$(mktemp -d)
+trap 'rm -rf "$work"' EXIT
+(cd "$src" && find . -type f -print0) > "$work/names"
+LC_ALL=C sort -z "$work/names" > "$work/sorted"
+(cd "$src" && xargs -0 cksum) < "$work/sorted" > "$work/sums"
+sum=$(cksum < "$work/sums")
+id=$(echo "$sum" | tr ' ' '-')
 if [ -f "$html/index.html" ] && [ "$(cat "$site/build-id" 2>/dev/null)" = "$id" ]; then
   echo "Frontend unchanged (build $id)"
   exit 0
