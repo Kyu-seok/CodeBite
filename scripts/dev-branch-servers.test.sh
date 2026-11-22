@@ -839,8 +839,8 @@ out=$(await_detached "$up" "$log" 2>&1) && code=0 || code=$?
 { kill "$up"; wait "$up"; } 2>/dev/null || true
 check "detached start up" "$code" 0
 [[ "$out" == *"Branch servers for feat/x:"* ]] || { echo "FAIL: a detached start should print the summary: $out"; fail=1; }
-# A log of its own: this start's redirection runs in the background, so the log above could still
-# hold the first start's summary when await_detached first reads it.
+# Each start below writes a log of its own: its redirection runs in the background, so a log shared
+# with an earlier case could still hold that case's summary when await_detached first reads it.
 died_log="$fake/start-died.log"
 sh -c 'echo "backend: exited before it came up"; exit 1' > "$died_log" 2>&1 &
 out=$(await_detached $! "$died_log" 2>&1) && code=0 || code=$?
@@ -849,17 +849,17 @@ check "detached start died" "$code" 1
 # A detached start that waits for another worktree's servers: the line saying whose is passed on
 # while it waits (stderr), and not printed again with the log.
 waiting_line="$WAITING_PREFIX /work/wt-b to stop (one live set at a time)"
-sh -c 'echo "$1"; sleep 2.5; echo "Branch servers for feat/x:"; sleep 30' _ "$waiting_line" > "$log" 2>&1 &
+sh -c 'echo "$1"; sleep 2.5; echo "Branch servers for feat/x:"; sleep 30' _ "$waiting_line" > "$fake/start-waited.log" 2>&1 &
 up=$!
-await_detached "$up" "$log" > "$fake/detached.out" 2> "$fake/detached.err" &
+await_detached "$up" "$fake/start-waited.log" > "$fake/detached.out" 2> "$fake/detached.err" &
 command sleep 1.5
 check "a detached start passes on whose servers it waits for" "$(cat "$fake/detached.err")" "$waiting_line"
 wait $! && code=0 || code=$?
 { kill "$up"; wait "$up"; } 2>/dev/null || true
 check "a detached start that waited is up" "$code $(cat "$fake/detached.out")" "0 Branch servers for feat/x:"
 check "the waiting line is printed once" "$(cat "$fake/detached.err")" "$waiting_line"
-sh -c 'echo "$1"; sleep 1.5; echo "$2"; exit 1' _ "$waiting_line" "dev-branch-servers.sh: the branch servers of /work/wt-b are still live" > "$log" 2>&1 &
-out=$(await_detached $! "$log" 2>&1) && code=0 || code=$?
+sh -c 'echo "$1"; sleep 1.5; echo "$2"; exit 1' _ "$waiting_line" "dev-branch-servers.sh: the branch servers of /work/wt-b are still live" > "$fake/start-gave-up.log" 2>&1 &
+out=$(await_detached $! "$fake/start-gave-up.log" 2>&1) && code=0 || code=$?
 check "a detached start that gave up" "$code
 $out" "1
 $waiting_line

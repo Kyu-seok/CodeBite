@@ -49,3 +49,15 @@ _Example:_ `lca-bst` highlights `p` and `q`; `count-desk-clusters`, whose answer
 `.claude/skills/add-walkthrough/views.md` has one section per Roadmap Category, in Roadmap order, after "Every view" and "Recursion and the call stack". Each bullet is one rule: a shape, how it is drawn, and the tracers that draw it. A Walkthrough that finds a new pattern edits the bullet it refines, or adds one bullet beside it in its category's section. It never adds a section named for a ticket or a second section for a category, and never states a rule another bullet already states: a bullet that needs another section's rule names that section. Two bullets stating one rule drift into two rules, and a reader can't tell which one holds. `scripts/check-doc-references.py` fails on the mechanical part, a `## ` heading with a ticket number or the same heading twice; a repeated rule is left to the reviewer.
 
 _Example:_ the Heap section's "A heap that only orders a search" points to Advanced Graphs, where the rule is. When each ticket of #364 appended a section of its own ("Greedy (#375)", "Dynamic Programming, part 2 (#376)"), the file ended with two Dynamic Programming sections and four heap rules that disagreed.
+
+## A test's background writer gets a file of its own
+
+A test that starts a process in the background with its output redirected to a file gives that process a file no earlier case wrote. The redirection, truncation included, happens in the background too, so a reader started right after can still see the earlier case's lines and pass or fail on them.
+
+_Example:_ three `await_detached` cases in `scripts/dev-branch-servers.test.sh` shared one `$log`; the second read the first's `Branch servers for` line before its own writer had emptied the file, and CI run 45004083219 went red on unchanged code (#439).
+
+## A function called under `||` checks its own steps
+
+Bash turns `set -e` off inside a function called under `||`, `&&`, `if` or `!`, for everything the function runs. Such a function tests each step that can fail and names the one that did; a step left bare falls through to the next line as if it had worked. A test fails one step in the middle and expects the later ones not to run.
+
+_Example:_ `restore_front` in `scripts/deploy-prod.sh`, called as `restore_front || …` in the rollback, went on to publish from the stale image after `build frontend` failed. It now returns at the first failed step, and `scripts/deploy-prod.test.sh` fails the build and expects no publish (#439).
