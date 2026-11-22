@@ -14,7 +14,9 @@ if [ "$(git branch --show-current)" = master ]; then
   exit 1
 fi
 
-staged=$(git diff --cached --name-only --diff-filter=ACMR)
+# The paths the checks below are chosen by: the staged ones, or CODEBITE_HOOK_PATHS (one per line)
+# when a caller runs this file over paths of its own, as scripts/merge-ticket.sh --refresh does.
+staged=${CODEBITE_HOOK_PATHS-$(git diff --cached --name-only --diff-filter=ACMR)}
 touches() { grep -qE "$1" <<<"$staged"; }
 
 # git runs hooks with GIT_INDEX_FILE, GIT_DIR and friends pointing at this repository. JGit reads
