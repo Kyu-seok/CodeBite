@@ -1,0 +1,15 @@
+# Nested functions two or more tracers shared before scripts/check-tracer-helpers.py compared nested
+# ones. A line passes only while exactly these files share the function; #435 moves each into
+# codebite.py and removes its line. Add no line here: a new copy goes into codebite.py.
+bits: compare-loadout-bits.py, power-of-two-tank.py
+bits: count-flag-bits.py, find-empty-locker.py
+cell: check-interleaved-inputs.py, count-hint-matches.py, desk-notes-overlap.py, min-cheat-code-edits.py
+find: count-voice-parties.py, graph-valid-tree.py, redundant-friendship.py
+frame: count-coupon-ways.py, count-hint-matches.py, desk-notes-overlap.py, max-balloon-pop-points.py, min-cheat-code-edits.py, skin-resale-with-cooldown.py, ticket-plus-or-minus.py
+frame: order-group-tasks.py, verify-task-order.py
+measure: longest-two-flavor-stretch.py, longest-window-with-at-most-k-genres.py
+name: drop-nth-reservation.py, flip-chunks-of-k.py, merge-leaderboard-runs.py
+nid: drop-nth-reservation.py, flip-chunks-of-k.py, interleave-clip-chain.py, merge-cafe-queues.py, merge-leaderboard-runs.py, swap-print-pairs.py
+obj: flip-chunks-of-k.py, interleave-clip-chain.py
+returned: chat-ring-buffer.py, click-tally-window.py, min-stack.py, snack-stock-map.py, versioned-cells.py
+root_of: count-voice-parties.py, graph-valid-tree.py, redundant-friendship.py

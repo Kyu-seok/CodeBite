@@ -62,11 +62,52 @@ class CheckTracerHelpers(unittest.TestCase):
         self.write("three-sum.py", "def listed(values, sep=' and '):\n    return sep.join(values)\n")
         self.assertEqual(self.check(), (0, ""))
 
-    def test_methods_and_nested_functions_are_not_compared(self):
+    def test_methods_are_not_compared(self):
         body = "    def walk(self):\n        return 1\n"
-        self.write("two-sum.py", "class Solution:\n" + body + "\ndef solve(a):\n" + body + "    return walk(a)\n")
-        self.write("three-sum.py", "class Solution:\n" + body + "\ndef solve(b):\n" + body + "    return walk(b)\n")
+        self.write("two-sum.py", "class Solution:\n" + body)
+        self.write("three-sum.py", "class Solution:\n" + body)
         self.assertEqual(self.check(), (0, ""))
+
+    NESTED = "    def nid(i):\n        return f\"n{i}\"\n"
+
+    def nested_in(self, *names):
+        for name in names:
+            self.write(name, f"def solve(nums):\n{self.NESTED}    return nid(len(nums)) + {name!r}\n")
+
+    def test_two_tracers_sharing_a_nested_function_fail_naming_both(self):
+        self.nested_in("two-sum.py", "three-sum.py")
+        code, out = self.check()
+        self.assertEqual(code, 1)
+        self.assertEqual(out, "  COPY  nid: three-sum.py and two-sum.py define the same nested function; "
+                              "move it into codebite.py and import it from there\n")
+
+    def test_a_nested_function_inside_a_method_is_compared(self):
+        for name in ("two-sum.py", "three-sum.py"):
+            self.write(name, "class Solution:\n    def solve(self, nums):\n"
+                       + self.NESTED.replace("    ", "        ") + f"        return nid(0) + {name!r}\n")
+        code, out = self.check()
+        self.assertEqual(code, 1)
+        self.assertIn("COPY  nid: three-sum.py and two-sum.py define the same nested function", out)
+
+    def test_a_listed_nested_copy_passes(self):
+        self.nested_in("two-sum.py", "three-sum.py")
+        self.write("nested-copies.known", "# cleared by #999\nnid: three-sum.py, two-sum.py\n")
+        self.assertEqual(self.check(), (0, ""))
+
+    def test_a_third_tracer_copying_a_listed_nested_function_fails(self):
+        self.nested_in("two-sum.py", "three-sum.py", "four-sum.py")
+        self.write("nested-copies.known", "nid: three-sum.py, two-sum.py\n")
+        code, out = self.check()
+        self.assertEqual(code, 1)
+        self.assertIn("COPY  nid: four-sum.py, three-sum.py and two-sum.py define the same nested function", out)
+
+    def test_a_listed_nested_copy_that_is_gone_fails_as_stale(self):
+        self.nested_in("two-sum.py")
+        self.write("nested-copies.known", "nid: three-sum.py, two-sum.py\n")
+        code, out = self.check()
+        self.assertEqual(code, 1)
+        self.assertEqual(out, "  STALE  nested-copies.known lists nid: three-sum.py, two-sum.py, "
+                              "which no longer share it; remove the line\n")
 
     def test_a_tracer_in_python_312_syntax_is_read(self):
         # Tracers run on python3.12 and nest a quote inside an f-string; this machine's python3 is 3.9.
