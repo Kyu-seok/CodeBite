@@ -96,7 +96,7 @@ def default_backend(root):
     backend = backend_from_status(done.stdout)
     if not backend:
         print(f"judge-run.sh: no --backend, and this checkout's branch servers aren't running "
-              f"({(done.stdout or done.stderr).strip()}); start them: scripts/dev-branch-servers.sh start --detach",
+              f"({(done.stdout or done.stderr).strip()}); start them: scripts/dev-branch-servers.sh start --wait --detach",
               file=sys.stderr)
         sys.exit(2)
     return backend

@@ -10,7 +10,9 @@
 # With --refresh: a ticket one merge behind gets the tip merged into it (in its worktree or a temporary
 # one), its own pre-commit hook run over the paths it touches with the Gradle tests skipped, and the
 # no-checks push; a refresh conflict, a failing hook or a dirty ticket worktree stops with nothing
-# merged into the integration branch. Last, the real hook's tools for a given CODEBITE_HOOK_PATHS.
+# merged into the integration branch; a failed hook fails again on a rerun with nothing fixed and
+# passes once the fix is committed in the ticket's worktree, on origin or not; a failed worktree add
+# or remove is named. Last, the real hook's tools for a given CODEBITE_HOOK_PATHS.
 set -euo pipefail
 
 script="$(cd "$(dirname "$0")" && pwd)/merge-ticket.sh"
@@ -267,7 +269,7 @@ late_ticket() {  # <name>: ticket/<name> one merge behind integration/x, local i
     && g commit -qm "$1" && g push -q origin "ticket/$1" \
     && g switch -q --detach origin/integration/x && g switch -qc "ticket/$1-mover" \
     && echo "$1" > "$1-mover.txt" && g add . && g commit -qm mover && g push -q origin "ticket/$1-mover")
-  run_merge "ticket/$1-mover" 'Mover' >/dev/null || { echo "FAIL: setup merge for $1 failed"; fail=1; }
+  run_merge "ticket/$1-mover" 'Mover' >"$scratch/setup.out" 2>&1 || { echo "FAIL: setup merge for $1 failed: $(cat "$scratch/setup.out")"; fail=1; }
 }
 
 # The ticket's branch has no worktree (seed is detached on another commit): a temporary one is used,
@@ -314,11 +316,68 @@ check "refresh red: integration unmerged" "$(git -C "$scratch/work" rev-parse HE
 check "refresh red: not pushed" "$(remote_head)" "$before"
 check "refresh red: ticket worktree holds the tip" \
   "$(git -C "$scratch/held" merge-base --is-ancestor "$before" HEAD && echo yes || echo no)" yes
-# Rerun once the check is fixed: the branch now contains the tip, so nothing is refreshed again.
+# Rerun with nothing fixed: the refresh merge is still on the branch, which now contains the tip, and
+# the checks run again all the same, so the failure stays a failure and nothing is pushed.
+held_tip=$(git -C "$scratch/held" rev-parse HEAD)
+rm -f "$hook_log"
+if out=$(HOOK_FAIL=1 run_merge --refresh ticket/held 'Held'); then echo "FAIL: a rerun with nothing fixed must fail again: $out"; fail=1; fi
+grep -q 'path-scoped checks failed' <<<"$out" || { echo "FAIL: the rerun must name the path-scoped checks: $out"; fail=1; }
+check "refresh red rerun: integration unmerged" "$(git -C "$scratch/work" rev-parse HEAD)" "$before"
+check "refresh red rerun: not pushed" "$(remote_head)" "$before"
+check "refresh red rerun: ticket branch not merged into twice" "$(git -C "$scratch/held" rev-parse HEAD)" "$held_tip"
+# Rerun once the fix is committed in that worktree: the checks run over the ticket's paths and pass.
+(cd "$scratch/held" && echo fixed > scripts/held-fix.sh && g add . && g commit -qm fix)
 rm -f "$hook_log"
 if ! out=$(run_merge --refresh ticket/held 'Held'); then echo "FAIL: rerun after a fixed check failed: $out"; fail=1; fi
-[[ -e "$hook_log" ]] && { echo "FAIL: a branch that contains the tip was refreshed again"; fail=1; }
+check "refresh rerun: the checks run over the ticket's paths" "$(cat "$hook_log" 2>/dev/null)" \
+  "hook skip=1 paths=scripts/held-fix.sh scripts/held.sh "
+[[ "$out" == *-ran* ]] && { echo "FAIL: the rerun ran the full checks: $out"; fail=1; }
 check "refresh rerun: pushed" "$(remote_head)" "$(git -C "$scratch/work" rev-parse HEAD)"
+check "refresh rerun: the fix is merged" "$(git -C "$scratch/work" rev-parse HEAD^2)" "$(git -C "$scratch/held" rev-parse HEAD)"
+
+# The same when origin has the ticket branch too: after the failure the worktree's branch is ahead of
+# origin's by the refresh merge and the fix, and the rerun the advice asks for takes it and pushes it.
+late_ticket both
+g -C "$scratch/work" fetch -q origin
+g -C "$scratch/work" worktree add -q "$scratch/both" -b ticket/both origin/ticket/both
+before=$(remote_head)
+if out=$(HOOK_FAIL=1 run_merge --refresh ticket/both 'Both'); then echo "FAIL: a failing path-scoped check must fail (branch on origin)"; fail=1; fi
+grep -q "Fix it in .*/both, commit, and run this again" <<<"$out" || { echo "FAIL: must say where to fix it: $out"; fail=1; }
+check "refresh red, on origin: origin's ticket branch unmoved" "$(git -C "$scratch/origin.git" rev-parse ticket/both)" \
+  "$(git -C "$scratch/seed" rev-parse ticket/both)"
+(cd "$scratch/both" && echo fixed > scripts/both-fix.sh && g add . && g commit -qm fix)
+if ! out=$(run_merge --refresh ticket/both 'Both'); then echo "FAIL: the advised rerun failed with the branch on origin: $out"; fail=1; fi
+check "refresh rerun, on origin: integration pushed" "$(remote_head)" "$(git -C "$scratch/work" rev-parse HEAD)"
+check "refresh rerun, on origin: the fix is merged" "$(git -C "$scratch/work" rev-parse HEAD^2)" "$(git -C "$scratch/both" rev-parse HEAD)"
+check "refresh rerun, on origin: ticket branch pushed" "$(git -C "$scratch/origin.git" rev-parse ticket/both)" \
+  "$(git -C "$scratch/both" rev-parse HEAD)"
+rm -f "$hook_log"
+
+# A step of the refresh that fails is named for what it was, never reported as a conflict: a git
+# ahead on PATH fails the call whose arguments hold $GIT_FAIL and hands every other one on.
+mkdir "$scratch/bin"
+cat > "$scratch/bin/git" <<GIT
+#!/usr/bin/env bash
+if [[ -n "\${GIT_FAIL:-}" && "\$*" == *"\$GIT_FAIL"* ]]; then echo "git: stubbed failure of \$GIT_FAIL" >&2; exit 1; fi
+exec "$(command -v git)" "\$@"
+GIT
+chmod +x "$scratch/bin/git"
+late_ticket steps
+(cd "$scratch/seed" && g switch -q --detach)
+before=$(remote_head); steps_before=$(git -C "$scratch/origin.git" rev-parse ticket/steps)
+if out=$(PATH="$scratch/bin:$PATH" GIT_FAIL='worktree add' run_merge --refresh ticket/steps 'Steps'); then echo "FAIL: a failed worktree add must fail"; fail=1; fi
+grep -q 'could not add a temporary worktree' <<<"$out" || { echo "FAIL: must name the failed worktree add: $out"; fail=1; }
+grep -q 'conflicts with' <<<"$out" && { echo "FAIL: a failed worktree add reported as a conflict: $out"; fail=1; }
+check "worktree add failed: integration unmerged" "$(git -C "$scratch/work" rev-parse HEAD)" "$before"
+[[ -e "$hook_log" ]] && { echo "FAIL: checks ran after a failed worktree add"; fail=1; }
+if out=$(PATH="$scratch/bin:$PATH" GIT_FAIL='worktree remove' run_merge --refresh ticket/steps 'Steps'); then echo "FAIL: a failed worktree remove must fail"; fail=1; fi
+grep -q 'could not remove the temporary worktree' <<<"$out" || { echo "FAIL: must name the failed worktree remove: $out"; fail=1; }
+check "worktree remove failed: integration unmerged" "$(git -C "$scratch/work" rev-parse HEAD)" "$before"
+check "worktree remove failed: not pushed" "$(remote_head)" "$before"
+check "worktree remove failed: ticket branch unmoved" "$(git -C "$scratch/origin.git" rev-parse ticket/steps)" "$steps_before"
+left=$(git -C "$scratch/work" worktree list --porcelain | awk '/^worktree .*\/refresh$/{print substr($0, 10)}')
+[[ -n "$left" ]] && { g -C "$scratch/work" worktree remove --force "$left"; rm -rf "$(dirname "$left")"; }
+rm -f "$hook_log"
 
 # A dirty ticket worktree is refused before anything moves.
 late_ticket dirty
@@ -344,7 +403,7 @@ check "refresh conflict: not pushed" "$(remote_head)" "$before"
 check "refresh conflict: ticket branch unmoved" "$(git -C "$scratch/origin.git" rev-parse ticket/clash)" "$clash_before"
 check "refresh conflict: clean tree" "$(git -C "$scratch/work" status --porcelain)" ""
 [[ -e "$hook_log" ]] && { echo "FAIL: checks ran after a refresh conflict"; fail=1; }
-check "refresh conflict: temporary worktree removed" "$(git -C "$scratch/work" worktree list | wc -l | tr -d ' ')" 3
+check "refresh conflict: temporary worktree removed" "$(git -C "$scratch/work" worktree list | wc -l | tr -d ' ')" 4
 
 # --- the pre-commit hook takes its paths from CODEBITE_HOOK_PATHS when set (what --refresh passes) ---
 
@@ -368,6 +427,19 @@ check "hook: docs only" "$(hook_tools docs/a.md)" "python3 "
 check "hook: scripts" "$(hook_tools 'scripts/a.sh
 backend/src/A.java')" "python3 script-tests shellcheck "
 check "hook: frontend" "$(hook_tools frontend/src/a.ts)" "npm python3 "
+# frontend/publish.sh is a script the deploy runs, tested by scripts/frontend-publish.test.sh.
+check "hook: frontend/publish.sh" "$(hook_tools frontend/publish.sh)" "npm python3 script-tests shellcheck "
+grep -q '^shellcheck .*frontend/publish\.sh' "$hk/log" || { echo "FAIL: the hook's shellcheck must cover frontend/publish.sh"; fail=1; }
+# The full checks' shellcheck covers it too.
+mkdir -p "$hk/checks/scripts" "$hk/checks/bin"
+printf '#!/usr/bin/env bash\necho "$*" >> "$TOOL_LOG"\n' > "$hk/checks/bin/shellcheck"
+printf '#!/usr/bin/env bash\n' > "$hk/checks/bin/python3"
+cp "$hk/checks/bin/python3" "$hk/checks/scripts/run-script-tests.sh"
+chmod +x "$hk"/checks/bin/* "$hk"/checks/scripts/*.sh
+# shellcheck source=SCRIPTDIR/merge-ticket.sh
+(source "$script" && cd "$hk/checks" && PATH="$hk/checks/bin:$PATH" TOOL_LOG="$hk/checks/log" repo_checks) \
+  || { echo "FAIL: repo_checks failed under stubs"; fail=1; }
+grep -q 'frontend/publish\.sh' "$hk/checks/log" 2>/dev/null || { echo "FAIL: repo_checks' shellcheck must cover frontend/publish.sh"; fail=1; }
 rm -rf "$hk"
 
 echo dirt > "$scratch/work/dirt.txt"
