@@ -12,10 +12,11 @@ writes common/src/main/resources/walkthroughs/graph-valid-tree.json.
 import json
 import os
 import sys
+from functools import partial
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import driver_list, josa, node_order, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import driver_list, halving_find, josa, node_order, plural, sample_cases, sample_run, union_root, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, move  # noqa: E402
 
 SLUG = "graph-valid-tree"
@@ -39,23 +40,9 @@ def solve(n, edges, run):
     parent = list(range(n))
     m = len(edges)
 
-    def root_of(x):
-        """The root of x's group, without the halving find does: for the graph's tags only."""
-        while parent[x] != x:
-            x = parent[x]
-        return x
+    root_of = partial(union_root, parent)
 
-    def find(x, writes, visited):
-        """The reference's find, recording each node it stands on and each parent it rewrites."""
-        visited.append(x)
-        while parent[x] != x:
-            jumped = parent[parent[x]]
-            if jumped != parent[x]:
-                writes.append((parent[x], x, jumped))  # (read from, written cell, new value)
-            parent[x] = jumped
-            x = parent[x]
-            visited.append(x)
-        return x
+    find = partial(halving_find, parent)
 
     def frame(caption, edge=None, done=0, edge_marks=None, node_marks=None, lit_cells=(), good_cells=(),
               pointers=None, moves=None, **answer):

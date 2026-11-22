@@ -11,10 +11,11 @@ writes common/src/main/resources/walkthroughs/drop-nth-reservation.json.
 import json
 import os
 import sys
+from functools import partial
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import ListNode, driver_list, josa, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import ListNode, driver_list, josa, node_name, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, linked_list, move, node_id  # noqa: E402
 
 SLUG = "drop-nth-reservation"
@@ -47,8 +48,7 @@ def solve(values, n, run):
     order = [dummy] + nodes
     ptr = {"dummy": dummy, "trail": dummy, "lead": dummy}
 
-    def nid(node):
-        return node_id(order, node)
+    nid = partial(node_id, order)
 
     def frame(caption, marks, link=None, cut=None, moves=None, result=(), **answer):
         state = {**linked_list(order), "pointers": {k: nid(v) for k, v in ptr.items()}, "marks": marks}
@@ -60,8 +60,7 @@ def solve(values, n, run):
                   result={"values": list(result), "marks": {"path": list(range(len(result)))}},
                   state={"items": [{"label": "n", "value": n}]}, moves=moves, **answer)
 
-    def name(node):
-        return "dummy" if node is dummy else str(node.val)
+    name = partial(node_name, dummy=dummy)
 
     if len(nodes) == 1:
         books = {"en": f"One booking, {nodes[0].val}", "ko": f"예약은 {nodes[0].val} 하나뿐이고"}

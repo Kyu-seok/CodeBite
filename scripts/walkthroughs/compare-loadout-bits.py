@@ -13,7 +13,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import josa, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import bit_digits, josa, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, move, span  # noqa: E402
 
 SLUG = "compare-loadout-bits"
@@ -38,10 +38,7 @@ def solve(left, right, run):
     width = max(4, left.bit_length(), right.bit_length())
     places = [1 << (width - 1 - p) for p in range(width)]
 
-    def bits(v):
-        return [int(c) for c in format(v, f"0{width}b")]
-
-    lb, rb = bits(left), bits(right)
+    lb, rb = bit_digits(left, width), bit_digits(right, width)
     differ = [p for p in range(width) if lb[p] != rb[p]]
     diff = None
     count = 0
@@ -56,7 +53,7 @@ def solve(left, right, run):
             "count": {"values": [count], "marks": {"path": [0]} if path else {"good": [0]} if counted else {}},
         }
         if diff is not None:
-            views["diff"] = {"values": bits(diff), "spans": {"value": span(0, width - 1, f"diff = {diff}")},
+            views["diff"] = {"values": bit_digits(diff, width), "spans": {"value": span(0, width - 1, f"diff = {diff}")},
                              "marks": {"good": list(good), "path": differ if path else []}}
         run.frame(caption, moves=moves, **views, **answer)
 

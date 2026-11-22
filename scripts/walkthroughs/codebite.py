@@ -14,7 +14,13 @@ and bag_text (the fewest-bags tables' cell tag).
 The solution's own node classes are shared too: TreeNode with build_tree (a Level-Order Array) and tree_values
 (back to one), and ListNode with build_list; node_order places a graph's nodes as its description's Diagram does.
 heap_moves gives a heap tree's moves since the last frame, for a tracer that draws a heap as its list leaves it.
-A helper two tracers need goes here: scripts/check-tracer-helpers.py fails on one defined in two files.
+Tracers of one shape share more: bit_text and bit_digits (a number in binary), table_cell and table_frame (a DP
+table under a header row and column, as the one grid view `table`), node_name and node_object (a ListNode in a
+caption), record_return (a design problem's returned values), union_root and halving_find (a union-find's parent
+list), hold_to_best (a sliding window against the longest so far) and task_frame (a topological sort's frame).
+A helper two tracers need goes here, nested ones too: scripts/check-tracer-helpers.py fails on one defined in two
+files. One that closed over the tracer's state takes it as parameters, and the tracer binds it once with
+functools.partial: `frame = partial(table_frame, run, grid)`.
     wt.write(walkthrough_path("rotting-donuts"))
 
 The samples come through scripts/db-sql.sh, so the local database (or CODEBITE_DB's) must be at this
@@ -225,3 +231,96 @@ def node_order(edges, nodes=()):
     first two items, so a weighted edge works too), then the rest of `nodes` in their order."""
     order = list(dict.fromkeys(v for edge in edges for v in edge[:2]))
     return order + [v for v in nodes if v not in order]
+
+
+def bit_text(v, width):
+    """v in binary as a caption or tag writes it, padded with zeros to `width` digits: bit_text(5, 4) is "0101"."""
+    return format(v, f"0{width}b")
+
+
+def bit_digits(v, width):
+    """v's `width` binary digits as an array view's values, highest place first: bit_digits(5, 4) is [0, 1, 0, 1]."""
+    return [int(c) for c in bit_text(v, width)]
+
+
+def table_cell(i, j):
+    """Entry (i, j) of a table drawn in a grid view under a header row and beside a header column, as the
+    grid cell an `at` or a mark names: [i + 1, j + 1]."""
+    return [i + 1, j + 1]
+
+
+def node_name(node, dummy):
+    """A ListNode as a caption names it: "dummy" for the solution's dummy head `dummy`, else its value."""
+    return "dummy" if node is dummy else str(node.val)
+
+
+def node_object(node):
+    """A ListNode as the object of a Korean verb: its value with 을/를, or null을 for no node."""
+    return "null을" if node is None else josa(node.val, "을를")
+
+
+def record_return(result, value):
+    """Append what a call of a design problem returned to `result`, the output view's values, as the JSON the
+    Driver prints (null for a call that returns nothing), and give its index there."""
+    result.append(json.dumps(value))
+    return len(result) - 1
+
+
+def table_frame(run, grid, caption, marks=None, moves=None, **answer):
+    """A frame of `run` for a tracer whose one view is the grid view `table`: `grid` as its cells with `marks`,
+    the frame's `moves`, and `answer="…"` on the last. A tracer binds its run and grid once:
+    `frame = partial(table_frame, run, grid)`."""
+    run.frame(caption, table={"cells": grid, "marks": marks or {}}, moves=moves, **answer)
+
+
+def task_frame(run, n, prereqs, waiting, finished, ready, caption, leaving=None, node_lit=(), node_good=(),
+               node_bad=(), node_path=(), edge_lit=(), edge_bad=(), queue_lit=(), queue_good=(), moves=None, **answer):
+    """A frame of `run` for a topological sort over tasks 0..n-1 by counting prerequisites: the graph view `tasks`
+    (each task with how many it still waits on, `waiting`, and its place in `finished` as a tag), the queue view
+    `ready` and the output view `done`. `leaving` is the task just taken from the front of `ready`, drawn there for
+    the frame it leaves. A final `node_path` lights the whole order and dims nothing. A tracer binds the run and
+    the solution's state once: `frame = partial(task_frame, run, n, prereqs, waiting, finished, ready)`."""
+    shown = ([leaving] if leaving is not None else []) + list(ready)
+    run.frame(caption,
+              tasks={"nodes": [{"id": v, "tag": {"en": f"#{finished.index(v) + 1}", "ko": f"{finished.index(v) + 1}번째"}}
+                               if v in finished else {"id": v} for v in node_order(prereqs, range(n))],
+                     "values": {str(v): waiting[v] for v in range(n)},
+                     "nodeMarks": {"dim": list(finished) if not node_path else [], "path": list(node_path),
+                                   "bad": list(node_bad), "good": list(node_good), "lit": list(node_lit)},
+                     "edgeMarks": {"bad": list(edge_bad), "lit": list(edge_lit)}},
+              ready={"values": shown, "marks": {"lit": list(queue_lit), "good": list(queue_good)}},
+              done={"values": list(finished), "marks": {"path": list(range(len(finished)))} if node_path else {}},
+              moves=moves, **answer)
+
+
+def union_root(parent, x):
+    """The root of x's group in a union-find's `parent` list, without the halving halving_find does: for a
+    graph's tags, which must not change the list they describe."""
+    while parent[x] != x:
+        x = parent[x]
+    return x
+
+
+def halving_find(parent, x, writes, visited):
+    """A union-find's find with path halving, as the reference solutions write it, recording as it climbs: each
+    node it stands on is appended to `visited`, and each parent it rewrites to `writes` as (the cell the new value
+    was read from, the cell written, the new value)."""
+    visited.append(x)
+    while parent[x] != x:
+        jumped = parent[parent[x]]
+        if jumped != parent[x]:
+            writes.append((parent[x], x, jumped))
+        parent[x] = jumped
+        x = parent[x]
+        visited.append(x)
+    return x
+
+
+def hold_to_best(left, right, best, best_span):
+    """Hold the window left..right up to the longest so far, `best` long at `best_span` (left, right): whether it
+    is longer, the best and its span after it, and the caption's verdict in English and in Korean:
+    `beaten, best, best_span, verdict_en, verdict_ko = hold_to_best(left, right, best, best_span)`."""
+    length = right - left + 1
+    if length > best:
+        return True, length, (left, right), f"a new best, {length}", f"best = {josa(length, '(으)로')} 갱신"
+    return False, best, best_span, f"best stays {best}", f"best = {best} 그대로"

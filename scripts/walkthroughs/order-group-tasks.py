@@ -15,10 +15,11 @@ import json
 import os
 import sys
 from collections import deque
+from functools import partial
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import driver_list, josa, node_order, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import driver_list, josa, plural, sample_cases, sample_run, task_frame, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, move  # noqa: E402
 
 SLUG = "order-group-tasks"
@@ -48,21 +49,8 @@ def solve(n, prereqs, run):
     edge_index = {(a, b): i for i, (a, b) in enumerate(prereqs)}
     finished = []
     ready = deque()
-    leaving = None  # the front, drawn for the frame it leaves
 
-    def frame(caption, node_lit=(), node_good=(), node_bad=(), node_path=(), edge_lit=(), edge_bad=(),
-              queue_lit=(), queue_good=(), moves=None, **answer):
-        shown = ([leaving] if leaving is not None else []) + list(ready)
-        run.frame(caption,
-                  tasks={"nodes": [{"id": v, "tag": {"en": f"#{finished.index(v) + 1}", "ko": f"{finished.index(v) + 1}번째"}}
-                                   if v in finished else {"id": v} for v in node_order(prereqs, range(n))],
-                         "values": {str(v): waiting[v] for v in range(n)},
-                         "nodeMarks": {"dim": list(finished) if not node_path else [], "path": list(node_path),
-                                       "bad": list(node_bad), "good": list(node_good), "lit": list(node_lit)},
-                         "edgeMarks": {"bad": list(edge_bad), "lit": list(edge_lit)}},
-                  ready={"values": shown, "marks": {"lit": list(queue_lit), "good": list(queue_good)}},
-                  done={"values": list(finished), "marks": {"path": list(range(len(finished)))} if node_path else {}},
-                  moves=moves, **answer)
+    frame = partial(task_frame, run, n, prereqs, waiting, finished, ready)
 
     m = len(prereqs)
     frame({"en": f"{n} {plural(n, 'task', 'tasks')} and {m} {plural(m, 'prerequisite', 'prerequisites')}: an arrow "
@@ -94,13 +82,12 @@ def solve(n, prereqs, run):
               node_bad=range(n))
     while ready:
         task = ready.popleft()
-        leaving = task
         finished.append(task)
         frame({"en": f"Take task {task} from the front of ready and append it to the order: "
                      f"{len(finished)} of {n} placed.",
                "ko": f"ready 앞에서 과제 {josa(task, '을를')} 꺼내 order 끝에 붙입니다. {n}개 중 {len(finished)}개를 놓았습니다."},
-              queue_lit=[0], node_lit=[task], moves=[move(at("ready", 0), at("done", len(finished) - 1))])
-        leaving = None
+              queue_lit=[0], node_lit=[task], moves=[move(at("ready", 0), at("done", len(finished) - 1))],
+              leaving=task)  # the front, drawn for the frame it leaves
         if not unlocks[task]:
             continue
         for unlocked in unlocks[task]:

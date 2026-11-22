@@ -13,7 +13,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import josa, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import bit_digits, josa, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, move, span  # noqa: E402
 
 SLUG = "power-of-two-tank"
@@ -42,10 +42,7 @@ def solve(n, run):
     width = n.bit_length()
     places = [1 << (width - 1 - p) for p in range(width)]
 
-    def bits(v):
-        return [int(c) for c in format(v, f"0{width}b")]
-
-    nb, lb, bb = bits(n), bits(n - 1), bits(n & (n - 1))
+    nb, lb, bb = bit_digits(n, width), bit_digits(n - 1, width), bit_digits(n & (n - 1), width)
     tags = [[p, str(places[p])] for p in range(width)]
 
     def view(name, value, values, marks):

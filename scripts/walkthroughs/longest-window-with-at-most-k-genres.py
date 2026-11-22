@@ -14,7 +14,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import josa, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import hold_to_best, plural, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, map_entries, move, span  # noqa: E402
 
 SLUG = "longest-window-with-at-most-k-genres"
@@ -62,15 +62,6 @@ def solve(queue, k, run):
                   state={"items": [{"label": "k", "value": k}]},
                   moves=moves, **answer)
 
-    def measure():
-        """Hold the window left..right up to best: whether it beats it, and the caption's verdict in each language."""
-        nonlocal best, best_span
-        beaten = right - left + 1 > best
-        if beaten:
-            best, best_span = right - left + 1, (left, right)
-            return True, f"a new best, {best}", f"best = {josa(best, '(으)로')} 갱신"
-        return False, f"best stays {best}", f"best = {best} 그대로"
-
     if k == 0:
         frame({"en": "k = 0: the window holds no genre, so not even one tag fits. Answer 0.",
                "ko": "k = 0이면 구간에 장르를 하나도 넣을 수 없어 태그 하나도 들어가지 않습니다. 답은 0입니다."},
@@ -98,7 +89,7 @@ def solve(queue, k, run):
                 tail_en = tail_ko = ""
                 if fits:
                     length = right - left + 1
-                    beaten, verdict_en, verdict_ko = measure()
+                    beaten, best, best_span, verdict_en, verdict_ko = hold_to_best(left, right, best, best_span)
                     tail_en = f" Back to {k} {plural(k, 'genre', 'genres')}: window length {length}, {verdict_en}."
                     tail_ko = f" 다시 장르 {k}종류: 구간 길이 {length}, {verdict_ko}."
                 count = f"{window[out] + 1} → {window[out]}"
@@ -113,7 +104,7 @@ def solve(queue, k, run):
                     del window[out]
             continue
         length = right - left + 1
-        beaten, verdict_en, verdict_ko = measure()
+        beaten, best, best_span, verdict_en, verdict_ko = hold_to_best(left, right, best, best_span)
         frame({"en": f"queue[{right}] = '{tag}' joins: {len(window)} {plural(len(window), 'genre', 'genres')}, "
                      f"within k = {k}. Window length {length}: {verdict_en}.",
                "ko": f"queue[{right}] = '{tag}' 추가: 장르 {len(window)}종류로 k = {k} 이내입니다. 구간 길이 {length}, {verdict_ko}."},
