@@ -654,8 +654,9 @@ JSON
   unset CORS_ALLOWED_ORIGINS JWT_SECRET DB_USER DB_PASSWORD DB_URL JUDGE0_URL KAFKA_ENABLED \
     SPRING_PROFILES_ACTIVE SPRING_DATASOURCE_URL SERVER_PORT SPRING_APPLICATION_JSON
   if [[ -n "$judge0" ]]; then export JUDGE0_URL="$judge0"; fi
+  # An empty $1: sourced bare, dev-env.sh would read this function's own (--wait) as its file.
   # shellcheck source=SCRIPTDIR/dev-env.sh
-  source scripts/dev-env.sh
+  source scripts/dev-env.sh ""
   # Marks every process started below as this checkout's: branch_pids stops only those, and
   # scripts/dev-status.sh tells them from the shared servers by it.
   export CODEBITE_DEV_BRANCH="$db"
