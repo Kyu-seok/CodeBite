@@ -126,6 +126,14 @@ class JavaDriversCompileTest {
     }
 
     @Test
+    void aClassOfTheDriversOwnAboveTheUsersCodeBreaksOnlyCodeThatOpensWithAnImport() {
+        assertThat(firstError(FIXTURES, "class-above-the-user-code")).isEmpty();
+        assertThat(firstError(FIXTURES, "class-above-the-user-code", LEADING_IMPORT)).get().asString()
+                .isEqualTo("class-above-the-user-code: line 9: class, interface, or enum expected"
+                        + " | import java.util.stream.*;");
+    }
+
+    @Test
     void aLeadingImportAboveAStubStarterInAWorkingDriverPasses() {
         assertThat(firstError(FIXTURES, "stub-starter", LEADING_IMPORT)).isEmpty();
     }
