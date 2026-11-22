@@ -29,7 +29,8 @@ Mini PC (Linux)
 ├── Docker Compose
 │   ├── postgres       (PostgreSQL 15, persistent volume)
 │   ├── backend        (Spring Boot JAR, Java 17)
-│   ├── frontend       (Nginx serving Vite build)
+│   ├── nginx          (serves the Vite build from a volume, proxies /api)
+│   ├── frontend       (publishes each build into that volume; runs only during a deploy)
 │   ├── judge0         (Judge0 CE API server)
 │   ├── judge0-workers (Judge0 CE workers, privileged)
 │   ├── judge0-db      (PostgreSQL 13 for Judge0)
@@ -79,7 +80,7 @@ Key points:
 
 ### 1.2 Frontend Dockerfile
 
-Create `frontend/Dockerfile`:
+`frontend/Dockerfile` builds the app and holds the build, with nothing that serves it:
 
 ```dockerfile
 FROM node:22-alpine AS build
@@ -89,18 +90,20 @@ RUN npm ci
 COPY . .
 RUN npm run build
 
-FROM nginx:alpine
-COPY --from=build /app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-EXPOSE 80
+FROM alpine:3.22
+COPY --from=build /app/dist /dist
+COPY publish.sh /publish.sh
+CMD ["sh", "/publish.sh"]
 ```
 
-Create `frontend/nginx.conf`:
+Run, the image publishes `/dist` into the `codebite-frontend` volume (`frontend/publish.sh`: assets first, `index.html` last, a replaced build's assets kept for a week). A stock `nginx` container serves that volume and is never rebuilt for a frontend change: a deploy publishes the new build under it and reloads it. `docs/adr/0014-the-frontend-is-published-under-a-running-nginx.md` has the reasons and the costs.
+
+The nginx config is `infra/nginx/nginx.conf`, mounted with its directory (there is no `frontend/nginx.conf`, and no file is baked into an nginx image):
 
 ```nginx
 server {
     listen 80;
-    root /usr/share/nginx/html;
+    root /srv/frontend/html;   # the codebite-frontend volume
     index index.html;
 
     # SPA fallback — all routes serve index.html
@@ -118,7 +121,9 @@ server {
 }
 ```
 
-This serves the built React app and proxies `/api/*` requests to the backend container — no CORS needed in production.
+(The file in the repository has more: the canonical-origin redirects, the SSE stream, cache headers.)
+
+nginx serves the built React app and proxies `/api/*` requests to the backend container — no CORS needed in production.
 
 ### 1.x Additional Changes Made During Phase 1
 
@@ -170,26 +175,39 @@ services:
     networks:
       - codebite
 
+  # Holds the build; `run --rm frontend` publishes it into the volume nginx serves (docs/adr/0014).
   frontend:
     build: ../frontend
-    container_name: codebite-frontend
+    image: codebite-frontend
+    profiles: [publish]
+    network_mode: none
+    volumes:
+      - codebite-frontend:/srv/frontend
+
+  nginx:
+    image: nginx:1.31-alpine
+    container_name: codebite-nginx
     restart: unless-stopped
     depends_on:
       - backend
     ports:
       - "80:80"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d:ro
+      - codebite-frontend:/srv/frontend:ro
     networks:
       - codebite
 
 volumes:
   codebite-pgdata:
+  codebite-frontend:
 
 networks:
   codebite:
 ```
 
 Key points:
-- No ports exposed for postgres or backend — only frontend (Nginx) is public-facing
+- No ports exposed for postgres or backend — only nginx is public-facing
 - Nginx proxies `/api/*` to the backend internally via Docker networking
 - Secrets are read from environment variables (`.env` file), not hardcoded
 - `restart: unless-stopped` keeps services running after crashes or reboots
@@ -271,7 +289,7 @@ curl http://localhost
 
 ```bash
 docker compose -f infra/docker-compose.prod.yml logs -f backend
-docker compose -f infra/docker-compose.prod.yml logs -f frontend
+docker compose -f infra/docker-compose.prod.yml logs -f nginx
 ```
 
 ---
@@ -407,7 +425,7 @@ caddy:
     - caddy_data:/data
 ```
 
-Then the frontend container removes its port mapping and Caddy handles routing.
+Then the nginx container removes its port mapping and Caddy handles routing.
 
 ### 4.2 Judge0 Integration — COMPLETED
 
@@ -436,7 +454,7 @@ The backend's `JUDGE0_URL` already defaults to `http://judge0:2358`. No backend 
 ## Implementation Order (Checklist)
 
 - [x] Create `backend/Dockerfile`
-- [x] Create `frontend/Dockerfile` and `frontend/nginx.conf`
+- [x] Create `frontend/Dockerfile` and the nginx config (now `infra/nginx/nginx.conf`; the frontend is published into a volume, docs/adr/0014)
 - [x] Create `infra/docker-compose.prod.yml` and `infra/.env.example`
 - [x] Add `infra/.env` to `.gitignore`
 - [x] Test full stack locally with `docker compose -f infra/docker-compose.prod.yml up --build`
