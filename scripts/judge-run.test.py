@@ -293,7 +293,7 @@ Branch servers for t1:
         self.servers_status("not running (codebite_t1_abc)")
         code, out = self.run_script("piggy-bank-total", backend=False)
         self.assertEqual(code, 2, out)
-        self.assertIn("dev-branch-servers.sh start --detach", out)
+        self.assertIn("dev-branch-servers.sh start --wait --detach", out)
 
     def test_a_backend_without_api_is_the_same_backend(self):
         code, out = self.run_script("piggy-bank-total", "--languages", "python",

@@ -1,8 +1,8 @@
 import java.util.*;
 
-// {{LIB:JsonOutput}}
-
 {USER_CODE}
+
+// {{LIB:JsonOutput}}
 
 public class Main {
     public static void main(String[] args) {

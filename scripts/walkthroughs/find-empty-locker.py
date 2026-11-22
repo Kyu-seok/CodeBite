@@ -14,7 +14,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import driver_list, josa, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import bit_text, driver_list, josa, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, move  # noqa: E402
 
 SLUG = "find-empty-locker"
@@ -38,9 +38,6 @@ def solve(lockers, run):
     n = len(lockers)
     width = max(1, n.bit_length())
 
-    def bits(v):
-        return format(v, f"0{width}b")
-
     numbers = list(range(n + 1))
     xored_range, xored_lockers = set(), set()  # values XORed in from each array so far
     missing = 0
@@ -48,14 +45,14 @@ def solve(lockers, run):
     def frame(caption, i=None, from_range=(), from_locker=None, path=False, **answer):
         cancelled = xored_range & xored_lockers
         run.frame(caption,
-                  range={"values": numbers, "tags": [[k, bits(k)] for k in numbers],
+                  range={"values": numbers, "tags": [[k, bit_text(k, width)] for k in numbers],
                          "marks": {"dim": [k for k in numbers if k in cancelled],
                                    "lit": list(from_range), "path": [missing] if path else []}},
-                  lockers={"values": lockers, "tags": [[k, bits(v)] for k, v in enumerate(lockers)],
+                  lockers={"values": lockers, "tags": [[k, bit_text(v, width)] for k, v in enumerate(lockers)],
                            "pointers": {"i": i},
                            "marks": {"dim": [k for k, v in enumerate(lockers) if v in cancelled],
                                      "lit": [from_locker] if from_locker is not None else []}},
-                  missing={"values": [f"{missing} ({bits(missing)})"],
+                  missing={"values": [f"{missing} ({bit_text(missing, width)})"],
                            "marks": {"path": [0]} if path else {"good": [0]} if from_range else {}},
                   moves=[move(at("range", k), at("missing", 0), value=f"^ {k}", mark="good") for k in from_range]
                   + ([move(at("lockers", from_locker), at("missing", 0), value=f"^ {lockers[from_locker]}", mark="good")]

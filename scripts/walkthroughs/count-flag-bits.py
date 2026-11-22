@@ -12,7 +12,7 @@ import sys
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import driver_list, josa, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import bit_text, driver_list, josa, sample_cases, sample_run, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, move  # noqa: E402
 
 SLUG = "count-flag-bits"
@@ -34,9 +34,6 @@ def solve(upper, run):
     """Solution.tallyPriorityFlags with a frame per i. Returns the counts."""
     width = max(1, upper.bit_length())
 
-    def bits(v):
-        return format(v, f"0{width}b")
-
     counts = [0] * (upper + 1)
 
     def frame(caption, i=None, j=None, path=False, **answer):
@@ -44,7 +41,7 @@ def solve(upper, run):
         marks = {"path": list(range(upper + 1))} if path else {"good": [i] if i is not None else [], "lit": [j] if j is not None else []}
         run.frame(caption,
                   counts={"values": counts,
-                          "tags": [[k, bits(k)] for k in range(upper + 1)],
+                          "tags": [[k, bit_text(k, width)] for k in range(upper + 1)],
                           "unread": list(range(filled + 1, upper + 1)),
                           "pointers": {"i": i, "i & (i−1)": j},
                           "marks": marks},
@@ -58,9 +55,9 @@ def solve(upper, run):
     for i in range(1, upper + 1):
         j = i & (i - 1)
         counts[i] = counts[j] + 1
-        frame({"en": f"i = {i} = {bits(i)}. {i} & {i - 1} = {bits(j)} = {j} clears its lowest 1, "
+        frame({"en": f"i = {i} = {bit_text(i, width)}. {i} & {i - 1} = {bit_text(j, width)} = {j} clears its lowest 1, "
                      f"so flagCounts[{i}] = flagCounts[{j}] + 1 = {counts[i]}.",
-               "ko": f"i = {i} = {bits(i)}입니다. {i} & {i - 1} = {bits(j)} = {josa(j, '은는')} 가장 낮은 1을 끈 수이므로 "
+               "ko": f"i = {i} = {bit_text(i, width)}입니다. {i} & {i - 1} = {bit_text(j, width)} = {josa(j, '은는')} 가장 낮은 1을 끈 수이므로 "
                      f"flagCounts[{i}] = flagCounts[{j}] + 1 = {counts[i]}입니다."},
               i=i, j=j)
     if upper == 0:

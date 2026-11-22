@@ -15,10 +15,11 @@ writes common/src/main/resources/walkthroughs/skin-resale-with-cooldown.json.
 import json
 import os
 import sys
+from functools import partial
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import sample_cases, sample_run, table_frame, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, move  # noqa: E402
 
 SLUG = "skin-resale-with-cooldown"
@@ -67,8 +68,7 @@ def solve(prices, run):
     grid[HOLD][1], grid[SOLD][1], grid[REST][1] = INF, 0, 0
     came = {}  # (row, col) -> (row, col) the value was taken from
 
-    def frame(caption, marks=None, moves=None, **answer):
-        run.frame(caption, table={"cells": grid, "marks": marks or {}}, moves=moves, **answer)
+    frame = partial(table_frame, run, grid)
 
     frame({"en": "Before day 0: no copy can be held yet (hold −∞), and nothing is sold, so sold and rest are 0.",
            "ko": "0일 전: 아직 스킨을 들 수 없으므로 hold는 −∞, 판 것도 없으므로 sold와 rest는 0입니다."},

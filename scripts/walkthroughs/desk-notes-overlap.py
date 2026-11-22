@@ -16,10 +16,11 @@ writes common/src/main/resources/walkthroughs/desk-notes-overlap.json.
 import os
 import string
 import sys
+from functools import partial
 
 sys.dont_write_bytecode = True  # no __pycache__ beside the tracers
 sys.path.insert(0, os.path.dirname(__file__))
-from codebite import josa, sample_cases, sample_run, walkthrough_path  # noqa: E402
+from codebite import josa, sample_cases, sample_run, table_cell, table_frame, walkthrough_path  # noqa: E402
 from walkthrough_trace import Walkthrough, at, move  # noqa: E402
 
 SLUG = "desk-notes-overlap"
@@ -53,17 +54,13 @@ def solve(left, right, run):
     grid += [[a, 0] + [UNSET] * m for a in left]
     came = {}  # (i, j) -> the cell its value was taken from
 
-    def cell(i, j):
-        return [i + 1, j + 1]
-
-    def frame(caption, marks=None, moves=None, **answer):
-        run.frame(caption, table={"cells": grid, "marks": marks or {}}, moves=moves, **answer)
+    frame = partial(table_frame, run, grid)
 
     frame({"en": f"Compare \"{left}\" with \"{right}\". An empty prefix shares nothing with anything, so the first row "
                  "and column are 0.",
            "ko": f"\"{left}\" 문자열과 \"{right}\" 문자열을 비교합니다. 빈 앞부분은 어떤 문자열과도 공통 글자가 없으므로 첫 행과 첫 "
                  "열은 0입니다."},
-          marks={"good": [cell(0, j) for j in range(m + 1)] + [cell(i, 0) for i in range(1, n + 1)]})
+          marks={"good": [table_cell(0, j) for j in range(m + 1)] + [table_cell(i, 0) for i in range(1, n + 1)]})
     previous = [0] * (m + 1)
     for i, a in enumerate(left, 1):
         current = [0]
@@ -78,8 +75,8 @@ def solve(left, right, run):
                              f"{previous[j - 1]} + 1 = {value}.",
                        "ko": f"'{a}' = '{b}': 두 앞부분 모두 이 공통 글자로 끝낼 수 있으므로 대각선 값에 1을 더합니다: "
                              f"{previous[j - 1]} + 1 = {value}."},
-                      marks={"lit": letters + [cell(i - 1, j - 1)], "good": [cell(i, j)]},
-                      moves=[move(at("table", cell(i - 1, j - 1)), at("table", cell(i, j)),
+                      marks={"lit": letters + [table_cell(i - 1, j - 1)], "good": [table_cell(i, j)]},
+                      moves=[move(at("table", table_cell(i - 1, j - 1)), at("table", table_cell(i, j)),
                                   value=f"{previous[j - 1]}+1")])
             else:
                 up, lt = previous[j], current[j - 1]
@@ -92,19 +89,19 @@ def solve(left, right, run):
                              f"is {lt}; keep the larger, {value}.",
                        "ko": f"'{a}' ≠ '{b}': 둘 중 하나를 뺍니다. 위('{a}' 없이)는 {up}, 왼쪽('{b}' 없이)은 "
                              f"{lt}이므로 큰 값 {josa(value, '을를')} 씁니다."},
-                      marks={"lit": letters + [cell(i - 1, j), cell(i, j - 1)], "good": [cell(i, j)]},
-                      moves=[move(at("table", cell(*src)), at("table", cell(i, j)))])
+                      marks={"lit": letters + [table_cell(i - 1, j), table_cell(i, j - 1)], "good": [table_cell(i, j)]},
+                      moves=[move(at("table", table_cell(*src)), at("table", table_cell(i, j)))])
         previous = current
     answer = previous[-1]
     # walk back along where each value came from: the diagonals taken are the shared letters
     path, shared, (i, j) = [], [], (n, m)
     while i > 0 and j > 0:
-        path.append(cell(i, j))
+        path.append(table_cell(i, j))
         pi, pj = came[(i, j)]
         if (pi, pj) == (i - 1, j - 1):
             shared.append((i, j))
         i, j = pi, pj
-    path.append(cell(i, j))
+    path.append(table_cell(i, j))
     shared.reverse()
     word = "".join(left[i - 1] for i, _ in shared)
     headers = [[i + 1, 0] for i, _ in shared] + [[0, j + 1] for _, j in shared]

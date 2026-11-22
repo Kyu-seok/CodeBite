@@ -5,7 +5,9 @@ RUN npm ci
 COPY . .
 RUN npm run build
 
-FROM nginx:alpine
-COPY --from=build /app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-EXPOSE 80
+# Holds the build and nothing that serves it: run, it publishes /dist into the volume mounted at
+# /srv/frontend, which the nginx service serves (docs/adr/0014).
+FROM alpine:3.22
+COPY --from=build /app/dist /dist
+COPY publish.sh /publish.sh
+CMD ["sh", "/publish.sh"]
