@@ -48,7 +48,8 @@
 #
 # It refuses, before merging anything, when a CI run on the integration branch's HEAD failed or was
 # cancelled: a skipped-check push (above) is checked only by that run, and a merge stacked on a red
-# tip hides which merge broke it (#264). A pending run doesn't stop it.
+# tip hides which merge broke it (#264). A pending run doesn't stop it. The refusal names the red run
+# and the command that reruns its failed jobs, for a failure a rerun clears (a download, a flaky test).
 #
 # The second form merges nothing: it runs the checks below on HEAD and pushes it to <integration
 # branch> when they pass. It is the rerun after a failed check that turned out flaky: the merge
@@ -143,15 +144,25 @@ ci_runs() {
   gh run list --commit "$1" --workflow CI --json conclusion,url --jq '.[] | "\(.conclusion) \(.url)"' 2>/dev/null || true
 }
 
-# Why not to merge onto a tip whose CI runs are $1 (ci_runs lines), or nothing.
-red_tip_refusal() {
+# The run that makes a tip red among $1 (ci_runs lines), as its "<conclusion> <url>" line, or nothing:
+# the first that failed, was cancelled or timed out.
+red_run() {
   local conclusion url
   while read -r conclusion url; do
     if [[ "$conclusion" == failure || "$conclusion" == cancelled || "$conclusion" == timed_out ]]; then
-      echo "refusing to merge onto a red integration tip: CI $conclusion $url; fix it first (scripts/test-failures.sh)"
+      echo "$conclusion $url"
       return
     fi
   done <<<"$1"
+}
+
+# Why not to merge onto a tip whose CI runs are $1 (ci_runs lines), or nothing. A run's URL ends in
+# its id, which `gh run rerun` takes.
+red_tip_refusal() {
+  local red
+  red=$(red_run "$1")
+  [[ -n "$red" ]] || return 0
+  echo "refusing to merge onto a red integration tip: CI $red; fix it first (scripts/test-failures.sh) or rerun its failed jobs (gh run rerun ${red##*/} --failed)"
 }
 
 # Whether CI runs on a push to branch $1: keep in step with ci.yml's `push: branches`.

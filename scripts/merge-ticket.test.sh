@@ -39,9 +39,12 @@ check "no runs" "$(red_tip_refusal '')" ""
 check "pending and green" "$(red_tip_refusal ' https://ci/1
 success https://ci/2')" ""
 check "red" "$(red_tip_refusal 'success https://ci/1
-failure https://ci/2')" "refusing to merge onto a red integration tip: CI failure https://ci/2; fix it first (scripts/test-failures.sh)"
+failure https://ci/2')" "refusing to merge onto a red integration tip: CI failure https://ci/2; fix it first (scripts/test-failures.sh) or rerun its failed jobs (gh run rerun 2 --failed)"
 check "cancelled counts as red" "$(red_tip_refusal 'cancelled https://ci/3')" \
-  "refusing to merge onto a red integration tip: CI cancelled https://ci/3; fix it first (scripts/test-failures.sh)"
+  "refusing to merge onto a red integration tip: CI cancelled https://ci/3; fix it first (scripts/test-failures.sh) or rerun its failed jobs (gh run rerun 3 --failed)"
+# A failure that a rerun clears (a download, a flaky test): the refusal names the rerun of that run.
+check "red names the rerun of its run" "$(red_tip_refusal 'failure https://github.com/o/r/actions/runs/45000924487')" \
+  "refusing to merge onto a red integration tip: CI failure https://github.com/o/r/actions/runs/45000924487; fix it first (scripts/test-failures.sh) or rerun its failed jobs (gh run rerun 45000924487 --failed)"
 
 # --- which integration branches CI checks on push (ci.yml) -------------------------------------
 
