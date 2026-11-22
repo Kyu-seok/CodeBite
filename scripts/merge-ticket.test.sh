@@ -12,7 +12,8 @@
 # no-checks push; a refresh conflict, a failing hook or a dirty ticket worktree stops with nothing
 # merged into the integration branch; a failed hook fails again on a rerun with nothing fixed and
 # passes once the fix is committed in the ticket's worktree, on origin or not; a failed worktree add
-# or remove is named. Last, the real hook's tools for a given CODEBITE_HOOK_PATHS.
+# or remove is named. Last, the real hook's tools for a given CODEBITE_HOOK_PATHS, and that it and
+# repo_checks shellcheck a tracked shell file outside scripts/ through the real scripts/check-shell.sh.
 set -euo pipefail
 
 script="$(cd "$(dirname "$0")" && pwd)/merge-ticket.sh"
@@ -407,15 +408,22 @@ check "refresh conflict: temporary worktree removed" "$(git -C "$scratch/work" w
 
 # --- the pre-commit hook takes its paths from CODEBITE_HOOK_PATHS when set (what --refresh passes) ---
 
+# The real scripts/check-shell.sh lists the scratch repo's shell files: tools/new.sh is one that
+# nothing else names, outside scripts/.
 hk=$(mktemp -d)
-mkdir -p "$hk/bin" "$hk/scripts" "$hk/frontend"
+mkdir -p "$hk/bin" "$hk/scripts" "$hk/frontend" "$hk/tools"
 git -C "$hk" init -q -b ticket/x
 for tool in python3 npm shellcheck; do
   printf '#!/usr/bin/env bash\necho "%s $*" >> "$TOOL_LOG"\n' "$tool" > "$hk/bin/$tool"
 done
 printf '#!/usr/bin/env bash\necho "script-tests" >> "$TOOL_LOG"\n' > "$hk/scripts/run-script-tests.sh"
 printf '#!/usr/bin/env bash\necho "gradle $*" >> "$TOOL_LOG"\n' > "$hk/scripts/gradle-test.sh"
+cp "$(dirname "$script")/check-shell.sh" "$hk/scripts/"
+echo 'echo publish' > "$hk/frontend/publish.sh"
+echo 'echo new' > "$hk/tools/new.sh"
 chmod +x "$hk"/bin/* "$hk"/scripts/*.sh
+git -C "$hk" add scripts frontend tools
+shellcheck_args() { awk '$1 == "shellcheck"' "$1" 2>/dev/null; }  # <log>: the fake shellcheck's lines
 real_hook="$(dirname "$script")/../.githooks/pre-commit"
 hook_tools() {  # <paths>: the tools the real hook calls for them, Gradle tests skipped
   rm -f "$hk/log"
@@ -429,17 +437,27 @@ backend/src/A.java')" "python3 script-tests shellcheck "
 check "hook: frontend" "$(hook_tools frontend/src/a.ts)" "npm python3 "
 # frontend/publish.sh is a script the deploy runs, tested by scripts/frontend-publish.test.sh.
 check "hook: frontend/publish.sh" "$(hook_tools frontend/publish.sh)" "npm python3 script-tests shellcheck "
-grep -q '^shellcheck .*frontend/publish\.sh' "$hk/log" || { echo "FAIL: the hook's shellcheck must cover frontend/publish.sh"; fail=1; }
-# The full checks' shellcheck covers it too.
-mkdir -p "$hk/checks/scripts" "$hk/checks/bin"
-printf '#!/usr/bin/env bash\necho "$*" >> "$TOOL_LOG"\n' > "$hk/checks/bin/shellcheck"
-printf '#!/usr/bin/env bash\n' > "$hk/checks/bin/python3"
-cp "$hk/checks/bin/python3" "$hk/checks/scripts/run-script-tests.sh"
-chmod +x "$hk"/checks/bin/* "$hk"/checks/scripts/*.sh
+grep -q 'frontend/publish\.sh' <<<"$(shellcheck_args "$hk/log")" || { echo "FAIL: the hook's shellcheck must cover frontend/publish.sh"; fail=1; }
+# A shell file outside scripts/ that no list names: shellcheck and the script tests run, over it too.
+check "hook: tools/new.sh" "$(hook_tools tools/new.sh)" "python3 script-tests shellcheck "
+grep -q 'tools/new\.sh' <<<"$(shellcheck_args "$hk/log")" || { echo "FAIL: the hook's shellcheck must cover tools/new.sh"; fail=1; }
+# The full checks' shellcheck covers them too.
+chk=$hk/checks
+mkdir -p "$chk/scripts" "$chk/bin" "$chk/frontend" "$chk/tools"
+git -C "$chk" init -q
+cp "$hk/bin/shellcheck" "$chk/bin/"
+printf '#!/usr/bin/env bash\n' > "$chk/bin/python3"
+cp "$chk/bin/python3" "$chk/scripts/run-script-tests.sh"
+cp "$(dirname "$script")/check-shell.sh" "$chk/scripts/"
+cp "$hk/frontend/publish.sh" "$chk/frontend/"
+cp "$hk/tools/new.sh" "$chk/tools/"
+chmod +x "$chk"/bin/* "$chk"/scripts/*.sh
+git -C "$chk" add scripts frontend tools
 # shellcheck source=SCRIPTDIR/merge-ticket.sh
-(source "$script" && cd "$hk/checks" && PATH="$hk/checks/bin:$PATH" TOOL_LOG="$hk/checks/log" repo_checks) \
+(source "$script" && cd "$chk" && PATH="$chk/bin:$PATH" TOOL_LOG="$chk/log" repo_checks) \
   || { echo "FAIL: repo_checks failed under stubs"; fail=1; }
-grep -q 'frontend/publish\.sh' "$hk/checks/log" 2>/dev/null || { echo "FAIL: repo_checks' shellcheck must cover frontend/publish.sh"; fail=1; }
+grep -q 'frontend/publish\.sh' <<<"$(shellcheck_args "$chk/log")" || { echo "FAIL: repo_checks' shellcheck must cover frontend/publish.sh"; fail=1; }
+grep -q 'tools/new\.sh' <<<"$(shellcheck_args "$chk/log")" || { echo "FAIL: repo_checks' shellcheck must cover tools/new.sh"; fail=1; }
 rm -rf "$hk"
 
 echo dirt > "$scratch/work/dirt.txt"

@@ -3,7 +3,8 @@
 # outside scripts/, an empty one, one with a space in its path and extensionless files with a sh or
 # bash shebang reach shellcheck at warning severity; a python or zsh shebang, a plain text file, an
 # untracked .sh file and a tracked one deleted from the working tree don't; --list prints the same
-# files and runs nothing; shellcheck's failing exit code is the script's.
+# files and runs nothing; shellcheck's failing exit code is the script's. Then, in this repository,
+# that no tracked file but scripts/check-shell.sh runs shellcheck itself (#443).
 set -euo pipefail
 
 here="$(cd "$(dirname "$0")" && pwd)"
@@ -60,5 +61,14 @@ check "--list prints the same files" "$(sort <<<"$listed")" "$expected"
 code=0; run --nonsense >/dev/null 2>&1 || code=$?
 check "an unknown argument is a usage error" "$code" 2
 
+# A command, not a mention: shellcheck followed by an option, a variable, a glob, a quoted path or
+# a path. "# shellcheck disable=…" directives, `command -v shellcheck` and prose don't match.
+invocation='shellcheck[[:space:]]+(-|[$*]|"[$./[:alnum:]]|[[:alnum:]_.-]*(/|\.sh))'
+if hits=$(git -C "$here/.." grep -nIE "$invocation" -- ':!scripts/check-shell.sh'); then
+  echo "FAIL: shellcheck is run outside scripts/check-shell.sh; call that script instead:"
+  echo "$hits"
+  fail=1
+fi
+
 (( fail )) && exit 1
-echo "PASS: check-shell.sh shellchecks every tracked shell file"
+echo "PASS: check-shell.sh shellchecks every tracked shell file, and only it runs shellcheck"
