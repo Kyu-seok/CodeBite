@@ -72,6 +72,12 @@ jobs:
           RANGE: ${{ github.event_name == 'pull_request' && format('{0}..{1}', github.event.pull_request.base.sha, github.event.pull_request.head.sha) || format('origin/master..{0}', github.sha) }}
         run: scripts/check-commit-subjects.sh "$RANGE"
       - run: scripts/run-script-tests.sh
+      # A deploy runs publish.sh on the frontend image's BusyBox, where a flag Ubuntu's tools take
+      # can be missing: the test's cases again, with publish.sh in that image.
+      - name: frontend/publish.sh on BusyBox
+        env:
+          CODEBITE_PUBLISH_IN_IMAGE: 1
+        run: scripts/frontend-publish.test.sh
       - run: python3 -I scripts/check-doc-references.py
       - run: python3 -I scripts/copy-walkthrough-kit.py --check
       - run: python3 -I scripts/check-tracer-helpers.py
