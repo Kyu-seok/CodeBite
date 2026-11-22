@@ -5,6 +5,7 @@
 #
 # <state directory>/merge-log.md has one line per merge, oldest first:
 #   <ticket numbers, space separated>|<ticket branch>|<what changed>|<what is owed after merge, or ->
+# A field cannot contain `|`: a line without exactly four fields is refused (exit 2). Blank lines are skipped.
 # <state directory>/pr-notes/<n>.md (optional) is what ticket <n> asks the PR to record; it becomes
 # that ticket's section once the merge log names the ticket.
 #
@@ -38,8 +39,19 @@ tip=$(git rev-parse --short --verify --quiet "$branch^{commit}") || die "no bran
 
 log=$state/merge-log.md
 merged=' '
+log_numbers=() log_branches=() log_whats=() log_oweds=()
 if [[ -f $log ]]; then
-  while IFS='|' read -r numbers _; do merged+="$numbers "; done <"$log"
+  lineno=0
+  while IFS= read -r line || [[ -n $line ]]; do
+    lineno=$((lineno + 1))
+    [[ $line =~ [^[:space:]] ]] || continue
+    pipes=${line//[^|]/}
+    (( ${#pipes} == 3 )) ||
+      die "merge-log.md line $lineno has $(( ${#pipes} + 1 )) fields, not 4 (a field cannot contain |): $line"
+    IFS='|' read -r numbers tbranch what owed <<<"$line"
+    log_numbers+=("$numbers") log_branches+=("$tbranch") log_whats+=("$what") log_oweds+=("$owed")
+    merged+="$numbers "
+  done <"$log"
 fi
 is_merged() { [[ $merged == *" $1 "* ]]; }
 
@@ -57,16 +69,16 @@ body() {
   echo
   echo "## Merged"
   echo
-  if [[ -s $log ]]; then
-    local line numbers_in tbranch what owed
-    while IFS='|' read -r numbers_in tbranch what owed; do
-      [[ -n $numbers_in ]] || continue
+  if (( ${#log_numbers[@]} )); then
+    local i line owed
+    for (( i = 0; i < ${#log_numbers[@]}; i++ )); do
       line="-"
-      for t in $numbers_in; do line+=" #$t"; done
-      line+=" (\`$tbranch\`): $what"
+      for t in ${log_numbers[i]}; do line+=" #$t"; done
+      line+=" (\`${log_branches[i]}\`): ${log_whats[i]}"
+      owed=${log_oweds[i]}
       [[ -n $owed && $owed != - ]] && line+=" **Owed:** $owed"
       echo "$line"
-    done <"$log"
+    done
   else
     echo "Nothing yet."
   fi

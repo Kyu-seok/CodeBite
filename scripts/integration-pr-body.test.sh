@@ -89,6 +89,26 @@ run --print integration/batch "$dir/empty" 5
 check "with no merge log yet nothing is merged and nothing closes" \
   '[[ $status == 0 && $out == *"One ticket (#5) "* && $out == *"Nothing yet."* && $out == *"## Not merged yet"*"#5"* && $out != *Closes* ]]'
 
+mkdir "$dir/unterminated"
+printf '\n7|ticket/7|Seven.|-\n8|ticket/8|No newline at the end.|-' > "$dir/unterminated/merge-log.md"
+run --print integration/batch "$dir/unterminated" 7 8
+check "a last line with no newline is read like the others" \
+  '[[ $status == 0 && $out == *"- #8 (\`ticket/8\`): No newline at the end."* && $out == *"Closes #8"* && $out != *"Not merged"* ]]'
+
+mkdir "$dir/substring"
+printf '112|ticket/112|One twelve.|-\n' > "$dir/substring/merge-log.md"
+run --print integration/batch "$dir/substring" 12 112
+check "a ticket is merged only when the log names that number" \
+  '[[ $status == 0 ]] && grep -qx "#12" <<<"$out" && ! grep -qx "Closes #12" <<<"$out" && grep -qx "Closes #112" <<<"$out"'
+
+mkdir "$dir/malformed"
+for fields in 'Three|fields|only' '9|ticket/9|A | in the text|-'; do
+  printf '9|ticket/9|Fine.|-\n%s\n' "$fields" > "$dir/malformed/merge-log.md"
+  run integration/batch "$dir/malformed" 9
+  check "refuses a line that is not four fields: $fields" \
+    '[[ $status == 2 && $err == *"line 2 "* && $err == *"cannot contain |"* && -z $log && ! -e $dir/malformed/pr-body.md ]]'
+done
+
 for bad in \
   "integration/batch $dir/state" \
   "integration/batch $dir/missing 12" \
