@@ -30,14 +30,20 @@
 # with the files named, the ticket branch as it was and nothing merged here. Then it runs the ticket
 # branch's own .githooks/pre-commit over the paths the ticket adds to HEAD, with CODEBITE_SKIP_TESTS=1:
 # the doc references and kit copy always, shellcheck, the tracer helpers and the script tests for
-# scripts/, the frontend lint and tests for frontend/ (the hook is the list; this is what it held
-# when written). The Gradle suites are left out because they are the ten minutes --refresh exists to
-# save, and CI runs them on the pushed tree, which is the refreshed ticket's own; the cheap checks
-# run here because the implementer never ran them on the merged tree and a red one would otherwise
-# show only after the push. A failing one stops with nothing merged here or pushed: the refreshed
-# branch stays in its worktree to fix (a temporary worktree is dropped, the branch unmoved). When
-# they pass, the refreshed branch is pushed if origin has it, and the merge goes on as above. A
-# branch that already contains HEAD is not touched, and without --refresh nothing here happens.
+# scripts/ and frontend/publish.sh, the frontend lint and tests for frontend/ (the hook is the list;
+# this is what it held when written). The Gradle suites are left out because they are the ten minutes
+# --refresh exists to save, and CI runs them on the pushed tree, which is the refreshed ticket's own;
+# the cheap checks run here because the implementer never ran them on the merged tree and a red one
+# would otherwise show only after the push. A failing one stops with nothing merged here or pushed:
+# the refreshed branch stays in its worktree to fix (a temporary worktree is dropped, the branch
+# unmoved). When they pass, the branch is pushed if origin has it, and the merge goes on as above.
+#
+# Under --refresh those path-scoped checks run for every branch, one that already contains HEAD too
+# (no merge into it then, only the checks): a failed check leaves the refresh merge on the branch in
+# its worktree, so on the rerun the branch contains HEAD, and a rerun with nothing fixed must fail
+# again rather than push unchecked. The rerun after a fix committed in that worktree takes the local
+# branch when it is ahead of origin's, and pushes it with the rest. Without --refresh nothing here
+# happens.
 #
 # It refuses, before merging anything, when a CI run on the integration branch's HEAD failed or was
 # cancelled: a skipped-check push (above) is checked only by that run, and a merge stacked on a red
@@ -84,12 +90,13 @@ refresh_message() {
 }
 
 # The repo-wide checks the pre-commit hook and CI run, which a ticket committed with --no-verify
-# skipped: doc references (CLAUDE.md's size ceiling too), the walkthrough kit copy, shellcheck and the
-# script tests. Seconds, so they go before Gradle.
+# skipped: doc references (CLAUDE.md's size ceiling too), the walkthrough kit copy, shellcheck (the
+# scripts and frontend/publish.sh, as the hook and ci.yml list them) and the script tests. Seconds,
+# so they go before Gradle.
 repo_checks() {
   python3 -I scripts/check-doc-references.py \
     && python3 -I scripts/copy-walkthrough-kit.py --check \
-    && if command -v shellcheck >/dev/null 2>&1; then shellcheck -S warning scripts/*.sh; fi \
+    && if command -v shellcheck >/dev/null 2>&1; then shellcheck -S warning scripts/*.sh frontend/publish.sh; fi \
     && scripts/run-script-tests.sh
 }
 
@@ -198,12 +205,14 @@ refresh_checks() {
   )
 }
 
-# Merges HEAD into ticket branch $1 (at $2, which lacks it) and runs the path-scoped checks on the
-# result, for a merge into branch $3. Afterwards $2 names the refreshed branch.
+# Brings ticket branch $1 (at $2) up to HEAD when it lacks it, by merging HEAD into it, and runs the
+# path-scoped checks on the result, for a merge into branch $3. Afterwards $2 names the checked
+# branch. Its callers test its status, so errexit is off in here: every step is checked by hand and
+# a failed one is named.
 refresh_ticket() {
   local branch=$1 from=$2 current=$3 tip dir temp='' conflicts paths refreshed status=0
-  tip=$(git rev-parse HEAD)
-  dir=$(branch_worktree "$branch")
+  tip=$(git rev-parse HEAD) || return 1
+  dir=$(branch_worktree "$branch") || return 1
   if [[ -n "$dir" ]]; then
     if [[ "$(git rev-parse "refs/heads/$branch")" != "$(git rev-parse "$from")" ]]; then
       echo "merge-ticket: $branch in $dir and $from differ; push or reset one first" >&2
@@ -219,42 +228,72 @@ refresh_ticket() {
       echo "merge-ticket: local $branch and $from differ; push or reset one first" >&2
       return 1
     fi
-    temp=$(mktemp -d)
+    if ! temp=$(mktemp -d); then
+      echo "merge-ticket: could not make a temporary directory to refresh $branch in; nothing merged into $current" >&2
+      return 1
+    fi
     dir=$temp/refresh
-    git worktree add -q --detach "$dir" "$from"
+    if ! git worktree add -q --detach "$dir" "$from"; then
+      echo "merge-ticket: could not add a temporary worktree at $dir for $from; nothing merged into $current" >&2
+      rm -rf "$temp"
+      return 1
+    fi
   fi
 
-  echo "merge-ticket: refreshing $branch: merging $current ($(git rev-parse --short "$tip")) into it in $dir"
-  if ! git -C "$dir" merge -q --no-ff -m "$(refresh_message "$current" "$branch")" "$tip"; then
-    conflicts=$(git -C "$dir" diff --name-only --diff-filter=U)
-    git -C "$dir" merge --abort
-    echo "merge-ticket: $current conflicts with $branch; refresh aborted, nothing merged into $current. Conflicting files:" >&2
-    sed 's/^/  /' <<<"$conflicts" >&2
-    status=1
+  if git merge-base --is-ancestor "$tip" "$from"; then
+    echo "merge-ticket: $branch already contains $current ($(git rev-parse --short "$tip")); checking it in $dir"
   else
-    refreshed=$(git -C "$dir" rev-parse HEAD)
-    paths=$(git -C "$dir" diff --name-only --diff-filter=ACMR "$tip" HEAD)
-    echo "merge-ticket: running the path-scoped checks on the refreshed $branch (Gradle is left to CI)"
-    if ! refresh_checks "$dir" "$paths"; then
-      if [[ -n "$temp" ]]; then
-        echo "merge-ticket: path-scoped checks failed on the refreshed $branch; nothing is merged into $current or pushed, and $branch is as it was" >&2
+    echo "merge-ticket: refreshing $branch: merging $current ($(git rev-parse --short "$tip")) into it in $dir"
+    if ! git -C "$dir" merge -q --no-ff -m "$(refresh_message "$current" "$branch")" "$tip"; then
+      conflicts=$(git -C "$dir" diff --name-only --diff-filter=U)
+      if git -C "$dir" rev-parse -q --verify MERGE_HEAD >/dev/null && ! git -C "$dir" merge --abort; then
+        echo "merge-ticket: could not abort the merge of $current in $dir; abort it there by hand" >&2
+      fi
+      if [[ -n "$conflicts" ]]; then
+        echo "merge-ticket: $current conflicts with $branch; refresh aborted, nothing merged into $current. Conflicting files:" >&2
+        sed 's/^/  /' <<<"$conflicts" >&2
       else
-        echo "merge-ticket: path-scoped checks failed on the refreshed $branch; nothing is merged into $current or pushed. Fix it in $dir, commit, and run this again" >&2
+        echo "merge-ticket: git could not merge $current into $branch in $dir (no conflict; its message is above); nothing merged into $current" >&2
       fi
       status=1
     fi
   fi
 
+  if (( status == 0 )); then
+    if ! refreshed=$(git -C "$dir" rev-parse HEAD) \
+      || ! paths=$(git -C "$dir" diff --name-only --diff-filter=ACMR "$tip" HEAD); then
+      echo "merge-ticket: could not list what $branch adds to $current in $dir; nothing merged into $current" >&2
+      status=1
+    else
+      echo "merge-ticket: running the path-scoped checks on $branch (Gradle is left to CI)"
+      if ! refresh_checks "$dir" "$paths"; then
+        if [[ -n "$temp" ]]; then
+          echo "merge-ticket: path-scoped checks failed on $branch with $current merged in; nothing is merged into $current or pushed, and $branch is as it was" >&2
+        else
+          echo "merge-ticket: path-scoped checks failed on $branch with $current merged in; nothing is merged into $current or pushed. Fix it in $dir, commit, and run this again" >&2
+        fi
+        status=1
+      fi
+    fi
+  fi
+
   if [[ -n "$temp" ]]; then
-    git worktree remove --force "$dir"
+    if ! git worktree remove --force "$dir"; then
+      echo "merge-ticket: could not remove the temporary worktree $dir (git worktree remove --force); remove it by hand. Nothing is merged into $current or pushed, and $branch is as it was" >&2
+      return 1
+    fi
     rm -rf "$temp"
-    if (( status == 0 )) && git rev-parse -q --verify "refs/heads/$branch" >/dev/null; then
-      git update-ref "refs/heads/$branch" "$refreshed"
+    if (( status == 0 )) && git rev-parse -q --verify "refs/heads/$branch" >/dev/null \
+      && ! git update-ref "refs/heads/$branch" "$refreshed"; then
+      echo "merge-ticket: could not move local $branch to the refreshed $(git rev-parse --short "$refreshed"); nothing merged into $current" >&2
+      return 1
     fi
   fi
   (( status == 0 )) || return 1
-  if git rev-parse -q --verify "refs/remotes/origin/$branch" >/dev/null; then
-    git push -q origin "$refreshed:refs/heads/$branch"
+  if git rev-parse -q --verify "refs/remotes/origin/$branch" >/dev/null \
+    && ! git push -q origin "$refreshed:refs/heads/$branch"; then
+    echo "merge-ticket: could not push the checked $branch ($(git rev-parse --short "$refreshed")) to origin; nothing merged into $current" >&2
+    return 1
   fi
 }
 
@@ -272,6 +311,15 @@ merge_one() {
     echo "merge-ticket: no branch $branch here or on origin" >&2
     return 1
   fi
+  # The local branch ahead of origin's is the refresh merge a failed check left in its worktree, plus
+  # the fix committed there: take it, and refresh_ticket pushes it once its checks pass.
+  if [[ "$refresh" == yes && "$ref" == "origin/$branch" ]] \
+    && git rev-parse -q --verify "refs/heads/$branch" >/dev/null \
+    && [[ "$(git rev-parse "refs/heads/$branch")" != "$(git rev-parse "$ref")" ]] \
+    && git merge-base --is-ancestor "$ref" "refs/heads/$branch"; then
+    echo "merge-ticket: local $branch is ahead of $ref; taking the local branch"
+    ref=$branch
+  fi
   git merge-base --is-ancestor "$ref" HEAD && merged=yes
   git merge-base --is-ancestor HEAD "$ref" && contains_head=yes
   local refusal
@@ -286,7 +334,7 @@ merge_one() {
     return 1
   fi
 
-  if [[ "$refresh" == yes && "$contains_head" == no ]]; then
+  if [[ "$refresh" == yes ]]; then
     refresh_ticket "$branch" "$ref" "$current" || return 1
     git merge-base --is-ancestor HEAD "$ref" && contains_head=yes
   fi
