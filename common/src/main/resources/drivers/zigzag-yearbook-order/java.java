@@ -1,9 +1,9 @@
 import java.util.*;
 
+{USER_CODE}
+
 // {{LIB:TreeNode}}
 // {{LIB:JsonOutput}}
-
-{USER_CODE}
 
 public class Main {
     public static void main(String[] args) {

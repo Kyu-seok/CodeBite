@@ -32,12 +32,19 @@ import static org.assertj.core.api.Assertions.assertThat;
  * its types lack, or one that puts a Library class above a starter that opens with an
  * {@code import} (#336).
  *
+ * <p>Every Driver also compiles when the code in its place opens with an {@code import} of the
+ * user's own: Java allows no import after a class, so nothing but the Driver's imports may come
+ * before {@code {USER_CODE}}, and Libraries and helper classes go below it (#412).
+ *
  * <p>A starter is a stub, so one javac error is expected and passed over: "missing return
  * statement" on the starter's own lines. The same error on a Driver line fails.
  */
 class JavaDriversCompileTest {
 
     private static final String MISSING_RETURN = "compiler.err.missing.ret.stmt";
+
+    /** What a user may type as their first line; no Driver or Starter Code needs it. */
+    private static final String LEADING_IMPORT = "import java.util.stream.*;\n";
 
     /**
      * Judge0's release, and every class checked through flow analysis whatever errors came before:
@@ -69,6 +76,20 @@ class JavaDriversCompileTest {
         assertThat(broken).as("Java Drivers that do not compile with their Starter Code").isEmpty();
     }
 
+    @Test
+    void everyJavaDriverCompilesWhenTheUsersCodeOpensWithAnImport() {
+        ProblemAssets assets = new ProblemAssets();
+        List<String> broken = new ArrayList<>();
+        for (String slug : assets.slugsWithDriver(Language.JAVA)) {
+            firstError(assets, slug, LEADING_IMPORT).ifPresent(broken::add);
+        }
+
+        assertThat(broken)
+                .as("Java Drivers with a Library or a class above {USER_CODE}: move it below, "
+                        + "or a submission that opens with an import does not compile")
+                .isEmpty();
+    }
+
     // --- What the check catches, on Drivers made for it ---
 
     private static final ProblemAssets FIXTURES = new ProblemAssets("classpath:problem-assets/java-drivers/");
@@ -97,6 +118,19 @@ class JavaDriversCompileTest {
     }
 
     @Test
+    void aLibraryAboveTheUsersCodeBreaksOnlyCodeThatOpensWithAnImport() {
+        assertThat(firstError(FIXTURES, "library-above-the-user-code")).isEmpty();
+        assertThat(firstError(FIXTURES, "library-above-the-user-code", LEADING_IMPORT)).get().asString()
+                .isEqualTo("library-above-the-user-code: line 10: class, interface, or enum expected"
+                        + " | import java.util.stream.*;");
+    }
+
+    @Test
+    void aLeadingImportAboveAStubStarterInAWorkingDriverPasses() {
+        assertThat(firstError(FIXTURES, "stub-starter", LEADING_IMPORT)).isEmpty();
+    }
+
+    @Test
     void aDriverWithoutAStarterIsNamed() {
         assertThat(firstError(FIXTURES, "no-starter")).contains("no-starter: no Java Starter Code");
     }
@@ -107,11 +141,17 @@ class JavaDriversCompileTest {
      * Libraries are expanded, so it is not the Driver file's line); empty when it compiles.
      */
     private static Optional<String> firstError(ProblemAssets assets, String slug) {
+        return firstError(assets, slug, "");
+    }
+
+    /** The same, with {@code leadingLines} typed above the Starter Code as a user might. */
+    private static Optional<String> firstError(ProblemAssets assets, String slug, String leadingLines) {
         assertThat(COMPILER).as("javac: these tests need a JDK, not a JRE").isNotNull();
-        String starter = assets.starters(slug).get(Language.JAVA);
-        if (starter == null) {
+        String untouched = assets.starters(slug).get(Language.JAVA);
+        if (untouched == null) {
             return Optional.of(slug + ": no Java Starter Code");
         }
+        String starter = leadingLines + untouched;
         String source = assets.assemble(slug, Language.JAVA, starter).source();
         int starterAt = source.indexOf(starter);
         assertThat(starterAt).as(slug + ": its Starter Code, verbatim, in the assembled Program").isNotNegative();
