@@ -1,8 +1,8 @@
 import java.util.*;
 
-// {{LIB:TreeNode}}
-
 {USER_CODE}
+
+// {{LIB:TreeNode}}
 
 public class Main {
     static TreeNode findNode(TreeNode root, int val) {
