@@ -7,7 +7,7 @@ Several sessions often run here at once, on one machine and one main checkout. O
 - `git worktree add <scratchpad>/wt -b <branch> origin/master`, then `(cd <scratchpad>/wt/frontend && npm ci)` before any frontend check: a worktree has no `node_modules`, and the main checkout's may be stale.
 
 ## What trails `origin/master`
-- The CLAUDE.md a session starts with is the main checkout's, which can trail `origin/master`: so can a skill loaded at session start. After `git worktree add`, run `git -C <worktree> diff $(git rev-parse HEAD) -- CLAUDE.md .claude/skills` from the main checkout and read what landed since, such as a newer script you would otherwise work around or a step of the skill you are following.
+- The CLAUDE.md a session starts with is the main checkout's, which can trail `origin/master`: so can a skill loaded at session start. A SessionStart hook (`.claude/hooks/sync-main-checkout.sh`) fast-forwards a clean main checkout on `master` and prints one `main checkout:` line when it moved it or couldn't (it is silent when origin can't be reached). After `git worktree add`, run `git -C <worktree> diff $(git rev-parse HEAD) -- CLAUDE.md .claude/skills` from the main checkout and read what landed since, such as a newer script you would otherwise work around or a step of the skill you are following.
 - Read and edit source only under the worktree path: the main checkout trails `origin/master` the same way, so a patch written from its text misses.
 
 ## Gradle and memory
