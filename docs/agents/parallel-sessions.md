@@ -12,6 +12,7 @@ Several sessions often run here at once, on one machine and one main checkout. O
 
 ## Gradle and memory
 - The machine has 8 GB, so one Gradle run goes at a time: run tests with `scripts/gradle-test.sh <gradle args>`, which waits for another worktree's run (the hooks and scripts use it too).
+- One live set of branch servers at a time, for the same reason: an agent starts them with `scripts/dev-branch-servers.sh start --wait --detach`, which waits while another worktree's set is live (saying whose) and gives up after `CODEBITE_BRANCH_SERVERS_WAIT` seconds (default 1800) naming the set and the command that stops it. `stop` yours as soon as the check is done: another session may be waiting.
 - A parallel implementer runs the test package it touches (`--tests 'com.codebite.<package>.*'`) and leaves the full suite to the merge gate.
 - In Claude Code's Bash, `grep` is the claude binary's ugrep, killed (exit 137) when memory runs low along with whatever pipes into it (a `migrate | grep` left a migration unapplied): write long output to a file and read it after, and use `/usr/bin/grep` in pipelines.
 

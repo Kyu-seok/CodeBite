@@ -5,6 +5,11 @@
 #   scripts/dev-branch-servers.sh [start [--detach]]  start all three and stay in the foreground, Ctrl-C
 #                                           stopping them; --detach returns once they are up, with the
 #                                           summary, and leaves them running (log: <state>/start.log)
+#   scripts/dev-branch-servers.sh start --wait [--detach]  the same, once no other worktree's servers are live:
+#                                           the machine has 8 GB, so one set runs at a time. Says once whose
+#                                           it waits for, and gives up (exit 1, naming the set and the command
+#                                           that stops it) after CODEBITE_BRANCH_SERVERS_WAIT seconds, default
+#                                           1800; looks every CODEBITE_BRANCH_SERVERS_POLL seconds, default 5
 #   scripts/dev-branch-servers.sh restart   stop, then start detached: the backend migrates the branch
 #                                           database to the migrations written since the last start
 #   scripts/dev-branch-servers.sh stop      stop them from another shell
@@ -530,12 +535,81 @@ cmd_migrate() {
   echo "read it with CODEBITE_DB=$db (scripts/problem-text.sh, scripts/db-sql.sh, scripts/judge-local.sh)"
 }
 
+# One live set of branch servers at a time (start --wait): the machine has 8 GB. A set is live
+# while app processes carry its database (branch_pids), or while the start that claimed the slot
+# for it still runs (its start.pid), which covers the minutes before its first app is up. Only the
+# sets of worktrees still there count: a removed worktree's holds nothing.
+
+# What a waiting start's line begins with; a detached start's caller passes those lines on.
+WAITING_PREFIX="dev-branch-servers.sh: waiting for the branch servers of"
+
+# Whether pid $1 is a run of this script, not another process that got a dead start's pid.
+is_start() {
+  [[ "$(ps -o command= -p "$1" 2>/dev/null || true)" == *dev-branch-servers.sh* ]]
+}
+
+# Whether the set of branch database $1, of the worktree at $2, is live.
+set_is_live() {
+  local pid
+  [[ -z "$(db=$1 root=$2 branch_pids)" ]] || return 0
+  pid=$(cat "$state_base/$1/start.pid" 2>/dev/null) || return 1
+  [[ -n "$pid" && "$pid" != "$$" ]] && is_start "$pid"
+}
+
+# The first other worktree whose set is live, as worktree_databases prints it; nothing when none is.
+other_live_set() {
+  local other path
+  while IFS=$'\t' read -r other path; do
+    [[ -n "$other" && "$other" != "$db" ]] || continue
+    if set_is_live "$other" "$path"; then
+      printf '%s\t%s\n' "$other" "$path"
+      return 0
+    fi
+  done < <(worktree_databases)
+}
+
+# Sets slot_holder to the other live set, or claims the slot for this start when there is none.
+# Run under with_port_mutex, so two waiters never both find the slot free.
+claim_slot() {
+  slot_holder=$(other_live_set)
+  [[ -n "$slot_holder" ]] && return 0
+  mkdir -p "$state"
+  echo $$ > "$state/start.pid"
+}
+
+# Returns once no other worktree's set is live, with the slot claimed for this start; says once
+# whose set it waits for. Returns 1, naming the set still live and the command that stops it,
+# after CODEBITE_BRANCH_SERVERS_WAIT seconds.
+wait_for_slot() {
+  local poll=${CODEBITE_BRANCH_SERVERS_POLL:-5} bound=${CODEBITE_BRANCH_SERVERS_WAIT:-1800}
+  local tries i said="" path
+  tries=$(awk -v b="$bound" -v p="$poll" 'BEGIN { n = b / p; printf "%d", (n > int(n)) ? n + 1 : n }')
+  for (( i = 0; ; i++ )); do
+    slot_holder=""
+    with_port_mutex claim_slot || return 1
+    [[ -n "$slot_holder" ]] || return 0
+    path=${slot_holder#*$'\t'}
+    if (( i >= tries )); then
+      echo "dev-branch-servers.sh: the branch servers of $path (${slot_holder%%$'\t'*}) are still live after" \
+        "${bound}s; stop them: (cd $path && scripts/dev-branch-servers.sh stop)" >&2
+      return 1
+    fi
+    if [[ "$said" != "$path" ]]; then
+      echo "$WAITING_PREFIX $path to stop (one live set at a time)" >&2
+      said=$path
+    fi
+    sleep "$poll"
+  done
+}
+
+# With --wait as $1, starts only once no other worktree's set is live (wait_for_slot).
 cmd_start() {
   if [[ -n "$(branch_pids)" ]]; then
     echo "already running for this checkout:" >&2
     [[ -f "$state/ports" ]] && summary >&2
     exit 1
   fi
+  if [[ "${1:-}" == --wait ]]; then wait_for_slot || exit 1; fi
   require_postgres
   require_kafka_and_redis
   ensure_database "the backend migrates it on start"
@@ -628,27 +702,44 @@ JSON
   done
 }
 
-# Starts the servers in the background, detached from this shell, and returns once they are up.
+# Starts the servers in the background, detached from this shell, and returns once they are up;
+# with --wait as $1, that start waits for the slot first.
 cmd_start_detached() {
   mkdir -p "$state"
   local log="$state/start.log"
-  nohup "${BASH_SOURCE[0]}" start > "$log" 2>&1 < /dev/null &
+  nohup "${BASH_SOURCE[0]}" start ${1:+"$1"} > "$log" 2>&1 < /dev/null &
   await_detached $! "$log"
 }
 
 # Waits for the start $1 writing log $2: prints the log and returns 0 once it has printed the
-# summary, or prints it to stderr and returns 1 once that start has died first.
+# summary, or prints it to stderr and returns 1 once that start has died first. A line saying
+# whose servers that start waits for is passed on (stderr) when it appears, and left out of the
+# log printed at the end.
 await_detached() {
-  local pid=$1 log=$2
+  local pid=$1 log=$2 waiting="" line
   while kill -0 "$pid" 2>/dev/null; do
     if grep -q '^Branch servers for' "$log" 2>/dev/null; then
-      cat "$log"
+      detached_log "$log" "$waiting"
       return 0
+    fi
+    line=$(grep -F -- "$WAITING_PREFIX" "$log" 2>/dev/null | tail -n 1 || true)
+    if [[ -n "$line" && "$line" != "$waiting" ]]; then
+      echo "$line" >&2
+      waiting=$line
     fi
     sleep 1
   done
-  cat "$log" >&2
+  detached_log "$log" "$waiting" >&2
   return 1
+}
+
+# Log $1, without the waiting lines when one was already passed on ($2).
+detached_log() {
+  if [[ -n "$2" ]]; then
+    grep -vF -- "$WAITING_PREFIX" "$1" || true
+  else
+    cat "$1"
+  fi
 }
 
 # A start left running would see its apps gone and, if that comes before it sees the stop, stop
@@ -764,15 +855,20 @@ orphan_databases() {
   return 0
 }
 
-# The branch database of each worktree of this repository whose directory is still there (rev-parse fails
-# in a removed one).
-live_worktree_databases() {
+# Each worktree of this repository whose directory is still there (rev-parse fails in a removed
+# one): its branch database and its top level, tab-separated.
+worktree_databases() {
   local key path top
   git -C "$main" worktree list --porcelain | while read -r key path; do
     [[ "$key" == worktree ]] || continue
     top=$(git -C "$path" rev-parse --show-toplevel 2>/dev/null) || continue
-    checkout_database "$top"
+    printf '%s\t%s\n' "$(checkout_database "$top")" "$top"
   done
+}
+
+# The branch database of each of those worktrees.
+live_worktree_databases() {
+  worktree_databases | cut -f1
 }
 
 # What branch databases that are gone left behind (a drop skips a stopped Kafka or Redis): one
@@ -893,14 +989,17 @@ usage() {
 }
 
 main() {
-  local cmd=${1:-start} detach=false orphan="" count=false
+  local cmd=${1:-start} detach=false wait="" orphan="" count=false most=2 arg
   case "$cmd" in
     start)
-      case "${2:-}" in
-        '') ;;
-        --detach) detach=true ;;
-        *) usage; exit 2 ;;
-      esac ;;
+      most=3
+      for arg in "${@:2}"; do
+        case "$arg" in
+          --detach) detach=true ;;
+          --wait) wait=--wait ;;
+          *) usage; exit 2 ;;
+        esac
+      done ;;
     drop) orphan=${2:-} ;;
     orphans)
       case "${2:-}" in
@@ -911,7 +1010,7 @@ main() {
     restart | stop | status | migrate | name) [[ $# -le 1 ]] || { usage; exit 2; } ;;
     *) usage; exit 2 ;;
   esac
-  (( $# <= 2 )) || { usage; exit 2; }
+  (( $# <= most )) || { usage; exit 2; }
   setup
   if [[ "$cmd" != name && "$cmd" != status && "$cmd" != orphans && -z "$orphan" && "$root" == "$main" ]]; then
     echo "dev-branch-servers.sh: $root is the main checkout, whose servers are the shared ones;" \
@@ -919,7 +1018,7 @@ main() {
     exit 1
   fi
   case "$cmd" in
-    start) if $detach; then cmd_start_detached; else cmd_start; fi ;;
+    start) if $detach; then cmd_start_detached "$wait"; else cmd_start "$wait"; fi ;;
     restart) cmd_restart ;;
     migrate) cmd_migrate ;;
     stop) stop_all ;;

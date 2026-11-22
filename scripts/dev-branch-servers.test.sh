@@ -679,6 +679,96 @@ unset -f psql_admin kafka_bin redis_cmd container_state docker live_worktree_dat
 # shellcheck source=SCRIPTDIR/dev-branch-servers.sh
 source "$script"
 
+# --- one live set at a time (start --wait) ------------------------------------------------------
+
+# Fakes: the repository has this worktree (codebite_mine) and /work/wt-b (codebite_theirs); pgrep
+# finds pid 501 under /work/wt-b while $fx/theirs-live exists, and pid 601 under /work/wt-gone, a
+# worktree no longer there, always. require_postgres, the first thing a start does once it goes
+# ahead, notes that it started and ends the start with exit 7. Each start is a subshell.
+fx="$fake/slot"
+mkdir -p "$fx"
+state_base="$fake/slot-states" port_locks="$fake/slot-locks" root=/work/wt-a
+use_database codebite_mine
+worktree_databases() { printf 'codebite_master\t/work/main\ncodebite_mine\t/work/wt-a\ncodebite_theirs\t/work/wt-b\n'; }
+pgrep() {
+  case "$2" in
+    /work/wt-b/*) if [[ -f "$fx/theirs-live" ]]; then echo 501; fi ;;
+    /work/wt-gone/*) echo 601 ;;
+  esac
+}
+env_value() { case "$1" in 501) echo codebite_theirs ;; 601) echo codebite_gone ;; *) echo ;; esac; }
+require_postgres() { echo started >> "$fx/started"; exit 7; }
+export CODEBITE_BRANCH_SERVERS_POLL=0.05 CODEBITE_BRANCH_SERVERS_WAIT=30
+waiting_line="dev-branch-servers.sh: waiting for the branch servers of /work/wt-b to stop (one live set at a time)"
+
+# Another worktree's set live: start --wait starts nothing, naming it once, until it stops.
+touch "$fx/theirs-live"
+(cmd_start --wait) > "$fx/out" 2>&1 &
+waiter=$!
+command sleep 0.5
+check "start --wait starts nothing while another set is live" "$(cat "$fx/started" 2>/dev/null)" ""
+check "start --wait names the worktree it waits for, once" "$(cat "$fx/out")" "$waiting_line"
+rm "$fx/theirs-live"
+wait "$waiter" && code=0 || code=$?
+check "start --wait starts once that set stops" "$code $(cat "$fx/started" 2>/dev/null)" "7 started"
+check "start --wait says nothing more" "$(cat "$fx/out")" "$waiting_line"
+check "the start that goes ahead claims the slot" "$(cat "$state/start.pid")" "$$"
+
+# Without --wait, start goes ahead beside a live set, as before.
+touch "$fx/theirs-live"; rm -f "$fx/started"
+out=$( (cmd_start) 2>&1) && code=0 || code=$?
+check "start without --wait doesn't wait" "$code $(cat "$fx/started" 2>/dev/null)/$out" "7 started/"
+
+# The bound running out: exit 1, one more line naming the set and the command that stops it.
+rm -f "$fx/started"
+out=$( (CODEBITE_BRANCH_SERVERS_WAIT=0.2; cmd_start --wait) 2>&1) && code=0 || code=$?
+check "start --wait gives up after the bound" "$code
+$out" "1
+$waiting_line
+dev-branch-servers.sh: the branch servers of /work/wt-b (codebite_theirs) are still live after 0.2s; stop them: (cd /work/wt-b && scripts/dev-branch-servers.sh stop)"
+check "a start that gave up started nothing" "$(cat "$fx/started" 2>/dev/null)" ""
+rm "$fx/theirs-live"
+
+# What doesn't hold the slot: a set whose processes are dead (its state and its start's pid left
+# behind), a pid of a dead start that another process now has, and the running servers of a
+# worktree that is gone.
+sh -c 'exit 0' & wait $!; dead=$!
+sh -c 'sleep 30; :' & reused=$!
+mkdir -p "$state_base/codebite_theirs" "$state_base/codebite_gone"
+for pid in "$dead" "$reused"; do
+  echo "$pid" > "$state_base/codebite_theirs/start.pid"
+  rm -f "$fx/started"
+  out=$( (cmd_start --wait) 2>&1) && code=0 || code=$?
+  check "a dead set doesn't hold the slot (start.pid $pid)" "$code $(cat "$fx/started" 2>/dev/null)/$out" "7 started/"
+done
+{ kill "$reused"; wait "$reused"; } 2>/dev/null || true
+check "a gone worktree's servers do run" "$(db=codebite_gone root=/work/wt-gone branch_pids | sort -u)" 601
+check "no other set is live" "$(other_live_set)" ""
+
+# A start still on its way up (no app process yet) holds the slot by its start.pid: of two starts
+# with --wait at once, in two worktrees, the second starts only after the first is gone. Each is
+# a process of its own, as a start is, whose "servers" run for half a second.
+rm -rf "$state_base"; : > "$fx/order"
+for name in mine theirs; do
+  bash -c '
+    source "$1"; fx=$2 state_base=$3 port_locks=$4 root=/work/wt-$5
+    use_database "codebite_$5"
+    worktree_databases() { printf "codebite_mine\t/work/wt-mine\ncodebite_theirs\t/work/wt-theirs\n"; }
+    pgrep() { :; }
+    require_postgres() { echo "$db up" >> "$fx/order"; sleep 0.5; echo "$db down" >> "$fx/order"; exit 0; }
+    cmd_start --wait' _ "$script" "$fx" "$state_base" "$port_locks" "$name" > "$fx/race-$name" 2>&1 &
+done
+wait
+check "two waiting starts go one after the other" \
+  "$(sed 's/codebite_[a-z]*/a set/' "$fx/order" | paste -sd, -)" "a set up,a set down,a set up,a set down"
+check "both waiting starts started" "$(sort "$fx/order" | paste -sd, -)" \
+  "codebite_mine down,codebite_mine up,codebite_theirs down,codebite_theirs up"
+check "one of them waited for the other" "$(cat "$fx"/race-* | grep -c 'waiting for the branch servers of /work/wt-')" 1
+unset -f worktree_databases pgrep env_value require_postgres
+unset CODEBITE_BRANCH_SERVERS_POLL CODEBITE_BRANCH_SERVERS_WAIT
+# shellcheck source=SCRIPTDIR/dev-branch-servers.sh
+source "$script"
+
 # --- the main checkout ------------------------------------------------------------------------
 
 # A throwaway repository with a worktree: the script must refuse everything but name and status
@@ -693,7 +783,7 @@ for tool in docker pgrep kill; do
   printf '#!/bin/sh\necho "%s $*" >> "%s/escaped"; exit 1\n' "$tool" "$fake" > "$fake/bin/$tool"
   chmod +x "$fake/bin/$tool"
 done
-for cmd in start 'start --detach' restart stop drop migrate; do
+for cmd in start 'start --detach' 'start --wait' 'start --wait --detach' 'start --detach --wait' restart stop drop migrate; do
   # shellcheck disable=SC2086  # 'start --detach' is two words
   out=$(cd "$repo" && PATH="$fake/bin:$PATH" "$script" $cmd 2>&1) && code=0 || code=$?
   check "$cmd refused in the main checkout" "$code" 1
@@ -720,16 +810,23 @@ check "live worktrees' databases" "$(cd "$fake/wt" && setup && live_worktree_dat
   "$(cd "$repo" && "$script" name)
 $(cd "$fake/wt" && "$script" name)
 $(cd "$fake/wt-detached" && "$script" name)"
+check "each with its worktree" "$(cd "$fake/wt" && setup && worktree_databases | cut -f2)" \
+  "$(for d in "$repo" "$fake/wt" "$fake/wt-detached"; do git -C "$d" rev-parse --show-toplevel; done)"
 
 out=$("$script" bogus 2>&1) && code=0 || code=$?
 check "unknown subcommand" "$code" 2
-for cmd in '[start [--detach]]' restart stop status migrate 'drop [<name>]' orphans 'orphans --count' name; do
+for cmd in '[start [--detach]]' 'start --wait [--detach]' restart stop status migrate 'drop [<name>]' orphans 'orphans --count' name; do
   [[ "$out" == *"dev-branch-servers.sh $cmd"* ]] || { echo "FAIL: usage lacks $cmd: $out"; fail=1; }
 done
 
 # In the stubbed main checkout, so a broken check can't start real servers.
 out=$(cd "$repo" && PATH="$fake/bin:$PATH" "$script" start --bogus 2>&1) && code=0 || code=$?
 check "unknown start option" "$code" 2
+for cmd in 'start --wait --bogus' 'start --wait --detach --wait' 'restart --wait'; do
+  # shellcheck disable=SC2086  # several words
+  out=$(cd "$repo" && PATH="$fake/bin:$PATH" "$script" $cmd 2>&1) && code=0 || code=$?
+  check "$cmd is a usage error" "$code" 2
+done
 
 # --- a detached start ---------------------------------------------------------------------------
 
@@ -746,6 +843,24 @@ sh -c 'echo "backend: exited before it came up"; exit 1' > "$log" 2>&1 &
 out=$(await_detached $! "$log" 2>&1) && code=0 || code=$?
 check "detached start died" "$code" 1
 [[ "$out" == *"exited before it came up"* ]] || { echo "FAIL: a failed detached start should show its log: $out"; fail=1; }
+# A detached start that waits for another worktree's servers: the line saying whose is passed on
+# while it waits (stderr), and not printed again with the log.
+waiting_line="$WAITING_PREFIX /work/wt-b to stop (one live set at a time)"
+sh -c 'echo "$1"; sleep 2.5; echo "Branch servers for feat/x:"; sleep 30' _ "$waiting_line" > "$log" 2>&1 &
+up=$!
+await_detached "$up" "$log" > "$fake/detached.out" 2> "$fake/detached.err" &
+command sleep 1.5
+check "a detached start passes on whose servers it waits for" "$(cat "$fake/detached.err")" "$waiting_line"
+wait $! && code=0 || code=$?
+{ kill "$up"; wait "$up"; } 2>/dev/null || true
+check "a detached start that waited is up" "$code $(cat "$fake/detached.out")" "0 Branch servers for feat/x:"
+check "the waiting line is printed once" "$(cat "$fake/detached.err")" "$waiting_line"
+sh -c 'echo "$1"; sleep 1.5; echo "$2"; exit 1' _ "$waiting_line" "dev-branch-servers.sh: the branch servers of /work/wt-b are still live" > "$log" 2>&1 &
+out=$(await_detached $! "$log" 2>&1) && code=0 || code=$?
+check "a detached start that gave up" "$code
+$out" "1
+$waiting_line
+dev-branch-servers.sh: the branch servers of /work/wt-b are still live"
 
 # --- Judge0 -----------------------------------------------------------------------------------
 
@@ -758,4 +873,4 @@ check "unset stays unset" "$(dev_judge0_url '')" ""
 
 (( fail )) && exit 1
 [[ -s "$unknown_queries" ]] && exit 1
-echo "PASS: dev-branch-servers.sh names, ownership, Redis claim, process matching, ports, main-checkout refusal, detached start, Judge0 URL"
+echo "PASS: dev-branch-servers.sh names, ownership, Redis claim, process matching, ports, one live set at a time, main-checkout refusal, detached start, Judge0 URL"
