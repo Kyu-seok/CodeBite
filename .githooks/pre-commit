@@ -50,11 +50,12 @@ if touches '^frontend/'; then
   (cd frontend && npm test -s)
 fi
 
-# frontend/publish.sh is the deploy's own script (docs/adr/0014), tested by scripts/frontend-publish.test.sh.
-if touches '^scripts/|^frontend/publish\.sh$|^\.shellcheckrc$'; then
+# scripts/, .shellcheckrc, or a tracked shell file anywhere (scripts/check-shell.sh --list: frontend/publish.sh,
+# the git and Claude hooks, gradlew), whose tests are scripts/*.test.sh too.
+if touches '^scripts/|^\.shellcheckrc$' || grep -qxF -f <(scripts/check-shell.sh --list) <<<"$staged"; then
   if command -v shellcheck >/dev/null 2>&1; then
     echo "pre-commit: shellcheck"
-    shellcheck -S warning scripts/*.sh frontend/publish.sh
+    scripts/check-shell.sh
   else
     echo "pre-commit: shellcheck not installed, skipping (CI still runs it)"
   fi

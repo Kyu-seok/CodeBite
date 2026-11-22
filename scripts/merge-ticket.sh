@@ -30,9 +30,10 @@
 # with the files named, the ticket branch as it was and nothing merged here. Then it runs the ticket
 # branch's own .githooks/pre-commit over the paths the ticket adds to HEAD, with CODEBITE_SKIP_TESTS=1:
 # the doc references and kit copy always, shellcheck, the tracer helpers and the script tests for
-# scripts/ and frontend/publish.sh, the frontend lint and tests for frontend/ (the hook is the list;
-# this is what it held when written). The Gradle suites are left out because they are the ten minutes
-# --refresh exists to save, and CI runs them on the pushed tree, which is the refreshed ticket's own;
+# scripts/ and every tracked shell file (scripts/check-shell.sh --list), the frontend lint and tests
+# for frontend/ (the hook is the list; this is what it held when written). The Gradle suites are
+# left out because they are the ten minutes --refresh exists to save, and CI runs them on the pushed
+# tree, which is the refreshed ticket's own;
 # the cheap checks run here because the implementer never ran them on the merged tree and a red one
 # would otherwise show only after the push. A failing one stops with nothing merged here or pushed:
 # the refreshed branch stays in its worktree to fix (a temporary worktree is dropped, the branch
@@ -90,13 +91,13 @@ refresh_message() {
 }
 
 # The repo-wide checks the pre-commit hook and CI run, which a ticket committed with --no-verify
-# skipped: doc references (CLAUDE.md's size ceiling too), the walkthrough kit copy, shellcheck (the
-# scripts and frontend/publish.sh, as the hook and ci.yml list them) and the script tests. Seconds,
-# so they go before Gradle.
+# skipped: doc references (CLAUDE.md's size ceiling too), the walkthrough kit copy, shellcheck
+# (scripts/check-shell.sh, every tracked shell file, as the hook and ci.yml run it) and the script
+# tests. Seconds, so they go before Gradle.
 repo_checks() {
   python3 -I scripts/check-doc-references.py \
     && python3 -I scripts/copy-walkthrough-kit.py --check \
-    && if command -v shellcheck >/dev/null 2>&1; then shellcheck -S warning scripts/*.sh frontend/publish.sh; fi \
+    && if command -v shellcheck >/dev/null 2>&1; then scripts/check-shell.sh; fi \
     && scripts/run-script-tests.sh
 }
 

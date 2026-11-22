@@ -63,7 +63,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # the commit-subject step reads every commit since master
-      - run: shellcheck -S warning scripts/*.sh frontend/publish.sh .claude/hooks/*.sh
+      - run: scripts/check-shell.sh
       # The commit-msg hook's 72-character subject limit over the commits a PR or an integration push
       # adds, since --no-verify skips the hook. Not on master: its commits are squash-merged PR titles.
       - name: Commit subjects
