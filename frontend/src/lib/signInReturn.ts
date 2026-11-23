@@ -22,9 +22,9 @@ export interface ReturnStorage {
 
 const KEY = "returnUrl";
 
-/** Where signing in from a page comes back to. */
+/** Where signing in from a page comes back to: the page as it was, query string included. */
 export function returnTarget(location: { pathname: string; search: string }): string {
-  return location.pathname;
+  return location.pathname + location.search;
 }
 
 /** Remembers where to come back to after signing in; OAuthCallbackPage takes it. */

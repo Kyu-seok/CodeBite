@@ -1,7 +1,7 @@
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import Spinner from "../ui/Spinner";
-import { rememberReturn } from "@/lib/signInReturn";
+import { rememberReturn, returnTarget } from "@/lib/signInReturn";
 
 export default function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, loading } = useAuth();
@@ -9,8 +9,8 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
 
   if (loading) return <Spinner />;
   if (!isAuthenticated) {
-    // Same hand-off the navbar's login button uses: OAuthCallbackPage returns here after sign-in.
-    rememberReturn(location.pathname + location.search);
+    // OAuthCallbackPage comes back here after sign-in, as it does to the page the navbar's Log in left.
+    rememberReturn(returnTarget(location));
     return <Navigate to="/login" replace />;
   }
   return <>{children}</>;
