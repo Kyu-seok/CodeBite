@@ -117,7 +117,7 @@ Every endpoint is an `@*Mapping` in `backend/src/main/java/com/codebite/*/contro
 ### Common Commands
 ```bash
 ./gradlew :worker:compileJava     # compile worker
-./gradlew :worker:test            # run worker tests
+scripts/gradle-test.sh :worker:test  # worker tests
 source scripts/dev-env.sh && ./gradlew :worker:bootRun  # run worker locally (needs Postgres + Kafka + Judge0)
 ```
 

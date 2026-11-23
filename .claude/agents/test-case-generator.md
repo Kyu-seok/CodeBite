@@ -66,7 +66,7 @@ Each test case needs:
 
 ### Against the statement (always)
 
-Reference solutions can't tell a case with two right answers from a sound one; the problem's Guarantee can. Write one if the problem has none, as steps 1–2 of `.claude/skills/correct-test-cases/SKILL.md` describe, then run `./gradlew :backend:test --tests '*ProblemGuaranteesTest' --tests '*TestCasePositionsTest'` once your migration exists. Replace any input it rejects or that has more than one right output.
+Reference solutions can't tell a case with two right answers from a sound one; the problem's Guarantee can. Write one if the problem has none, as steps 1–2 of `.claude/skills/correct-test-cases/SKILL.md` describe, then run `scripts/gradle-test.sh :backend:test --tests '*ProblemGuaranteesTest' --tests '*TestCasePositionsTest'` once your migration exists. Replace any input it rejects or that has more than one right output.
 
 ### Locally (the default)
 

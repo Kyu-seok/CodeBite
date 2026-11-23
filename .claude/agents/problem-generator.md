@@ -278,7 +278,7 @@ It exits 0 only when every Language is Accepted. A failing case means the Driver
 
 ## Step 8: Write Its Guarantee
 
-Write the problem's Guarantee as steps 1–2 of `.claude/skills/correct-test-cases/SKILL.md` describe, and run `./gradlew :backend:test --tests '*ProblemGuaranteesTest'`. A red case gets a new input, not a looser Guarantee.
+Write the problem's Guarantee as steps 1–2 of `.claude/skills/correct-test-cases/SKILL.md` describe, and run `scripts/gradle-test.sh :backend:test --tests '*ProblemGuaranteesTest'`. A red case gets a new input, not a looser Guarantee.
 
 ## Output Summary
 

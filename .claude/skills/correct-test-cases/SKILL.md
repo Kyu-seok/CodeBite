@@ -23,7 +23,7 @@ Done when you can list every promise the statement makes about an input (each co
 1. Write `<PascalSlug>Guarantee implements ProblemGuarantee` (`TwoMenuSumGuarantee` is the model) and add it to `ProblemGuaranteesTest.GUARANTEES`.
    - `inputViolations`: one check per promise from step 1.
    - `correctOutputs`: every output the statement accepts, printed as the Driver prints it, by brute force. The Grader compares output exactly, so a case is sound only when this set is its expected output alone.
-2. `./gradlew :backend:test --tests '*ProblemGuaranteesTest' --tests '*TestCasePositionsTest'`.
+2. `scripts/gradle-test.sh :backend:test --tests '*ProblemGuaranteesTest' --tests '*TestCasePositionsTest'`.
 3. For a Problem Report, find the reported case (`order_index` = its position) and look for the user's output among its right answers: a red case's failure lists them, and a green case has one, its expected output.
 
 Done when you know, for the reported case and every other case, whether the Guarantee is red or green on it and whether the user's output is a right answer. Then branch:
@@ -48,7 +48,7 @@ Create `common/src/main/resources/db/migration/V<next>__correct_<slug_with_under
 3. Two cases at one `order_index`: move the hidden ones up, as V201 did, before any `UPDATE` that names a case by its position.
 4. Head the migration with what was wrong, the change, and the Guarantee that checks it (V202 is the model).
 
-Done when `./gradlew :backend:test --tests 'com.codebite.problem.*'` is green. `StatementsMatchTestCasesTest` in that run compares every Example with its sample and writes each mismatch, a listed problem's too, to `backend/build/reports/statements/examples.txt`: a corrected sample whose Example you missed shows there.
+Done when `scripts/gradle-test.sh :backend:test --tests 'com.codebite.problem.*'` is green. `StatementsMatchTestCasesTest` in that run compares every Example with its sample and writes each mismatch, a listed problem's too, to `backend/build/reports/statements/examples.txt`: a corrected sample whose Example you missed shows there.
 
 ## 4. Judge it with every reference solution
 

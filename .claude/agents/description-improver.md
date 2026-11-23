@@ -152,7 +152,7 @@ After generating the migration:
 2. Verify example Input/Output values match the original exactly
 3. Confirm the SQL is syntactically valid
 4. Count that all slugs requested were processed
-5. Run `./gradlew :backend:test --tests '*MigrationSlugReferencesTest'`: it fails when a `WHERE slug = …` names a slug that no problem has at that point, an UPDATE that would silently match nothing
+5. Run `scripts/gradle-test.sh :backend:test --tests '*MigrationSlugReferencesTest'`: it fails when a `WHERE slug = …` names a slug that no problem has at that point, an UPDATE that would silently match nothing
 
 ## Example
 
