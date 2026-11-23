@@ -4,8 +4,9 @@
 Two kinds of pointer are checked:
 
 * a repo path in inline backticks (`scripts/judge-local.sh`, `.claude/skills/x/SKILL.md`) in
-  CLAUDE.md, GLOSSARY.md, CODING_STANDARDS.md, .claude/skills, .claude/agents and docs/agents
-  must exist, at the repo root or, for a package like `common/time/`, under a Java source root.
+  CLAUDE.md, GLOSSARY.md, CODING_STANDARDS.md, .claude/skills, .claude/agents, docs/agents and the
+  design docs agents are sent to (docs/DRIVER_CODE.md, SUBMISSION_FLOW.md, SYSTEM_DESIGN.md) must
+  exist, at the repo root or, for a package like `common/time/`, under a Java source root.
   Skipped: paths with a placeholder (<slug>, {slug}, *, ..., …), gitignored ones (`infra/.env`),
   fenced code blocks, and ADRs, which record what was true when they were written.
 * a term cited as "Term (GLOSSARY.md)" in those documents, ADRs or source comments must be a
@@ -37,7 +38,8 @@ import sys
 from pathlib import Path
 
 DOCS = ["CLAUDE.md", "GLOSSARY.md", "CODING_STANDARDS.md",
-        ".claude/skills/**/*.md", ".claude/agents/*.md", "docs/agents/*.md"]
+        ".claude/skills/**/*.md", ".claude/agents/*.md", "docs/agents/*.md",
+        "docs/DRIVER_CODE.md", "docs/SUBMISSION_FLOW.md", "docs/SYSTEM_DESIGN.md"]
 RECORDS = ["docs/adr/*.md"]
 PACKAGE_ROOTS = ["common/src/main/java/com/codebite", "backend/src/main/java/com/codebite",
                  "worker/src/main/java/com/codebite/worker"]
