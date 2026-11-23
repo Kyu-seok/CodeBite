@@ -6,13 +6,13 @@ Which package of `backend/` holds what. Open it to find where a class lives or w
 
 Each feature package holds `controller/`, `service/` and `dto/` (the `*Request` body records and the response records a controller returns).
 
-- `config/` — SecurityConfig (which requests need a JWT), WebConfig, OAuthProperties, GitHubAppProperties (`app.github.*`, optional), RedisConfig, KafkaTopicConfig, KafkaConsumerConfig
-- `common/controller/` — HealthController; `common/exception/` — GlobalExceptionHandler
+- `config/` — SecurityConfig (which requests need a JWT), WebConfig, OAuthProperties, GitHubAppProperties (`app.github.*`, optional), SiteProperties (`app.site.*`: the origin absolute links such as the sitemap's are built under), RedisConfig, KafkaTopicConfig, KafkaConsumerConfig, SchedulingConfig (`@EnableScheduling` for the re-drive sweep, off when `app.scheduling.enabled` is false)
+- `common/controller/` — HealthController; `common/exception/` — GlobalExceptionHandler; `common/service/` — RateLimiterService (the Redis `SET NX EX` cooldown behind Run, Submit, Solution posts, comments and reports, and the re-drive sweep's lock; absent unless `app.cache.enabled`)
 - `auth/` — JWT auth + OAuth (controller, service, DTOs, filter, token provider, oauth clients); `TestTokenController` (dev profile)
 - `user/` — UserService, DTOs, settings endpoint
 - `problem/` — `ProblemCatalogue` (what users see: the published list with Progress and Acceptance Rate, header counts, random pick, detail), `ProblemAdminService` (curation behind /api/admin/problems), `ProblemDtos` (builds the DTOs both return), `Walkthroughs` (every `walkthroughs/<slug>.json` read once at startup: `has`, `of`, `slugs`), controllers, DTOs
 - `submission/` — Submission flow (controller, service, DTOs, Kafka producer), `sse/` (the Verdict announcement stream)
-- `run/` — Run flow (controller, service, DTOs — synchronous Judge0 execution, sample test cases only)
+- `run/` — Run flow (controller, service, DTOs — synchronous Judge0 execution of the sample test cases, stopping at the first failure, then of the request's custom test cases once every sample passes)
 - `streak/` — Streaks and Repairs (controller, service, DTOs, `submission-results` listener)
 - `progress/` — typed progress reads: `UserProgress` (Solved and Attempted for the problem list, roadmap and recommendations; the Solved counts by difficulty and tag that the profile and list header show, over published problems only; Activity, every submission bucketed into UTC days in Java; `signUpsSince`, each non-admin sign-up with its first Accepted submission, the admin dashboard's onboarding success figure), `ProblemPopularity` (Acceptance Rate from `problem_stats`, maintained by `stats/consumer/SubmissionStatsListener` and backfilled once by V195; a problem with no row reads `Rate.NONE`)
 - `review/` — Reviews: `ReviewService`, controller, DTOs
@@ -34,6 +34,6 @@ Each feature package holds `controller/`, `service/` and `dto/` (the `*Request` 
 - Spring Data JPA + Flyway migrations
 - PostgreSQL 15 (dev/prod), H2 in PostgreSQL mode (tests)
 - Redis 7 (JWT token blacklist, user profile cache)
-- Spring Kafka (submission event producer)
+- Spring Kafka (submission event producer, `submission-results` and `github-imports` listeners)
 - Spring Boot Actuator + Micrometer Prometheus (metrics)
 - jjwt 0.12.5 for JWT token handling

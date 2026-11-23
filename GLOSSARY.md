@@ -49,6 +49,10 @@ _Avoid_: Visual aid, image, illustration
 One of the ordered stages of the Roadmap (Arrays & Hashing, Two Pointers, ... Design), each holding the problems that practise one technique or data structure, in order. A problem belongs to at most one. Unlike a Tag, which labels what a problem touches and can be one of several on it, a Roadmap Category is where the problem is taught.
 _Avoid_: Category, topic, section
 
+**Curation**:
+A fixed subset of the catalogue: the problems numbered 1 to its size, CB50, CB100 or CB200. The problem list and its difficulty counts show one Curation at a time, CB100 until the user picks another; the Tutorial Problem, numbered 0, belongs to none.
+_Avoid_: Collection, track, problem set
+
 **Walkthrough**:
 A stepped picture of one approach to a problem running on each of its sample Test Cases (and on any extra input the samples leave out, labelled as such), frame by frame from the input to the answer, each frame drawing the data in the shape it is held in (an array, a map, a set, a queue, a heap, ...) as the approach actually computed it, with what the step read, where its values moved and what changed. Unlike a Diagram, which shows an example, a Walkthrough shows how the answer is reached.
 _Avoid_: Visualization, solution animation, trace

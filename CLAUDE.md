@@ -122,7 +122,7 @@ source scripts/dev-env.sh && ./gradlew :worker:bootRun  # run worker locally (ne
 ```
 
 ### Package Structure (`worker/src/main/java/com/codebite/worker/`)
-- `WorkerApplication` — Spring Boot entry point (no web server, excludes Security/Redis; scans only `judge.client`, `judge.service` and `judge.grader`, so it never loads `ProblemAssets`: the event already carries the Program, read back with `Program.fromEvent`)
+- `WorkerApplication` — Spring Boot entry point (no web server, excludes Security/Redis; of `judge` it scans only `client`, `service` and `grader`, so never `ProblemAssets`: the event carries the Program, read back with `Program.fromEvent`)
 - `consumer/SubmissionConsumer` — Kafka listener that processes submissions against Judge0
 - `config/KafkaConsumerConfig` — Error handler with retry (3 retries, 1s backoff)
 
