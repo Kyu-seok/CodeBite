@@ -97,12 +97,34 @@ class StreakIntegrationTest {
     }
 
     @Test
-    void repairingTodayIsABadRequest() throws Exception {
+    void repairingTodayIsABadRequestInTheRequestsLanguage() throws Exception {
         mockMvc.perform(post("/api/streak/repairs")
                         .header("Authorization", "Bearer " + token)
+                        .header("Accept-Language", "ko")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"date\":\"" + today + "\"}"))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("지난 날만 복구할 수 있습니다"));
+        mockMvc.perform(post("/api/streak/repairs")
+                        .header("Authorization", "Bearer " + token)
+                        .header("Accept-Language", "en")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"date\":\"" + today + "\"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Only past days can be repaired"));
+    }
+
+    @Test
+    void repairingACountedDayIsAConflictInTheRequestsLanguage() throws Exception {
+        streakDayRepository.save(new StreakDay(userId, today.minusDays(1), false));
+
+        mockMvc.perform(post("/api/streak/repairs")
+                        .header("Authorization", "Bearer " + token)
+                        .header("Accept-Language", "ko")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"date\":\"" + today.minusDays(1) + "\"}"))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message").value("이미 연속 풀이에 포함된 날입니다"));
     }
 
     @Test

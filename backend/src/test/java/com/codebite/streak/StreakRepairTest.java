@@ -1,6 +1,7 @@
 package com.codebite.streak;
 
-import com.codebite.common.exception.DuplicateResourceException;
+import com.codebite.common.exception.InvalidStateException;
+import com.codebite.common.exception.UnsupportedValueException;
 import com.codebite.streak.dto.StreakSummary;
 import com.codebite.streak.entity.StreakDay;
 import com.codebite.streak.entity.UserStreak;
@@ -107,8 +108,8 @@ class StreakRepairTest {
         solvedDaysAgo(3);
         holdRepairs(1);
 
-        assertThrows(IllegalArgumentException.class, () -> streakService.repair(userId, TODAY, TODAY));
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(UnsupportedValueException.class, () -> streakService.repair(userId, TODAY, TODAY));
+        assertThrows(UnsupportedValueException.class,
                 () -> streakService.repair(userId, TODAY.plusDays(1), TODAY));
     }
 
@@ -117,9 +118,9 @@ class StreakRepairTest {
         solvedDaysAgo(3);
         holdRepairs(1);
 
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(UnsupportedValueException.class,
                 () -> streakService.repair(userId, TODAY.minusDays(4), TODAY));
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(UnsupportedValueException.class,
                 () -> streakService.repair(userId, TODAY.minusDays(3), TODAY));
     }
 
@@ -127,11 +128,11 @@ class StreakRepairTest {
     void cannotRepairWithoutRepairs() {
         solvedDaysAgo(3);
 
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(UnsupportedValueException.class,
                 () -> streakService.repair(userId, TODAY.minusDays(2), TODAY));
 
         holdRepairs(0);
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(UnsupportedValueException.class,
                 () -> streakService.repair(userId, TODAY.minusDays(2), TODAY));
     }
 
@@ -141,9 +142,9 @@ class StreakRepairTest {
         holdRepairs(2);
         streakService.repair(userId, TODAY.minusDays(2), TODAY);
 
-        assertThrows(DuplicateResourceException.class,
+        assertThrows(InvalidStateException.class,
                 () -> streakService.repair(userId, TODAY.minusDays(2), TODAY));
-        assertThrows(DuplicateResourceException.class,
+        assertThrows(InvalidStateException.class,
                 () -> streakService.repair(userId, TODAY.minusDays(1), TODAY));
         assertEquals(1, userStreakRepository.findById(userId).orElseThrow().getRepairs(),
                 "a rejected Repair is not spent");

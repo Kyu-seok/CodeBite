@@ -1,6 +1,7 @@
 package com.codebite.solution.service;
 
 import com.codebite.common.exception.ResourceNotFoundException;
+import com.codebite.common.exception.UnsupportedValueException;
 import com.codebite.solution.dto.CommentResponse;
 import com.codebite.solution.dto.CreateCommentRequest;
 import com.codebite.solution.dto.UpdateCommentRequest;
@@ -77,7 +78,7 @@ public class CommentService {
                 throw new ResourceNotFoundException("error.comment.notFound", request.parentCommentId());
             }
             if (parent.getParentComment() != null) {
-                throw new IllegalArgumentException("Replies cannot be nested further");
+                throw new UnsupportedValueException("error.comment.depth.exceeded");
             }
         }
 

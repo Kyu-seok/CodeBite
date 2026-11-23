@@ -1,6 +1,7 @@
 package com.codebite.review;
 
 import com.codebite.common.exception.ResourceNotFoundException;
+import com.codebite.common.exception.UnsupportedValueException;
 import com.codebite.judge.grader.CaseVerdict;
 import com.codebite.judge.grader.Verdict;
 import com.codebite.problem.entity.Difficulty;
@@ -233,7 +234,7 @@ class ReviewServiceTest {
 
         when(submissionRepository.findById(100L)).thenReturn(Optional.of(pending));
 
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(UnsupportedValueException.class,
                 () -> reviewService.setReview(100L, 1L, Confidence.GOOD, null));
         verify(stateRepository, never()).save(any());
     }
