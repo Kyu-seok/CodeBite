@@ -8,6 +8,7 @@ import Spinner from "@/components/ui/Spinner"
 import LoadError, { InlineLoadError } from "@/components/ui/LoadError"
 import { useAuth } from "@/context/AuthContext"
 import { useProblem } from "@/hooks/useProblem"
+import { useDocumentTitle } from "@/hooks/useDocumentTitle"
 import {
   createSolution,
   getSolution,
@@ -79,9 +80,7 @@ export default function SolutionEditorPage({ mode }: SolutionEditorPageProps) {
 
   const dirty = mode === "edit" && original !== null && draftChanged(original, draft)
 
-  useEffect(() => {
-    document.title = `${mode === "create" ? t("solutions.create") : t("solutions.edit")} | CodeBite`
-  }, [mode, t])
+  useDocumentTitle(`${mode === "create" ? t("solutions.create") : t("solutions.edit")} | CodeBite`)
 
   // Edit mode: load the solution. A failed load shows an error, never an empty form that could
   // be published over the real solution.

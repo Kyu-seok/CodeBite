@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import {
   getReviewStats,
   getReviewActivity,
@@ -49,9 +50,7 @@ export default function ReviewsPage() {
   const [failed, setFailed] = useState<ReadonlySet<Section>>(new Set());
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    document.title = t("metaTitle");
-  }, [t]);
+  useDocumentTitle(t("metaTitle"));
 
   // Each section loads and retries on its own, so one failure shows as an error on its card
   // instead of zeros across the page, and retrying it leaves the other cards (and the
