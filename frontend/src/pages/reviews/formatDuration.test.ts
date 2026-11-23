@@ -26,6 +26,7 @@ describe("formatSolveTime (a single solve)", () => {
     ["exactly a minute, with 0 seconds", MINUTE, "1m 0s", "1분 0초"],
     ["minutes and seconds", 7 * MINUTE + 27, "7m 27s", "7분 27초"],
     ["over an hour, still in minutes", HOUR + 2 * MINUTE + 5, "62m 5s", "62분 5초"],
+    ["a thousand minutes or more, digits grouped", 1000 * MINUTE + 5, "1,000m 5s", "1,000분 5초"],
   ])("%s", (_case, seconds, en, ko) => {
     expect(formatSolveTime(seconds, "en")).toBe(en);
     expect(formatSolveTime(seconds, "ko")).toBe(ko);
