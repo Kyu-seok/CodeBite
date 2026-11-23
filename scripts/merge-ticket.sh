@@ -2,6 +2,7 @@
 # Merges finished ticket branches into the integration branch checked out in this worktree:
 #
 #   scripts/merge-ticket.sh [--refresh] <branch> <title> [<branch> <title> ...]
+#   scripts/merge-ticket.sh --fixes-red <branch> <title>
 #   scripts/merge-ticket.sh --checks-and-push <integration branch>
 #
 # For each branch in order, it takes origin/<branch> when that exists, else the local branch, and
@@ -48,12 +49,20 @@
 #
 # It refuses, before merging anything, when a CI run on the integration branch's HEAD failed or was
 # cancelled: a skipped-check push (above) is checked only by that run, and a merge stacked on a red
-# tip hides which merge broke it (#264). A pending run doesn't stop it.
+# tip hides which merge broke it (#264). A pending run doesn't stop it. The refusal names the red
+# run and the command that reruns its failed jobs, for a failure a rerun clears (a download, a flaky
+# test).
 #
-# The second form merges nothing: it runs the checks below on HEAD and pushes it to <integration
-# branch> when they pass. It is the rerun after a failed check that turned out flaky: the merge
-# commits are already in place and unpushed, so rerun with the branch checked out here, e.g.
-# `scripts/merge-ticket.sh --checks-and-push spec/348-dev-tooling`, rather than merging again.
+# --fixes-red is for the branch that fixes a red tip, which a failure no rerun clears would
+# otherwise keep out: it merges that one branch onto the red tip, saying so in one line with the red
+# run, then always runs the checks (never the skip above: the fix shows it works before it lands)
+# and pushes only when they pass. On a tip that isn't red (green, pending or no run) it is a usage
+# error and merges nothing.
+#
+# The --checks-and-push form merges nothing: it runs the checks below on HEAD and pushes it to
+# <integration branch> when they pass. It is the rerun after a failed check that turned out flaky:
+# the merge commits are already in place and unpushed, so rerun with the branch checked out here,
+# e.g. `scripts/merge-ticket.sh --checks-and-push spec/348-dev-tooling`, rather than merging again.
 # A merge that changes this script also hands the checks and the push to the merged copy this way:
 # bash read this copy before the merge, so its checks are the old ones. Keep that mode in every
 # later version.
@@ -143,15 +152,25 @@ ci_runs() {
   gh run list --commit "$1" --workflow CI --json conclusion,url --jq '.[] | "\(.conclusion) \(.url)"' 2>/dev/null || true
 }
 
-# Why not to merge onto a tip whose CI runs are $1 (ci_runs lines), or nothing.
-red_tip_refusal() {
+# The run that makes a tip red among $1 (ci_runs lines), as its "<conclusion> <url>" line, or nothing:
+# the first that failed, was cancelled or timed out.
+red_run() {
   local conclusion url
   while read -r conclusion url; do
     if [[ "$conclusion" == failure || "$conclusion" == cancelled || "$conclusion" == timed_out ]]; then
-      echo "refusing to merge onto a red integration tip: CI $conclusion $url; fix it first (scripts/test-failures.sh)"
+      echo "$conclusion $url"
       return
     fi
   done <<<"$1"
+}
+
+# Why not to merge onto a tip whose CI runs are $1 (ci_runs lines), or nothing. A run's URL ends in
+# its id, which `gh run rerun` takes.
+red_tip_refusal() {
+  local red
+  red=$(red_run "$1")
+  [[ -n "$red" ]] || return 0
+  echo "refusing to merge onto a red integration tip: CI $red; fix it first (scripts/test-failures.sh) or rerun its failed jobs (gh run rerun ${red##*/} --failed)"
 }
 
 # Whether CI runs on a push to branch $1: keep in step with ci.yml's `push: branches`.
@@ -351,20 +370,26 @@ merge_one() {
 }
 
 # Merges each <branch> <title> pair in order, then checks and pushes once. A leading --refresh
-# first brings each branch that lacks HEAD up to it.
+# first brings each branch that lacks HEAD up to it; a leading --fixes-red merges its one branch only
+# onto a red tip, and never skips the checks.
 merge_ticket() {
-  local current start all_contain_head=yes ref contains_head red refresh=no
-  if [[ "${1:-}" == --refresh ]]; then
-    refresh=yes
-    shift
-  fi
+  local current start all_contain_head=yes ref contains_head red refresh=no fixes_red=no
+  case "${1:-}" in
+    --refresh) refresh=yes; shift ;;
+    --fixes-red) fixes_red=yes; shift ;;
+  esac
   current=$(git branch --show-current)
   start=$(git rev-parse HEAD)
   [[ -z "$current" || "$current" == master ]] || integration_branch_warning "$current" >&2
   git fetch -q origin
-  red=$(red_tip_refusal "$(ci_runs "$start")")
-  if [[ -n "$red" ]]; then
-    echo "merge-ticket: $red" >&2
+  red=$(red_run "$(ci_runs "$start")")
+  if [[ "$fixes_red" == yes && -z "$red" ]]; then
+    echo "merge-ticket: --fixes-red needs a red integration tip, and no CI run on $current's HEAD failed (green, pending or none); nothing merged. Merge $1 without --fixes-red" >&2
+    return 2
+  elif [[ "$fixes_red" == yes ]]; then
+    echo "merge-ticket: merging $1 onto a red integration tip (CI $red): --fixes-red names it the fix, so the full checks run and gate the push"
+  elif [[ -n "$red" ]]; then
+    echo "merge-ticket: $(red_tip_refusal "$red")" >&2
     return 1
   fi
   while (( $# >= 2 )); do
@@ -377,7 +402,7 @@ merge_ticket() {
     shift 2
   done
 
-  if [[ "$all_contain_head" == yes ]] && ci_checks_pushes "$current"; then
+  if [[ "$all_contain_head" == yes && "$fixes_red" == no ]] && ci_checks_pushes "$current"; then
     push_checked_by_ci "$current" "$ref"
   elif git diff --name-only "$start" HEAD | grep -qx scripts/merge-ticket.sh; then
     echo "merge-ticket: the merge changes merge-ticket.sh; its merged copy runs the checks"
@@ -393,8 +418,12 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
     check_and_push "$2"
     exit
   fi
+  if [[ "${1:-}" == --fixes-red && $# -ne 3 ]]; then
+    echo "usage: scripts/merge-ticket.sh --fixes-red <branch> <title>" >&2
+    exit 2
+  fi
   pairs=$#
-  [[ "${1:-}" == --refresh ]] && pairs=$(( $# - 1 ))
+  [[ "${1:-}" == --refresh || "${1:-}" == --fixes-red ]] && pairs=$(( $# - 1 ))
   if (( pairs < 2 || pairs % 2 != 0 )); then
     echo "usage: scripts/merge-ticket.sh [--refresh] <branch> <title> [<branch> <title> ...]" >&2
     echo "       scripts/merge-ticket.sh --checks-and-push <integration branch>" >&2

@@ -7,6 +7,8 @@
 # 72 characters is refused, an unprefixed integration branch warns and still merges, a merge that changes
 # merge-ticket.sh hands the checks and the push to the merged copy, and two tickets in one call get
 # one run of the checks and one push, or stop at a conflict on the second with the first unpushed.
+# A red tip's refusal names the rerun of its run; --fixes-red merges onto a red tip with the full
+# checks, pushing only when they pass, and on a tip that isn't red is a usage error that merges nothing.
 # With --refresh: a ticket one merge behind gets the tip merged into it (in its worktree or a temporary
 # one), its own pre-commit hook run over the paths it touches with the Gradle tests skipped, and the
 # no-checks push; a refresh conflict, a failing hook or a dirty ticket worktree stops with nothing
@@ -32,6 +34,11 @@ check "usage names both modes" "$usage_out" \
 usage_out=$(bash "$script" --checks-and-push 2>&1) && { echo "FAIL: --checks-and-push alone must exit non-zero"; fail=1; }
 [[ "$usage_out" == *"--checks-and-push <integration branch>"* ]] \
   || { echo "FAIL: --checks-and-push without a branch must print the usage: $usage_out"; fail=1; }
+# --fixes-red takes exactly one branch and its title.
+usage_out=$(bash "$script" --fixes-red ticket/a 2>&1) && { echo "FAIL: --fixes-red without a title must exit non-zero"; fail=1; }
+check "--fixes-red without a title" "$usage_out" "usage: scripts/merge-ticket.sh --fixes-red <branch> <title>"
+usage_out=$(bash "$script" --fixes-red ticket/a A ticket/b B 2>&1) && { echo "FAIL: --fixes-red with two branches must exit non-zero"; fail=1; }
+check "--fixes-red with two branches" "$usage_out" "usage: scripts/merge-ticket.sh --fixes-red <branch> <title>"
 
 # --- a red integration tip: CI's runs on HEAD, one "<conclusion> <url>" line each ------------------
 
@@ -39,9 +46,12 @@ check "no runs" "$(red_tip_refusal '')" ""
 check "pending and green" "$(red_tip_refusal ' https://ci/1
 success https://ci/2')" ""
 check "red" "$(red_tip_refusal 'success https://ci/1
-failure https://ci/2')" "refusing to merge onto a red integration tip: CI failure https://ci/2; fix it first (scripts/test-failures.sh)"
+failure https://ci/2')" "refusing to merge onto a red integration tip: CI failure https://ci/2; fix it first (scripts/test-failures.sh) or rerun its failed jobs (gh run rerun 2 --failed)"
 check "cancelled counts as red" "$(red_tip_refusal 'cancelled https://ci/3')" \
-  "refusing to merge onto a red integration tip: CI cancelled https://ci/3; fix it first (scripts/test-failures.sh)"
+  "refusing to merge onto a red integration tip: CI cancelled https://ci/3; fix it first (scripts/test-failures.sh) or rerun its failed jobs (gh run rerun 3 --failed)"
+# A failure that a rerun clears (a download, a flaky test): the refusal names the rerun of that run.
+check "red names the rerun of its run" "$(red_tip_refusal 'failure https://github.com/o/r/actions/runs/45000924487')" \
+  "refusing to merge onto a red integration tip: CI failure https://github.com/o/r/actions/runs/45000924487; fix it first (scripts/test-failures.sh) or rerun its failed jobs (gh run rerun 45000924487 --failed)"
 
 # --- which integration branches CI checks on push (ci.yml) -------------------------------------
 
@@ -184,6 +194,46 @@ grep -q 'ticket/ontop already contains integration/x; skipping the checks' <<<"$
 [[ "$out" == *-ran* ]] && { echo "FAIL: checks ran on a ticket that contains HEAD: $out"; fail=1; }
 check "on top: pushed" "$(remote_head)" "$(git -C "$scratch/work" rev-parse HEAD)"
 check "on top: two parents" "$(git -C "$scratch/work" rev-list --parents -1 HEAD | wc -w | tr -d ' ')" 3
+
+# --fixes-red: the branch that fixes a red tip. ticket/fix contains HEAD, which would skip the checks
+# on any other merge.
+(cd "$scratch/seed" && g fetch -q origin && g switch -q --detach origin/integration/x \
+  && g switch -qc ticket/fix && echo fix > fix.txt && g add . && g commit -qm fix && g push -q origin ticket/fix)
+before=$(remote_head)
+red_url=https://github.com/o/r/actions/runs/45004083219
+# On a tip that isn't red (green, pending or no run) it is a usage error and merges nothing.
+for runs in "success https://ci/green" " https://ci/pending" ""; do
+  ci_runs() { echo "$runs"; }
+  status=0
+  out=$(run_merge --fixes-red ticket/fix 'Fix') || status=$?
+  check "fixes-red, tip not red ('$runs'): usage error" "$status" 2
+  grep -q -- '--fixes-red needs a red integration tip' <<<"$out" || { echo "FAIL: must say the tip isn't red: $out"; fail=1; }
+  check "fixes-red, tip not red ('$runs'): nothing merged" "$(git -C "$scratch/work" rev-parse HEAD)" "$before"
+  check "fixes-red, tip not red ('$runs'): nothing pushed" "$(remote_head)" "$before"
+done
+ci_runs() { echo "failure $red_url"; }
+# Without the flag the red tip refuses, naming the rerun of the red run.
+if out=$(run_merge ticket/fix 'Fix'); then echo "FAIL: merging onto a red tip without --fixes-red must fail"; fail=1; fi
+grep -q "or rerun its failed jobs (gh run rerun 45004083219 --failed)$" <<<"$out" \
+  || { echo "FAIL: the refusal must name the rerun: $out"; fail=1; }
+check "red, no flag: nothing merged" "$(git -C "$scratch/work" rev-parse HEAD)" "$before"
+# With it, a failing check leaves the merge unpushed.
+frontend_checks() { echo frontend-ran; return 1; }
+if out=$(run_merge --fixes-red ticket/fix 'Fix'); then echo "FAIL: --fixes-red with a failing check must fail"; fail=1; fi
+check "fixes-red: says why it merges onto red" "$(grep 'red integration tip' <<<"$out")" \
+  "merge-ticket: merging ticket/fix onto a red integration tip (CI failure $red_url): --fixes-red names it the fix, so the full checks run and gate the push"
+grep -q 'frontend checks failed' <<<"$out" || { echo "FAIL: must name the failing check: $out"; fail=1; }
+check "fixes-red, failing check: not pushed" "$(remote_head)" "$before"
+check "fixes-red, failing check: merge kept" "$(git -C "$scratch/work" log -1 --format=%s)" "Merge ticket/fix: Fix"
+g -C "$scratch/work" reset -q --hard "$before"
+frontend_checks() { echo frontend-ran; }
+# Green checks push it: the full checks ran although the ticket contains HEAD.
+if ! out=$(run_merge --fixes-red ticket/fix 'Fix'); then echo "FAIL: --fixes-red with green checks failed: $out"; fail=1; fi
+[[ "$out" == *repo-ran*backend-ran*frontend-ran* ]] || { echo "FAIL: --fixes-red must run the full checks: $out"; fail=1; }
+grep -q 'skipping the checks' <<<"$out" && { echo "FAIL: --fixes-red skipped the checks: $out"; fail=1; }
+check "fixes-red: pushed" "$(remote_head)" "$(git -C "$scratch/work" rev-parse HEAD)"
+check "fixes-red: the fix merged" "$(git -C "$scratch/work" log -1 --format=%s)" "Merge ticket/fix: Fix"
+ci_runs() { :; }
 
 # A ticket that changes merge-ticket.sh itself (based on ticket/ok, so it lacks HEAD and the checks
 # are due): this copy was read before the merge, so the checks and the push are handed to the merged
