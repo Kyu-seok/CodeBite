@@ -21,6 +21,11 @@ A fifth keeps the add-walkthrough skill's views.md to one section per category (
 "views.md states each rule once"): a `## ` heading there carries no ticket number ("Greedy (#375)") and never
 repeats another. A fenced `## ` line counts too: skipping fences would let one left open hide every
 heading after it. Whether two bullets state one rule is left to the reviewer.
+A sixth and a seventh keep two docs/agents/ tables matched to the code they describe, both ways:
+every route in frontend/src/App.tsx is a row of frontend.md's Routes table and every row a route,
+and every "codebite.<name>" metric in the backend, worker and common main sources is a row of
+monitoring.md's Custom Metrics table and every row such a metric. A route nested in a pathless
+layout route (all of App.tsx's today) is its path with a leading slash; an index route is `/`.
 
     scripts/check-doc-references.py [repo-root]
 
@@ -56,6 +61,14 @@ SECTION_HEADING = re.compile(r"^##\s+(.*?)\s*$")
 TICKET = re.compile(r"#\d+")
 VIEWS_ADVICE = ("a new pattern edits the bullet it refines or adds one beside it in its category's section "
                 "(CODING_STANDARDS.md, \"views.md states each rule once\")")
+APP = "frontend/src/App.tsx"
+ROUTES_DOC, ROUTES_HEADING = "docs/agents/frontend.md", "## Routes"
+ROUTE_PATH = re.compile(r'\bpath="([^"]+)"')
+ROUTE_INDEX = re.compile(r"<Route\s+index\b")
+METRICS_DOC, METRICS_HEADING = "docs/agents/monitoring.md", "## Custom Metrics"
+METRIC_SOURCES = ["backend/src/main/**/*.java", "worker/src/main/**/*.java", "common/src/main/**/*.java"]
+METRIC = re.compile(r'"(codebite\.[A-Za-z0-9_.]+)"')
+ROW_KEY = re.compile(r"^\|\s*`([^`]+)`\s*\|")
 
 
 def files(root, patterns):
@@ -158,10 +171,61 @@ def heading_problems(root):
         first_line.setdefault(folded, number)
 
 
+def section_rows(path, heading):
+    """(first cell, line) of each table row under `heading`, up to the next `## ` heading."""
+    if not path.exists():
+        return {}
+    rows, inside = {}, False
+    for number, line in enumerate(path.read_text().splitlines(), 1):
+        if line.startswith("## "):
+            inside = line.strip() == heading
+        elif inside and (key := ROW_KEY.match(line)):
+            rows.setdefault(key.group(1), number)
+    return rows
+
+
+def route_problems(root):
+    app = root / APP
+    if not app.exists():
+        return
+    routes = {}
+    for number, line in enumerate(app.read_text().splitlines(), 1):
+        for path in ROUTE_PATH.findall(line):
+            routes.setdefault(path if path.startswith("/") or path == "*" else "/" + path, number)
+        if ROUTE_INDEX.search(line):
+            routes.setdefault("/", number)
+    rows = section_rows(root / ROUTES_DOC, ROUTES_HEADING)
+    for path, number in routes.items():
+        if path not in rows:
+            yield f"{APP}:{number}: route `{path}` has no row in {ROUTES_DOC}'s Routes table (a new route is a row there)"
+    for path, number in rows.items():
+        if path not in routes:
+            yield f"{ROUTES_DOC}:{number}: route `{path}` is not declared in {APP}"
+
+
+def metric_problems(root):
+    metrics = {}
+    for path in files(root, METRIC_SOURCES):
+        for number, line in enumerate(path.read_text().splitlines(), 1):
+            for name in METRIC.findall(line):
+                metrics.setdefault(name, f"{path.relative_to(root)}:{number}")
+    rows = {key: number for key, number in section_rows(root / METRICS_DOC, METRICS_HEADING).items()
+            if key.startswith("codebite.")}
+    for name, where in metrics.items():
+        if name not in rows:
+            yield (f"{where}: metric `{name}` has no row in {METRICS_DOC}'s Custom Metrics table "
+                   "(a new or changed metric is a row there)")
+    for name, number in rows.items():
+        if name not in metrics:
+            yield f"{METRICS_DOC}:{number}: metric `{name}` is not registered in backend, worker or common main sources"
+
+
 def problems(root):
     terms = known_terms(root)
     yield from size_problems(root)
     yield from heading_problems(root)
+    yield from route_problems(root)
+    yield from metric_problems(root)
     for path in files(root, DOCS):
         text = path.read_text()
         yield from path_problems(root, path, text)
