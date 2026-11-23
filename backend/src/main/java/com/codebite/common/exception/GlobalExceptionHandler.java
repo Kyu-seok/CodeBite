@@ -32,11 +32,6 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.NOT_FOUND, message);
     }
 
-    @ExceptionHandler(DuplicateResourceException.class)
-    public ResponseEntity<ApiError> handleDuplicate(DuplicateResourceException ex) {
-        return buildResponse(HttpStatus.CONFLICT, ex.getMessage());
-    }
-
     @ExceptionHandler(InvalidStateException.class)
     public ResponseEntity<ApiError> handleInvalidState(InvalidStateException ex) {
         String message = resolveMessage(ex.getMessageCode(), ex.getMessageArgs());
