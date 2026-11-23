@@ -24,7 +24,8 @@ import { useReviewState } from '@/hooks/useReviewState';
 import { useSolutionCommit } from '@/hooks/useSolutionCommit';
 import { clearSubmissionReview } from '@/api/reviews';
 import type { Confidence } from '@/types/review';
-import { formatElapsed } from '@/lib/formatElapsed';
+import { formatSolveTime } from '@/pages/reviews/formatDuration';
+import { rememberReturn } from '@/lib/signInReturn';
 import {
   MONACO_LANGUAGE,
   STATUS_KEYS,
@@ -175,7 +176,7 @@ export function SubmissionDetail({
               onClick={() => {
                 const target = `/problems/${submission.problemSlug}/solutions/new?fromSubmission=${submission.id}`;
                 if (!isAuthenticated) {
-                  sessionStorage.setItem('returnUrl', target);
+                  rememberReturn(target);
                   navigate('/login');
                   return;
                 }
@@ -227,7 +228,7 @@ export function SubmissionDetail({
             {submission.solveTimeSeconds != null && (
               <div className="flex-1 rounded-lg border border-border bg-muted/30 px-3 py-2">
                 <div className="text-xs text-muted-foreground">{t('submissions.solveTime')}</div>
-                <div className="font-mono text-sm font-semibold tabular-nums text-foreground">{formatElapsed(submission.solveTimeSeconds)}</div>
+                <div className="font-mono text-sm font-semibold tabular-nums text-foreground">{formatSolveTime(submission.solveTimeSeconds, i18n.language)}</div>
               </div>
             )}
           </div>

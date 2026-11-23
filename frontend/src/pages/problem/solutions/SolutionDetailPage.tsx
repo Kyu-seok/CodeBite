@@ -17,6 +17,8 @@ import { AuthorAvatar } from "./AuthorAvatar"
 import { ConfirmDialog } from "../ConfirmDialog"
 import { formatDate } from "../submissionDisplay"
 import { useComments } from "@/hooks/useSolutions"
+import { useDocumentMeta } from "@/hooks/useDocumentMeta"
+import { problemSummary } from "@/lib/headMeta"
 import type { SolutionDetail } from "@/types/solution"
 
 export default function SolutionDetailPage() {
@@ -66,9 +68,15 @@ export default function SolutionDetailPage() {
     }
   }, [id, loadAttempt])
 
-  useEffect(() => {
-    if (solution) document.title = `${solution.title} | CodeBite`
-  }, [solution])
+  useDocumentMeta(
+    solution
+      ? {
+          title: `${solution.title} | CodeBite`,
+          description: problemSummary(solution.content),
+          path: `/problems/${solution.problemSlug}/solutions/${solution.id}`,
+        }
+      : null,
+  )
 
   const retry = () => {
     setFailed(false)

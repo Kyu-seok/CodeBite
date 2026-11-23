@@ -6,6 +6,7 @@ import Spinner from "@/components/ui/Spinner";
 import { buttonVariants } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
+import { takeReturn } from "@/lib/signInReturn";
 
 export default function OAuthCallbackPage() {
   const { t } = useTranslation("auth");
@@ -29,9 +30,7 @@ export default function OAuthCallbackPage() {
 
     loginWithOAuth(provider, code, state)
       .then(() => {
-        const returnUrl = sessionStorage.getItem("returnUrl")
-        sessionStorage.removeItem("returnUrl")
-        navigate(returnUrl || "/problems", { replace: true })
+        navigate(takeReturn() || "/problems", { replace: true })
       })
       .catch(() => setError(t("callback.failed")));
   }, [provider, code, state, loginWithOAuth, navigate, t]);

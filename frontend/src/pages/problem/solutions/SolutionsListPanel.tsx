@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/Badge"
 import Spinner from "@/components/ui/Spinner"
 import LoadError from "@/components/ui/LoadError"
 import { useSolutionsList } from "@/hooks/useSolutions"
+import { rememberReturn } from "@/lib/signInReturn"
 import { LanguagePill } from "./LanguagePill"
 import { formatDate, languageLabel } from "../submissionDisplay"
 import { AuthorAvatar } from "./AuthorAvatar"
@@ -63,7 +64,7 @@ export function SolutionsListPanel({ slug, languages, isAuthenticated }: Solutio
 
   const handleShare = () => {
     if (!isAuthenticated) {
-      sessionStorage.setItem("returnUrl", `/problems/${slug}/solutions/new`)
+      rememberReturn(`/problems/${slug}/solutions/new`)
       navigate("/login")
       return
     }
