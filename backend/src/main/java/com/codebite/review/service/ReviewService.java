@@ -1,6 +1,7 @@
 package com.codebite.review.service;
 
 import com.codebite.common.exception.ResourceNotFoundException;
+import com.codebite.common.exception.UnsupportedValueException;
 import com.codebite.common.time.DayRuns;
 import com.codebite.problem.entity.Difficulty;
 import com.codebite.problem.entity.Problem;
@@ -66,7 +67,7 @@ public class ReviewService {
             throw new ResourceNotFoundException("error.submission.notFound", submissionId);
         }
         if (submission.getStatus() == SubmissionStatus.PENDING) {
-            throw new IllegalArgumentException("error.review.pending");
+            throw new UnsupportedValueException("error.review.pending");
         }
 
         Instant now = Instant.now();

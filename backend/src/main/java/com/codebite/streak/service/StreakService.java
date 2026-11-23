@@ -1,6 +1,7 @@
 package com.codebite.streak.service;
 
-import com.codebite.common.exception.DuplicateResourceException;
+import com.codebite.common.exception.InvalidStateException;
+import com.codebite.common.exception.UnsupportedValueException;
 import com.codebite.common.time.DayRuns;
 import com.codebite.streak.dto.StreakCalendar;
 import com.codebite.streak.dto.StreakSummary;
@@ -121,19 +122,19 @@ public class StreakService {
     @Transactional
     public StreakSummary repair(Long userId, LocalDate date, LocalDate today) {
         if (!date.isBefore(today)) {
-            throw new IllegalArgumentException("Only past days can be repaired");
+            throw new UnsupportedValueException("error.streak.repair.notPast");
         }
         Optional<LocalDate> first = streakDayRepository.findFirstStreakDate(userId);
         if (first.isEmpty() || !date.isAfter(first.get())) {
-            throw new IllegalArgumentException("Days before your first Streak Day cannot be repaired");
+            throw new UnsupportedValueException("error.streak.repair.beforeFirstDay");
         }
 
         // A user who has never earned a Repair has no row; there is nothing to lock or spend.
         UserStreak streak = userStreakRepository.findByIdForUpdate(userId)
                 .filter(s -> s.getRepairs() > 0)
-                .orElseThrow(() -> new IllegalArgumentException("No Repairs left"));
+                .orElseThrow(() -> new UnsupportedValueException("error.streak.repair.noneLeft"));
         if (streakDayRepository.findByUserIdAndStreakDate(userId, date).isPresent()) {
-            throw new DuplicateResourceException("That day already counts toward your Streak");
+            throw new InvalidStateException("error.streak.repair.alreadyCounted");
         }
 
         streak.spendRepair();

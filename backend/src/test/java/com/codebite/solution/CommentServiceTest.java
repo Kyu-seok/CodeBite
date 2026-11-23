@@ -1,5 +1,6 @@
 package com.codebite.solution;
 
+import com.codebite.common.exception.UnsupportedValueException;
 import com.codebite.solution.dto.CreateCommentRequest;
 import com.codebite.solution.entity.Solution;
 import com.codebite.solution.entity.SolutionComment;
@@ -98,7 +99,7 @@ class CommentServiceTest {
         when(userRepository.findById(100L)).thenReturn(Optional.of(author));
         when(commentRepository.findById(11L)).thenReturn(Optional.of(parent));
 
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(UnsupportedValueException.class,
                 () -> commentService.create(1L, new CreateCommentRequest("too deep", 11L), 100L));
     }
 
