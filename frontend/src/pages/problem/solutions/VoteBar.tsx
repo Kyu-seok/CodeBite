@@ -7,6 +7,7 @@ import { useAuth } from "@/context/AuthContext"
 import { clearVote, voteSolution } from "@/api/solutions"
 import type { SolutionDetail, VoteDirection, VoteResponse } from "@/types/solution"
 import { cn } from "@/lib/utils"
+import { rememberReturn } from "@/lib/signInReturn"
 
 interface VoteBarProps {
   solution: SolutionDetail
@@ -23,7 +24,7 @@ export function VoteBar({ solution, onChange, slug }: VoteBarProps) {
   const netScore = solution.upvotesCount - solution.downvotesCount
 
   const requireAuth = () => {
-    sessionStorage.setItem("returnUrl", `/problems/${slug}/solutions/${solution.id}`)
+    rememberReturn(`/problems/${slug}/solutions/${solution.id}`)
     navigate("/login")
   }
 

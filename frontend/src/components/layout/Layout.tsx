@@ -10,6 +10,7 @@ import { NavbarLogo } from '@/components/ui/NavbarLogo';
 import { StreakFlame } from './StreakFlame';
 import { useStartTutorial } from '@/hooks/useTutorial';
 import { cn } from '@/lib/utils';
+import { rememberReturn, returnTarget } from '@/lib/signInReturn';
 import Spinner from '@/components/ui/Spinner';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/Tooltip';
 import {
@@ -491,7 +492,7 @@ export default function Layout() {
               <button
                 type="button"
                 onClick={() => {
-                  sessionStorage.setItem("returnUrl", location.pathname);
+                  rememberReturn(returnTarget(location));
                   navigate("/login");
                 }}
                 className={cn('whitespace-nowrap rounded-sm text-muted-foreground transition-colors hover:text-foreground', focusRing)}

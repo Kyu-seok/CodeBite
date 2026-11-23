@@ -25,6 +25,7 @@ import { useSolutionCommit } from '@/hooks/useSolutionCommit';
 import { clearSubmissionReview } from '@/api/reviews';
 import type { Confidence } from '@/types/review';
 import { formatSolveTime } from '@/pages/reviews/formatDuration';
+import { rememberReturn } from '@/lib/signInReturn';
 import {
   MONACO_LANGUAGE,
   STATUS_KEYS,
@@ -175,7 +176,7 @@ export function SubmissionDetail({
               onClick={() => {
                 const target = `/problems/${submission.problemSlug}/solutions/new?fromSubmission=${submission.id}`;
                 if (!isAuthenticated) {
-                  sessionStorage.setItem('returnUrl', target);
+                  rememberReturn(target);
                   navigate('/login');
                   return;
                 }

@@ -12,3 +12,29 @@ export function languageOnReturn(search: string, languages: readonly string[]): 
   const lang = new URLSearchParams(search).get("lang");
   return lang != null && languages.includes(lang) ? lang : null;
 }
+
+/** The part of Storage the way back needs; tests pass a Map-backed fake. */
+export interface ReturnStorage {
+  getItem(key: string): string | null;
+  setItem(key: string, value: string): void;
+  removeItem(key: string): void;
+}
+
+const KEY = "returnUrl";
+
+/** Where signing in from a page comes back to. */
+export function returnTarget(location: { pathname: string; search: string }): string {
+  return location.pathname;
+}
+
+/** Remembers where to come back to after signing in; OAuthCallbackPage takes it. */
+export function rememberReturn(target: string, storage: ReturnStorage = sessionStorage): void {
+  storage.setItem(KEY, target);
+}
+
+/** The way back remembered before signing in, cleared so it is followed once; null when there is none. */
+export function takeReturn(storage: ReturnStorage = sessionStorage): string | null {
+  const target = storage.getItem(KEY);
+  storage.removeItem(KEY);
+  return target;
+}

@@ -13,6 +13,7 @@ import { ReportDialog } from "./ReportDialog"
 import { AuthorAvatar } from "./AuthorAvatar"
 import { ConfirmDialog } from "../ConfirmDialog"
 import { formatDate } from "../submissionDisplay"
+import { rememberReturn } from "@/lib/signInReturn"
 import type { SolutionComment } from "@/types/solution"
 
 interface CommentThreadProps {
@@ -30,7 +31,7 @@ const actionClass =
 function useRequireAuth(slug: string, solutionId: number) {
   const navigate = useNavigate()
   return () => {
-    sessionStorage.setItem("returnUrl", `/problems/${slug}/solutions/${solutionId}`)
+    rememberReturn(`/problems/${slug}/solutions/${solutionId}`)
     navigate("/login")
   }
 }

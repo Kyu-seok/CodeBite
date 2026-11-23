@@ -45,7 +45,7 @@ import {
 } from "@/onboarding"
 import { useTutorial, type TutorialNavigationState } from "@/hooks/useTutorial"
 import { TutorialSpotlight } from "./TutorialSpotlight"
-import { languageOnReturn, submitReturnUrl } from "@/lib/signInReturn"
+import { languageOnReturn, rememberReturn, submitReturnUrl } from "@/lib/signInReturn"
 
 /** The server's reason for refusing a Run or Submit, when it gave one; the panel has a generic fallback. */
 function rejectionMessage(err: unknown): string | undefined {
@@ -428,7 +428,7 @@ export default function ProblemDetailPage() {
 
   const handleSubmit = async () => {
     if (!isAuthenticated) {
-      sessionStorage.setItem("returnUrl", submitReturnUrl(slug!, activeLang))
+      rememberReturn(submitReturnUrl(slug!, activeLang))
       navigate("/login")
       return
     }
