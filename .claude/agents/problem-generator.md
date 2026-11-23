@@ -102,8 +102,10 @@ Expected output:
 
 Determine the next Flyway version by checking the highest existing migration:
 ```bash
-ls common/src/main/resources/db/migration/ | sort -V | tail -1
+bash -c 'source scripts/dev-servers-common.sh && newest_migration .'
 ```
+
+It prints the highest version among the SQL migrations and the Java ones in `common/src/main/java/db/migration/`: a version in either directory is taken, so yours is one higher.
 
 Create the migration file at `common/src/main/resources/db/migration/V{N}__add_{slug}_problem.sql`:
 

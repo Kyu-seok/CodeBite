@@ -110,8 +110,10 @@ For batch updates (multiple slugs), use: `V{next_version}__improve_descriptions_
 
 To find the next version number, check the latest migration:
 ```
-ls common/src/main/resources/db/migration/ | sort -V | tail -1
+bash -c 'source scripts/dev-servers-common.sh && newest_migration .'
 ```
+
+It prints the highest version among the SQL migrations and the Java ones in `common/src/main/java/db/migration/`: a version in either directory is taken, so yours is one higher.
 
 ### SQL Template (single problem)
 
@@ -156,7 +158,7 @@ After generating the migration:
 
 Given slug `remove-sorted-dupes`, the agent would:
 
-1. Read the current description from V44 migration
+1. Read the current description with `scripts/problem-text.sh remove-sorted-dupes`
 2. Rewrite it following the structure above
 3. Generate `V55__improve_remove_sorted_dupes_description.sql` with UPDATE statements
 
