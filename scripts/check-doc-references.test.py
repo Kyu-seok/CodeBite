@@ -132,6 +132,85 @@ class CheckDocReferences(unittest.TestCase):
         self.write(".claude/skills/add-walkthrough/SKILL.md", "## Greedy (#375)\n\n## Greedy (#375)\n")
         self.assertEqual(self.check(), (0, ""))
 
+    APP = """<Routes>
+  <Route path="/login" element={<LoginPage />} />
+  <Route element={<Layout />}>
+    <Route index element={<LandingPage />} />
+    <Route
+      path="problems/:slug/solutions/new"
+      element={<NewSolutionPage />}
+    />
+    {Gallery && <Route path="dev/diagrams" element={<Gallery />} />}
+    <Route path="*" element={<NotFoundPage />} />
+  </Route>
+</Routes>
+"""
+    ROUTES = ("# Frontend\n\n| Path | Page |\n|---|---|\n| `/elsewhere` | a table outside Routes |\n\n"
+              "## Routes\n\n| Path | Page | Auth |\n|------|------|------|\n| `/login` | LoginPage | No |\n"
+              "| `/` | LandingPage | No |\n| `/problems/:slug/solutions/new` | NewSolutionPage | Yes |\n"
+              "| `/dev/diagrams` | DiagramGalleryPage | ADMIN |\n| `*` | NotFoundPage | No |\n\n## Next\n\n"
+              "| `/after` | a table after Routes |\n")
+
+    def test_routes_and_their_rows_that_match_pass(self):
+        # An index route is `/`, a path under a pathless layout route gains its slash, and a
+        # path= on its own line counts; tables outside the Routes section are not read.
+        self.write(checker.APP, self.APP)
+        self.write(checker.ROUTES_DOC, self.ROUTES)
+        self.assertEqual(self.check(), (0, ""))
+
+    def test_a_route_without_a_row_fails_with_its_app_line(self):
+        self.write(checker.APP, self.APP.replace('    <Route path="*"', '    <Route path="roadmap" element={<R />} />\n    <Route path="*"'))
+        self.write(checker.ROUTES_DOC, self.ROUTES)
+        code, out = self.check()
+        self.assertEqual(code, 1)
+        self.assertIn("frontend/src/App.tsx:10: route `/roadmap` has no row in docs/agents/frontend.md's Routes table", out)
+        self.assertEqual(len(out.splitlines()), 1)
+
+    def test_a_row_without_a_route_fails_with_its_doc_line(self):
+        self.write(checker.APP, self.APP.replace("    <Route index element={<LandingPage />} />\n", ""))
+        self.write(checker.ROUTES_DOC, self.ROUTES)
+        code, out = self.check()
+        self.assertEqual(code, 1)
+        self.assertIn("docs/agents/frontend.md:12: route `/` is not declared in frontend/src/App.tsx", out)
+        self.assertEqual(len(out.splitlines()), 1)
+
+    METRICS = ("# Monitoring\n\n## Custom Metrics\n| Metric | Type | Source | Description |\n"
+               "|---|---|---|---|\n| `codebite.submissions.created` | Counter | Backend | Created |\n"
+               "| `codebite.sse.connections.open` | Gauge | Backend | Open streams |\n\n"
+               "## Built-in Metrics\n| `codebite.elsewhere` | not read |\n")
+
+    def write_metrics(self, backend_name="codebite.submissions.created"):
+        self.write("backend/src/main/java/com/codebite/S.java",
+                   f'class S {{ Counter c = Counter.builder("{backend_name}"); }}\n')
+        self.write("worker/src/main/java/com/codebite/worker/G.java",
+                   'class G {\n  Gauge g = Gauge.builder("codebite.sse.connections.open", x, f);\n}\n')
+        self.write("backend/src/test/java/com/codebite/T.java", 'class T { String m = "codebite.test.only"; }\n')
+
+    def test_metrics_and_their_rows_that_match_pass(self):
+        # A metric named only in a test source needs no row.
+        self.write_metrics()
+        self.write(checker.METRICS_DOC, self.METRICS)
+        self.assertEqual(self.check(), (0, ""))
+
+    def test_a_metric_without_a_row_fails_with_its_source_line(self):
+        self.write_metrics()
+        self.write("common/src/main/java/com/codebite/C.java", 'class C {\n  Timer t = Timer.builder("codebite.grade.duration");\n}\n')
+        self.write(checker.METRICS_DOC, self.METRICS)
+        code, out = self.check()
+        self.assertEqual(code, 1)
+        self.assertIn("common/src/main/java/com/codebite/C.java:2: metric `codebite.grade.duration` has no row "
+                      "in docs/agents/monitoring.md's Custom Metrics table", out)
+        self.assertEqual(len(out.splitlines()), 1)
+
+    def test_a_row_for_a_metric_no_source_registers_fails_with_its_line(self):
+        self.write_metrics(backend_name="codebite.submissions.made")
+        self.write(checker.METRICS_DOC, self.METRICS)
+        code, out = self.check()
+        self.assertEqual(code, 1)
+        self.assertIn("docs/agents/monitoring.md:6: metric `codebite.submissions.created` is not registered", out)
+        self.assertIn("backend/src/main/java/com/codebite/S.java:1: metric `codebite.submissions.made` has no row", out)
+        self.assertEqual(len(out.splitlines()), 2)
+
     def test_this_checkouts_views_headings_pass(self):
         repo = SCRIPT.parent.parent
         self.assertEqual(list(checker.heading_problems(repo)), [])

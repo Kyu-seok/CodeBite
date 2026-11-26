@@ -61,7 +61,7 @@ Anki 같은 암기 앱이 쓰는 방식을 그대로 가져왔습니다. 쉽게 
 
 ![코드 워크스페이스](docs/screenshots/editor.jpg)
 
-- **Monaco 에디터** — VS Code와 같은 엔진, Java / Python / JavaScript / C++ / C 지원
+- **Monaco 에디터** — VS Code와 같은 엔진, Java / Python / JavaScript / C++ 지원
 - **Vim · Emacs 키바인딩**, 폰트 크기 · 탭 크기 · 자동완성 설정
 - **커스텀 테스트 케이스** — 직접 입력한 케이스를 추가해서 실행
 - **문제 설명 속 다이어그램** — 트리 · 그래프 · 그리드 · 연결 리스트를 그림으로 그려서 보여줍니다

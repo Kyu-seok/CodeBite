@@ -9,8 +9,8 @@ Which package of `common/` holds what. Open it to find where a class lives or wh
 - `common/time/` — DayRuns (runs of consecutive UTC days behind the Streak and the Review Streak), DayCount (a count on one calendar day, the heatmap row)
 - `user/entity/` — User, Role, OAuthProvider, UserOAuthAccount
 - `user/repository/` — UserRepository, UserOAuthAccountRepository
-- `problem/entity/` — Problem, TestCase, Difficulty, Curation (a curated subset numbered 1 to N; docs/adr/0007), FormerSlug (a Slug a problem had before a Restatement)
-- `problem/repository/` — ProblemRepository (`findBySlugOrFormerSlug`, `isSlugTaken`), TestCaseRepository
+- `problem/entity/` — Problem, TestCase, Difficulty, Curation (a curated subset numbered 1 to N; docs/adr/0007), FormerSlug (a Slug a problem had before a Restatement), ProblemTranslation (a problem's text in a language other than English, the `problem_translations` row), Tag
+- `problem/repository/` — ProblemRepository (`findBySlugOrFormerSlug`, `isSlugTaken`), TestCaseRepository, ProblemTranslationRepository, TagRepository, and the query projections DifficultyCount, TagCount and SitemapEntry
 - `submission/entity/` — Submission (`language()` = the stored code as a `Language`), SubmissionResult, SubmissionStatus
 - `submission/repository/` — SubmissionRepository (lifecycle, Import, re-drive and admin reads), SubmissionResultRepository
 - `submission/event/` — SubmissionEvent (Kafka message DTO)

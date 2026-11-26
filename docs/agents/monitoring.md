@@ -13,6 +13,10 @@ How metrics are scraped and shown locally, and what each metric counts. Open it 
 | `codebite.submissions.created` | Counter | Backend | Total submissions created |
 | `codebite.submissions.completed` | Counter | Worker | Submissions completed (tags: `status`, `language`) |
 | `codebite.submissions.processing.duration` | Timer | Worker | Time to process a submission through Judge0 |
+| `codebite.submissions.publish.failures` | Counter | Backend | Submission events the Kafka send failed for; the row stays PENDING for the re-drive sweep (`SubmissionEventProducer`) |
+| `codebite.submissions.redriven` | Counter | Backend | Submissions still PENDING past `app.submission.redrive.min-age-seconds` that the re-drive sweep re-published to Kafka (`StuckSubmissionRedriver`) |
+| `codebite.submissions.abandoned` | Counter | Backend | Submissions still PENDING past `app.submission.redrive.max-age-seconds` that the sweep closed as Abandoned (INTERNAL_ERROR, never judged) |
+| `codebite.sse.connections.open` | Gauge | Backend | Result streams (SSE connections) this instance holds open (`SubmissionEmitterRegistry`); per replica, so sum across instances |
 | `codebite.solution.commits` | Counter | Backend | Solution Commits by final outcome after retries (tag: `outcome` = `committed`, `failed`, or `broken` when the installation or repository is gone, which is never retried). An Import counts each commit in its batch |
 | `codebite.tutorial.milestones` | Counter | Backend | Tutorial milestones reached, each reported once per run of the Tutorial by the browser (tag: `milestone` = `started`, `ran`, `submitted`, `accepted`, `skipped`); anonymous |
 

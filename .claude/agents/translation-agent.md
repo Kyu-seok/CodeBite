@@ -9,10 +9,11 @@ You translate CodeBite problem descriptions from English to Korean. Output is a 
 
 ## Before You Start
 
-Find the source problem's migration file:
+Print the source problem as it stands, English and Korean text, from the local database:
 ```bash
-grep -r '{slug}' common/src/main/resources/db/migration/ --include='*.sql' -l
+scripts/problem-text.sh {slug}
 ```
+Never grep the migrations for it: the first match is usually stale, and a Restated problem's older migrations name its Former Slug. When the script refuses a database missing this checkout's migrations, run `scripts/dev-branch-servers.sh migrate` (seconds, no servers) and rerun with `CODEBITE_DB=<the database it prints>`. For a batch, `scripts/db-sql.sh "<sql>"` reads across problems.
 
 **Note on prior migrations:** Older Korean migrations (`V23`, `V26`, `V77`–`V96`, `V128`–`V153`) follow an earlier convention that kept `Input:` / `Output:` / `Explanation:` labels in English inside code blocks. **Do not copy that format.** Use the canonical example below.
 
@@ -86,8 +87,10 @@ One or more problem slugs to translate (e.g., `popular-vote` or `popular-vote,re
 
 Determine the next Flyway version:
 ```bash
-ls common/src/main/resources/db/migration/ | sort -V | tail -1
+bash -c 'source scripts/dev-servers-common.sh && newest_migration .'
 ```
+
+It prints the highest version among the SQL migrations and the Java ones in `common/src/main/java/db/migration/`: a version in either directory is taken, so yours is one higher.
 
 Decide INSERT vs REFRESH first:
 

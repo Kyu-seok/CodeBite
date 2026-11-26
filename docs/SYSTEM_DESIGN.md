@@ -68,106 +68,7 @@ In MVP:
 
 ## 3. Backend Modules & Package Structure
 
-```
-com.codebite
-├── config/                  # Spring configuration
-│   ├── SecurityConfig       # Spring Security + JWT filter chain
-│   ├── WebConfig            # CORS, interceptors
-│   ├── JudgeClientConfig    # Judge0 RestTemplate/WebClient bean
-│   ├── KafkaConfig          # Kafka producer/consumer, topic config
-│   └── RedisConfig          # Redis connection, rate limiter beans
-│
-├── auth/                    # Authentication module (OAuth via Google/GitHub)
-│   ├── controller/
-│   │   └── AuthController          # GET /api/auth/oauth/{provider}, POST .../callback, /me
-│   ├── dto/
-│   │   ├── OAuthCallbackRequest
-│   │   ├── OAuthUrlResponse
-│   │   └── AuthResponse
-│   ├── service/
-│   │   └── AuthService
-│   ├── oauth/
-│   │   ├── OAuthProviderClient     # Interface for OAuth providers
-│   │   ├── GoogleOAuthClient
-│   │   ├── GitHubOAuthClient
-│   │   ├── OAuthClientFactory
-│   │   ├── OAuthStateService       # Stateless CSRF via signed JWT state
-│   │   └── dto/
-│   │       ├── OAuthTokenResponse
-│   │       └── OAuthUserInfo
-│   └── jwt/
-│       ├── JwtTokenProvider
-│       └── JwtAuthenticationFilter
-│
-├── user/                    # User module
-│   ├── entity/
-│   │   ├── User
-│   │   ├── UserOAuthAccount
-│   │   └── OAuthProvider           # GOOGLE, GITHUB
-│   ├── repository/
-│   │   ├── UserRepository
-│   │   └── UserOAuthAccountRepository
-│   ├── dto/
-│   │   └── UserProfile
-│   └── service/
-│       └── UserService
-│
-├── problem/                 # Problem module
-│   ├── controller/
-│   │   └── ProblemController       # GET /api/problems, /api/problems/{slug}
-│   ├── entity/
-│   │   ├── Problem
-│   │   └── TestCase
-│   ├── repository/
-│   │   ├── ProblemRepository
-│   │   └── TestCaseRepository
-│   ├── dto/
-│   │   ├── ProblemListItem
-│   │   ├── ProblemDetail
-│   │   └── TestCaseDto
-│   └── service/
-│       └── ProblemService
-│
-├── submission/              # Submission module
-│   ├── controller/
-│   │   └── SubmissionController    # POST /api/submissions, GET .../status
-│   ├── entity/
-│   │   ├── Submission
-│   │   └── SubmissionResult
-│   ├── repository/
-│   │   └── SubmissionRepository
-│   ├── dto/
-│   │   ├── SubmitRequest
-│   │   ├── SubmissionResponse
-│   │   └── SubmissionStatus
-│   ├── event/
-│   │   ├── SubmissionEventPublisher  # Publishes to Kafka topic
-│   │   └── SubmissionEvent           # Kafka message payload DTO
-│   └── service/
-│       └── SubmissionService
-│
-├── ratelimit/               # Rate limiting module
-│   ├── RateLimiterService           # Redis-backed sliding window counter
-│   └── RateLimitInterceptor         # Checks rate limit before submission
-│
-├── judge/                   # Judge0 integration module
-│   ├── client/
-│   │   └── JudgeClient             # HTTP calls to Judge0
-│   ├── dto/
-│   │   ├── JudgeSubmissionRequest
-│   │   └── JudgeSubmissionResponse
-│   └── service/
-│       └── JudgeService            # Orchestrates test case execution
-│
-└── common/                  # Shared utilities
-    ├── exception/
-    │   ├── GlobalExceptionHandler   # @ControllerAdvice
-    │   ├── ResourceNotFoundException
-    │   ├── RateLimitExceededException
-    │   └── ApiError
-    └── base/
-        └── BaseEntity               # id, createdAt, updatedAt
-```
+Three Gradle modules share the `com.codebite` packages: `common` (entities, repositories, the Judge0 client, the Grader, Drivers and Starter Code, Flyway migrations), `backend` (controllers, services, DTOs, security, Redis, the Kafka producers and result listeners) and `worker` (the Kafka consumer that grades submissions). Which package holds what is kept current in `docs/agents/backend.md` and `docs/agents/common.md`, and the worker's packages in CLAUDE.md's Worker section; this document no longer repeats them.
 
 **Design rationale:** Organized by domain feature (not by layer). Each module owns its controller, service, entity, repo, and DTOs. This makes future extraction into microservices straightforward.
 
@@ -470,7 +371,7 @@ Every endpoint is an `@*Mapping` in a backend controller (`backend/src/main/java
 | GET    | /api/admin/analytics/users                  | Paginated users                              | ADMIN |
 | GET    | /api/admin/users/{userId}/submissions       | A user's submissions                         | ADMIN |
 | DELETE | /api/admin/submissions/{id}                 | Delete a submission                          | ADMIN |
-| GET    | /api/admin/reports                          | Paginated Problem and Solution Reports       | ADMIN |
+| GET    | /api/admin/reports                          | Paginated Solution and comment reports       | ADMIN |
 | POST   | /api/admin/reports/{id}/resolve             | Resolve a report                             | ADMIN |
 | POST   | /api/admin/solutions/{id}/hide              | Hide a solution                              | ADMIN |
 | POST   | /api/admin/solutions/{id}/unhide            | Show it again                                | ADMIN |
@@ -585,7 +486,7 @@ public class Main {
 }
 ```
 
-**Polling strategy:** Judge0 is async by default. Poll `GET /submissions/{token}` with exponential backoff (100ms, 200ms, 400ms...) up to a timeout of ~10s.
+**Polling strategy:** Judge0 is async by default. `JudgeService` sends every case of a program as one batch (`POST /submissions/batch`) and polls `GET /submissions/batch?tokens=…` every 150 ms (`app.judge0.poll-interval-ms`) until every case is done, giving up after 30 s (`app.judge0.poll-timeout-ms`).
 
 **Alternative (simpler for MVP):** Use Judge0's `?wait=true` query parameter on submission to get a synchronous response. This blocks the Judge0 request until execution finishes (up to a configured timeout). Avoids polling logic entirely.
 
@@ -595,40 +496,48 @@ public class Main {
 User submits code
        │
        ▼
-Redis rate limiter
-  (sliding window: N submissions per user per minute)
+Redis cooldown (SET NX EX)
+  (one Submit per user per 10 s)
        │ pass                    │ fail
        ▼                        ▼
 SubmissionService          Return 429
-  1. Save submission           Too Many Requests
+  1. Assemble the Program      Too Many Requests
+  2. Save submission
      (status=PENDING)
-  2. Publish SubmissionEvent
+  3. Publish SubmissionEvent
      to Kafka topic
      "submission-events"
        │
        ▼
-Returns 202 Accepted
-with submissionId
+Returns 201 Created
+with the PENDING
+submission
        │                   Kafka topic: "submission-events"
        │                        │
-       │                   ┌────┴─────────────────┐
-       │                   │  Worker Consumer      │
-       │                   │  (Kafka consumer      │
-       │                   │   group: "judge-      │
-       │                   │   workers")           │
-       │                   │                       │
+       │                   ┌────┴──────────────────┐
+       │                   │  Worker Consumer       │
+       │                   │  (Kafka consumer       │
+       │                   │   group:               │
+       │                   │   "codebite-worker")   │
+       │                   │                        │
        │                   │  1. Deserialize event  │
        │                   │  2. Fetch test cases   │
-       │                   │  3. Call Judge0 per    │
-       │                   │     test case          │
+       │                   │  3. Grade every case   │
+       │                   │     in one Judge0      │
+       │                   │     batch              │
        │                   │  4. Write results to   │
        │                   │     DB                 │
-       │                   │  5. Commit Kafka       │
+       │                   │  5. Publish result to  │
+       │                   │     "submission-       │
+       │                   │     results"           │
+       │                   │  6. Commit Kafka       │
        │                   │     offset             │
-       │                   └───────────────────────┘
+       │                   └────────────────────────┘
        ▼
-Frontend polls
-GET /submissions/{id}
+Frontend waits on the SSE stream
+(GET /api/submissions/{id}/stream),
+polling GET /api/submissions/{id}
+when it can't
 ```
 
 **Kafka topic design (as implemented):**
@@ -677,7 +586,7 @@ graded submission.
   so the volume inherits that ownership; mounting elsewhere yields a root-owned dir and a crash loop.
 
 **Redis rate limiter design (as implemented):**
-- Algorithm: fixed cooldown flag via `SET NX EX` (not a sliding window)
+- Algorithm: a fixed cooldown. `SET NX EX` sets the key only when it is absent, so the first request passes and every other one in the window is refused until the key expires
 - Key: `ratelimit:{action}:{identifier}`
 - Limits: submit 10s per user, run 5s per client IP
 - Fails open if Redis is unavailable
@@ -705,106 +614,19 @@ replica sweeps per interval, elected via the same `SET NX EX` primitive as the r
 
 ```
 CodeBite/
-├── backend/
-│   ├── src/
-│   │   ├── main/
-│   │   │   ├── java/com/codebite/
-│   │   │   │   ├── CodeBiteApplication.java
-│   │   │   │   ├── config/
-│   │   │   │   ├── auth/
-│   │   │   │   │   ├── controller/
-│   │   │   │   │   ├── dto/
-│   │   │   │   │   ├── service/
-│   │   │   │   │   └── jwt/
-│   │   │   │   ├── user/
-│   │   │   │   │   ├── entity/
-│   │   │   │   │   ├── repository/
-│   │   │   │   │   ├── dto/
-│   │   │   │   │   └── service/
-│   │   │   │   ├── problem/
-│   │   │   │   │   ├── controller/
-│   │   │   │   │   ├── entity/
-│   │   │   │   │   ├── repository/
-│   │   │   │   │   ├── dto/
-│   │   │   │   │   └── service/
-│   │   │   │   ├── submission/
-│   │   │   │   │   ├── controller/
-│   │   │   │   │   ├── entity/
-│   │   │   │   │   ├── repository/
-│   │   │   │   │   ├── dto/
-│   │   │   │   │   └── service/
-│   │   │   │   ├── judge/
-│   │   │   │   │   ├── client/
-│   │   │   │   │   ├── dto/
-│   │   │   │   │   └── service/
-│   │   │   │   └── common/
-│   │   │   │       ├── exception/
-│   │   │   │       └── base/
-│   │   │   └── resources/
-│   │   │       ├── application.yml
-│   │   │       ├── application-dev.yml
-│   │   │       └── db/migration/        # Flyway migrations
-│   │   │           ├── V1__create_users.sql
-│   │   │           ├── V2__create_problems.sql
-│   │   │           ├── V3__create_test_cases.sql
-│   │   │           ├── V4__create_submissions.sql
-│   │   │           └── V5__seed_sample_problems.sql
-│   │   └── test/java/com/codebite/
-│   │       ├── auth/
-│   │       ├── problem/
-│   │       ├── submission/
-│   │       └── judge/
-│   ├── build.gradle                     # or pom.xml
-│   └── Dockerfile
-│
-├── frontend/
-│   ├── public/
-│   ├── src/
-│   │   ├── api/                         # Axios client + API modules
-│   │   │   ├── client.ts
-│   │   │   ├── auth.ts
-│   │   │   ├── problems.ts
-│   │   │   └── submissions.ts
-│   │   ├── types/                       # TypeScript interfaces
-│   │   ├── context/
-│   │   │   └── AuthContext.tsx
-│   │   ├── components/
-│   │   │   ├── layout/                  # Layout, ProtectedRoute
-│   │   │   └── ui/                      # DifficultyBadge, StatusBadge, Spinner
-│   │   ├── pages/
-│   │   │   ├── LoginPage.tsx             # OAuth buttons (Google + GitHub)
-│   │   │   ├── OAuthCallbackPage.tsx     # Handles OAuth redirect
-│   │   │   ├── ProblemListPage.tsx
-│   │   │   ├── ProblemDetailPage.tsx     # Monaco editor + submissions
-│   │   │   └── NotFoundPage.tsx
-│   │   ├── hooks/                       # useProblems, useProblem, useSubmissions
-│   │   └── App.tsx
-│   ├── package.json
-│   └── Dockerfile
-│
-├── worker/                              # Post-MVP
-│   ├── src/main/java/com/codebite/worker/
-│   │   ├── WorkerApplication.java
-│   │   ├── config/
-│   │   │   └── KafkaConsumerConfig.java
-│   │   ├── consumer/
-│   │   │   └── SubmissionEventConsumer.java  # @KafkaListener
-│   │   └── service/
-│   │       └── JudgeExecutionService.java    # Calls Judge0, writes results
-│   └── Dockerfile
-│
-├── infra/
-│   ├── docker-compose.yml               # Local dev: Postgres + Judge0
-│   ├── docker-compose.prod.yml          # Full stack: Postgres + Kafka + Redis + Judge0 + Nginx
-│   └── nginx/
-│       └── nginx.conf
-│
-├── docs/
-│   └── SYSTEM_DESIGN.md                 # This document
-│
+├── backend/      # Spring Boot REST API (depends on common)
+├── common/       # Shared library: entities, repositories, Judge0 client, Grader,
+│                 #   Drivers, Starter Code, Walkthroughs, Flyway migrations
+├── worker/       # Kafka consumer that grades submissions (depends on common)
+├── frontend/     # React SPA (Vite + TypeScript + Tailwind CSS)
+├── infra/        # Docker Compose (PostgreSQL, Redis, Kafka, Nginx, Prometheus, Grafana, Loki), Judge0 image
+├── scripts/      # Developer and CI scripts
+├── docs/         # This document, ADRs (docs/adr/), agent references (docs/agents/)
 ├── CLAUDE.md
 └── README.md
 ```
+
+Inside the modules, `docs/agents/backend.md`, `docs/agents/common.md` and `docs/agents/frontend.md` list which directory holds what.
 
 ---
 
@@ -855,7 +677,7 @@ CodeBite/
 
 ### Milestone 5: Redis Rate Limiting
 - [x] Add Redis to docker-compose
-- [x] Implement `RateLimiterService` — a Redis `SET NX EX` cooldown key per action and identifier (`app.cache.enabled`), not a sliding window counter: one request per window is enough for a judge
+- [x] Implement `RateLimiterService` — a Redis `SET NX EX` cooldown key per action and identifier (`app.cache.enabled`): the first request sets the key and the rest wait until it expires, since one request per window is enough for a judge
 - [x] Apply it to the endpoints — in the controllers (`SubmissionController` 10 s per user, `RunController` 5 s per IP), not an interceptor
 - [x] Return `429 Too Many Requests` when exceeded — no `Retry-After` header
 - [ ] Configure limits via `application.yml` — the windows are literals in the controllers
@@ -872,7 +694,7 @@ CodeBite/
 - [x] Backend submission endpoint returns **201 Created** + submission detail (not 202: the submission resource is created synchronously; only grading is async)
 - [x] Frontend polls `GET /submissions/{id}` for status updates
 - [x] Handle consumer failures — retry policy (`FixedBackOff` 1s × 3) + `SubmissionFailureRecoverer` settling the submission as `INTERNAL_ERROR` once retries are exhausted. **No dead-letter topic by design:** `SubmissionEvent` is fully reconstructible from the `submissions` table (`source_code`, `language`, `problem_id`), so a DLT would only duplicate data Postgres already holds
-- [ ] Consider SSE or WebSocket for real-time result delivery
+- [x] SSE for real-time result delivery — `submission/sse/`; the frontend (`frontend/src/judge/watchSubmission.ts`) waits on the stream and falls back to polling
 
 **Deliverable:** Submission execution is decoupled via Kafka. Multiple workers can consume in parallel.
 
@@ -888,7 +710,7 @@ CodeBite/
 #### Redis Auth Cache Details
 - **Token blacklist:** On logout, the JWT's `jti` claim is stored in Redis key `blacklist:{jti}` with TTL matching the token's remaining lifetime. The `JwtAuthenticationFilter` checks blacklist before authenticating requests. Fail-open on Redis errors.
 - **User profile cache:** `GET /api/auth/me` checks Redis key `user:{id}:profile` before hitting the DB. Cached for 5 minutes (configurable via `app.cache.user-profile-ttl-seconds`). Fail-open on Redis errors.
-- Both services use `@ConditionalOnBean` — when Redis is unavailable (e.g., in tests), they are not created and the system degrades gracefully.
+- Both services exist only when `app.cache.enabled` is true (`@ConditionalOnProperty`) — when it is false (e.g., in tests), they are not created and the system degrades gracefully.
 
 **Deliverable:** Dockerized multi-instance deployment demonstrating horizontal scaling.
 
@@ -915,7 +737,7 @@ Terms in GLOSSARY.md; decisions in ADR 0001 (UTC days), 0002 (backdated Imports)
 | Code execution | Judge0 (self-hosted) | Battle-tested sandboxing, supports 40+ languages |
 | MVP submission | Synchronous | Simplest to implement; refactor to async in Milestone 6 |
 | Async queue | Kafka | Retained log lets one `submission-results` topic serve both a broadcast subscriber (SSE, per-instance group) and a work queue (stats, shared group), and lets derived state backfill by replay. Not chosen for throughput — the measured ceiling is Judge0 host CPU at ~0.65 submissions/sec. RabbitMQ would arguably fit the work-queue half better (per-message ack suits second-scale tasks, DLX and priority queues are built in); Kafka's costs here are `max-poll-records: 1`, a partition-count parallelism ceiling, and a hand-rolled terminal handler |
-| Rate limiting | Redis sliding window | Atomic counters across multiple backend instances; low latency |
+| Rate limiting | Redis `SET NX EX` cooldown | One atomic command, shared across backend instances; low latency |
 | Caching | Redis (cache-aside) | Same Redis instance used for rate limiting; avoids adding another dependency |
 | API style | REST + JSON | Standard, well-understood, sufficient for this use case |
 | Starter code storage | Classpath files | Readable, diffable, syntax-highlighted; loaded at startup by `ProblemAssets`, beside the driver code in `common` |

@@ -16,7 +16,7 @@ The user never sees driver code — they only write the solution class shown in 
 
 ## Approach: Per-Problem Driver Files + Shared Language Utilities
 
-Driver templates live as standalone source files on the classpath under `src/main/resources/drivers/`. Each file uses native file extensions (`.java`, `.py`, `.cpp`, `.js`) so editors provide syntax highlighting, linting, and formatting out of the box.
+Driver templates live as standalone source files on the classpath under `common/src/main/resources/drivers/`. Each file uses native file extensions (`.java`, `.py`, `.cpp`, `.js`) so editors provide syntax highlighting, linting, and formatting out of the box.
 
 ### Why files instead of database rows?
 
@@ -28,31 +28,28 @@ Driver templates live as standalone source files on the classpath under `src/mai
 ### File layout
 
 ```
-src/main/resources/drivers/
-├── lib/                        ← shared utilities (data structures, parsers)
+common/src/main/resources/drivers/
+├── lib/                        ← shared Libraries, Java and C++ only
 │   ├── java/
+│   │   ├── JsonOutput.java
 │   │   ├── ListNode.java
-│   │   ├── TreeNode.java
-│   │   └── GraphNode.java
-│   ├── python/
-│   │   ├── list_node.py
-│   │   ├── tree_node.py
-│   │   └── graph_node.py
-│   ├── cpp/
-│   │   └── ...
-│   └── javascript/
-│       └── ...
-├── two-sum/
-│   ├── java.java
+│   │   ├── Node.java
+│   │   └── TreeNode.java
+│   └── cpp/
+│       ├── JsonOutput.cpp
+│       ├── ListNode.cpp
+│       ├── Node.cpp
+│       └── TreeNode.cpp
+├── snack-drawer-pair/
+│   ├── java.java               ← includes // {{LIB:JsonOutput}}
 │   ├── python.py
 │   ├── cpp.cpp
 │   └── javascript.js
-├── fizzbuzz/
-│   ├── java.java
-│   └── ...
 └── reverse-linked-list/
     ├── java.java               ← includes // {{LIB:ListNode}}
-    └── python.py
+    ├── python.py
+    ├── cpp.cpp
+    └── javascript.js
 ```
 
 **Lookup convention:** `drivers/{problem-slug}/{language}.{ext}`
@@ -62,21 +59,25 @@ Language-to-extension mapping:
 | Language     | Extension | Judge0 ID |
 |-------------|-----------|-----------|
 | `java`       | `.java`   | 62        |
-| `python`     | `.py`     | 71        |
+| `python`     | `.py`     | 100 (Python 3.12, from CodeBite's own Judge0 image: docs/adr/0004) |
 | `cpp`        | `.cpp`    | 54        |
 | `javascript` | `.js`     | 63        |
+
+`Language` (`common/src/main/java/com/codebite/judge/Language.java`) is the one place these live.
 
 ## The `{USER_CODE}` Placeholder
 
 Every driver template contains exactly one `{USER_CODE}` placeholder. At submission time, this literal string is replaced with the user's source code via `String.replace()`.
 
-### Example: Two Sum (Java)
+### Example: Snack Drawer Pair (Java)
 
-**Driver template** (`drivers/two-sum/java.java`):
+**Driver template** (`drivers/snack-drawer-pair/java.java`):
 ```java
 import java.util.*;
 
 {USER_CODE}
+
+// {{LIB:JsonOutput}}
 
 public class Main {
     public static void main(String[] args) {
@@ -86,10 +87,12 @@ public class Main {
         String inner = numsLine.substring(1, numsLine.length() - 1);
         String[] parts = inner.split(",");
         int[] nums = new int[parts.length];
-        for (int i = 0; i < parts.length; i++)
-            nums[i] = Integer.parseInt(parts[i].trim());
-        int[] result = new Solution().twoSum(nums, target);
-        System.out.println(Arrays.toString(result).replace(" ", ""));
+        for (int i = 0; i < parts.length; i++) nums[i] = Integer.parseInt(parts[i].trim());
+        int[] result = new Solution().findPairIndices(nums, target);
+        if (result != null && result.length == 2 && result[0] > result[1]) {
+            int tmp = result[0]; result[0] = result[1]; result[1] = tmp;
+        }
+        System.out.println(JsonOutput.intArray(result));
     }
 }
 ```
@@ -97,13 +100,12 @@ public class Main {
 **User's code** (what they write in the editor):
 ```java
 class Solution {
-    public int[] twoSum(int[] nums, int target) {
-        Map<Integer, Integer> map = new HashMap<>();
-        for (int i = 0; i < nums.length; i++) {
-            int complement = target - nums[i];
-            if (map.containsKey(complement))
-                return new int[]{map.get(complement), i};
-            map.put(nums[i], i);
+    public int[] findPairIndices(int[] snacks, int target) {
+        Map<Integer, Integer> seen = new HashMap<>();
+        for (int i = 0; i < snacks.length; i++) {
+            Integer j = seen.get(target - snacks[i]);
+            if (j != null) return new int[]{j, i};
+            seen.put(snacks[i], i);
         }
         return new int[]{};
     }
@@ -112,24 +114,26 @@ class Solution {
 
 **Final source code** sent to Judge0: the driver template with `{USER_CODE}` replaced by the user's code — a complete, compilable program.
 
-### Example: Two Sum (Python)
+### Example: Snack Drawer Pair (Python)
 
-**Driver template** (`drivers/two-sum/python.py`):
+**Driver template** (`drivers/snack-drawer-pair/python.py`):
 ```python
 {USER_CODE}
 
-import sys
+import json
 nums = eval(input())
 target = int(input())
-result = Solution().twoSum(nums, target)
-print(result)
+result = Solution().findPairIndices(nums, target)
+if result is not None and len(result) == 2 and result[0] > result[1]:
+    result = [result[1], result[0]]
+print(json.dumps(result, separators=(',', ':')))
 ```
 
 Python drivers tend to be shorter since `eval(input())` handles most parsing.
 
 ## Shared Utility Libraries (`// {{LIB:ClassName}}`)
 
-Problems involving linked lists, trees, or graphs need shared data structure definitions. Rather than duplicating `ListNode` in every driver file, shared utilities live under `drivers/lib/{language}/` and are inlined via markers.
+Problems involving linked lists or trees need shared data structure definitions, and Java and C++ need help printing compact JSON. Rather than duplicating `ListNode` or `JsonOutput` in every driver file, shared utilities live under `drivers/lib/java/` and `drivers/lib/cpp/` and are inlined via markers. Python and JavaScript have no Libraries: a node class comes from the Starter Code, which the user's code keeps, and the Driver formats its own output.
 
 ### How it works
 
@@ -155,29 +159,18 @@ Problems involving linked lists, trees, or graphs need shared data structure def
 
 ### Example: Reverse Linked List (Java)
 
-**Shared utility** (`drivers/lib/java/ListNode.java`):
+**Shared utility** (`drivers/lib/java/ListNode.java`, shortened):
 ```java
 class ListNode {
     int val;
     ListNode next;
-    ListNode(int val) { this.val = val; this.next = null; }
+    ListNode() {}
+    ListNode(int val) { this.val = val; }
+    ListNode(int val, ListNode next) { this.val = val; this.next = next; }
 
-    static ListNode fromArray(int[] arr) {
-        ListNode dummy = new ListNode(0);
-        ListNode curr = dummy;
-        for (int v : arr) { curr.next = new ListNode(v); curr = curr.next; }
-        return dummy.next;
-    }
+    static ListNode fromArray(String input) { ... }     // "[1,2,3]" to a list, "[]" to null
 
-    static String toArrayString(ListNode head) {
-        StringBuilder sb = new StringBuilder("[");
-        while (head != null) {
-            sb.append(head.val);
-            if (head.next != null) sb.append(",");
-            head = head.next;
-        }
-        return sb.append("]").toString();
-    }
+    static String toJsonArray(ListNode head) { ... }    // a list to "[1,2,3]", null to "[]"
 }
 ```
 
@@ -193,13 +186,9 @@ public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         String line = sc.nextLine().trim();
-        // parse [1,2,3,4,5] into int array, then build linked list
-        String inner = line.substring(1, line.length() - 1);
-        int[] arr = Arrays.stream(inner.split(","))
-            .mapToInt(s -> Integer.parseInt(s.trim())).toArray();
-        ListNode head = ListNode.fromArray(arr);
-        ListNode result = new Solution().reverseList(head);
-        System.out.println(ListNode.toArrayString(result));
+        ListNode head = ListNode.fromArray(line);
+        head = new Solution().reverseList(head);
+        System.out.println(ListNode.toJsonArray(head));
     }
 }
 ```
@@ -229,32 +218,31 @@ User writes code in Monaco Editor
 POST /api/problems/{slug}/submit  { sourceCode, language }
     │
     ▼
-SubmissionService.submit()
-    ├── Fetch Problem by slug
-    ├── Validate language is supported
-    ├── Load driver template: driverCodeLoader.getDriverCode(slug, language)
+SubmissionService.submit()                       [backend]
+    ├── Find the Problem by Slug or Former Slug
+    ├── Language.ofRequest(language)             (400 for a language CodeBite doesn't accept)
+    ├── problemAssets.assemble(slug, language, sourceCode)  → Program
+    │                                            (400 when the problem has no Driver for it)
     ├── Save Submission (status=PENDING, stores raw user code)
-    ├── Build full source: driverTemplate.replace("{USER_CODE}", userCode)
-    ├── Get Judge0 language ID
-    └── Trigger async processing → return immediately with PENDING
+    └── Publish program.toEvent(submission) to Kafka `submission-events`
+        (`submission-events-admin` for an admin) → return 201 with PENDING
             │
             ▼
-      SubmissionJudgeProcessor.processAsync()  [background thread]
-            │
-            ├── For each TestCase (ordered by orderIndex):
-            │     ├── POST to Judge0: { source_code, language_id, stdin: testCase.input }
-            │     ├── Poll GET /submissions/{token} until complete
-            │     ├── Compare stdout.trim() to expectedOutput.trim()
-            │     └── Save SubmissionResult (status, actualOutput, runtime, memory)
-            │
-            └── Update Submission with overall status, max runtime, max memory
+      SubmissionConsumer                         [worker]
+            ├── Program.fromEvent(event)         (the event carries the assembled source and Judge0 id)
+            ├── grader.grade(program, every TestCase by orderIndex)
+            │     one Judge0 batch, one submission per case; compares stdout.trim() to expectedOutput.trim()
+            ├── Save one SubmissionResult per case and the overall status
+            └── Publish the result to `submission-results`, which the backend announces over SSE
 ```
+
+Run (`RunService.run()`) takes the same `assemble` step, then grades synchronously and stores nothing: the samples with `grader.gradeUntilFailure`, stopping at the first that fails, and, once they all pass, the request's custom cases with `grader.grade`.
 
 ## Writing a New Driver Template
 
 When adding a new problem, create one driver file per supported language:
 
-1. **Create the file** at `src/main/resources/drivers/{slug}/{language}.{ext}`
+1. **Create the file** at `common/src/main/resources/drivers/{slug}/{language}.{ext}`
 
 2. **Include `{USER_CODE}`** exactly once — this is where the user's solution class gets inserted
 

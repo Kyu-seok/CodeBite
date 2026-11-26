@@ -102,8 +102,10 @@ Expected output:
 
 Determine the next Flyway version by checking the highest existing migration:
 ```bash
-ls common/src/main/resources/db/migration/ | sort -V | tail -1
+bash -c 'source scripts/dev-servers-common.sh && newest_migration .'
 ```
+
+It prints the highest version among the SQL migrations and the Java ones in `common/src/main/java/db/migration/`: a version in either directory is taken, so yours is one higher.
 
 Create the migration file at `common/src/main/resources/db/migration/V{N}__add_{slug}_problem.sql`:
 
@@ -276,7 +278,7 @@ It exits 0 only when every Language is Accepted. A failing case means the Driver
 
 ## Step 8: Write Its Guarantee
 
-Write the problem's Guarantee as steps 1–2 of `.claude/skills/correct-test-cases/SKILL.md` describe, and run `./gradlew :backend:test --tests '*ProblemGuaranteesTest'`. A red case gets a new input, not a looser Guarantee.
+Write the problem's Guarantee as steps 1–2 of `.claude/skills/correct-test-cases/SKILL.md` describe, and run `scripts/gradle-test.sh :backend:test --tests '*ProblemGuaranteesTest'`. A red case gets a new input, not a looser Guarantee.
 
 ## Output Summary
 

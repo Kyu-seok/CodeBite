@@ -16,16 +16,17 @@ You generate comprehensive test cases for existing CodeBite problems and validat
 **Read these files first:**
 
 1. `docs/DRIVER_CODE.md` — understand driver code architecture
-2. Find the problem's existing test cases by searching migration files:
+2. Print the problem as it stands, its text and every existing test case, from the local database:
    ```bash
-   grep -r '{slug}' common/src/main/resources/db/migration/ --include='*.sql'
+   scripts/problem-text.sh {slug} --all
    ```
+   Never grep the migrations for it: the first match is usually stale, and a Restated problem's older migrations name its Former Slug. When the script refuses a database missing this checkout's migrations, run `scripts/dev-branch-servers.sh migrate` (seconds, no servers) and rerun with `CODEBITE_DB=<the database it prints>`. `scripts/problem-text.sh {slug} --json` gives the cases as the JSON list `scripts/judge-local.sh --cases` reads.
 3. Read the problem's driver code for all 4 languages:
    - `common/src/main/resources/drivers/{slug}/java.java`
    - `common/src/main/resources/drivers/{slug}/python.py`
    - `common/src/main/resources/drivers/{slug}/cpp.cpp`
    - `common/src/main/resources/drivers/{slug}/javascript.js`
-4. Read the problem's description from its migration file to understand input/output format
+4. Read the problem's description in that output to understand input/output format
 
 ## Input
 
@@ -33,7 +34,7 @@ A problem slug (e.g., `pair-sum`) or a list of slugs.
 
 ## Step 1: Analyze the Problem
 
-From the migration file, extract:
+From `scripts/problem-text.sh {slug} --all`, extract:
 - Problem description and constraints
 - Existing test cases (input format, output format)
 - Input parsing pattern from driver code
@@ -65,7 +66,7 @@ Each test case needs:
 
 ### Against the statement (always)
 
-Reference solutions can't tell a case with two right answers from a sound one; the problem's Guarantee can. Write one if the problem has none, as steps 1–2 of `.claude/skills/correct-test-cases/SKILL.md` describe, then run `./gradlew :backend:test --tests '*ProblemGuaranteesTest' --tests '*TestCasePositionsTest'` once your migration exists. Replace any input it rejects or that has more than one right output.
+Reference solutions can't tell a case with two right answers from a sound one; the problem's Guarantee can. Write one if the problem has none, as steps 1–2 of `.claude/skills/correct-test-cases/SKILL.md` describe, then run `scripts/gradle-test.sh :backend:test --tests '*ProblemGuaranteesTest' --tests '*TestCasePositionsTest'` once your migration exists. Replace any input it rejects or that has more than one right output.
 
 ### Locally (the default)
 
@@ -136,8 +137,10 @@ curl -s -X POST "$JUDGE0_URL/submissions?base64_encoded=false&wait=true" \
 
 Determine the next Flyway version:
 ```bash
-ls common/src/main/resources/db/migration/ | sort -V | tail -1
+bash -c 'source scripts/dev-servers-common.sh && newest_migration .'
 ```
+
+It prints the highest version among the SQL migrations and the Java ones in `common/src/main/java/db/migration/`: a version in either directory is taken, so yours is one higher.
 
 Create the migration at `common/src/main/resources/db/migration/V{N}__add_{slug}_test_cases.sql`:
 

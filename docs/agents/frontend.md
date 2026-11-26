@@ -19,20 +19,30 @@ Which directory of `frontend/src/` holds what. Open it to find where a module li
 - Tailwind CSS v4 with `@tailwindcss/typography`
 - Axios (HTTP client with JWT interceptor)
 - Monaco Editor (`@monaco-editor/react`)
-- React Router v6, React Context for auth state
+- React Router v7 (`react-router-dom`), React Context for auth state
 
 ## Routes
 
-Declared in `frontend/src/App.tsx`.
+Declared in `frontend/src/App.tsx`; `scripts/check-doc-references.py` fails when a route and this table disagree.
 
 | Path | Page | Auth |
 |------|------|------|
 | `/login` | LoginPage | No |
 | `/auth/callback/:provider` | OAuthCallbackPage | No |
-| `/` | Redirect to `/problems` | No |
+| `/admin/dashboard` | AdminDashboardPage (`pages/admin/DashboardPage`) | ADMIN (`AdminLayout` sends anyone else to `/`) |
+| `/admin/problems` | AdminProblemListPage | ADMIN |
+| `/admin/problems/:id` | AdminProblemEditPage | ADMIN |
+| `/admin/users` | AdminUserListPage | ADMIN |
+| `/admin/users/:userId/submissions` | AdminUserSubmissionsPage | ADMIN |
+| `/` | LandingPage | No |
 | `/problems` | ProblemListPage | No |
 | `/problems/:slug` | ProblemDetailPage | No (submit requires auth) |
+| `/problems/:slug/solutions/new` | SolutionEditorPage (create) | Yes |
+| `/problems/:slug/solutions/:solutionId` | SolutionDetailPage | No |
+| `/problems/:slug/solutions/:solutionId/edit` | SolutionEditorPage (edit) | Yes |
+| `/roadmap` | RoadmapPage | No |
 | `/profile` | ProfilePage | Yes |
 | `/github/callback` | GitHubCallbackPage (GitHub App install redirect; links the Solution Repository named on the profile card, with a retry on failure) | Yes |
+| `/reviews` | ReviewsPage | Yes |
 | `/dev/diagrams` | DiagramGalleryPage (Vite dev mode only, see Diagrams in CLAUDE.md; 404 in a production build) | ADMIN |
 | `*` | NotFoundPage | No |
