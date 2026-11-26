@@ -144,10 +144,15 @@ function atom(code: string, i: number, end: number, scope: number, depth: number
   while (code[j] === '[') {
     const close = matchForward(code, j);
     if (close < 0) return { type: UNKNOWN, end };
-    type = indexType(PYTHON_TYPES, type);
+    type = subscriptType(type, code.slice(j + 1, close));
     j = skipWs(code, close + 1);
   }
   return { type, end: j };
+}
+
+/** `x[i]` is an item of x, while a slice such as `x[1:]` or `s[::-1]` is x's own type. */
+export function subscriptType(type: TypeRef, subscript: string): TypeRef {
+  return topLevel(subscript, 0, subscript.length).colon ? type : indexType(PYTHON_TYPES, type);
 }
 
 /** The first item of a bracket's contents: where it ends (a top-level `,` or `for`), and whether a `:` came first. */

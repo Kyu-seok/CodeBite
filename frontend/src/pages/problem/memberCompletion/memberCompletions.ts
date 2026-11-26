@@ -2,7 +2,7 @@ import { declaredType, type CFamily } from './cFamily';
 import { CPP_TYPES } from './cppMembers';
 import { JAVA_STATICS, JAVA_TYPES } from './javaMembers';
 import { UNKNOWN, pointee, typeRef, type Member, type TypeInfo, type TypeRef, type TypeTable } from './model';
-import { boundType } from './python';
+import { boundType, subscriptType } from './python';
 import { PYTHON_MODULES, PYTHON_TYPES } from './pythonMembers';
 import { indexType, lookup, stripCommentsAndStrings, trailingAccess } from './source';
 
@@ -13,6 +13,8 @@ interface Language {
   /** Members of a name nothing declares: Java's `Math`, Python's `heapq`. */
   readonly globals: Readonly<Record<string, readonly Member[]>>;
   readonly typeOf: (code: string, name: string, before: number) => TypeRef | undefined;
+  /** The type of `x[subscript]` for an `x` of `type`. */
+  readonly subscript: (type: TypeRef, subscript: string) => TypeRef;
   readonly stringLiteral: TypeRef;
   readonly python: boolean;
   /** C++ reaches a pointer's members with `->`. */
@@ -23,6 +25,7 @@ const cFamily = (lang: CFamily, globals: Language['globals'], arrow: boolean): L
   table: lang.table,
   globals,
   typeOf: (code, name, before) => declaredType(lang, code, name, before),
+  subscript: (type) => indexType(lang.table, type),
   stringLiteral: lang.stringLiteral,
   python: false,
   arrow,
@@ -43,6 +46,7 @@ const LANGUAGES: Readonly<Record<string, Language>> = {
     table: PYTHON_TYPES,
     globals: PYTHON_MODULES,
     typeOf: boundType,
+    subscript: subscriptType,
     stringLiteral: typeRef('str'),
     python: true,
     arrow: false,
@@ -71,10 +75,10 @@ export function memberCompletions(language: string, textBeforeCursor: string): r
     type = lang.stringLiteral;
   } else {
     const declared = lang.typeOf(code, access.receiver.name, access.receiver.start);
-    if (!declared) return access.indexes === 0 ? (lookup(lang.globals, access.receiver.name) ?? null) : null;
+    if (!declared) return access.subscripts.length === 0 ? (lookup(lang.globals, access.receiver.name) ?? null) : null;
     type = declared;
   }
-  for (let i = 0; i < access.indexes; i++) type = indexType(lang.table, type);
+  for (const subscript of access.subscripts) type = lang.subscript(type, subscript);
   if (access.arrow) type = pointee(type);
   return lookup<TypeInfo>(lang.table, type.name)?.members ?? null;
 }

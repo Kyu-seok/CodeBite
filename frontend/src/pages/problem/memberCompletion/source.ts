@@ -94,12 +94,13 @@ export function occurrencesBefore(code: string, name: string, before: number): n
 }
 
 /**
- * The receiver of a member access the code ends in: `grid[i].` or `grid[i].si` is grid, indexed
- * once; `arrow` when it is reached through a pointer, as in `node->`.
+ * The receiver of a member access the code ends in: `grid[i].` or `grid[i].si` is grid with one
+ * subscript, `i` (what stands between each pair of brackets, the last one first); `arrow` when it
+ * is reached through a pointer, as in `node->`.
  */
 export interface Access {
   readonly receiver: { readonly name: string; readonly start: number } | 'string literal';
-  readonly indexes: number;
+  readonly subscripts: readonly string[];
   readonly arrow: boolean;
 }
 
@@ -113,15 +114,15 @@ export function trailingAccess(code: string, arrow: boolean): Access | null {
   else return null;
   i = skipWsBack(code, i);
 
-  let indexes = 0;
+  const subscripts: string[] = [];
   while (code[i - 1] === ']') {
     const open = matchBack(code, i - 1, '[');
     if (open < 0) return null;
-    indexes++;
+    subscripts.push(code.slice(open + 1, i - 1));
     i = skipWsBack(code, open);
   }
 
-  if (/["']/.test(code[i - 1]) && code[i - 2] === code[i - 1]) return { receiver: 'string literal', indexes, arrow: isArrow };
+  if (/["']/.test(code[i - 1]) && code[i - 2] === code[i - 1]) return { receiver: 'string literal', subscripts, arrow: isArrow };
 
   let start = i;
   while (isWordChar(code[start - 1])) start--;
@@ -129,5 +130,5 @@ export function trailingAccess(code: string, arrow: boolean): Access | null {
   if (!/^[A-Za-z_]/.test(name)) return null;
   const before = skipWsBack(code, start);
   if (code[before - 1] === '.' || /->|::/.test(code.slice(before - 2, before))) return null;
-  return { receiver: { name, start }, indexes, arrow: isArrow };
+  return { receiver: { name, start }, subscripts, arrow: isArrow };
 }

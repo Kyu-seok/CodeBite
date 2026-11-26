@@ -140,6 +140,17 @@ describe('Python', () => {
     expect(suggested('python', 'for ch in s:\n    pass\nword = "ab"\nword[0].')).toContain('isalpha');
   });
 
+  it('keeps the container type through a slice', () => {
+    const starter = 'def f(self, words: List[str], s: str, grid: List[List[int]]):\n    ';
+    expect(suggested('python', `${starter}words[1:].`)).toContain('append');
+    expect(suggested('python', `${starter}words[1:].`)).not.toContain('split');
+    expect(suggested('python', `${starter}rest = words[1:]\n    rest.`)).toContain('append');
+    expect(suggested('python', `${starter}rest = words[:-1][0]\n    rest.`)).toContain('split');
+    expect(suggested('python', `${starter}grid[1:][0].`)).toContain('append');
+    expect(suggested('python', `${starter}t = s[::-1]\n    t.`)).toContain('split');
+    expect(suggested('python', `${starter}words[i].`)).toContain('split');
+  });
+
   it('suggests module functions for a module name nothing binds', () => {
     expect(suggested('python', 'heapq.')).toEqual(expect.arrayContaining(['heappush', 'heappop', 'heapify']));
     expect(suggested('python', 'x = math.')).toEqual(expect.arrayContaining(['inf', 'gcd', 'isqrt']));
