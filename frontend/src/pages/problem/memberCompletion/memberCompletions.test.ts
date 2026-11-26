@@ -168,6 +168,39 @@ describe('Python', () => {
     expect(suggested('python', 'x = []\nx = 0\nx.')).toBeNull();
   });
 
+  it('suggests nothing after a rebinding whose type it cannot tell', () => {
+    const list = 's: List[int] = []\n';
+    expect(suggested('python', `${list}a, s = f()\ns.`)).toBeNull();
+    expect(suggested('python', `${list}(a, s) = f()\ns.`)).toBeNull();
+    expect(suggested('python', `${list}first, *s = words\ns.`)).toBeNull();
+    expect(suggested('python', `${list}a = s = f()\ns.`)).toBeNull();
+    expect(suggested('python', `${list}for i, s in enumerate(words):\n    s.`)).toBeNull();
+    expect(suggested('python', `${list}with open(p) as s:\n    s.`)).toBeNull();
+    expect(suggested('python', `${list}try:\n    pass\nexcept ValueError as s:\n    s.`)).toBeNull();
+    expect(suggested('python', `${list}def f(self, s):\n    s.`)).toBeNull();
+    expect(suggested('python', `${list}def f(self,\n      s=None):\n    s.`)).toBeNull();
+    expect(suggested('python', `${list}if (s := f()):\n    s.`)).toBeNull();
+    expect(suggested('python', `${list}def f():\n    global s\n    s.`)).toBeNull();
+    expect(suggested('python', `${list}def f():\n    nonlocal a, s\n    s.`)).toBeNull();
+    expect(suggested('python', `${list}key = lambda s: s.`)).toBeNull();
+    expect(suggested('python', `${list}words.sort(key=lambda x, s=0: s.`)).toBeNull();
+    expect(suggested('python', `${list}def s():\n    pass\ns.`)).toBeNull();
+  });
+
+  it('keeps a binding that a comprehension, lambda, subscript or keyword argument leaves alone', () => {
+    const list = 's: List[int] = []\n';
+    expect(suggested('python', `${list}words = [s for s in "ab"]\ns.`)).toContain('append');
+    expect(suggested('python', `${list}words.sort(key=lambda s: len(s))\ns.`)).toContain('append');
+    expect(suggested('python', `${list}s[0], s[1] = s[1], s[0]\ns.`)).toContain('append');
+    expect(suggested('python', `${list}s[i] = 1\ns.`)).toContain('append');
+    expect(suggested('python', `${list}f(a, s=1)\ns.`)).toContain('append');
+    expect(suggested('python', `${list}print(a, s)\ns.`)).toContain('append');
+    expect(suggested('python', `${list}s += [1]\ns.`)).toContain('append');
+    expect(suggested('python', `${list}d = {a: 1,\n     s: 2}\ns.`)).toContain('append');
+    expect(suggested('python', `${list}x = [1 for _ in s if s.`)).toContain('append');
+    expect(suggested('python', `${list}words = [w for w in s if w > 0]\nfor w in s:\n    s.`)).toContain('append');
+  });
+
   it('suggests nothing for an unknown receiver, attribute, call result, or number', () => {
     expect(suggested('python', 'foo.')).toBeNull();
     expect(suggested('python', 'x = foo()\nx.')).toBeNull();

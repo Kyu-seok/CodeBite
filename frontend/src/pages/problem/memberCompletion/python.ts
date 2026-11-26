@@ -40,28 +40,187 @@ const CONSTRUCTORS = new Set([
 ]);
 
 /**
+ * What binds a name at one of its occurrences: an annotation to read, a value or an iterable whose
+ * type (or item type) it takes, or a binding whose type can't be told.
+ */
+type Binding =
+  | { readonly kind: 'annotation'; readonly at: number }
+  | { readonly kind: 'value' | 'element'; readonly start: number; readonly end: number }
+  | { readonly kind: 'unknown' };
+
+const UNTYPED: Binding = { kind: 'unknown' };
+
+/** Words that end a walk over assignment targets: `if s` or `in s` is never a target. */
+const KEYWORDS = new Set([
+  'in',
+  'if',
+  'elif',
+  'else',
+  'not',
+  'and',
+  'or',
+  'is',
+  'return',
+  'yield',
+  'lambda',
+  'del',
+  'assert',
+  'await',
+  'while',
+  'with',
+  'import',
+  'from',
+  'raise',
+  'def',
+  'class',
+]);
+
+/**
  * The type of `name` at its latest binding before `before`, or undefined when nothing binds it
- * there. A binding is an annotation (`name: List[int]`, a parameter included), an assignment
- * starting a statement (`name = []`, never `name == x`), or a for loop (`for name in grid:`).
+ * there. Every way Python binds a name counts, and one whose type isn't written down or built
+ * from a literal or constructor gives UNKNOWN, so an older binding never shows through.
  */
 export function boundType(code: string, name: string, before: number, depth = 0): TypeRef | undefined {
   for (const at of occurrencesBefore(code, name, before)) {
-    if (code[at - 1] === '.') continue;
-    const next = skipInline(code, at + name.length);
-    const previous = code[skipWsBack(code, at) - 1];
-    if (code[next] === ':' && code[next + 1] !== '=' && (startsStatement(code, at) || previous === '(' || previous === ',')) {
-      return parseAnnotation(code, next + 1)?.type ?? UNKNOWN;
-    }
-    if (code[next] === '=' && code[next + 1] !== '=' && startsStatement(code, at)) {
-      return depth < MAX_DEPTH ? expressionType(code, next + 1, statementEnd(code, next + 1, false), at, depth) : UNKNOWN;
-    }
-    if (isWord(code, skipWsBack(code, at) - 3, 'for') && isWord(code, next, 'in')) {
-      if (depth >= MAX_DEPTH) return UNKNOWN;
-      const iterable = expressionType(code, next + 2, statementEnd(code, next + 2, true), at, depth);
-      return elementType(PYTHON_TYPES, iterable);
-    }
+    const binding = bindingAt(code, name, at, before);
+    if (!binding) continue;
+    if (binding.kind === 'annotation') return parseAnnotation(code, binding.at)?.type ?? UNKNOWN;
+    if (binding.kind === 'unknown' || depth >= MAX_DEPTH) return UNKNOWN;
+    const type = expressionType(code, binding.start, binding.end, at, depth);
+    return binding.kind === 'value' ? type : elementType(PYTHON_TYPES, type);
   }
   return undefined;
+}
+
+/**
+ * How the occurrence of `name` at `at` binds it, or null when it doesn't: `name: T`, a parameter,
+ * `as name`, `def name`, `class name`, `name :=`, `global name`, a lambda's parameter, or an
+ * assignment or for target. A comprehension's or lambda's binding counts only inside it.
+ */
+function bindingAt(code: string, name: string, at: number, before: number): Binding | null {
+  if (code[at - 1] === '.') return null;
+  const next = skipInline(code, at + name.length);
+  const previous = skipWsBack(code, at);
+  const opener = enclosingOpener(code, at);
+  if (['as', 'def', 'class'].includes(wordBefore(code, previous))) return UNTYPED;
+  if (code.startsWith(':=', next)) return UNTYPED;
+  if (/^[ \t]*(?:global|nonlocal)[ \t][\w \t,]*$/.test(code.slice(code.lastIndexOf('\n', at - 1) + 1, at))) return UNTYPED;
+  if (opener >= 0 && code[opener] === '(' && /\bdef\s+\w+\s*$/.test(code.slice(Math.max(0, opener - 64), opener))) {
+    if (!'(,*'.includes(code[previous - 1]) || !',)=:'.includes(code[next])) return null;
+    return code[next] === ':' ? { kind: 'annotation', at: next + 1 } : UNTYPED;
+  }
+  if (/\blambda\s[\w\s,*=]*$/.test(code.slice(Math.max(0, at - 128), at)) && ',:='.includes(code[next])) {
+    return inScope(code, at, before, true) ? UNTYPED : null;
+  }
+  if (code[next] === ':' && code[next + 1] !== '=' && opener < 0 && startsStatement(code, at)) {
+    return { kind: 'annotation', at: next + 1 };
+  }
+  return targetBinding(code, name, at, before);
+}
+
+/**
+ * A name among the targets of an assignment (`a, b = ...`, `x = y = []`) or a for (`for i, s in`,
+ * a comprehension's too): the value or iterable when it is the whole target, UNKNOWN when it is one
+ * of several, and null when it is no target at all (`s[i] = 1`, `f(s=1)`, `s == 1`).
+ */
+function targetBinding(code: string, name: string, at: number, before: number): Binding | null {
+  let start = at;
+  let forAt = -1;
+  for (;;) {
+    const i = skipInlineBack(code, start);
+    const c = code[i - 1] ?? '';
+    if (c !== '' && ',()[]*'.includes(c)) start = i - 1;
+    else if (c === '=' && !'=!<>:+-*/%&|^@'.includes(code[i - 2] ?? '')) start = i - 1;
+    else if (isWordChar(c)) {
+      const word = wordBefore(code, i);
+      if (word === 'for') forAt = i - 3;
+      if (word === 'for' || KEYWORDS.has(word)) break;
+      start = i - word.length;
+    } else break;
+  }
+
+  let end = at + name.length;
+  for (;;) {
+    end = skipInline(code, end);
+    const c = code[end] ?? '';
+    if (c !== '' && ',()[]*'.includes(c)) end++;
+    else if (isWordChar(c) && !/\d/.test(c)) {
+      const word = /^\w+/.exec(code.slice(end))![0];
+      if (KEYWORDS.has(word)) break;
+      end += word.length;
+    } else break;
+  }
+  const assigned = code[end] === '=' && code[end + 1] !== '=';
+  const iterated = forAt >= 0 && isWord(code, end, 'in');
+  if (iterated) {
+    if (enclosingOpener(code, forAt) >= 0 && !inScope(code, forAt, before, false)) return null;
+  } else if (!assigned || forAt >= 0 || !startsStatement(code, start) || enclosingOpener(code, start) >= 0) {
+    return null;
+  }
+
+  const target = ownTarget(code, iterated ? forAt + 3 : start, end, at, name);
+  if (target === null) return null;
+  if (!target) return UNTYPED;
+  return iterated
+    ? { kind: 'element', start: end + 2, end: statementEnd(code, end + 2, true) }
+    : { kind: 'value', start: end + 1, end: statementEnd(code, end + 1, false) };
+}
+
+/**
+ * Whether the name at `at` is the whole of its target in [start, end): true for `s = ...`, false
+ * for `a, s = ...`, null when it is no target (`s[i] = ...`, `f(a, s=1)`). Chained targets are
+ * split at each `=` outside brackets.
+ */
+function ownTarget(code: string, start: number, end: number, at: number, name: string): boolean | null {
+  let from = start;
+  let depth = 0;
+  for (let i = start; i < at; i++) {
+    if ('([{'.includes(code[i])) depth++;
+    else if (')]}'.includes(code[i])) depth--;
+    else if (depth === 0 && code[i] === '=') from = i + 1;
+  }
+  const target = code.slice(from, end);
+  let balance = 0;
+  for (const c of target) {
+    if ('([{'.includes(c)) balance++;
+    else if (')]}'.includes(c) && --balance < 0) return null;
+  }
+  if (balance !== 0 || '[.('.includes(code[skipInline(code, at + name.length)])) return null;
+  const opener = enclosingOpener(code.slice(from, at), at - from);
+  if (opener >= 0 && code[from + opener] === '[' && /[\w)\]]/.test(code[skipWsBack(code, from + opener) - 1] ?? '')) return null;
+  return target.trim() === name;
+}
+
+/** The index of the unclosed bracket around `at`, or -1 at the top level. */
+function enclosingOpener(code: string, at: number): number {
+  let depth = 0;
+  for (let i = at - 1; i >= 0; i--) {
+    if (')]}'.includes(code[i])) depth++;
+    else if ('([{'.includes(code[i]) && depth-- === 0) return i;
+  }
+  return -1;
+}
+
+/**
+ * Whether a binding at `from`, scoped to its brackets (a comprehension's for) or also to its
+ * statement (a lambda's parameter), still holds at `before`.
+ */
+function inScope(code: string, from: number, before: number, statement: boolean): boolean {
+  let depth = 0;
+  for (let i = from; i < before; i++) {
+    const c = code[i];
+    if ('([{'.includes(c)) depth++;
+    else if (')]}'.includes(c) && --depth < 0) return false;
+    else if (statement && depth === 0 && (c === ';' || (c === '\n' && code[i - 1] !== '\\'))) return false;
+  }
+  return true;
+}
+
+/** The word ending at `i`, or '' when none does. */
+function wordBefore(code: string, i: number): string {
+  let start = i;
+  while (isWordChar(code[start - 1])) start--;
+  return code.slice(start, i);
 }
 
 function skipInline(code: string, i: number): number {
@@ -69,11 +228,15 @@ function skipInline(code: string, i: number): number {
   return i;
 }
 
-/** Whether only indentation stands between `at` and the start of its line or a `;`. */
-function startsStatement(code: string, at: number): boolean {
-  let i = at;
+function skipInlineBack(code: string, i: number): number {
   while (code[i - 1] === ' ' || code[i - 1] === '\t') i--;
-  return i === 0 || code[i - 1] === '\n' || code[i - 1] === ';';
+  return i;
+}
+
+/** Whether only indentation stands between `at` and the start of its line, a `;` or a block's `:`. */
+function startsStatement(code: string, at: number): boolean {
+  const i = skipInlineBack(code, at);
+  return i === 0 || code[i - 1] === '\n' || code[i - 1] === ';' || code[i - 1] === ':';
 }
 
 function isWord(code: string, i: number, word: string): boolean {
