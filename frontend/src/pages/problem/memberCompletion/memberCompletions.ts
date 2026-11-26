@@ -1,6 +1,6 @@
 import { declaredType, type CFamily } from './cFamily';
-import { CPP_PRIMITIVES, CPP_TYPES } from './cppMembers';
-import { JAVA_PRIMITIVES, JAVA_STATICS, JAVA_TYPES } from './javaMembers';
+import { CPP_TYPES } from './cppMembers';
+import { JAVA_STATICS, JAVA_TYPES } from './javaMembers';
 import { UNKNOWN, typeRef, type Member, type TypeInfo, type TypeRef, type TypeTable } from './model';
 import { boundType } from './python';
 import { PYTHON_MODULES, PYTHON_TYPES } from './pythonMembers';
@@ -30,12 +30,12 @@ const cFamily = (lang: CFamily, globals: Language['globals'], arrow: boolean): L
 
 const LANGUAGES: Readonly<Record<string, Language>> = {
   java: cFamily(
-    { table: JAVA_TYPES, primitives: JAVA_PRIMITIVES, inferred: 'var', newKeyword: true, stringLiteral: typeRef('String') },
+    { table: JAVA_TYPES, inferred: 'var', newKeyword: true, untypedLambdas: true, stringLiteral: typeRef('String') },
     JAVA_STATICS,
     false,
   ),
   cpp: cFamily(
-    { table: CPP_TYPES, primitives: CPP_PRIMITIVES, inferred: 'auto', newKeyword: false, stringLiteral: UNKNOWN },
+    { table: CPP_TYPES, inferred: 'auto', newKeyword: false, untypedLambdas: false, stringLiteral: UNKNOWN },
     {},
     true,
   ),

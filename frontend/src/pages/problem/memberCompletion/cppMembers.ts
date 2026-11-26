@@ -137,18 +137,3 @@ export const CPP_TYPES: TypeTable = {
   ListNode: { members: LIST_NODE },
 };
 
-export const CPP_PRIMITIVES = new Set([
-  'int',
-  'long',
-  'short',
-  'char',
-  'bool',
-  'float',
-  'double',
-  'unsigned',
-  'signed',
-  'size_t',
-  'int64_t',
-  'uint64_t',
-  'int32_t',
-]);

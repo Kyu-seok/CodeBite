@@ -247,8 +247,6 @@ export const JAVA_TYPES: TypeTable = {
   ListNode: { members: LIST_NODE },
 };
 
-export const JAVA_PRIMITIVES = new Set(['int', 'long', 'short', 'byte', 'char', 'boolean', 'float', 'double']);
-
 const statics = (kind: 'method' | 'constant', specs: readonly string[]) =>
   members(kind, specs.map((s) => (kind === 'method' ? `static ${s}` : `static final ${s}`)));
 

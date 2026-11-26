@@ -57,6 +57,23 @@ describe('Java', () => {
     expect(suggested('java', 'List<Integer> a = new ArrayList<>();\nint a = 0;\na.')).toBeNull();
   });
 
+  it('ends the search at a declaration of a type it has no table for', () => {
+    expect(suggested('java', 'List<Integer> cur = new ArrayList<>();\nNode cur = head;\ncur.')).toBeNull();
+    expect(suggested('java', 'List<Integer> it;\nIterator<Integer> it = s.iterator();\nit.')).toBeNull();
+    expect(suggested('java', 'List<Integer> x;\nInteger x = 5;\nx.')).toBeNull();
+    expect(suggested('java', 'List<Integer> b;\nint a = 0, b = 1;\nb.')).toBeNull();
+    expect(suggested('java', 'List<Integer> a;\nlist.sort((a, b) -> a.')).toBeNull();
+    expect(suggested('java', 'List<Integer> a;\nlist.forEach(a -> a.')).toBeNull();
+  });
+
+  it('does not take a statement or an expression for a declaration', () => {
+    expect(suggested('java', 'String s = "";\nif (s == null) return s;\ns.')).toContain('charAt');
+    expect(suggested('java', 'List<Integer> b = new ArrayList<>();\na = b;\nb.')).toContain('add');
+    expect(suggested('java', 'String s = "";\nthrow s;\ns.')).toContain('charAt');
+    expect(suggested('java', 'int[] nums) {\n best = Math.max(best, k * nums[i]);\n nums.')).toEqual(['length', 'clone']);
+    expect(suggested('java', 'int[] nums) {\n f(k, nums);\n nums.')).toEqual(['length', 'clone']);
+  });
+
   it('suggests static members of a class name nothing declares', () => {
     expect(suggested('java', 'int m = Math.')).toEqual(expect.arrayContaining(['max', 'abs', 'PI']));
     expect(suggested('java', 'Integer.')).toEqual(expect.arrayContaining(['MAX_VALUE', 'parseInt']));
@@ -197,6 +214,20 @@ describe('C++', () => {
     expect(suggested('cpp', 'vector<int> a;\nset<int> a;\na.')).toContain('lower_bound');
     expect(suggested('cpp', 'vector<int>& nums) {\n int s = x * nums[0];\n nums.')).toContain('push_back');
     expect(suggested('cpp', 'int n = 1\'000;\nstring s; s.')).toContain('substr');
+  });
+
+  it('ends the search at a declaration of a type it has no table for', () => {
+    expect(suggested('cpp', 'vector<int> cur;\nNode cur = head;\ncur.')).toBeNull();
+    expect(suggested('cpp', 'vector<int> j;\nint i = 0, j = n - 1;\nj.')).toBeNull();
+    expect(suggested('cpp', 'vector<int> x;\nauto [x, y] = p;\nx.')).toBeNull();
+    expect(suggested('cpp', 'string a;\nlong long a = 0;\na.')).toBeNull();
+  });
+
+  it('does not take a statement or an expression for a declaration', () => {
+    expect(suggested('cpp', 'string s;\nif (s.empty()) return s;\ns.')).toContain('substr');
+    expect(suggested('cpp', 'vector<int>& nums) {\n best = max(best, k * nums[i]);\n nums.')).toContain('push_back');
+    expect(suggested('cpp', 'vector<int> b;\na = b;\nb.')).toContain('push_back');
+    expect(suggested('cpp', 'TreeNode* t = root;\ndelete t;\nt->')).toEqual(['val', 'left', 'right']);
   });
 
   it('suggests nothing for an unknown receiver', () => {
