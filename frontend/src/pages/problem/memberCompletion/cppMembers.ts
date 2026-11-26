@@ -71,8 +71,6 @@ const ASSOCIATIVE = combine(
   members('method', [
     'iterator begin()',
     'iterator end()',
-    'pair<iterator, bool> insert(const value_type& value)',
-    'pair<iterator, bool> emplace(Args&&... args)',
     ['size_type erase(const key_type& key)', 'Removes every element with this key.'],
     'iterator erase(const_iterator pos)',
     ['iterator find(const key_type& key)', 'An iterator to the element, or end().'],
@@ -95,6 +93,13 @@ const HASHED = combine(
   ASSOCIATIVE,
   members('method', ['void reserve(size_type count)', 'size_type bucket_count() const', 'float load_factor() const']),
 );
+
+/** A set or map holds each key once, so inserting says whether it did; a multiset or multimap always does. */
+const UNIQUE_KEYS = members('method', [
+  ['pair<iterator, bool> insert(const value_type& value)', 'second is false when the key was already there.'],
+  'pair<iterator, bool> emplace(Args&&... args)',
+]);
+const EQUAL_KEYS = members('method', ['iterator insert(const value_type& value)', 'iterator emplace(Args&&... args)']);
 
 const MAPPED = members('method', ['T& at(const key_type& key)']);
 
@@ -123,12 +128,12 @@ export const CPP_TYPES: TypeTable = {
   string: { members: STRING, index: always(typeRef('char')), element: always(typeRef('char')) },
   vector: { members: VECTOR, index: first, element: first },
   deque: { members: DEQUE, index: first, element: first },
-  map: { members: combine(ORDERED, MAPPED), index: second, element: entry },
-  unordered_map: { members: combine(HASHED, MAPPED), index: second, element: entry },
-  multimap: { members: ORDERED, element: entry },
-  set: { members: ORDERED, element: first },
-  multiset: { members: ORDERED, element: first },
-  unordered_set: { members: HASHED, element: first },
+  map: { members: combine(ORDERED, UNIQUE_KEYS, MAPPED), index: second, element: entry },
+  unordered_map: { members: combine(HASHED, UNIQUE_KEYS, MAPPED), index: second, element: entry },
+  multimap: { members: combine(ORDERED, EQUAL_KEYS), element: entry },
+  set: { members: combine(ORDERED, UNIQUE_KEYS), element: first },
+  multiset: { members: combine(ORDERED, EQUAL_KEYS), element: first },
+  unordered_set: { members: combine(HASHED, UNIQUE_KEYS), element: first },
   queue: { members: QUEUE },
   stack: { members: TOP },
   priority_queue: { members: TOP },

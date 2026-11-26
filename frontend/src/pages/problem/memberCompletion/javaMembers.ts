@@ -211,7 +211,6 @@ const STRING_BUILDER = members('method', [
   'String substring(int start)',
   'String substring(int start, int end)',
   'void setLength(int newLength)',
-  'boolean isEmpty()',
 ]);
 
 const ARRAY = combine(members('field', ['int length']), members('method', ['T[] clone()']));

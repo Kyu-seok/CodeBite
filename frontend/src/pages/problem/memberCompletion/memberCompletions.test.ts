@@ -74,6 +74,13 @@ describe('Java', () => {
     expect(suggested('java', 'int[] nums) {\n f(k, nums);\n nums.')).toEqual(['length', 'clone']);
   });
 
+  it('offers only what Java 13 has', () => {
+    expect(suggested('java', 'StringBuilder sb = new StringBuilder(); sb.')).not.toContain('isEmpty');
+    expect(suggested('java', 'String s; s.')).toContain('isEmpty');
+    expect(suggested('java', 'String s; s.')).not.toContain('formatted');
+    expect(suggested('java', 'List<Integer> a; a.')).not.toContain('getFirst');
+  });
+
   it('suggests static members of a class name nothing declares', () => {
     expect(suggested('java', 'int m = Math.')).toEqual(expect.arrayContaining(['max', 'abs', 'PI']));
     expect(suggested('java', 'Integer.')).toEqual(expect.arrayContaining(['MAX_VALUE', 'parseInt']));
@@ -149,6 +156,11 @@ describe('Python', () => {
     expect(suggested('python', `${starter}grid[1:][0].`)).toContain('append');
     expect(suggested('python', `${starter}t = s[::-1]\n    t.`)).toContain('split');
     expect(suggested('python', `${starter}words[i].`)).toContain('split');
+  });
+
+  it('shows a subclass\'s own member in place of the one it overrides', () => {
+    const popitems = memberCompletions('python', 'd = OrderedDict()\nd.')!.filter((m) => m.name === 'popitem');
+    expect(popitems.map((m) => m.signature)).toEqual(['popitem(last=True) -> tuple']);
   });
 
   it('suggests module functions for a module name nothing binds', () => {
@@ -245,6 +257,15 @@ describe('C++', () => {
     expect(suggested('cpp', 'unordered_map<int, int> m; m.')).not.toContain('contains');
     expect(suggested('cpp', 'unordered_map<int, int> m; m.')).not.toContain('lower_bound');
     expect(suggested('cpp', 'string s; s.')).not.toContain('starts_with');
+  });
+
+  it('gives insert and emplace the return type of their container', () => {
+    const signatures = (code: string, name: string) =>
+      memberCompletions('cpp', code)!.filter((m) => m.name === name).map((m) => m.signature.split(' ')[0]);
+    expect(signatures('multiset<int> s; s.', 'insert')).toEqual(['iterator']);
+    expect(signatures('multimap<int, int> m; m.', 'emplace')).toEqual(['iterator']);
+    expect(signatures('set<int> s; s.', 'insert')).toEqual(['pair<iterator,']);
+    expect(signatures('unordered_map<int, int> m; m.', 'emplace')).toEqual(['pair<iterator,']);
   });
 
   it('types auto from a constructor, another variable, or a range', () => {

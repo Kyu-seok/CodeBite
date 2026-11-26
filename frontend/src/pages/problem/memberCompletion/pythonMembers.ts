@@ -1,4 +1,4 @@
-import { always, arg, combine, members, typeRef, type Member, type TypeTable } from './model';
+import { always, arg, combine, members, override, typeRef, type Member, type TypeTable } from './model';
 
 const LIST = members('method', [
   'append(x) -> None',
@@ -118,7 +118,7 @@ const COUNTER = combine(
 
 const DEFAULTDICT = combine(DICT, members('field', ['default_factory: Callable | None']));
 
-const ORDERED_DICT = combine(
+const ORDERED_DICT = override(
   DICT,
   members('method', ['move_to_end(key, last=True) -> None', 'popitem(last=True) -> tuple']),
 );

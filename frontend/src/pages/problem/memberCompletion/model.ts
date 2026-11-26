@@ -57,6 +57,12 @@ export function members(kind: MemberKind, specs: readonly Spec[]): Member[] {
   });
 }
 
+/** A subclass's members: each of `own` replaces the inherited member of its name (OrderedDict's popitem). */
+export function override(base: readonly Member[], own: readonly Member[]): readonly Member[] {
+  const names = new Set(own.map((m) => m.name));
+  return [...base.filter((m) => !names.has(m.name)), ...own];
+}
+
 /** One member list from several, each signature once: `TreeMap` is Map's members plus its own. */
 export function combine(...lists: readonly (readonly Member[])[]): readonly Member[] {
   const seen = new Set<string>();
