@@ -8,7 +8,11 @@ export interface Member {
   readonly doc?: string;
 }
 
-/** A type as far as completion needs it: `vector<vector<int>>` is vector of (vector of int). */
+/**
+ * A type as far as completion needs it: `vector<vector<int>>` is vector of (vector of int), a
+ * Java `int[]` is `[]` of int, and a C++ `TreeNode*` is `*` of TreeNode, which no table has, so
+ * only `->` reaches TreeNode's members.
+ */
 export interface TypeRef {
   readonly name: string;
   readonly args: readonly TypeRef[];
@@ -18,6 +22,12 @@ export interface TypeRef {
 export const UNKNOWN: TypeRef = { name: '', args: [] };
 
 export const typeRef = (name: string, ...args: TypeRef[]): TypeRef => ({ name, args });
+
+/** What `->` reaches: the type a pointer points to, or UNKNOWN for anything else. */
+export const pointee = (type: TypeRef): TypeRef => (type.name === '*' ? type.args[0] : UNKNOWN);
+
+/** The type under every `*`: `TreeNode` for `TreeNode**`. */
+export const unpointered = (type: TypeRef): TypeRef => (type.name === '*' ? unpointered(type.args[0]) : type);
 
 /** What a type offers: its members, what `x[i]` yields, and what iterating it yields. */
 export interface TypeInfo {

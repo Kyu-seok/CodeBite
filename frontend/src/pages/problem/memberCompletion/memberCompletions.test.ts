@@ -230,6 +230,20 @@ describe('C++', () => {
     expect(suggested('cpp', 'TreeNode* t = root;\ndelete t;\nt->')).toEqual(['val', 'left', 'right']);
   });
 
+  it('reaches a pointer\'s members only with ->, and an object\'s only with .', () => {
+    const starter = 'class Solution {\npublic:\n    ListNode* f(ListNode* head, vector<ListNode*>& lists) {\n        ';
+    expect(suggested('cpp', `${starter}head.`)).toBeNull();
+    expect(suggested('cpp', `${starter}head->`)).toEqual(['val', 'next']);
+    expect(suggested('cpp', `${starter}lists[0]->`)).toEqual(['val', 'next']);
+    expect(suggested('cpp', 'TreeNode* root; root.')).toBeNull();
+    expect(suggested('cpp', 'TreeNode* root;\nauto p = root; p->')).toEqual(['val', 'left', 'right']);
+    expect(suggested('cpp', 'ListNode *slow = head, *fast = head;\nfast.')).toBeNull();
+    expect(suggested('cpp', 'ListNode *slow = head, *fast = head;\nfast->')).toEqual(['val', 'next']);
+    expect(suggested('cpp', 'ListNode* a = head, b;\nb.')).toEqual(['val', 'next']);
+    expect(suggested('cpp', 'vector<int> v; v->')).toBeNull();
+    expect(suggested('cpp', 'TreeNode t; t->')).toBeNull();
+  });
+
   it('suggests nothing for an unknown receiver', () => {
     expect(suggested('cpp', 'Node* n; n->')).toBeNull();
     expect(suggested('cpp', 'foo.')).toBeNull();

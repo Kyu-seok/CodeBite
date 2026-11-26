@@ -1,7 +1,7 @@
 import { declaredType, type CFamily } from './cFamily';
 import { CPP_TYPES } from './cppMembers';
 import { JAVA_STATICS, JAVA_TYPES } from './javaMembers';
-import { UNKNOWN, typeRef, type Member, type TypeInfo, type TypeRef, type TypeTable } from './model';
+import { UNKNOWN, pointee, typeRef, type Member, type TypeInfo, type TypeRef, type TypeTable } from './model';
 import { boundType } from './python';
 import { PYTHON_MODULES, PYTHON_TYPES } from './pythonMembers';
 import { indexType, lookup, stripCommentsAndStrings, trailingAccess } from './source';
@@ -75,6 +75,7 @@ export function memberCompletions(language: string, textBeforeCursor: string): r
     type = declared;
   }
   for (let i = 0; i < access.indexes; i++) type = indexType(lang.table, type);
+  if (access.arrow) type = pointee(type);
   return lookup<TypeInfo>(lang.table, type.name)?.members ?? null;
 }
 

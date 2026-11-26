@@ -1,4 +1,4 @@
-import { UNKNOWN, typeRef, type TypeInfo, type TypeRef, type TypeTable } from './model';
+import { UNKNOWN, typeRef, unpointered, type TypeInfo, type TypeRef, type TypeTable } from './model';
 import {
   elementType,
   indexType,
@@ -94,7 +94,7 @@ export function declaredType(
     }
     const type = declarationType(code, at, follow) ?? laterDeclaratorType(code, at);
     if (!type) continue;
-    if (type.name === lang.inferred) {
+    if (unpointered(type).name === lang.inferred) {
       if (depth >= MAX_DEPTH) return UNKNOWN;
       if (follow === '=') return expressionType(lang, code, next + 1, at, depth);
       if (follow === ':') return elementType(lang.table, expressionType(lang, code, next + 1, at, depth));
@@ -130,10 +130,14 @@ function startsDeclaration(code: string, start: number): boolean {
   return MODIFIERS.has(code.slice(word, i));
 }
 
-/** The type of a later declarator, `j` in `int i = 0, j = n;`: the type written at the statement's start. */
+/**
+ * The type of a later declarator, `j` in `int i = 0, j = n;`: the type written at the statement's
+ * start, with the declarator's own `*`s (`fast` in `ListNode *slow, *fast` is a pointer).
+ */
 function laterDeclaratorType(code: string, at: number): TypeRef | null {
   let i = skipWsBack(code, at);
-  while (code[i - 1] === '*' || code[i - 1] === '&') i = skipWsBack(code, i - 1);
+  let stars = 0;
+  for (; code[i - 1] === '*' || code[i - 1] === '&'; i = skipWsBack(code, i - 1)) stars += code[i - 1] === '*' ? 1 : 0;
   if (code[i - 1] !== ',') return null;
   let depth = 0;
   for (i -= 2; i >= 0; i--) {
@@ -147,7 +151,10 @@ function laterDeclaratorType(code: string, at: number): TypeRef | null {
   if (NOT_TYPES.has(readWord(code, start) ?? '')) return null;
   const parsed = parseType(code, start);
   if (!parsed || !readWord(code, skipWs(code, parsed.end))) return null;
-  return MODIFIERS.has(parsed.type.name) ? UNKNOWN : parsed.type;
+  if (MODIFIERS.has(parsed.type.name)) return UNKNOWN;
+  let type = unpointered(parsed.type);
+  for (; stars > 0; stars--) type = typeRef('*', type);
+  return type;
 }
 
 /** Whether the `(` at `open` starts a for loop's header. */
@@ -231,7 +238,11 @@ export function parseType(code: string, i: number): { type: TypeRef; end: number
   let type = typeRef(name, ...args);
   for (;;) {
     const k = skipWs(code, i);
-    if (code[k] === '&' || code[k] === '*') i = k + 1;
+    if (code[k] === '&') i = k + 1;
+    else if (code[k] === '*') {
+      type = typeRef('*', type);
+      i = k + 1;
+    }
     else if (code[k] === '[' && code[skipWs(code, k + 1)] === ']') {
       type = typeRef('[]', type);
       i = skipWs(code, k + 1) + 1;
