@@ -1,0 +1,228 @@
+import { describe, expect, it } from 'vitest';
+import { insertText, memberCompletions } from './memberCompletions';
+
+/** The names suggested at the end of `code`, or null when nothing is. */
+function suggested(language: string, code: string): string[] | null {
+  return memberCompletions(language, code)?.map((m) => m.name) ?? null;
+}
+
+describe('Java', () => {
+  it('suggests List methods after a list declared as List and built as ArrayList', () => {
+    expect(suggested('java', 'List<Integer> a = new ArrayList<>(); a.')).toEqual(
+      expect.arrayContaining(['add', 'clear', 'size', 'get', 'remove']),
+    );
+  });
+
+  it('keeps suggesting while a member name is half typed', () => {
+    expect(suggested('java', 'List<Integer> a = new ArrayList<>();\na.ad')).toContain('add');
+  });
+
+  it('reads parameters from a starter signature', () => {
+    const starter = 'class Solution {\n    public int maxProfit(int[] prices, String s) {\n        ';
+    expect(suggested('java', `${starter}prices.`)).toEqual(['length', 'clone']);
+    expect(suggested('java', `${starter}s.`)).toEqual(expect.arrayContaining(['charAt', 'substring', 'length']));
+  });
+
+  it('follows nested generics and indexing', () => {
+    expect(suggested('java', 'Map<String, List<Integer>> m = new HashMap<>();\nm.')).toEqual(
+      expect.arrayContaining(['getOrDefault', 'computeIfAbsent', 'entrySet']),
+    );
+    expect(suggested('java', 'void f(int[][] grid) { grid[0].')).toEqual(['length', 'clone']);
+    expect(suggested('java', 'List<List<String>> rows) {\n rows.')).toContain('subList');
+  });
+
+  it('gives a TreeMap its navigation methods and a HashMap none', () => {
+    expect(suggested('java', 'TreeMap<Integer, Integer> t = new TreeMap<>(); t.')).toContain('floorKey');
+    expect(suggested('java', 'HashMap<Integer, Integer> h = new HashMap<>(); h.')).not.toContain('floorKey');
+  });
+
+  it('types var from what it is created as', () => {
+    expect(suggested('java', 'var q = new ArrayDeque<int[]>(); q.')).toEqual(expect.arrayContaining(['offer', 'pollFirst']));
+    expect(suggested('java', 'var dp = new int[n + 1][m]; dp[0].')).toEqual(['length', 'clone']);
+    expect(suggested('java', 'var s = "abc"; s.')).toContain('charAt');
+    expect(suggested('java', 'var x = compute(); x.')).toBeNull();
+  });
+
+  it('types a for-each variable, declared or var', () => {
+    expect(suggested('java', 'for (Map.Entry<String, Integer> e : m.entrySet()) {\n e.')).toEqual(
+      expect.arrayContaining(['getKey', 'getValue']),
+    );
+    expect(suggested('java', 'int[][] grid = new int[3][3];\nfor (var row : grid) row.')).toEqual(['length', 'clone']);
+  });
+
+  it('uses the latest declaration of a reused name', () => {
+    const code = 'String a = "";\nStringBuilder a = new StringBuilder();\na.';
+    expect(suggested('java', code)).toContain('append');
+    expect(suggested('java', code)).not.toContain('toCharArray');
+    expect(suggested('java', 'List<Integer> a = new ArrayList<>();\nint a = 0;\na.')).toBeNull();
+  });
+
+  it('suggests static members of a class name nothing declares', () => {
+    expect(suggested('java', 'int m = Math.')).toEqual(expect.arrayContaining(['max', 'abs', 'PI']));
+    expect(suggested('java', 'Integer.')).toEqual(expect.arrayContaining(['MAX_VALUE', 'parseInt']));
+    expect(suggested('java', 'Arrays.')).toEqual(expect.arrayContaining(['sort', 'fill', 'asList']));
+    expect(suggested('java', 'if (Character.')).toContain('isDigit');
+    expect(suggested('java', 'String.')).toContain('valueOf');
+  });
+
+  it('suggests String members after a string literal', () => {
+    expect(suggested('java', '"abc".')).toContain('length');
+  });
+
+  it('suggests nothing for an unknown receiver, a method result, or a number', () => {
+    expect(suggested('java', 'foo.')).toBeNull();
+    expect(suggested('java', 'Node n = new Node(); n.')).toBeNull();
+    expect(suggested('java', 'List<Integer> a = new ArrayList<>(); a.get(0).')).toBeNull();
+    expect(suggested('java', 'double d = 1.')).toBeNull();
+    expect(suggested('java', 'this.')).toBeNull();
+  });
+
+  it('ignores dots and declarations in strings and comments, and stays quiet inside them', () => {
+    expect(suggested('java', 'String s = "a.b"; // StringBuilder s.\n/* int s; */ s.')).toContain('charAt');
+    expect(suggested('java', 'String s = "s.')).toBeNull();
+    expect(suggested('java', 'String s = ""; // s.')).toBeNull();
+    expect(suggested('java', 'String s; /* s.')).toBeNull();
+  });
+});
+
+describe('Python', () => {
+  it('suggests list and dict methods after literals', () => {
+    expect(suggested('python', 'a = []; a.')).toEqual(expect.arrayContaining(['append', 'pop', 'sort']));
+    expect(suggested('python', 'd = {}; d.')).toEqual(expect.arrayContaining(['get', 'items', 'keys']));
+    expect(suggested('python', 's = {1, 2}\ns.')).toContain('add');
+    expect(suggested('python', 'c = {k: 0 for k in xs}\nc.')).toContain('items');
+  });
+
+  it('does not take == for an assignment', () => {
+    const code = 'a = []\nif a == {}:\n    a.';
+    expect(suggested('python', code)).toContain('append');
+    expect(suggested('python', code)).not.toContain('items');
+  });
+
+  it('reads annotated parameters from a starter signature', () => {
+    const starter =
+      'class Solution:\n    def f(self, nums: List[int], s: str, root: Optional[TreeNode], grid: list[list[int]]) -> int:\n        ';
+    expect(suggested('python', `${starter}nums.`)).toContain('append');
+    expect(suggested('python', `${starter}s.`)).toEqual(expect.arrayContaining(['split', 'join', 'isdigit']));
+    expect(suggested('python', `${starter}root.`)).toEqual(['val', 'left', 'right']);
+    expect(suggested('python', `${starter}grid[0].`)).toContain('append');
+  });
+
+  it('types collections built by their constructors', () => {
+    expect(suggested('python', 'q = deque([root])\nq.')).toEqual(expect.arrayContaining(['popleft', 'appendleft']));
+    expect(suggested('python', 'q = collections.deque()\nq.')).toContain('popleft');
+    expect(suggested('python', 'cnt = Counter(s)\ncnt.')).toEqual(expect.arrayContaining(['most_common', 'get']));
+    expect(suggested('python', 'seen = set()\nseen.')).toContain('discard');
+    expect(suggested('python', 'adj = defaultdict(list)\nadj.')).toEqual(expect.arrayContaining(['items', 'default_factory']));
+    expect(suggested('python', 'adj = defaultdict(list)\nadj[u].')).toContain('append');
+  });
+
+  it('types indexing and loops through nested lists', () => {
+    expect(suggested('python', 'dp = [[0] * n for _ in range(m)]\ndp[0].')).toContain('append');
+    expect(suggested('python', 'grid: List[List[int]] = []\nfor row in grid:\n    row.')).toContain('append');
+    expect(suggested('python', 'for ch in s:\n    pass\nword = "ab"\nword[0].')).toContain('isalpha');
+  });
+
+  it('suggests module functions for a module name nothing binds', () => {
+    expect(suggested('python', 'heapq.')).toEqual(expect.arrayContaining(['heappush', 'heappop', 'heapify']));
+    expect(suggested('python', 'x = math.')).toEqual(expect.arrayContaining(['inf', 'gcd', 'isqrt']));
+    expect(suggested('python', 'bisect.')).toContain('bisect_left');
+    expect(suggested('python', 'itertools.')).toContain('permutations');
+  });
+
+  it('suggests str methods after a string literal', () => {
+    expect(suggested('python', 'return "".')).toContain('join');
+    expect(suggested('python', "x = ', '.")).toContain('join');
+  });
+
+  it('uses the latest binding of a reused name', () => {
+    expect(suggested('python', 'x = []\nx = {}\nx.')).toContain('items');
+    expect(suggested('python', 'x = []\nx = 0\nx.')).toBeNull();
+  });
+
+  it('suggests nothing for an unknown receiver, attribute, call result, or number', () => {
+    expect(suggested('python', 'foo.')).toBeNull();
+    expect(suggested('python', 'x = foo()\nx.')).toBeNull();
+    expect(suggested('python', 'self.')).toBeNull();
+    expect(suggested('python', 'a = []\nself.a.')).toBeNull();
+    expect(suggested('python', 'x = 1.')).toBeNull();
+  });
+
+  it('ignores strings and comments, and stays quiet inside them', () => {
+    expect(suggested('python', 's = "a.b"  # s = []\ns.')).toContain('split');
+    expect(suggested('python', 's = """\ns = [].\n"""\ns.')).toContain('split');
+    expect(suggested('python', 'a = []  # a.')).toBeNull();
+    expect(suggested('python', "a = 'a.")).toBeNull();
+  });
+});
+
+describe('C++', () => {
+  it('suggests vector methods after a vector declaration', () => {
+    expect(suggested('cpp', 'vector<int> a; a.')).toEqual(expect.arrayContaining(['push_back', 'size', 'clear']));
+  });
+
+  it('reads parameters from a starter signature', () => {
+    const starter = 'class Solution {\npublic:\n    int f(vector<int>& nums, string s, TreeNode* root) {\n        ';
+    expect(suggested('cpp', `${starter}nums.`)).toContain('push_back');
+    expect(suggested('cpp', `${starter}s.`)).toEqual(expect.arrayContaining(['substr', 'find']));
+    expect(suggested('cpp', `${starter}root->`)).toEqual(['val', 'left', 'right']);
+  });
+
+  it('follows nested generics and indexing', () => {
+    expect(suggested('cpp', 'vector<vector<int>> g(n, vector<int>(m)); g[0].')).toContain('push_back');
+    expect(suggested('cpp', 'unordered_map<int, vector<int>> adj;\nadj[u].')).toContain('push_back');
+    expect(suggested('cpp', 'std::map<std::string, int> m; m.')).toEqual(
+      expect.arrayContaining(['lower_bound', 'upper_bound', 'find', 'count']),
+    );
+    expect(suggested('cpp', 'priority_queue<int, vector<int>, greater<int>> pq; pq.')).toEqual(
+      expect.arrayContaining(['top', 'push', 'pop']),
+    );
+    expect(suggested('cpp', 'const string& word) { word.')).toContain('substr');
+  });
+
+  it('offers only what C++14 has', () => {
+    expect(suggested('cpp', 'unordered_map<int, int> m; m.')).not.toContain('contains');
+    expect(suggested('cpp', 'unordered_map<int, int> m; m.')).not.toContain('lower_bound');
+    expect(suggested('cpp', 'string s; s.')).not.toContain('starts_with');
+  });
+
+  it('types auto from a constructor, another variable, or a range', () => {
+    expect(suggested('cpp', 'auto v = vector<int>(n, 0); v.')).toContain('push_back');
+    expect(suggested('cpp', 'vector<vector<int>>& grid) {\n for (auto& row : grid) row.')).toContain('push_back');
+    expect(suggested('cpp', 'map<int, int> m; for (const auto& p : m) p.')).toEqual(['first', 'second', 'swap']);
+    expect(suggested('cpp', 'auto it = m.find(k); it->')).toBeNull();
+  });
+
+  it('uses the latest declaration and is not fooled by multiplication', () => {
+    expect(suggested('cpp', 'vector<int> a;\nset<int> a;\na.')).toContain('lower_bound');
+    expect(suggested('cpp', 'vector<int>& nums) {\n int s = x * nums[0];\n nums.')).toContain('push_back');
+    expect(suggested('cpp', 'int n = 1\'000;\nstring s; s.')).toContain('substr');
+  });
+
+  it('suggests nothing for an unknown receiver', () => {
+    expect(suggested('cpp', 'Node* n; n->')).toBeNull();
+    expect(suggested('cpp', 'foo.')).toBeNull();
+    expect(suggested('cpp', 'x > y; y.')).toBeNull();
+  });
+});
+
+it('suggests nothing for a language without member tables', () => {
+  expect(suggested('javascript', 'const a = []; a.')).toBeNull();
+});
+
+describe('insertText', () => {
+  const member = (language: string, code: string, name: string) =>
+    memberCompletions(language, code)!.find((m) => m.name === name)!;
+
+  it('puts the cursor between the parentheses only when the method takes arguments', () => {
+    expect(insertText(member('java', 'List<Integer> a; a.', 'add'))).toBe('add($0)');
+    expect(insertText(member('java', 'List<Integer> a; a.', 'size'))).toBe('size()');
+    expect(insertText(member('cpp', 'vector<int> a; a.', 'resize'))).toBe('resize($0)');
+    expect(insertText(member('python', 'heapq.', 'heappop'))).toBe('heappop($0)');
+  });
+
+  it('inserts a field or constant as its bare name', () => {
+    expect(insertText(member('java', 'int[] a; a.', 'length'))).toBe('length');
+    expect(insertText(member('python', 'math.', 'inf'))).toBe('inf');
+  });
+});
