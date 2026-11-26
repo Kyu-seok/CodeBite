@@ -44,7 +44,8 @@ export function registerMemberCompletion(monaco: Monaco): void {
         };
         return {
           suggestions: members.map((member) => ({
-            label: member.name,
+            // Parameters inline, so overloads (`add(E e)`, `add(int index, E element)`) read apart.
+            label: { label: member.name, detail: /\([^)]*\)/.exec(member.signature)?.[0] },
             kind: kinds[member.kind],
             detail: member.signature,
             documentation: member.doc,
