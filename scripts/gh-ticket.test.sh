@@ -2,6 +2,7 @@
 # Checks scripts/gh-ticket.sh against a stub gh: one call creates the issue,
 # attaches it to its parent and adds its blockers, printing #<n>; a failed
 # attach or link names the issue it left half-linked and exits non-zero.
+# --private files a draft security advisory instead and creates no issue.
 # shellcheck disable=SC2016 # check() evals its single-quoted conditions later
 set -euo pipefail
 
@@ -18,6 +19,11 @@ if [[ -n "${GH_STUB_FAIL:-}" && " $* " == *" $GH_STUB_FAIL "* ]]; then
   echo "stub gh: $GH_STUB_FAIL failed" >&2; exit 1
 fi
 [[ "$1 $2" == "issue create" ]] && echo "https://github.com/Kyu-seok/CodeBite/issues/142"
+[[ "$1 $2" == "repo view" ]] && echo "CodeBite"
+if [[ "$1" == api ]]; then
+  cat > "$GH_STUB_LOG.input"
+  echo "https://github.com/Kyu-seok/CodeBite/security/advisories/GHSA-aaaa-bbbb-cccc"
+fi
 exit 0
 STUB
 chmod +x "$dir/bin/gh"
@@ -56,7 +62,27 @@ check "a failed link exits non-zero and names the issue" '[[ $status != 0 && $er
 GH_STUB_FAIL=create run --title "Child" --body-file "$dir/body.md" --parent 131
 check "a failed create exits non-zero and links nothing" '[[ $status != 0 && $(wc -l <<<"$log") -eq 1 ]]'
 
+run --private --title "Cooldown bypass" --body-file "$dir/body.md"
+check "a private finding prints the advisory's URL" \
+  '[[ $status == 0 && $out == "https://github.com/Kyu-seok/CodeBite/security/advisories/GHSA-aaaa-bbbb-cccc" ]]'
+check "a private finding creates no issue" '! grep -q "issue create" <<<"$log"'
+check "a private finding posts a draft advisory to this repository" \
+  'grep -q "^api --method POST repos/{owner}/{repo}/security-advisories " <<<"$log"'
+check "the advisory carries the title, the body, a medium severity and the repository as its package" \
+  '[[ $(jq -c "[.summary, .description, .severity, .vulnerabilities[0].package.name]" "$dir/log.input") == "[\"Cooldown bypass\",\"body\\n\",\"medium\",\"CodeBite\"]" ]]'
+
+run --private --severity high --title "Cooldown bypass" --body-file "$dir/body.md"
+check "--severity sets the advisory's severity" '[[ $status == 0 && $(jq -r .severity "$dir/log.input") == high ]]'
+
+GH_STUB_FAIL=api run --private --title "Cooldown bypass" --body-file "$dir/body.md"
+check "a failed advisory exits non-zero and prints no URL" '[[ $status != 0 && -z $out ]]'
+
 for bad in \
+  "--private --title T --body-file $dir/body.md --label bug" \
+  "--private --title T --body-file $dir/body.md --parent 131" \
+  "--private --title T --body-file $dir/body.md --blocked-by 120" \
+  "--private --title T --body-file $dir/body.md --severity urgent" \
+  "--title T --body-file $dir/body.md --severity high" \
   "--body-file $dir/body.md" \
   "--title T" \
   "--title T --body-file $dir/missing.md" \
@@ -70,4 +96,4 @@ for bad in \
 done
 
 (( fail )) && exit 1
-echo "PASS: gh-ticket.sh creates, attaches and links one ticket"
+echo "PASS: gh-ticket.sh creates, attaches and links one ticket, or files one private advisory"

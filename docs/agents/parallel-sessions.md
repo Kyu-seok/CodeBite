@@ -29,7 +29,7 @@ An orchestrator that runs implementers in parallel (one worktree and ticket bran
 - In Bash, `sed` is BSD, where `\b` silently matches nothing, so it edits with `perl -pi -e`; the shell is zsh, where an unquoted glob that matches nothing is an error; `python3` is 3.9 (`scripts/python312.sh` prints a 3.12); and pipelines use `/usr/bin/grep` (Gradle and memory).
 
 ## Commits
-The pre-commit hook refuses commits on `master`, and the commit-msg hook a subject over 72 characters.
+The pre-commit hook refuses commits on `master`, and the commit-msg hook a subject over 72 characters. A project hook refuses `gh pr create` and `gh pr edit` with a title over 64 characters (65 on an edit that names a three-digit PR): the squash subject is the title plus ` (#<n>)`, and `scripts/ship-branch.sh` refuses one over 72 at merge.
 
 ## Merging
 - Merge with `scripts/ship-branch.sh <branch>…` from the main checkout: it stops on unticked `- [ ]` in the PR unless `--allow-unticked`, waits for CI, squash-merges, deletes the branch (remote, local, worktree, database). Its header says what it refuses and how it keeps itself current.
