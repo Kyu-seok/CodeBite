@@ -24,6 +24,7 @@ Each feature package holds `controller/`, `service/` and `dto/` (the `*Request` 
 ## Tests (`backend/src/test/java/com/codebite/`)
 
 - `github/gateway/FakeGitHubGateway`, swapped in by `config/TestGitHubConfig`; `config/TestKafkaConfig` runs Imports synchronously
+- `auth/service/InMemoryTokenBlacklistService`, swapped in by `config/TestTokenBlacklistConfig`: logout's token blacklist without Redis, its entries lasting their TTL
 - `problem/MigratedDatabase` for tests that read migrated rows (H2 keeps `E'…\n…'` escapes literally)
 - `testsupport/LoopbackHttpServer` for a test that stands in for an HTTP API with a JDK `HttpServer`: it binds 127.0.0.1, never the wildcard address (#247)
 

@@ -79,9 +79,16 @@ class JwtTokenProviderTest {
     }
 
     @Test
-    void getExpiration_returnsNonNullDate() {
+    void getExpiration_isTheConfiguredLifetimeAfterIssue() {
+        long before = System.currentTimeMillis();
         String token = tokenProvider.generateToken(createTestUser());
-        assertNotNull(tokenProvider.getExpiration(token));
+        long after = System.currentTimeMillis();
+
+        long expiry = tokenProvider.getExpiration(token).getTime();
+
+        // A JWT carries whole seconds, so the expiry can fall up to a second before issue + 60 s.
+        assertTrue(expiry > before - 1000 + 60000 && expiry <= after + 60000,
+                "expiry " + expiry + " is not 60 s after issue (" + before + ".." + after + ")");
     }
 
     @Test

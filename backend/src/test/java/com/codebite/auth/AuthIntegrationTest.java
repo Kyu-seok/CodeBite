@@ -92,6 +92,28 @@ class AuthIntegrationTest {
     }
 
     @Test
+    void logout_rejectsThatTokenAfterwards_andKeepsTheUsersOtherTokens() throws Exception {
+        User user = new User();
+        user.setUsername("logoutuser");
+        user.setEmail("logout@test.com");
+        user.setRole(Role.USER);
+        user = userRepository.save(user);
+        String token = jwtTokenProvider.generateToken(user);
+        String otherToken = jwtTokenProvider.generateToken(user);
+
+        mockMvc.perform(get("/api/auth/me").header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(post("/api/auth/logout").header("Authorization", "Bearer " + token))
+                .andExpect(status().isNoContent());
+
+        mockMvc.perform(get("/api/auth/me").header("Authorization", "Bearer " + token))
+                .andExpect(status().isUnauthorized());
+        mockMvc.perform(get("/api/auth/me").header("Authorization", "Bearer " + otherToken))
+                .andExpect(status().isOk());
+    }
+
+    @Test
     void me_withoutToken_returns401() throws Exception {
         mockMvc.perform(get("/api/auth/me"))
                 .andExpect(status().isUnauthorized());
