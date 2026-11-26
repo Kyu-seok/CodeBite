@@ -89,9 +89,7 @@ export function declaredType(
     const follow = code[next];
     if (lang.untypedLambdas && isLambdaParameter(code, at, next)) return UNKNOWN;
     if (!'=;,)({[:'.includes(follow) || code[next + 1] === (follow === ':' ? ':' : '=')) continue;
-    if (new RegExp(`\\b${lang.inferred}\\s*&{0,2}\\s*\\[[\\w\\s,]*$`).test(code.slice(Math.max(0, at - 128), at))) {
-      return UNKNOWN;
-    }
+    if (isStructuredBinding(lang, code, at)) return UNKNOWN;
     const type = declarationType(code, at, follow) ?? laterDeclaratorType(code, at);
     if (!type) continue;
     if (unpointered(type).name === lang.inferred) {
@@ -108,7 +106,13 @@ export function declaredType(
 /** `x -> ...` or `(a, b) -> ...`: a lambda's parameter, whose type nothing writes down. */
 function isLambdaParameter(code: string, at: number, next: number): boolean {
   if (code.startsWith('->', next)) return true;
-  return '(,'.includes(code[skipWsBack(code, at) - 1]) && /^(?:\s*,\s*[A-Za-z_]\w*)*\s*\)\s*->/.test(code.slice(next, next + 256));
+  const inParentheses = '(,'.includes(code[skipWsBack(code, at) - 1]);
+  return inParentheses && /^(?:\s*,\s*[A-Za-z_]\w*)*\s*\)\s*->/.test(code.slice(next, next + 256));
+}
+
+/** `x` in `auto [x, y] = p;`, whose type the pair's would decide. */
+function isStructuredBinding(lang: CFamily, code: string, at: number): boolean {
+  return new RegExp(`\\b${lang.inferred}\\s*&{0,2}\\s*\\[[\\w\\s,]*$`).test(code.slice(Math.max(0, at - 128), at));
 }
 
 /** The type of a declaration whose declarator at `at` follows its type: `int x`, `final List<T> x`. */
@@ -121,7 +125,10 @@ function declarationType(code: string, at: number, follow: string): TypeRef | nu
   return parsed.type;
 }
 
-/** Whether a declaration may start at `start`: after a statement, a bracket, a comma or a modifier, never after an operator. */
+/**
+ * Whether a declaration may start at `start`: after a statement, a bracket, a comma or a modifier,
+ * never after an operator (`x * nums` in `s = x * nums[i]`) or a word such as `return`.
+ */
 function startsDeclaration(code: string, start: number): boolean {
   const i = skipWsBack(code, start);
   if (i === 0 || ';{}(,:'.includes(code[i - 1])) return true;
@@ -137,7 +144,10 @@ function startsDeclaration(code: string, start: number): boolean {
 function laterDeclaratorType(code: string, at: number): TypeRef | null {
   let i = skipWsBack(code, at);
   let stars = 0;
-  for (; code[i - 1] === '*' || code[i - 1] === '&'; i = skipWsBack(code, i - 1)) stars += code[i - 1] === '*' ? 1 : 0;
+  while (code[i - 1] === '*' || code[i - 1] === '&') {
+    if (code[i - 1] === '*') stars++;
+    i = skipWsBack(code, i - 1);
+  }
   if (code[i - 1] !== ',') return null;
   let depth = 0;
   for (i -= 2; i >= 0; i--) {
@@ -238,12 +248,10 @@ export function parseType(code: string, i: number): { type: TypeRef; end: number
   let type = typeRef(name, ...args);
   for (;;) {
     const k = skipWs(code, i);
-    if (code[k] === '&') i = k + 1;
-    else if (code[k] === '*') {
-      type = typeRef('*', type);
+    if (code[k] === '&' || code[k] === '*') {
+      if (code[k] === '*') type = typeRef('*', type);
       i = k + 1;
-    }
-    else if (code[k] === '[' && code[skipWs(code, k + 1)] === ']') {
+    } else if (code[k] === '[' && code[skipWs(code, k + 1)] === ']') {
       type = typeRef('[]', type);
       i = skipWs(code, k + 1) + 1;
     } else return { type, end: i };
