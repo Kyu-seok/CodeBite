@@ -2,7 +2,7 @@ import { cFamilySource, declaredType, type CFamily } from './cFamily';
 import { CPP_TYPES } from './cppMembers';
 import { JAVA_STATICS, JAVA_TYPES } from './javaMembers';
 import { UNKNOWN, pointee, typeRef, type Member, type TypeInfo, type TypeRef, type TypeTable } from './model';
-import { boundType, pythonSource, subscriptType } from './python';
+import { boundType, pythonSource, redefinesClass, subscriptType } from './python';
 import { PYTHON_MODULES, PYTHON_TYPES } from './pythonMembers';
 import { indexType, lookup, stripCommentsAndStrings, trailingAccess } from './source';
 
@@ -19,6 +19,8 @@ interface Language {
   readonly python: boolean;
   /** C++ reaches a pointer's members with `->`. */
   readonly arrow: boolean;
+  /** Whether the document defines its own `name`, whose members may not be the built-in ones. */
+  readonly redefines: (document: string, name: string, builtin: readonly Member[]) => boolean;
 }
 
 const cFamily = (lang: CFamily, globals: Language['globals'], arrow: boolean): Language => ({
@@ -29,6 +31,7 @@ const cFamily = (lang: CFamily, globals: Language['globals'], arrow: boolean): L
   stringLiteral: lang.stringLiteral,
   python: false,
   arrow,
+  redefines: (document, name) => new RegExp(`\\b(?:class|struct)\\s+${name}\\b`).test(document),
 });
 
 const LANGUAGES: Readonly<Record<string, Language>> = {
@@ -50,6 +53,8 @@ const LANGUAGES: Readonly<Record<string, Language>> = {
     stringLiteral: typeRef('str'),
     python: true,
     arrow: false,
+    redefines: (document, name, builtin) =>
+      redefinesClass(document, name, builtin.filter((m) => m.kind === 'field').map((m) => m.name)),
   },
 };
 
@@ -58,11 +63,16 @@ export const MEMBER_COMPLETION_LANGUAGES = Object.keys(LANGUAGES);
 
 /**
  * What to suggest when the code before the cursor ends in a member access (`a.`, `grid[i].si`,
- * `node->`): the members of the receiver's type, from its latest declaration before the cursor.
- * Null when the text doesn't end in one, the cursor is in a comment or string, or the type isn't
- * one CodeBite knows or has no members (a C array).
+ * `node->`): the members of the receiver's type, from its latest declaration in scope at the
+ * cursor. Null when the text doesn't end in one, the cursor is in a comment or string, or the
+ * type isn't one CodeBite knows, has no members (a C array), or is a class the document defines
+ * itself (anywhere, so the text after the cursor counts too).
  */
-export function memberCompletions(language: string, textBeforeCursor: string): readonly Member[] | null {
+export function memberCompletions(
+  language: string,
+  textBeforeCursor: string,
+  textAfterCursor = '',
+): readonly Member[] | null {
   const lang = lookup(LANGUAGES, language);
   if (!lang || !/(?:\.|->)\s*\w*$/.test(textBeforeCursor.slice(-128))) return null;
   const code = stripCommentsAndStrings(textBeforeCursor, lang.python);
@@ -81,7 +91,11 @@ export function memberCompletions(language: string, textBeforeCursor: string): r
   for (const subscript of access.subscripts) type = lang.subscript(type, subscript);
   if (access.arrow) type = pointee(type);
   const members = lookup<TypeInfo>(lang.table, type.name)?.members;
-  return members?.length ? members : null;
+  if (!members?.length) return null;
+  const document = textAfterCursor
+    ? (stripCommentsAndStrings(textBeforeCursor + textAfterCursor, lang.python) ?? code)
+    : code;
+  return /^\w+$/.test(type.name) && lang.redefines(document, type.name, members) ? null : members;
 }
 
 /**

@@ -118,6 +118,15 @@ describe('Java', () => {
     expect(suggested('java', 'Map<Integer, String[]> m = new HashMap<>();\nString.')).toContain('valueOf');
   });
 
+  it('suggests nothing for a ListNode the code defines itself, before or after the cursor', () => {
+    const own = 'class ListNode { int key, value; ListNode prev, next; }\nclass Solution {\n  ListNode head;\n  void g() { head.';
+    expect(suggested('java', own)).toBeNull();
+    const after = ' }\n}\nclass ListNode { int key; ListNode next; }';
+    expect(memberCompletions('java', 'class Solution {\n  void g(ListNode head) { head.', after)).toBeNull();
+    const starter = '/**\n * class ListNode {\n *     int val;\n *     ListNode next;\n * }\n */\nclass Solution {\n  void g(ListNode head) { head.';
+    expect(suggested('java', starter)).toEqual(['val', 'next']);
+  });
+
   it('suggests String members after a string literal', () => {
     expect(suggested('java', '"abc".')).toContain('length');
   });
@@ -197,6 +206,17 @@ describe('Python', () => {
     expect(suggested('python', 'x = math.')).toEqual(expect.arrayContaining(['inf', 'gcd', 'isqrt']));
     expect(suggested('python', 'bisect.')).toContain('bisect_left');
     expect(suggested('python', 'itertools.')).toContain('permutations');
+  });
+
+  it('suggests a ListNode\'s fields only when the code\'s own class has the standard ones', () => {
+    const own =
+      'class ListNode:\n    def __init__(self, key, val):\n        self.key = key\n        self.val = val\n        self.prev = self.next = None\n\n';
+    const standard =
+      'class ListNode:\n    def __init__(self, val=0, next=None):\n        self.val = val\n        self.next = next\n\n';
+    const method = 'class Solution:\n    def f(self, head: Optional[ListNode]):\n        head.';
+    expect(suggested('python', own + method)).toBeNull();
+    expect(memberCompletions('python', method, `\n${own}`)).toBeNull();
+    expect(suggested('python', standard + method)).toEqual(['val', 'next']);
   });
 
   it('suggests str methods after a string literal', () => {
@@ -383,6 +403,11 @@ describe('C++', () => {
     expect(suggested('cpp', 'ListNode* a = head, b;\nb.')).toEqual(['val', 'next']);
     expect(suggested('cpp', 'vector<int> v; v->')).toBeNull();
     expect(suggested('cpp', 'TreeNode t; t->')).toBeNull();
+  });
+
+  it('suggests nothing for a ListNode the code defines itself', () => {
+    expect(suggested('cpp', 'struct ListNode { int key; ListNode *prev, *next; };\nListNode* head;\nhead->')).toBeNull();
+    expect(suggested('cpp', '/**\n * struct ListNode {\n *     int val;\n * };\n */\nListNode* head;\nhead->')).toEqual(['val', 'next']);
   });
 
   it('suggests nothing for an unknown receiver', () => {

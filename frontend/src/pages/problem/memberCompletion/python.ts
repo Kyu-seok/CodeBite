@@ -85,7 +85,27 @@ export interface Source {
 
 export function pythonSource(code: string): Source {
   const br = brackets(code);
-  return { code, opener: br.opener, scopes: new Scopes(code.length, [...blocks(code, br), ...lambdas(code, br), ...comprehensions(code, br)]) };
+  const ranges = [...blocks(code, br).map((block) => block.range), ...lambdas(code, br), ...comprehensions(code, br)];
+  return { code, opener: br.opener, scopes: new Scopes(code.length, ranges) };
+}
+
+/**
+ * Whether the code defines its own class `name` whose `self.` fields differ from `fields`, the
+ * built-in one's: a user's ListNode with `prev` and `key`. The starters' standard ListNode and
+ * TreeNode have the built-in fields.
+ */
+export function redefinesClass(code: string, name: string, fields: readonly string[]): boolean {
+  if (!new RegExp(`\\bclass\\s+${name}\\b`).test(code)) return false;
+  const block = blocks(code, brackets(code)).find((b) => b.keyword === 'class' && b.name === name);
+  if (!block || fields.length === 0) return true;
+  const own = new Set([...code.slice(block.range[0], block.range[1] + 1).matchAll(/\bself\.(\w+)\s*=(?!=)/g)].map((m) => m[1]));
+  return own.size !== fields.length || fields.some((field) => !own.has(field));
+}
+
+interface Block {
+  readonly keyword: string;
+  readonly name: string;
+  readonly range: Range;
 }
 
 /**
@@ -93,22 +113,25 @@ export function pythonSource(code: string): Source {
  * the last line indented deeper than its header. A line that continues a bracket or a `\` is
  * part of the line before it.
  */
-function blocks(code: string, br: Brackets): Range[] {
-  const ranges: Range[] = [];
-  const open: { indent: number; start: number }[] = [];
+function blocks(code: string, br: Brackets): Block[] {
+  const closed: Block[] = [];
+  const open: { indent: number; keyword: string; name: string; start: number }[] = [];
   for (let line = 0; line < code.length; ) {
     const newline = code.indexOf('\n', line);
     const lineEnd = newline < 0 ? code.length : newline;
     const first = skipInline(code, line);
     if (first < lineEnd && br.opener[line] < 0 && code[line - 2] !== '\\') {
       const indent = first - line;
-      while (open.length && indent <= open[open.length - 1].indent) ranges.push([open.pop()!.start, line - 1]);
-      const header = /^(?:async\s+)?(?:def|class)\s+\w+/.exec(code.slice(first, first + 128));
-      if (header) open.push({ indent, start: first + header[0].length });
+      while (open.length && indent <= open[open.length - 1].indent) {
+        const { keyword, name, start } = open.pop()!;
+        closed.push({ keyword, name, range: [start, line - 1] });
+      }
+      const header = /^(?:async\s+)?(def|class)\s+(\w+)/.exec(code.slice(first, first + 128));
+      if (header) open.push({ indent, keyword: header[1], name: header[2], start: first + header[0].length });
     }
     line = lineEnd + 1;
   }
-  return [...ranges, ...open.map(({ start }): Range => [start, code.length])];
+  return [...closed, ...open.map(({ keyword, name, start }): Block => ({ keyword, name, range: [start, code.length] }))];
 }
 
 /** Each lambda, from its keyword to the `,`, `;`, closing bracket or line end after its body. */

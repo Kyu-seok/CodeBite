@@ -25,6 +25,7 @@ export function registerMemberCompletion(monaco: Monaco): void {
     monaco.languages.registerCompletionItemProvider(language, {
       triggerCharacters: language === 'cpp' ? ['.', '>'] : ['.'],
       provideCompletionItems(model, position) {
+        const lastLine = model.getLineCount();
         const members = memberCompletions(
           language,
           model.getValueInRange({
@@ -32,6 +33,12 @@ export function registerMemberCompletion(monaco: Monaco): void {
             startColumn: 1,
             endLineNumber: position.lineNumber,
             endColumn: position.column,
+          }),
+          model.getValueInRange({
+            startLineNumber: position.lineNumber,
+            startColumn: position.column,
+            endLineNumber: lastLine,
+            endColumn: model.getLineMaxColumn(lastLine),
           }),
         );
         if (!members) return { suggestions: [] };
