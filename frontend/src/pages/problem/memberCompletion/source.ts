@@ -135,6 +135,7 @@ export function trailingAccess(code: string, arrow: boolean): Access | null {
   const name = code.slice(start, i);
   if (!/^[A-Za-z_]/.test(name)) return null;
   const before = skipWsBack(code, start);
-  if (code[before - 1] === '.' || /->|::/.test(code.slice(before - 2, before))) return null;
+  const reached = code.slice(before - 2, before);
+  if (code[before - 1] === '.' || reached === '::' || (arrow && reached === '->')) return null;
   return { receiver: { name, start }, subscripts, arrow: isArrow };
 }

@@ -89,6 +89,7 @@ describe('Java', () => {
     expect(suggested('java', 'void f(String s) {}\nvoid g(List<Integer> s) {\n  s.')).toContain('add');
     expect(suggested('java', 'List<Integer> a = new ArrayList<>();\nlist.sort((a, b) -> a - b);\na.')).toContain('add');
     expect(suggested('java', 'List<Integer> a = new ArrayList<>();\nlist.forEach(a -> f(a));\na.')).toContain('add');
+    expect(suggested('java', 'List<Integer> seen = new ArrayList<>();\nq.removeIf(x -> seen.')).toContain('contains');
     expect(suggested('java', 'List<Integer> i = new ArrayList<>();\nfor (int i = 0; i < n; i++) t += i;\ni.')).toContain('add');
     expect(suggested('java', 'String e = "";\ntry { f(); } catch (Exception e) { }\ne.')).toContain('charAt');
     expect(suggested('java', 'String s = "";\n{ int s = 0; }\ns.')).toContain('charAt');
