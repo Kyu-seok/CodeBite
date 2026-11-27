@@ -27,6 +27,7 @@ import { useEditorSettings } from '@/context/EditorSettingsContext';
 import { SettingsDialog } from './SettingsDialog';
 import { ProblemReportDialog } from './ProblemReportDialog';
 import { MONACO_LANGUAGE, languageLabel } from './submissionDisplay';
+import { registerMemberCompletion } from './memberCompletion/registerMemberCompletion';
 import {
   Bug,
   RotateCcw,
@@ -333,6 +334,7 @@ export function EditorPanel({
           language={MONACO_LANGUAGE[activeLanguage] || activeLanguage}
           value={code}
           onChange={onCodeChange}
+          beforeMount={registerMemberCompletion}
           onMount={handleMount}
           theme={theme === 'dark' ? 'vs-dark' : 'light'}
           loading={<Spinner />}
