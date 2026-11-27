@@ -1,5 +1,6 @@
 import { UNKNOWN, typeRef, type TypeRef } from './model';
 import { PYTHON_TYPES } from './pythonMembers';
+import { brackets } from './scopes';
 import {
   elementType,
   indexType,
@@ -75,18 +76,29 @@ const KEYWORDS = new Set([
   'class',
 ]);
 
+/** The code before the cursor, with the innermost bracket open at each position (-1 at the top level). */
+export interface Source {
+  readonly code: string;
+  readonly opener: Int32Array;
+}
+
+export function pythonSource(code: string): Source {
+  return { code, opener: brackets(code).opener };
+}
+
 /**
  * The type of `name` at its latest binding before `before`, or undefined when nothing binds it
  * there. Every way Python binds a name counts, and one whose type isn't written down or built
  * from a literal or constructor gives UNKNOWN, so an older binding never shows through.
  */
-export function boundType(code: string, name: string, before: number, depth = 0): TypeRef | undefined {
+export function boundType(src: Source, name: string, before: number, depth = 0): TypeRef | undefined {
+  const { code } = src;
   for (const at of occurrencesBefore(code, name, before)) {
-    const binding = bindingAt(code, name, at, before);
+    const binding = bindingAt(src, name, at, before);
     if (!binding) continue;
     if (binding.kind === 'annotation') return parseAnnotation(code, binding.at)?.type ?? UNKNOWN;
     if (binding.kind === 'unknown' || depth >= MAX_DEPTH) return UNKNOWN;
-    const type = expressionType(code, binding.start, binding.end, at, depth);
+    const type = expressionType(src, binding.start, binding.end, at, depth);
     return binding.kind === 'value' ? type : elementType(PYTHON_TYPES, type);
   }
   return undefined;
@@ -97,11 +109,12 @@ export function boundType(code: string, name: string, before: number, depth = 0)
  * `as name`, `def name`, `class name`, `name :=`, `global name`, a lambda's parameter, or an
  * assignment or for target. A comprehension's or lambda's binding counts only inside it.
  */
-function bindingAt(code: string, name: string, at: number, before: number): Binding | null {
+function bindingAt(src: Source, name: string, at: number, before: number): Binding | null {
+  const { code } = src;
   if (code[at - 1] === '.') return null;
   const next = skipInline(code, at + name.length);
   const previous = skipWsBack(code, at);
-  const opener = enclosingOpener(code, at);
+  const opener = src.opener[at];
   if (['as', 'def', 'class'].includes(wordBefore(code, previous))) return UNTYPED;
   if (code.startsWith(':=', next)) return UNTYPED;
   if (/^[ \t]*(?:global|nonlocal)[ \t][\w \t,]*$/.test(code.slice(code.lastIndexOf('\n', at - 1) + 1, at))) return UNTYPED;
@@ -115,7 +128,7 @@ function bindingAt(code: string, name: string, at: number, before: number): Bind
   if (code[next] === ':' && code[next + 1] !== '=' && opener < 0 && startsStatement(code, at)) {
     return { kind: 'annotation', at: next + 1 };
   }
-  return targetBinding(code, name, at, before);
+  return targetBinding(src, name, at, before);
 }
 
 /**
@@ -123,7 +136,8 @@ function bindingAt(code: string, name: string, at: number, before: number): Bind
  * a comprehension's too): the value or iterable when it is the whole target, UNKNOWN when it is one
  * of several, and null when it is no target at all (`s[i] = 1`, `f(s=1)`, `s == 1`).
  */
-function targetBinding(code: string, name: string, at: number, before: number): Binding | null {
+function targetBinding(src: Source, name: string, at: number, before: number): Binding | null {
+  const { code } = src;
   let start = at;
   let forAt = -1;
   for (;;) {
@@ -153,12 +167,12 @@ function targetBinding(code: string, name: string, at: number, before: number): 
   const assigned = code[end] === '=' && code[end + 1] !== '=';
   const iterated = forAt >= 0 && isWord(code, end, 'in');
   if (iterated) {
-    if (enclosingOpener(code, forAt) >= 0 && !inScope(code, forAt, before, false)) return null;
-  } else if (!assigned || forAt >= 0 || !startsStatement(code, start) || enclosingOpener(code, start) >= 0) {
+    if (src.opener[forAt] >= 0 && !inScope(code, forAt, before, false)) return null;
+  } else if (!assigned || forAt >= 0 || !startsStatement(code, start) || src.opener[start] >= 0) {
     return null;
   }
 
-  const target = ownTarget(code, iterated ? forAt + 3 : start, end, at, name);
+  const target = ownTarget(src, iterated ? forAt + 3 : start, end, at, name);
   if (target === null) return null;
   if (!target) return UNTYPED;
   return iterated
@@ -171,7 +185,8 @@ function targetBinding(code: string, name: string, at: number, before: number): 
  * for `a, s = ...`, null when it is no target (`s[i] = ...`, `f(a, s=1)`). Chained targets are
  * split at each `=` outside brackets.
  */
-function ownTarget(code: string, start: number, end: number, at: number, name: string): boolean | null {
+function ownTarget(src: Source, start: number, end: number, at: number, name: string): boolean | null {
+  const { code } = src;
   let from = start;
   let depth = 0;
   for (let i = start; i < at; i++) {
@@ -186,19 +201,9 @@ function ownTarget(code: string, start: number, end: number, at: number, name: s
     else if (')]}'.includes(c) && --balance < 0) return null;
   }
   if (balance !== 0 || '[.('.includes(code[skipInline(code, at + name.length)])) return null;
-  const opener = enclosingOpener(code.slice(from, at), at - from);
-  if (opener >= 0 && code[from + opener] === '[' && /[\w)\]]/.test(code[skipWsBack(code, from + opener) - 1] ?? '')) return null;
+  const opener = src.opener[at];
+  if (opener >= from && code[opener] === '[' && /[\w)\]]/.test(code[skipWsBack(code, opener) - 1] ?? '')) return null;
   return target.trim() === name;
-}
-
-/** The index of the unclosed bracket around `at`, or -1 at the top level. */
-function enclosingOpener(code: string, at: number): number {
-  let depth = 0;
-  for (let i = at - 1; i >= 0; i--) {
-    if (')]}'.includes(code[i])) depth++;
-    else if ('([{'.includes(code[i]) && depth-- === 0) return i;
-  }
-  return -1;
 }
 
 /**
@@ -256,14 +261,16 @@ function statementEnd(code: string, i: number, colon: boolean): number {
 }
 
 /** The type of the expression in [i, end), from its leading value: `[0] * n` is a list of int. */
-function expressionType(code: string, i: number, end: number, scope: number, depth: number): TypeRef {
-  const leading = atom(code, skipWs(code, i), end, scope, depth);
+function expressionType(src: Source, i: number, end: number, scope: number, depth: number): TypeRef {
+  const { code } = src;
+  const leading = atom(src, skipWs(code, i), end, scope, depth);
   if (!leading) return UNKNOWN;
   const k = skipWs(code, leading.end);
   return k >= end || code[k] === '*' || code[k] === '+' ? leading.type : UNKNOWN;
 }
 
-function atom(code: string, i: number, end: number, scope: number, depth: number): { type: TypeRef; end: number } | null {
+function atom(src: Source, i: number, end: number, scope: number, depth: number): { type: TypeRef; end: number } | null {
+  const { code } = src;
   const c = code[i];
   if (c === '[' || c === '{' || c === '(') {
     const close = matchForward(code, i);
@@ -272,13 +279,13 @@ function atom(code: string, i: number, end: number, scope: number, depth: number
     const first = topLevel(code, i + 1, inner);
     const empty = first.end <= skipWs(code, i + 1);
     if (c === '[') {
-      const item = empty ? UNKNOWN : expressionType(code, i + 1, first.end, scope, depth);
+      const item = empty ? UNKNOWN : expressionType(src, i + 1, first.end, scope, depth);
       return { type: item === UNKNOWN ? typeRef('list') : typeRef('list', item), end: after };
     }
     if (c === '{') return { type: typeRef(empty || first.colon ? 'dict' : 'set'), end: after };
     if (empty || code[skipWs(code, first.end)] === ',') return { type: typeRef('tuple'), end: after };
     if (first.end < skipWsBack(code, inner)) return { type: UNKNOWN, end: after };
-    return { type: expressionType(code, i + 1, inner, scope, depth), end: after };
+    return { type: expressionType(src, i + 1, inner, scope, depth), end: after };
   }
 
   const literal = /^[rRbBfFuU]{0,2}(["'])/.exec(code.slice(i, i + 3));
@@ -302,7 +309,7 @@ function atom(code: string, i: number, end: number, scope: number, depth: number
   }
   if (path.length > 1) return { type: UNKNOWN, end: k };
 
-  let type = boundType(code, path[0], scope, depth + 1) ?? UNKNOWN;
+  let type = boundType(src, path[0], scope, depth + 1) ?? UNKNOWN;
   let j = k;
   while (code[j] === '[') {
     const close = matchForward(code, j);

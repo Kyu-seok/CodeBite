@@ -2,7 +2,7 @@ import { cFamilySource, declaredType, type CFamily } from './cFamily';
 import { CPP_TYPES } from './cppMembers';
 import { JAVA_STATICS, JAVA_TYPES } from './javaMembers';
 import { UNKNOWN, pointee, typeRef, type Member, type TypeInfo, type TypeRef, type TypeTable } from './model';
-import { boundType, subscriptType } from './python';
+import { boundType, pythonSource, subscriptType } from './python';
 import { PYTHON_MODULES, PYTHON_TYPES } from './pythonMembers';
 import { indexType, lookup, stripCommentsAndStrings, trailingAccess } from './source';
 
@@ -45,7 +45,7 @@ const LANGUAGES: Readonly<Record<string, Language>> = {
   python: {
     table: PYTHON_TYPES,
     globals: PYTHON_MODULES,
-    typeOf: boundType,
+    typeOf: (code, name, before) => boundType(pythonSource(code), name, before),
     subscript: subscriptType,
     stringLiteral: typeRef('str'),
     python: true,

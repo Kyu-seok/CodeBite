@@ -341,6 +341,19 @@ describe('C++', () => {
   });
 });
 
+it('answers within a keystroke on a 2000-line file', () => {
+  const files = [
+    ['python', 'class Solution:\n    def f(self, nums: List[int]) -> int:\n', '        total += nums[0] * nums[1]\n'],
+    ['java', 'class Solution {\n  int f(int[] nums) {\n', '        total += nums[0] * nums[1];\n'],
+    ['cpp', 'class Solution {\npublic:\n  int f(vector<int>& nums) {\n', '        total += nums[0] * nums[1];\n'],
+  ];
+  for (const [language, head, line] of files) {
+    const start = performance.now();
+    expect(suggested(language, `${head}${line.repeat(2000)}        nums.`)).not.toBeNull();
+    expect(performance.now() - start).toBeLessThan(200);
+  }
+});
+
 it('suggests nothing for a language without member tables', () => {
   expect(suggested('javascript', 'const a = []; a.')).toBeNull();
 });
