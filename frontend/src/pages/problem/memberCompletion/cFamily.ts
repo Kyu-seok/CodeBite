@@ -1,4 +1,5 @@
 import { UNKNOWN, typeRef, unpointered, type TypeInfo, type TypeRef, type TypeTable } from './model';
+import { brackets, Scopes, type Brackets, type Range } from './scopes';
 import {
   elementType,
   indexType,
@@ -71,20 +72,84 @@ const NOT_TYPES = new Set([
   'package',
 ]);
 
+/** The code before the cursor, with the scope of every position. */
+export interface Source {
+  readonly code: string;
+  readonly scopes: Scopes;
+}
+
 /**
- * The type `name` was declared with in its latest declaration before `before`, or undefined when
- * nothing before it declares that name. A declaration is a type, then the name, then one of
+ * The code's scopes: every `{...}` block, and every parenthesis together with the body it governs
+ * (a method's, catch's or lambda's block, a lambda's expression, a for loop's statement), so a
+ * parameter or loop variable is seen only there. A Java `x -> ...` lambda scopes `x` the same way.
+ */
+export function cFamilySource(lang: CFamily, code: string): Source {
+  const br = brackets(code);
+  const ranges: Range[] = [];
+  for (let i = 0; i < code.length; i++) {
+    const c = code[i];
+    if (c === '{') ranges.push([i, br.close[i]]);
+    else if (c === '(') ranges.push([i, governedEnd(lang, code, br, i)]);
+    else if (lang.untypedLambdas && code.startsWith('->', i) && isWordChar(code[skipWsBack(code, i) - 1])) {
+      let start = skipWsBack(code, i);
+      while (isWordChar(code[start - 1])) start--;
+      ranges.push([start, bodyEnd(code, br, skipWs(code, i + 2))]);
+    }
+  }
+  return { code, scopes: new Scopes(code.length, ranges) };
+}
+
+const JAVA_BODY = /^\s*(?:throws\s+[\w.]+(?:\s*,\s*[\w.]+)*\s*)?(\{|->)/;
+/** After a C++ parameter list: qualifiers, a trailing return type or a constructor's initializers, then the body. */
+const CPP_BODY = /^\s*(?:(?:const|mutable|noexcept|override|final)\b\s*)*(?:->[^;{}]*|:[^;{}]*)?(\{)/;
+const CONTROL = new Set(['for', 'while', 'if']);
+
+/** Where the scope of the parenthesis at `open` ends: its body's end, or its own `)` when it has none. */
+function governedEnd(lang: CFamily, code: string, br: Brackets, open: number): number {
+  const close = br.close[open];
+  if (close >= code.length) return close;
+  const head = (lang.untypedLambdas ? JAVA_BODY : CPP_BODY).exec(code.slice(close + 1, close + 257));
+  if (head) {
+    const at = close + 1 + head[0].length - head[1].length;
+    return head[1] === '{' ? br.close[at] : bodyEnd(code, br, skipWs(code, at + 2));
+  }
+  let word = skipWsBack(code, open);
+  const end = word;
+  while (isWordChar(code[word - 1])) word--;
+  return CONTROL.has(code.slice(word, end)) ? statementEnd(code, br, close + 1, false) : close;
+}
+
+/** Where a lambda's body starting at `i` ends: its block, or its expression. */
+function bodyEnd(code: string, br: Brackets, i: number): number {
+  return code[i] === '{' ? br.close[i] : statementEnd(code, br, i, true);
+}
+
+/** Where the statement or expression from `i` ends: a `;` (or `,`) outside brackets, or the enclosing bracket's close. */
+function statementEnd(code: string, br: Brackets, i: number, comma: boolean): number {
+  for (; i < code.length; i++) {
+    const c = code[i];
+    if (c === '(' || c === '[' || c === '{') i = br.close[i];
+    else if (c === ')' || c === ']' || c === '}' || c === ';' || (comma && c === ',')) return i;
+  }
+  return code.length;
+}
+
+/**
+ * The type `name` was declared with in its latest declaration before `before` that is in scope
+ * there, or undefined when none is. A declaration is a type, then the name, then one of
  * `= ; , ) ( { [ :` (initializer, end, parameter, constructor arguments, array size, range-for).
  * Its shape decides, not whether the type is known: `Node cur` hides an older `List<Integer> cur`.
  */
 export function declaredType(
   lang: CFamily,
-  code: string,
+  src: Source,
   name: string,
   before: number,
   depth = 0,
 ): TypeRef | undefined {
+  const { code } = src;
   for (const at of occurrencesBefore(code, name, before)) {
+    if (!src.scopes.visible(at, before)) continue;
     const next = skipWs(code, at + name.length);
     const follow = code[next];
     if (lang.untypedLambdas && isLambdaParameter(code, at, next)) return UNKNOWN;
@@ -94,8 +159,8 @@ export function declaredType(
     if (!type) continue;
     if (unpointered(type).name === lang.inferred) {
       if (depth >= MAX_DEPTH) return UNKNOWN;
-      if (follow === '=') return expressionType(lang, code, next + 1, at, depth);
-      if (follow === ':') return elementType(lang.table, expressionType(lang, code, next + 1, at, depth));
+      if (follow === '=') return expressionType(lang, src, next + 1, at, depth);
+      if (follow === ':') return elementType(lang.table, expressionType(lang, src, next + 1, at, depth));
       return UNKNOWN;
     }
     return type;
@@ -264,7 +329,8 @@ export function parseType(code: string, i: number): { type: TypeRef; end: number
  * other expression is UNKNOWN. `scope` is the declaration's own position, so `var x = x` looks
  * further back.
  */
-function expressionType(lang: CFamily, code: string, i: number, scope: number, depth: number): TypeRef {
+function expressionType(lang: CFamily, src: Source, i: number, scope: number, depth: number): TypeRef {
+  const { code } = src;
   i = skipWs(code, i);
   if (code[i] === '"') return lang.stringLiteral;
 
@@ -289,7 +355,7 @@ function expressionType(lang: CFamily, code: string, i: number, scope: number, d
 
   const variable = readWord(code, i);
   if (!variable) return UNKNOWN;
-  let type = declaredType(lang, code, variable, scope, depth + 1) ?? UNKNOWN;
+  let type = declaredType(lang, src, variable, scope, depth + 1) ?? UNKNOWN;
   let k = skipWs(code, i + variable.length);
   while (code[k] === '[') {
     const close = matchForward(code, k);

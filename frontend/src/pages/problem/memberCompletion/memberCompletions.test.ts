@@ -66,6 +66,18 @@ describe('Java', () => {
     expect(suggested('java', 'List<Integer> a;\nlist.forEach(a -> a.')).toBeNull();
   });
 
+  it('sees a declaration only inside the block, parameter list or loop that declares it', () => {
+    const field = 'class Solution {\n  StringBuilder path;\n  void a() { List<Integer> path = new ArrayList<>(); }\n  void b() { path.';
+    expect(suggested('java', field)).toContain('append');
+    expect(suggested('java', field)).not.toContain('add');
+    expect(suggested('java', 'void f(String s) {}\nvoid g(List<Integer> s) {\n  s.')).toContain('add');
+    expect(suggested('java', 'List<Integer> a = new ArrayList<>();\nlist.sort((a, b) -> a - b);\na.')).toContain('add');
+    expect(suggested('java', 'List<Integer> a = new ArrayList<>();\nlist.forEach(a -> f(a));\na.')).toContain('add');
+    expect(suggested('java', 'List<Integer> i = new ArrayList<>();\nfor (int i = 0; i < n; i++) t += i;\ni.')).toContain('add');
+    expect(suggested('java', 'String e = "";\ntry { f(); } catch (Exception e) { }\ne.')).toContain('charAt');
+    expect(suggested('java', 'String s = "";\n{ int s = 0; }\ns.')).toContain('charAt');
+  });
+
   it('does not take a statement or an expression for a declaration', () => {
     expect(suggested('java', 'String s = "";\nif (s == null) return s;\ns.')).toContain('charAt');
     expect(suggested('java', 'List<Integer> b = new ArrayList<>();\na = b;\nb.')).toContain('add');
@@ -279,6 +291,19 @@ describe('C++', () => {
     expect(suggested('cpp', 'vector<int> a;\nset<int> a;\na.')).toContain('lower_bound');
     expect(suggested('cpp', 'vector<int>& nums) {\n int s = x * nums[0];\n nums.')).toContain('push_back');
     expect(suggested('cpp', 'int n = 1\'000;\nstring s; s.')).toContain('substr');
+  });
+
+  it('sees a declaration only inside the block, parameter list or loop that declares it', () => {
+    const lambda =
+      'class Solution {\npublic:\n  int f(string left, string right) {\n    sort(v.begin(), v.end(), [](const vector<int>& left, const vector<int>& right) { return 0; });\n    left.';
+    expect(suggested('cpp', lambda)).toContain('substr');
+    expect(suggested('cpp', lambda)).not.toContain('emplace_back');
+    const block = 'vector<int> cur;\nfor (int i = 0; i < 3; i++) { string cur = "a"; }\ncur.';
+    expect(suggested('cpp', block)).toContain('emplace_back');
+    expect(suggested('cpp', block)).not.toContain('substr');
+    expect(suggested('cpp', 'string row;\nfor (auto& row : grid) t += row[0];\nrow.')).toContain('substr');
+    expect(suggested('cpp', 'struct DSU {\n  DSU(vector<int> p) : parent(p.size()), rank(p.size(), 0) {\n    p.')).toContain('push_back');
+    expect(suggested('cpp', 'auto cmp = [](string a) -> bool {\n  a.')).toContain('substr');
   });
 
   it('ends the search at a declaration of a type it has no table for', () => {

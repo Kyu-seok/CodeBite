@@ -1,4 +1,4 @@
-import { declaredType, type CFamily } from './cFamily';
+import { cFamilySource, declaredType, type CFamily } from './cFamily';
 import { CPP_TYPES } from './cppMembers';
 import { JAVA_STATICS, JAVA_TYPES } from './javaMembers';
 import { UNKNOWN, pointee, typeRef, type Member, type TypeInfo, type TypeRef, type TypeTable } from './model';
@@ -24,7 +24,7 @@ interface Language {
 const cFamily = (lang: CFamily, globals: Language['globals'], arrow: boolean): Language => ({
   table: lang.table,
   globals,
-  typeOf: (code, name, before) => declaredType(lang, code, name, before),
+  typeOf: (code, name, before) => declaredType(lang, cFamilySource(lang, code), name, before),
   subscript: (type) => indexType(lang.table, type),
   stringLiteral: lang.stringLiteral,
   python: false,
