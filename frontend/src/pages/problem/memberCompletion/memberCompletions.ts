@@ -60,7 +60,7 @@ export const MEMBER_COMPLETION_LANGUAGES = Object.keys(LANGUAGES);
  * What to suggest when the code before the cursor ends in a member access (`a.`, `grid[i].si`,
  * `node->`): the members of the receiver's type, from its latest declaration before the cursor.
  * Null when the text doesn't end in one, the cursor is in a comment or string, or the type isn't
- * one CodeBite knows.
+ * one CodeBite knows or has no members (a C array).
  */
 export function memberCompletions(language: string, textBeforeCursor: string): readonly Member[] | null {
   const lang = lookup(LANGUAGES, language);
@@ -80,7 +80,8 @@ export function memberCompletions(language: string, textBeforeCursor: string): r
   }
   for (const subscript of access.subscripts) type = lang.subscript(type, subscript);
   if (access.arrow) type = pointee(type);
-  return lookup<TypeInfo>(lang.table, type.name)?.members ?? null;
+  const members = lookup<TypeInfo>(lang.table, type.name)?.members;
+  return members?.length ? members : null;
 }
 
 /**

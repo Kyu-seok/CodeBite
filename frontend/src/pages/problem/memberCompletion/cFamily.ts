@@ -163,9 +163,20 @@ export function declaredType(
       if (follow === ':') return elementType(lang.table, expressionType(lang, src, next + 1, at, depth));
       return UNKNOWN;
     }
-    return type;
+    return arrayOf(code, next, type);
   }
   return undefined;
+}
+
+/** The type of a declarator with C-style dimensions from `i`: `adj` in `vector<int> adj[n]` is an array of vector. */
+function arrayOf(code: string, i: number, type: TypeRef): TypeRef {
+  while (code[i] === '[') {
+    const close = matchForward(code, i);
+    if (close < 0) return UNKNOWN;
+    type = typeRef('[]', type);
+    i = skipWs(code, close + 1);
+  }
+  return type;
 }
 
 /** `x -> ...` or `(a, b) -> ...`: a lambda's parameter, whose type nothing writes down. */

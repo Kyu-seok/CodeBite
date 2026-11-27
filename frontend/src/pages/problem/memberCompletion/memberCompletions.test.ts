@@ -36,6 +36,13 @@ describe('Java', () => {
     expect(suggested('java', 'HashMap<Integer, Integer> h = new HashMap<>(); h.')).not.toContain('floorKey');
   });
 
+  it('reads a C-style array declarator as an array of its type', () => {
+    const words = 'class Solution {\n  int f(String s) {\n    String words[] = s.split(" ");\n    words';
+    expect(suggested('java', `${words}.`)).toEqual(['length', 'clone']);
+    expect(suggested('java', `${words}[0].`)).toContain('charAt');
+    expect(suggested('java', 'int a, b[] = new int[3];\nb.')).toEqual(['length', 'clone']);
+  });
+
   it('types var from what it is created as', () => {
     expect(suggested('java', 'var q = new ArrayDeque<int[]>(); q.')).toEqual(expect.arrayContaining(['offer', 'pollFirst']));
     expect(suggested('java', 'var dp = new int[n + 1][m]; dp[0].')).toEqual(['length', 'clone']);
@@ -301,6 +308,13 @@ describe('C++', () => {
     expect(signatures('multimap<int, int> m; m.', 'emplace')).toEqual(['iterator']);
     expect(signatures('set<int> s; s.', 'insert')).toEqual(['pair<iterator,']);
     expect(signatures('unordered_map<int, int> m; m.', 'emplace')).toEqual(['pair<iterator,']);
+  });
+
+  it('reads a C-style array declarator as an array of its type', () => {
+    expect(suggested('cpp', 'vector<int> adj[100005];\nadj.')).toBeNull();
+    expect(suggested('cpp', 'vector<pair<int,int>> adj[n];\nadj[0].')).toContain('emplace_back');
+    expect(suggested('cpp', 'vector<int> g[5];\nfor (auto& row : g) row.')).toContain('emplace_back');
+    expect(suggested('cpp', 'string a, b[3];\nb[0].')).toContain('substr');
   });
 
   it('types auto from a constructor, another variable, or a range', () => {

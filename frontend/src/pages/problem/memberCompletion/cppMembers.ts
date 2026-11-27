@@ -125,6 +125,8 @@ const second = arg(1);
 const entry = (args: readonly TypeRef[]) => typeRef('pair', ...args);
 
 export const CPP_TYPES: TypeTable = {
+  /** A C array, `int a[n]`: no members, but indexing or iterating it gives its element. */
+  '[]': { members: [], index: first, element: first },
   string: { members: STRING, index: always(typeRef('char')), element: always(typeRef('char')) },
   vector: { members: VECTOR, index: first, element: first },
   deque: { members: DEQUE, index: first, element: first },
