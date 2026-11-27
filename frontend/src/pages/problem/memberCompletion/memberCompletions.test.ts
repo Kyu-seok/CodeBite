@@ -48,6 +48,15 @@ describe('Java', () => {
     expect(suggested('java', 'var dp = new int[n + 1][m]; dp[0].')).toEqual(['length', 'clone']);
     expect(suggested('java', 'var s = "abc"; s.')).toContain('charAt');
     expect(suggested('java', 'var x = compute(); x.')).toBeNull();
+    expect(suggested('java', 'var sb = new StringBuilder(s);\nsb.')).toContain('append');
+    expect(suggested('java', 'var a = new int[]{1, 2};\na.')).toEqual(['length', 'clone']);
+  });
+
+  it('suggests nothing for var built by a constructor and then a call chain', () => {
+    expect(suggested('java', 'var s = new StringBuilder(x).reverse().toString();\ns.')).toBeNull();
+    expect(suggested('java', 'var a = new ArrayList<String>(k).get(0);\na.')).toBeNull();
+    expect(suggested('java', 'var w = new String(cs).split(" ");\nw.')).toBeNull();
+    expect(suggested('java', 'var n = "abc".length();\nn.')).toBeNull();
   });
 
   it('types a for-each variable, declared or var', () => {
@@ -323,6 +332,10 @@ describe('C++', () => {
     expect(suggested('cpp', 'vector<vector<int>>& grid) {\n for (auto& row : grid) row.')).toContain('push_back');
     expect(suggested('cpp', 'map<int, int> m; for (const auto& p : m) p.')).toEqual(['first', 'second', 'swap']);
     expect(suggested('cpp', 'auto it = m.find(k); it->')).toBeNull();
+    expect(suggested('cpp', 'auto n = vector<int>(5).size();\nn.')).toBeNull();
+    expect(suggested('cpp', 'auto g = vector<vector<int>>(n, vector<int>(m))[0];\ng.')).toBeNull();
+    expect(suggested('cpp', 'auto p = make_pair(1, 2).first;\np.')).toBeNull();
+    expect(suggested('cpp', 'auto p = make_pair(1, 2);\np.')).toContain('first');
   });
 
   it('uses the latest declaration and is not fooled by multiplication', () => {

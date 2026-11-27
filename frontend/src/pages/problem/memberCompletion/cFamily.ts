@@ -338,43 +338,59 @@ export function parseType(code: string, i: number): { type: TypeRef; end: number
 
 /**
  * The type of an initializer or range at `i`: `new ArrayList<>()`, `new int[n][m]`,
- * `vector<int>(n)`, a string literal, or another variable, maybe indexed. A method call or any
- * other expression is UNKNOWN. `scope` is the declaration's own position, so `var x = x` looks
- * further back.
+ * `vector<int>(n)`, a string literal, or another variable, maybe indexed, with nothing after it.
+ * A method call, a call chain or any other expression is UNKNOWN. `scope` is the declaration's
+ * own position, so `var x = x` looks further back.
  */
 function expressionType(lang: CFamily, src: Source, i: number, scope: number, depth: number): TypeRef {
+  const leading = leadingValue(lang, src, skipWs(src.code, i), scope, depth);
+  if (!leading) return UNKNOWN;
+  const k = skipWs(src.code, leading.end);
+  return k >= src.code.length || ';,)'.includes(src.code[k]) ? leading.type : UNKNOWN;
+}
+
+/** The value an expression at `i` starts with, and where it ends. */
+function leadingValue(lang: CFamily, src: Source, i: number, scope: number, depth: number): { type: TypeRef; end: number } | null {
   const { code } = src;
-  i = skipWs(code, i);
-  if (code[i] === '"') return lang.stringLiteral;
+  if (code[i] === '"') return { type: lang.stringLiteral, end: i + 2 };
 
   if (lang.newKeyword && /^new\b/.test(code.slice(i, i + 4))) {
     const created = parseType(code, i + 3);
-    if (!created) return UNKNOWN;
+    if (!created) return null;
     let type = created.type;
-    for (let k = skipWs(code, created.end); code[k] === '['; ) {
-      const close = matchForward(code, k);
-      if (close < 0) break;
+    let k = skipWs(code, created.end);
+    for (; code[k] === '['; k = skipWs(code, k + 1)) {
+      k = matchForward(code, k);
+      if (k < 0) return null;
       type = typeRef('[]', type);
-      k = skipWs(code, close + 1);
     }
-    return type;
+    for (const opener of '({') {
+      if (code[k] !== opener) continue;
+      k = matchForward(code, k);
+      if (k < 0) return null;
+      k = skipWs(code, k + 1);
+    }
+    return { type, end: k };
   }
 
   const constructed = lang.newKeyword ? null : parseType(code, i);
-  if (constructed && '({'.includes(code[skipWs(code, constructed.end)] ?? ' ')) {
-    if (constructed.type.name === 'make_pair') return typeRef('pair');
-    return lookup<TypeInfo>(lang.table, constructed.type.name) ? constructed.type : UNKNOWN;
+  const open = constructed ? skipWs(code, constructed.end) : -1;
+  if (constructed && '({'.includes(code[open] ?? ' ')) {
+    const close = matchForward(code, open);
+    if (close < 0) return null;
+    if (constructed.type.name === 'make_pair') return { type: typeRef('pair'), end: close + 1 };
+    return lookup<TypeInfo>(lang.table, constructed.type.name) ? { type: constructed.type, end: close + 1 } : null;
   }
 
   const variable = readWord(code, i);
-  if (!variable) return UNKNOWN;
+  if (!variable) return null;
   let type = declaredType(lang, src, variable, scope, depth + 1) ?? UNKNOWN;
   let k = skipWs(code, i + variable.length);
   while (code[k] === '[') {
     const close = matchForward(code, k);
-    if (close < 0) return UNKNOWN;
+    if (close < 0) return null;
     type = indexType(lang.table, type);
     k = skipWs(code, close + 1);
   }
-  return k >= code.length || ';,)'.includes(code[k]) ? type : UNKNOWN;
+  return { type, end: k };
 }
