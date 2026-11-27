@@ -106,6 +106,7 @@ describe('Java', () => {
     expect(suggested('java', 'Arrays.')).toEqual(expect.arrayContaining(['sort', 'fill', 'asList']));
     expect(suggested('java', 'if (Character.')).toContain('isDigit');
     expect(suggested('java', 'String.')).toContain('valueOf');
+    expect(suggested('java', 'Map<Integer, String[]> m = new HashMap<>();\nString.')).toContain('valueOf');
   });
 
   it('suggests String members after a string literal', () => {

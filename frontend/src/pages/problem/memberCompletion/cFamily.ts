@@ -225,6 +225,7 @@ function laterDeclaratorType(code: string, at: number): TypeRef | null {
     i = skipWsBack(code, i - 1);
   }
   if (code[i - 1] !== ',') return null;
+  const comma = i - 1;
   let depth = 0;
   for (i -= 2; i >= 0; i--) {
     const c = code[i];
@@ -236,7 +237,8 @@ function laterDeclaratorType(code: string, at: number): TypeRef | null {
   const start = skipWs(code, i + 1);
   if (NOT_TYPES.has(readWord(code, start) ?? '')) return null;
   const parsed = parseType(code, start);
-  if (!parsed || !readWord(code, skipWs(code, parsed.end))) return null;
+  // A comma inside the type separates type arguments: `String` in `Map<Integer, String[]> m`.
+  if (!parsed || parsed.end > comma || !readWord(code, skipWs(code, parsed.end))) return null;
   if (MODIFIERS.has(parsed.type.name)) return UNKNOWN;
   let type = unpointered(parsed.type);
   for (; stars > 0; stars--) type = typeRef('*', type);
