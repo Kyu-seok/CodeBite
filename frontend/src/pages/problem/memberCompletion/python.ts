@@ -1,6 +1,6 @@
 import { UNKNOWN, typeRef, type TypeRef } from './model';
 import { PYTHON_TYPES } from './pythonMembers';
-import { brackets } from './scopes';
+import { brackets, Scopes, type Brackets, type Range } from './scopes';
 import {
   elementType,
   indexType,
@@ -76,25 +76,73 @@ const KEYWORDS = new Set([
   'class',
 ]);
 
-/** The code before the cursor, with the innermost bracket open at each position (-1 at the top level). */
+/** The code before the cursor, with the innermost bracket open at each position (-1 at the top level) and its scopes. */
 export interface Source {
   readonly code: string;
   readonly opener: Int32Array;
+  readonly scopes: Scopes;
 }
 
 export function pythonSource(code: string): Source {
-  return { code, opener: brackets(code).opener };
+  const br = brackets(code);
+  return { code, opener: br.opener, scopes: new Scopes(code.length, [...blocks(code, br), ...lambdas(code, br), ...comprehensions(code, br)]) };
 }
 
 /**
- * The type of `name` at its latest binding before `before`, or undefined when nothing binds it
- * there. Every way Python binds a name counts, and one whose type isn't written down or built
- * from a literal or constructor gives UNKNOWN, so an older binding never shows through.
+ * Each def's and class's block, from just after its name (so the name itself belongs outside) to
+ * the last line indented deeper than its header. A line that continues a bracket or a `\` is
+ * part of the line before it.
+ */
+function blocks(code: string, br: Brackets): Range[] {
+  const ranges: Range[] = [];
+  const open: { indent: number; start: number }[] = [];
+  for (let line = 0; line < code.length; ) {
+    const newline = code.indexOf('\n', line);
+    const lineEnd = newline < 0 ? code.length : newline;
+    const first = skipInline(code, line);
+    if (first < lineEnd && br.opener[line] < 0 && code[line - 2] !== '\\') {
+      const indent = first - line;
+      while (open.length && indent <= open[open.length - 1].indent) ranges.push([open.pop()!.start, line - 1]);
+      const header = /^(?:async\s+)?(?:def|class)\s+\w+/.exec(code.slice(first, first + 128));
+      if (header) open.push({ indent, start: first + header[0].length });
+    }
+    line = lineEnd + 1;
+  }
+  return [...ranges, ...open.map(({ start }): Range => [start, code.length])];
+}
+
+/** Each lambda, from its keyword to the `,`, `;`, closing bracket or line end after its body. */
+function lambdas(code: string, br: Brackets): Range[] {
+  return [...code.matchAll(/\blambda\b/g)].map(({ index: at }): Range => {
+    let body = false;
+    for (let i = at + 6; i < code.length; i++) {
+      const c = code[i];
+      if (c === '(' || c === '[' || c === '{') i = br.close[i];
+      else if (c === ':') body = true;
+      else if (')]};'.includes(c) || (body && c === ',') || (c === '\n' && br.opener[at] < 0 && code[i - 1] !== '\\')) {
+        return [at, i];
+      }
+    }
+    return [at, code.length];
+  });
+}
+
+/** Each comprehension's brackets: a bracket with a `for` directly inside. */
+function comprehensions(code: string, br: Brackets): Range[] {
+  const openers = new Set([...code.matchAll(/\bfor\b/g)].map(({ index }) => br.opener[index]));
+  return [...openers].filter((open) => open >= 0).map((open): Range => [open, br.close[open]]);
+}
+
+/**
+ * The type of `name` at its latest binding before `before` that is in scope there, or undefined
+ * when none is. Every way Python binds a name counts, and one whose type isn't written down or
+ * built from a literal or constructor gives UNKNOWN, so an older binding never shows through.
  */
 export function boundType(src: Source, name: string, before: number, depth = 0): TypeRef | undefined {
   const { code } = src;
   for (const at of occurrencesBefore(code, name, before)) {
-    const binding = bindingAt(src, name, at, before);
+    if (!src.scopes.visible(at, before)) continue;
+    const binding = bindingAt(src, name, at);
     if (!binding) continue;
     if (binding.kind === 'annotation') return parseAnnotation(code, binding.at)?.type ?? UNKNOWN;
     if (binding.kind === 'unknown' || depth >= MAX_DEPTH) return UNKNOWN;
@@ -107,9 +155,9 @@ export function boundType(src: Source, name: string, before: number, depth = 0):
 /**
  * How the occurrence of `name` at `at` binds it, or null when it doesn't: `name: T`, a parameter,
  * `as name`, `def name`, `class name`, `name :=`, `global name`, a lambda's parameter, or an
- * assignment or for target. A comprehension's or lambda's binding counts only inside it.
+ * assignment or for target.
  */
-function bindingAt(src: Source, name: string, at: number, before: number): Binding | null {
+function bindingAt(src: Source, name: string, at: number): Binding | null {
   const { code } = src;
   if (code[at - 1] === '.') return null;
   const next = skipInline(code, at + name.length);
@@ -123,12 +171,12 @@ function bindingAt(src: Source, name: string, at: number, before: number): Bindi
     return code[next] === ':' ? { kind: 'annotation', at: next + 1 } : UNTYPED;
   }
   if (/\blambda\s[\w\s,*=]*$/.test(code.slice(Math.max(0, at - 128), at)) && ',:='.includes(code[next])) {
-    return inScope(code, at, before, true) ? UNTYPED : null;
+    return UNTYPED;
   }
   if (code[next] === ':' && code[next + 1] !== '=' && opener < 0 && startsStatement(code, at)) {
     return { kind: 'annotation', at: next + 1 };
   }
-  return targetBinding(src, name, at, before);
+  return targetBinding(src, name, at);
 }
 
 /**
@@ -136,7 +184,7 @@ function bindingAt(src: Source, name: string, at: number, before: number): Bindi
  * a comprehension's too): the value or iterable when it is the whole target, UNKNOWN when it is one
  * of several, and null when it is no target at all (`s[i] = 1`, `f(s=1)`, `s == 1`).
  */
-function targetBinding(src: Source, name: string, at: number, before: number): Binding | null {
+function targetBinding(src: Source, name: string, at: number): Binding | null {
   const { code } = src;
   let start = at;
   let forAt = -1;
@@ -166,18 +214,14 @@ function targetBinding(src: Source, name: string, at: number, before: number): B
   }
   const assigned = code[end] === '=' && code[end + 1] !== '=';
   const iterated = forAt >= 0 && isWord(code, end, 'in');
-  if (iterated) {
-    if (src.opener[forAt] >= 0 && !inScope(code, forAt, before, false)) return null;
-  } else if (!assigned || forAt >= 0 || !startsStatement(code, start) || src.opener[start] >= 0) {
-    return null;
-  }
+  if (!iterated && (!assigned || forAt >= 0 || !startsStatement(code, start) || src.opener[start] >= 0)) return null;
 
   const target = ownTarget(src, iterated ? forAt + 3 : start, end, at, name);
   if (target === null) return null;
   if (!target) return UNTYPED;
   return iterated
-    ? { kind: 'element', start: end + 2, end: statementEnd(code, end + 2, true) }
-    : { kind: 'value', start: end + 1, end: statementEnd(code, end + 1, false) };
+    ? { kind: 'element', start: end + 2, end: statementEnd(code, end + 2, src.opener[forAt] >= 0 ? 'comprehension' : 'loop') }
+    : { kind: 'value', start: end + 1, end: statementEnd(code, end + 1, 'value') };
 }
 
 /**
@@ -204,21 +248,6 @@ function ownTarget(src: Source, start: number, end: number, at: number, name: st
   const opener = src.opener[at];
   if (opener >= from && code[opener] === '[' && /[\w)\]]/.test(code[skipWsBack(code, opener) - 1] ?? '')) return null;
   return target.trim() === name;
-}
-
-/**
- * Whether a binding at `from`, scoped to its brackets (a comprehension's for) or also to its
- * statement (a lambda's parameter), still holds at `before`.
- */
-function inScope(code: string, from: number, before: number, statement: boolean): boolean {
-  let depth = 0;
-  for (let i = from; i < before; i++) {
-    const c = code[i];
-    if ('([{'.includes(c)) depth++;
-    else if (')]}'.includes(c) && --depth < 0) return false;
-    else if (statement && depth === 0 && (c === ';' || (c === '\n' && code[i - 1] !== '\\'))) return false;
-  }
-  return true;
 }
 
 /** The word ending at `i`, or '' when none does. */
@@ -248,14 +277,20 @@ function isWord(code: string, i: number, word: string): boolean {
   return i >= 0 && code.startsWith(word, i) && !isWordChar(code[i - 1]) && !isWordChar(code[i + word.length]);
 }
 
-/** Where the statement from `i` ends: a newline or `;` outside brackets, or `:` for a for loop's header. */
-function statementEnd(code: string, i: number, colon: boolean): number {
+/**
+ * Where an assigned value or an iterable from `i` ends: a newline, `;` or closing bracket outside
+ * brackets, the `:` of a for loop's header, or the `if` or `for` after a comprehension's iterable.
+ */
+function statementEnd(code: string, i: number, of: 'value' | 'loop' | 'comprehension'): number {
   let depth = 0;
   for (; i < code.length; i++) {
     const c = code[i];
     if ('([{'.includes(c)) depth++;
-    else if (')]}'.includes(c)) depth--;
-    else if (depth === 0 && (c === ';' || (c === '\n' && code[i - 1] !== '\\') || (colon && c === ':'))) return i;
+    else if (')]}'.includes(c) && depth-- === 0) return i;
+    else if (depth > 0) continue;
+    else if (c === ';' || (c === '\n' && code[i - 1] !== '\\')) return i;
+    else if (of === 'loop' && c === ':') return i;
+    else if (of === 'comprehension' && (isWord(code, i, 'if') || isWord(code, i, 'for'))) return i;
   }
   return i;
 }
@@ -279,7 +314,9 @@ function atom(src: Source, i: number, end: number, scope: number, depth: number)
     const first = topLevel(code, i + 1, inner);
     const empty = first.end <= skipWs(code, i + 1);
     if (c === '[') {
-      const item = empty ? UNKNOWN : expressionType(src, i + 1, first.end, scope, depth);
+      // A comprehension's item sees the comprehension's own for targets, which follow it.
+      const itemScope = isWord(code, skipWs(code, first.end), 'for') ? inner : scope;
+      const item = empty ? UNKNOWN : expressionType(src, i + 1, first.end, itemScope, depth);
       return { type: item === UNKNOWN ? typeRef('list') : typeRef('list', item), end: after };
     }
     if (c === '{') return { type: typeRef(empty || first.colon ? 'dict' : 'set'), end: after };

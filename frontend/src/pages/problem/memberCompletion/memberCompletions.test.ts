@@ -225,6 +225,29 @@ describe('Python', () => {
     expect(suggested('python', `${list}words = [w for w in s if w > 0]\nfor w in s:\n    s.`)).toContain('append');
   });
 
+  it('sees a binding inside a def, lambda or comprehension only there', () => {
+    const method = (params: string, body: string) =>
+      `class Solution:\n    def f(self, ${params}) -> int:\n        ${body.replace(/\n/g, '\n        ')}`;
+    const local = method('s: str, t: str', 'def counts(x):\n    t = Counter(x)\n    return t\nneed = counts(s)\nt.');
+    expect(suggested('python', local)).toContain('split');
+    expect(suggested('python', local)).not.toContain('most_common');
+    const param = method('s: str', 'def helper(s: List[int]):\n    return 0\nreturn s.');
+    expect(suggested('python', param)).toContain('split');
+    expect(suggested('python', param)).not.toContain('append');
+    expect(suggested('python', method('s: str', 'def helper(s: List[int]):\n    s.'))).toContain('append');
+    expect(suggested('python', method('s: str', 'def helper(\n    s: List[int]):\n    return 0\ns.'))).toContain('split');
+    expect(suggested('python', method('s: str', 'key = lambda s: len(s)\ns.'))).toContain('split');
+    expect(suggested('python', method('s: str', 'words.sort(key=lambda s: s, reverse=True)\ns.'))).toContain('split');
+  });
+
+  it('types a comprehension target from its own iterable, never from an older binding', () => {
+    const older = 'strs: List[str] = []\nfor s in strs: pass\n';
+    expect(suggested('python', `${older}groups = defaultdict(list)\nout = [s for s in groups.values()]\nout[0].`)).toBeNull();
+    expect(suggested('python', `${older}out = [s for s in [[1]]]\nout[0].`)).toContain('append');
+    expect(suggested('python', `${older}out = [s for s in [[1]]]\ns.`)).toContain('split');
+    expect(suggested('python', `${older}out = [s for s in [[1]] if s]\nout[0].`)).toContain('append');
+  });
+
   it('suggests nothing for an unknown receiver, attribute, call result, or number', () => {
     expect(suggested('python', 'foo.')).toBeNull();
     expect(suggested('python', 'x = foo()\nx.')).toBeNull();
