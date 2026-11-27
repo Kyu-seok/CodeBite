@@ -342,7 +342,8 @@ function atom(src: Source, i: number, end: number, scope: number, depth: number)
       const item = empty ? UNKNOWN : expressionType(src, i + 1, first.end, itemScope, depth);
       return { type: item === UNKNOWN ? typeRef('list') : typeRef('list', item), end: after };
     }
-    if (c === '{') return { type: typeRef(empty || first.colon ? 'dict' : 'set'), end: after };
+    const dict = empty || first.colon || code.startsWith('**', skipWs(code, i + 1));
+    if (c === '{') return { type: typeRef(dict ? 'dict' : 'set'), end: after };
     if (empty || code[skipWs(code, first.end)] === ',') return { type: typeRef('tuple'), end: after };
     if (first.end < skipWsBack(code, inner)) return { type: UNKNOWN, end: after };
     return { type: expressionType(src, i + 1, inner, scope, depth), end: after };
@@ -352,7 +353,8 @@ function atom(src: Source, i: number, end: number, scope: number, depth: number)
   if (literal) {
     const quote = literal[1];
     const at = i + literal[0].length - 1;
-    return { type: typeRef('str'), end: at + (code.startsWith(quote.repeat(6), at) ? 6 : 2) };
+    const type = /[bB]/.test(literal[0]) ? UNKNOWN : typeRef('str');
+    return { type, end: at + (code.startsWith(quote.repeat(6), at) ? 6 : 2) };
   }
 
   const number = /^\d[\w.]*/.exec(code.slice(i, end));
@@ -380,9 +382,18 @@ function atom(src: Source, i: number, end: number, scope: number, depth: number)
   return { type, end: j };
 }
 
-/** `x[i]` is an item of x, while a slice such as `x[1:]` or `s[::-1]` is x's own type. */
+/**
+ * `x[i]` is an item of x, while a slice such as `x[1:]` or `s[::-1]` is x's own type. A tuple's
+ * item at a literal index is that argument: `p[1]` of `Tuple[str, List[int]]` is a list.
+ */
 export function subscriptType(type: TypeRef, subscript: string): TypeRef {
-  return topLevel(subscript, 0, subscript.length).colon ? type : indexType(PYTHON_TYPES, type);
+  if (topLevel(subscript, 0, subscript.length).colon) return type;
+  const literal = /^\s*(-?\d+)\s*$/.exec(subscript);
+  if (type.name === 'tuple' && literal && !type.args.some((item) => item.name === '...')) {
+    const k = Number(literal[1]);
+    return type.args[k < 0 ? type.args.length + k : k] ?? UNKNOWN;
+  }
+  return indexType(PYTHON_TYPES, type);
 }
 
 /** The first item of a bracket's contents: where it ends (a top-level `,` or `for`), and whether a `:` came first. */
@@ -414,7 +425,7 @@ function parseAnnotation(code: string, i: number): { type: TypeRef; end: number 
   i = skipWs(code, i);
   const quoted = /^(["'])\1/.exec(code.slice(i, i + 2));
   if (quoted) return { type: UNKNOWN, end: i + 2 };
-  if (code.startsWith('...', i)) return { type: UNKNOWN, end: i + 3 };
+  if (code.startsWith('...', i)) return { type: typeRef('...'), end: i + 3 };
   const dotted = /^[A-Za-z_]\w*(?:\.[A-Za-z_]\w*)*/.exec(code.slice(i, i + 128));
   if (!dotted) return null;
   const written = dotted[0].slice(dotted[0].lastIndexOf('.') + 1);

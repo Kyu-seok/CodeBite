@@ -1,4 +1,4 @@
-import { always, arg, combine, members, override, typeRef, type Member, type TypeTable } from './model';
+import { always, arg, combine, members, override, sameType, typeRef, type Member, type TypeRef, type TypeTable } from './model';
 
 const LIST = members('method', [
   'append(x) -> None',
@@ -129,6 +129,11 @@ const TREE_NODE = members('field', ['val: int', 'left: Optional[TreeNode]', 'rig
 const LIST_NODE = members('field', ['val: int', 'next: Optional[ListNode]']);
 
 const first = arg(0);
+/** The type every item of a tuple has: `Tuple[int, ...]` or `Tuple[str, str]`, but not `Tuple[str, int]`. */
+const shared = (args: readonly TypeRef[]) => {
+  const items = args.filter((item) => item.name !== '...');
+  return items.length && items.every((item) => sameType(item, items[0])) ? items[0] : undefined;
+};
 const second = arg(1);
 const str = typeRef('str');
 
@@ -138,7 +143,7 @@ export const PYTHON_TYPES: TypeTable = {
   set: { members: SET, element: first },
   frozenset: { members: SET.filter((m) => !m.signature.includes('-> None') && m.name !== 'pop'), element: first },
   str: { members: STR, index: always(str), element: always(str) },
-  tuple: { members: TUPLE, index: first, element: first },
+  tuple: { members: TUPLE, index: shared, element: shared },
   deque: { members: DEQUE, index: first, element: first },
   Counter: { members: COUNTER, index: always(typeRef('int')), element: first },
   defaultdict: { members: DEFAULTDICT, index: second, element: first },

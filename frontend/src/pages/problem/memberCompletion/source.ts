@@ -122,7 +122,13 @@ export function trailingAccess(code: string, arrow: boolean): Access | null {
     i = skipWsBack(code, open);
   }
 
-  if (/["']/.test(code[i - 1]) && code[i - 2] === code[i - 1]) return { receiver: 'string literal', subscripts, arrow: isArrow };
+  if (/["']/.test(code[i - 1]) && code[i - 2] === code[i - 1]) {
+    let open = i - 2;
+    while (code[open - 1] === code[i - 1]) open--;
+    // A bytes literal, `b"..."`, has no table.
+    if (/[bB]/.test(/\w*$/.exec(code.slice(Math.max(0, open - 2), open))![0])) return null;
+    return { receiver: 'string literal', subscripts, arrow: isArrow };
+  }
 
   let start = i;
   while (isWordChar(code[start - 1])) start--;

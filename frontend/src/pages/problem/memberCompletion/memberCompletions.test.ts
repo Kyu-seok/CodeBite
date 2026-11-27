@@ -219,6 +219,24 @@ describe('Python', () => {
     expect(suggested('python', standard + method)).toEqual(['val', 'next']);
   });
 
+  it('types dict unpacking, bytes and a tuple\'s items', () => {
+    expect(suggested('python', 'a: dict = {}\nmerged = {**a, **a}\nmerged.')).toContain('items');
+    expect(suggested('python', 'a = {1}\nmerged = {*a, *a}\nmerged.')).toContain('add');
+    expect(suggested('python', 'data = b"abc"\ndata.')).toBeNull();
+    expect(suggested('python', "data = rb'abc'\ndata.")).toBeNull();
+    expect(suggested('python', 'b"abc".')).toBeNull();
+    expect(suggested('python', 'r"a.b".')).toContain('split');
+    const pair = 'p: Tuple[str, List[int]] = f()\n';
+    expect(suggested('python', `${pair}p[1].`)).toContain('append');
+    expect(suggested('python', `${pair}p[1].`)).not.toContain('split');
+    expect(suggested('python', `${pair}p[0].`)).toContain('split');
+    expect(suggested('python', `${pair}p[-1].`)).toContain('append');
+    expect(suggested('python', `${pair}p[i].`)).toBeNull();
+    expect(suggested('python', `${pair}for x in p:\n    x.`)).toBeNull();
+    expect(suggested('python', 'q: Tuple[str, ...] = f()\nq[3].')).toContain('split');
+    expect(suggested('python', 't: tuple[str, str] = f()\nt[i].')).toContain('split');
+  });
+
   it('suggests str methods after a string literal', () => {
     expect(suggested('python', 'return "".')).toContain('join');
     expect(suggested('python', "x = ', '.")).toContain('join');

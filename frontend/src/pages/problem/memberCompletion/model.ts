@@ -42,6 +42,9 @@ export type TypeTable = Readonly<Record<string, TypeInfo>>;
 export const arg = (n: number) => (args: readonly TypeRef[]) => args[n];
 export const always = (type: TypeRef) => () => type;
 
+export const sameType = (a: TypeRef, b: TypeRef): boolean =>
+  a.name === b.name && a.args.length === b.args.length && a.args.every((arg, k) => sameType(arg, b.args[k]));
+
 type Spec = string | readonly [signature: string, doc: string];
 
 /**
